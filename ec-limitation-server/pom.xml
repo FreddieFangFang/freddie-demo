@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.weimob.saas</groupId>
+    <artifactId>ec-limitation-service</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>ec-limitation-server</artifactId>
+  <packaging>war</packaging>
+  <name>ec-limitation-server Maven Webapp</name>
+  <url>http://maven.apache.org</url>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+	
+	<dependency>
+      <groupId>com.weimob.saas</groupId>
+      <artifactId>ec-limitation-interface</artifactId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.weimob.saas</groupId>
+          <artifactId>ec-common</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
+  <build>
+    <finalName>ec-limitation-server</finalName>
+	<plugins>
+      <!-- war包不deploy到maven仓库 -->
+      <plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>maven-jetty-plugin</artifactId>
+        <version>6.1.6</version>
+        <configuration>
+          <connectors>
+            <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+              <port>8081</port>
+              <maxIdleTime>60000</maxIdleTime>
+            </connector>
+          </connectors>
+          <webAppConfig>
+            <contextPath>/</contextPath>
+            <defaultsDescriptor></defaultsDescriptor>
+          </webAppConfig>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
