@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.weimob.saas</groupId>
@@ -11,13 +11,21 @@
   <packaging>war</packaging>
   <name>ec-limitation-server Maven Webapp</name>
   <url>http://maven.apache.org</url>
+
+  <properties>
+    <junit.version>3.8.1</junit.version>
+    <cat-client.version>1.4.6-SNAPSHOT</cat-client.version>
+    <wcc-version>1.0.3-SNAPSHOT</wcc-version>
+    <spring.version>3.2.9.RELEASE</spring.version>
+    <arch-wdd.version>1.0.0-SNAPSHOT</arch-wdd.version>
+    <mybatis-spring.version>1.2.5</mybatis-spring.version>
+    <mybatis.version>3.3.1</mybatis.version>
+    <mysql.version>5.1.35</mysql.version>
+    <druid.version>1.0.21-cat-SNAPSHOT</druid.version>
+    <dubbo-version>2.7.0-weimob-RELEASE</dubbo-version>
+  </properties>
+
   <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
 	
 	<dependency>
       <groupId>com.weimob.saas</groupId>
@@ -30,6 +38,82 @@
         </exclusion>
       </exclusions>
     </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- 添加spring 依赖 -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-orm</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <!-- end 添加spring 依赖 -->
+    <dependency>
+      <groupId>com.weimob</groupId>
+      <artifactId>arch-wcc-client</artifactId>
+      <version>${wcc-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.dianping.cat</groupId>
+      <artifactId>cat-client</artifactId>
+      <version>${cat-client.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>dubbo</artifactId>
+      <version>${dubbo-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.weimob</groupId>
+      <artifactId>soa-monitor-client</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>netty</artifactId>
+          <groupId>org.jboss.netty</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.weimob</groupId>
+      <artifactId>arch-wdd</artifactId>
+      <version>${arch-wdd.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>druid</artifactId>
+      <version>${druid.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.dianping.cat</groupId>
+          <artifactId>cat-client</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.alibaba</groupId>
+          <artifactId>dubbo</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>${mysql.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mybatis</groupId>
+      <artifactId>mybatis</artifactId>
+      <version>${mybatis.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mybatis</groupId>
+      <artifactId>mybatis-spring</artifactId>
+      <version>${mybatis-spring.version}</version>
+    </dependency>
   </dependencies>
   <build>
     <finalName>ec-limitation-server</finalName>
@@ -39,24 +123,6 @@
         <artifactId>maven-deploy-plugin</artifactId>
         <configuration>
           <skip>true</skip>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>maven-jetty-plugin</artifactId>
-        <version>6.1.6</version>
-        <configuration>
-          <connectors>
-            <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
-              <port>8081</port>
-              <maxIdleTime>60000</maxIdleTime>
-            </connector>
-          </connectors>
-          <webAppConfig>
-            <contextPath>/</contextPath>
-            <defaultsDescriptor></defaultsDescriptor>
-          </webAppConfig>
         </configuration>
       </plugin>
     </plugins>

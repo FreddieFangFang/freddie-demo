@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+   
+    <settings>
+        <!-- 该配置影响的所有映射器中配置的缓存的全局开关。默认值true -->
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+        <setting name="cacheEnabled" value="true"/>
+        <!--延迟加载的全局开关。当开启时，所有关联对象都会延迟加载。 特定关联关系中可通过设置fetchType属性来覆盖该项的开关状态。默认值false  -->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <!-- <setting name="maxRequests" value="2048"/>
+        <setting name="maxSessions" value="1024"/>
+        <setting name="maxTransactions" value="512"/>
+        <setting name="useStatementNamespaces" value="true"/> -->
+    </settings>
+
+
+    <typeAliases>
+        <!-- 定义限购实体别名 -->
+        <typeAlias type="com.weimob.saas.ec.limitation.entity.GoodsLimitInfoEntity" alias="GoodsLimitInfoEntity"/>
+        <typeAlias type="com.weimob.saas.ec.limitation.entity.LimitInfoEntity" alias="LimitInfoEntity"/>
+        <typeAlias type="com.weimob.saas.ec.limitation.entity.LimitOrderChangeLogEntity" alias="LimitOrderChangeLogEntity"/>
+        <typeAlias type="com.weimob.saas.ec.limitation.entity.LimitStoreRelationshipEntity" alias="LimitStoreRelationshipEntity"/>
+        <typeAlias type="com.weimob.saas.ec.limitation.entity.SkuLimitInfoEntity" alias="SkuLimitInfoEntity"/>
+        <typeAlias type="com.weimob.saas.ec.limitation.entity.UserGoodsLimitEntity" alias="UserGoodsLimitEntity"/>
+        <typeAlias type="com.weimob.saas.ec.limitation.entity.UserLimitEntity" alias="UserLimitEntity"/>
+
+
+    </typeAliases>
+
+    <mappers>
+        <mapper resource="META-INF/sqlmap/sqlmap-goods-limit-info.xml"/>
+        <mapper resource="META-INF/sqlmap/sqlmap-limit-info.xml"/>
+        <mapper resource="META-INF/sqlmap/sqlmap-limit-order-change-log.xml"/>
+        <mapper resource="META-INF/sqlmap/sqlmap-limit-store-relationship.xml"/>
+        <mapper resource="META-INF/sqlmap/sqlmap-sku-limit-info.xml"/>
+        <mapper resource="META-INF/sqlmap/sqlmap-user-goods-limit.xml"/>
+        <mapper resource="META-INF/sqlmap/sqlmap-user-limit.xml"/>
+    </mappers>
+
+</configuration>

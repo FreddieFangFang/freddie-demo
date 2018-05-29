@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx-3.0.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+	<!-- 商品限购表 -->
+	<bean id="goodsLimitInfoDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.weimob.saas.ec.limitation.dao.GoodsLimitInfoDao" />
+		<property name="sqlSessionFactory" ref="limitationSqlSessionFactory" />
+	</bean>
+	
+	<!-- 限购信息主表 -->
+	<bean id="limitInfoDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.weimob.saas.ec.limitation.dao.LimitInfoDao" />
+		<property name="sqlSessionFactory" ref="limitationSqlSessionFactory" />
+	</bean>
+	
+	<!-- 限购订单日志记录表 -->
+	<bean id="limitOrderChangeLogDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.weimob.saas.ec.limitation.dao.LimitOrderChangeLogDao" />
+		<property name="sqlSessionFactory" ref="limitationSqlSessionFactory" />
+	</bean>
+	
+	<!-- 限购门店关系表 -->
+	<bean id="limitStoreRelationshipDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.weimob.saas.ec.limitation.dao.LimitStoreRelationshipDao" />
+		<property name="sqlSessionFactory" ref="limitationSqlSessionFactory" />
+	</bean>
+	
+	<!-- sku限购表 -->
+	<bean id="skuLimitInfoDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.weimob.saas.ec.limitation.dao.SkuLimitInfoDao" />
+		<property name="sqlSessionFactory" ref="limitationSqlSessionFactory" />
+	</bean>
+	
+	<!-- 用户商品购买记录表 -->
+	<bean id="userGoodsLimitDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.weimob.saas.ec.limitation.dao.UserGoodsLimitDao" />
+		<property name="sqlSessionFactory" ref="limitationSqlSessionFactory" />
+	</bean>
+	
+	<!-- 用户活动购买记录表 -->
+	<bean id="userLimitDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.weimob.saas.ec.limitation.dao.UserLimitDao" />
+		<property name="sqlSessionFactory" ref="limitationSqlSessionFactory" />
+	</bean>
+</beans>
+
