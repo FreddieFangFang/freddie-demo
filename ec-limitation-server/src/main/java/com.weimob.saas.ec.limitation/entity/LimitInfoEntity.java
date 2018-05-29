@@ -22,7 +22,7 @@ public class LimitInfoEntity {
     /**
      * 限购级别
      */
-    private Byte limitLevel;
+    private Integer limitLevel;
     /**
      * 活动id或者商品id
      */
@@ -30,11 +30,11 @@ public class LimitInfoEntity {
     /**
      * 活动类型或者商品限购类型
      */
-    private Byte bizType;
+    private Integer bizType;
     /**
      * 限购对每个人还是所有人
      */
-    private Byte limitType;
+    private Integer limitType;
     /**
      * 限购数量
      */
@@ -84,36 +84,12 @@ public class LimitInfoEntity {
         this.source = source == null ? null : source.trim();
     }
 
-    public Byte getLimitLevel() {
-        return limitLevel;
-    }
-
-    public void setLimitLevel(Byte limitLevel) {
-        this.limitLevel = limitLevel;
-    }
-
     public Long getBizId() {
         return bizId;
     }
 
     public void setBizId(Long bizId) {
         this.bizId = bizId;
-    }
-
-    public Byte getBizType() {
-        return bizType;
-    }
-
-    public void setBizType(Byte bizType) {
-        this.bizType = bizType;
-    }
-
-    public Byte getLimitType() {
-        return limitType;
-    }
-
-    public void setLimitType(Byte limitType) {
-        this.limitType = limitType;
     }
 
     public Integer getLimitNum() {
@@ -162,5 +138,29 @@ public class LimitInfoEntity {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Integer getLimitLevel() {
+        return limitLevel;
+    }
+
+    public void setLimitLevel(Integer limitLevel) {
+        this.limitLevel = limitLevel;
+    }
+
+    public Integer getBizType() {
+        return bizType;
+    }
+
+    public void setBizType(Integer bizType) {
+        this.bizType = bizType;
+    }
+
+    public Integer getLimitType() {
+        return limitType;
+    }
+
+    public void setLimitType(Integer limitType) {
+        this.limitType = limitType;
     }
 }

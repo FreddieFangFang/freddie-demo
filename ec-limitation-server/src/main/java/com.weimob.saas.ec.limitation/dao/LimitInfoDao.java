@@ -1,15 +1,13 @@
 package com.weimob.saas.ec.limitation.dao;
 
 import com.weimob.saas.ec.limitation.entity.LimitInfoEntity;
+import com.weimob.saas.ec.limitation.model.LimitParam;
 
 public interface LimitInfoDao extends BaseDao<LimitInfoEntity> {
-    int deleteByPrimaryKey(Long limitId);
+    LimitInfoEntity selectByLimitParam(LimitParam limitParam);
 
-    int insertSelective(LimitInfoEntity record);
+    int deleteByPrimaryKey(Long limitId);
 
     LimitInfoEntity selectByPrimaryKey(Long limitId);
 
-    int updateByPrimaryKeySelective(LimitInfoEntity record);
-
-    int updateByPrimaryKey(LimitInfoEntity record);
 }

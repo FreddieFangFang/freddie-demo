@@ -41,7 +41,8 @@ public enum LimitationErrorCode {
     LIMITLEVEL_IS_NULL("1080000100010","限购级别为空"),
     LIMITNUM_IS_NULL("1080000100011","活动限购数量为空"),
     LIMITTYPE_IS_NULL("1080000100012","限购维度limittype为空"),
-    SOURCE_IS_NULL("1080000100013","限购来源为空");
+    SOURCE_IS_NULL("1080000100013","限购来源为空"),
+    LIMITATION_IS_NULL("1080000100014","限购信息记录为空");
 
     private String errorCode;
     private String errorMsg;

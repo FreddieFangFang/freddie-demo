@@ -9,7 +9,7 @@ public class SkuLimitInfoEntity {
 
     private Long limitId;
 
-    private Byte limitType;
+    private Integer limitType;
 
     private Long goodsId;
 
@@ -51,11 +51,11 @@ public class SkuLimitInfoEntity {
         this.limitId = limitId;
     }
 
-    public Byte getLimitType() {
+    public Integer getLimitType() {
         return limitType;
     }
 
-    public void setLimitType(Byte limitType) {
+    public void setLimitType(Integer limitType) {
         this.limitType = limitType;
     }
 

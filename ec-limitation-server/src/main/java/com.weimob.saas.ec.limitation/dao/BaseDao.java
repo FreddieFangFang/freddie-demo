@@ -33,5 +33,31 @@ public interface BaseDao<T> {
      * @return
      */
     void batchInsert(List<T> entityList);
+    
+    /**
+     *  
+     * @title 
+     * @author lujialin
+     * @date 2018/5/29 17:03
+     * @useScene 
+     * @parameterExample 
+     * @returnExample 
+     * @param
+     * @return 
+     */
+    Long update(T entity);
+    
+    /**
+     *  
+     * @title 
+     * @author lujialin
+     * @date 2018/5/29 17:11
+     * @useScene 
+     * @parameterExample 
+     * @returnExample 
+     * @param 
+     * @return 
+     */
+    void delete(T entity);
 
 }

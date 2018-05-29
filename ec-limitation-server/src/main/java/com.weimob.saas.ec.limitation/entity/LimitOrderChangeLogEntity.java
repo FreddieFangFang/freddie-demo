@@ -13,7 +13,7 @@ public class LimitOrderChangeLogEntity {
 
     private Long bizId;
 
-    private Byte bizType;
+    private Integer bizType;
 
     private Long limitId;
 
@@ -79,11 +79,11 @@ public class LimitOrderChangeLogEntity {
         this.bizId = bizId;
     }
 
-    public Byte getBizType() {
+    public Integer getBizType() {
         return bizType;
     }
 
-    public void setBizType(Byte bizType) {
+    public void setBizType(Integer bizType) {
         this.bizType = bizType;
     }
 

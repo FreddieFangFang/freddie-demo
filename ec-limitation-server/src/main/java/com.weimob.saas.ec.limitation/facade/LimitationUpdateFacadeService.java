@@ -45,5 +45,17 @@ public class LimitationUpdateFacadeService {
         VerifyParamUtils.checkParam(LimitationErrorCode.LIMITTYPE_IS_NULL, requestVo.getLimitType());
     }
 
+    /**
+     * 更新限购主要信息
+     *
+     * @param requestVo
+     * @return
+     */
+    public LimitationUpdateResponseVo updateLimitationInfo(LimitationInfoRequestVo requestVo) {
+        //校验参数
+        validateRequestParam(requestVo);
+
+        return limitationUpdateBizService.updateLimitationInfo(requestVo);
+    }
 
 }

@@ -32,7 +32,7 @@ public class LimitationInfoRequestVo extends BaseRequest{
     /**
      * 限购级别
      */
-    private Byte limitLevel;
+    private Integer limitLevel;
     /**
      * 活动id或者商品id
      */
@@ -40,11 +40,11 @@ public class LimitationInfoRequestVo extends BaseRequest{
     /**
      * 活动类型或者商品限购类型
      */
-    private Byte bizType;
+    private Integer bizType;
     /**
      * 限购对每个人还是所有人
      */
-    private Byte limitType;
+    private Integer limitType;
     /**
      * 限购数量
      */
@@ -82,14 +82,6 @@ public class LimitationInfoRequestVo extends BaseRequest{
         this.source = source;
     }
 
-    public Byte getLimitLevel() {
-        return limitLevel;
-    }
-
-    public void setLimitLevel(Byte limitLevel) {
-        this.limitLevel = limitLevel;
-    }
-
     public Long getBizId() {
         return bizId;
     }
@@ -98,19 +90,27 @@ public class LimitationInfoRequestVo extends BaseRequest{
         this.bizId = bizId;
     }
 
-    public Byte getBizType() {
+    public Integer getLimitLevel() {
+        return limitLevel;
+    }
+
+    public void setLimitLevel(Integer limitLevel) {
+        this.limitLevel = limitLevel;
+    }
+
+    public Integer getBizType() {
         return bizType;
     }
 
-    public void setBizType(Byte bizType) {
+    public void setBizType(Integer bizType) {
         this.bizType = bizType;
     }
 
-    public Byte getLimitType() {
+    public Integer getLimitType() {
         return limitType;
     }
 
-    public void setLimitType(Byte limitType) {
+    public void setLimitType(Integer limitType) {
         this.limitType = limitType;
     }
 

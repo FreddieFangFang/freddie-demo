@@ -11,4 +11,6 @@ import com.weimob.saas.ec.limitation.model.response.LimitationUpdateResponseVo;
 public interface LimitationUpdateBizService {
 
     LimitationUpdateResponseVo saveLimitationInfo(LimitationInfoRequestVo requestVo);
+
+    LimitationUpdateResponseVo updateLimitationInfo(LimitationInfoRequestVo requestVo);
 }

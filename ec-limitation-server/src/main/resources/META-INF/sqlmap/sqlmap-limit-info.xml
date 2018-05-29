@@ -44,157 +44,44 @@
       NOW(), NOW())
       /*LimitInfoDao.insert*/
   </insert>
-  <insert id="insertSelective" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
-    insert into limit_info
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="limitId != null">
-        limit_id,
-      </if>
-      <if test="pid != null">
-        pid,
-      </if>
-      <if test="channelType != null">
-        channel_type,
-      </if>
-      <if test="source != null">
-        source,
-      </if>
-      <if test="limitLevel != null">
-        limit_level,
-      </if>
-      <if test="bizId != null">
-        biz_id,
-      </if>
-      <if test="bizType != null">
-        biz_type,
-      </if>
-      <if test="limitType != null">
-        limit_type,
-      </if>
-      <if test="limitNum != null">
-        limit_num,
-      </if>
-      <if test="soldNum != null">
-        sold_num,
-      </if>
-      <if test="version != null">
-        version,
-      </if>
-      <if test="isDeleted != null">
-        is_deleted,
-      </if>
-      <if test="createTime != null">
-        create_time,
-      </if>
-      <if test="updateTime != null">
-        update_time,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="limitId != null">
-        #{limitId,jdbcType=BIGINT},
-      </if>
-      <if test="pid != null">
-        #{pid,jdbcType=BIGINT},
-      </if>
-      <if test="channelType != null">
-        #{channelType,jdbcType=VARCHAR},
-      </if>
-      <if test="source != null">
-        #{source,jdbcType=VARCHAR},
-      </if>
-      <if test="limitLevel != null">
-        #{limitLevel,jdbcType=TINYINT},
-      </if>
-      <if test="bizId != null">
-        #{bizId,jdbcType=BIGINT},
-      </if>
-      <if test="bizType != null">
-        #{bizType,jdbcType=TINYINT},
-      </if>
-      <if test="limitType != null">
-        #{limitType,jdbcType=TINYINT},
-      </if>
-      <if test="limitNum != null">
-        #{limitNum,jdbcType=INTEGER},
-      </if>
-      <if test="soldNum != null">
-        #{soldNum,jdbcType=INTEGER},
-      </if>
-      <if test="version != null">
-        #{version,jdbcType=INTEGER},
-      </if>
-      <if test="isDeleted != null">
-        #{isDeleted,jdbcType=BIT},
-      </if>
-      <if test="createTime != null">
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateTime != null">
-        #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
+
+  <select id="selectByLimitParam" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from limit_info
+    where pid = #{pid}
+    and   biz_id = #{bizId}
+    and   biz_type = #{bizType}
+    /*LimitInfoDao.selectByLimitParam*/
+  </select>
+
+  <update id="update" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
     update limit_info
     <set>
-      <if test="pid != null">
-        pid = #{pid,jdbcType=BIGINT},
-      </if>
       <if test="channelType != null">
-        channel_type = #{channelType,jdbcType=VARCHAR},
+        channel_type = #{channelType},
       </if>
       <if test="source != null">
-        source = #{source,jdbcType=VARCHAR},
-      </if>
-      <if test="limitLevel != null">
-        limit_level = #{limitLevel,jdbcType=TINYINT},
-      </if>
-      <if test="bizId != null">
-        biz_id = #{bizId,jdbcType=BIGINT},
-      </if>
-      <if test="bizType != null">
-        biz_type = #{bizType,jdbcType=TINYINT},
+        source = #{source},
       </if>
       <if test="limitType != null">
-        limit_type = #{limitType,jdbcType=TINYINT},
+        limit_type = #{limitType},
       </if>
       <if test="limitNum != null">
-        limit_num = #{limitNum,jdbcType=INTEGER},
+        limit_num = #{limitNum},
       </if>
       <if test="soldNum != null">
-        sold_num = #{soldNum,jdbcType=INTEGER},
+        sold_num = #{soldNum},
       </if>
       <if test="version != null">
-        version = #{version,jdbcType=INTEGER},
+        version = #{version},
       </if>
       <if test="isDeleted != null">
-        is_deleted = #{isDeleted,jdbcType=BIT},
+        is_deleted = #{isDeleted},
       </if>
-      <if test="createTime != null">
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateTime != null">
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
+        update_time = NOW()
     </set>
-    where limit_id = #{limitId,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
-    update limit_info
-    set pid = #{pid,jdbcType=BIGINT},
-      channel_type = #{channelType,jdbcType=VARCHAR},
-      source = #{source,jdbcType=VARCHAR},
-      limit_level = #{limitLevel,jdbcType=TINYINT},
-      biz_id = #{bizId,jdbcType=BIGINT},
-      biz_type = #{bizType,jdbcType=TINYINT},
-      limit_type = #{limitType,jdbcType=TINYINT},
-      limit_num = #{limitNum,jdbcType=INTEGER},
-      sold_num = #{soldNum,jdbcType=INTEGER},
-      version = #{version,jdbcType=INTEGER},
-      is_deleted = #{isDeleted,jdbcType=BIT},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
-    where limit_id = #{limitId,jdbcType=BIGINT}
+    where limit_id = #{limitId}
+    /*LimitInfoDao.update*/
   </update>
 </mapper>

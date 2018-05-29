@@ -1,0 +1,46 @@
+package com.weimob.saas.ec.limitation.model;
+
+/**
+ * @author lujialin
+ * @description 数据库查询入参
+ * @date 2018/5/29 17:14
+ */
+public class LimitParam {
+    private Long pid;
+    private Long bizId;
+    private Integer bizType;
+
+    public LimitParam() {
+
+    }
+
+    public LimitParam(Long pid, Long bizId, Integer bizType) {
+        this.pid = pid;
+        this.bizId = bizId;
+        this.bizType = bizType;
+    }
+
+    public Long getPid() {
+        return pid;
+    }
+
+    public void setPid(Long pid) {
+        this.pid = pid;
+    }
+
+    public Long getBizId() {
+        return bizId;
+    }
+
+    public void setBizId(Long bizId) {
+        this.bizId = bizId;
+    }
+
+    public Integer getBizType() {
+        return bizType;
+    }
+
+    public void setBizType(Integer bizType) {
+        this.bizType = bizType;
+    }
+}
