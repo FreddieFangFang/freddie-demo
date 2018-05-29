@@ -35,13 +35,14 @@
     insert into limit_info (limit_id, pid, channel_type, 
       source, limit_level, biz_id, 
       biz_type, limit_type, limit_num, 
-      sold_num, version, is_deleted, 
+      sold_num, is_deleted,
       create_time, update_time)
     values (#{limitId,jdbcType=BIGINT}, #{pid,jdbcType=BIGINT}, #{channelType,jdbcType=VARCHAR}, 
       #{source,jdbcType=VARCHAR}, #{limitLevel,jdbcType=TINYINT}, #{bizId,jdbcType=BIGINT}, 
       #{bizType,jdbcType=TINYINT}, #{limitType,jdbcType=TINYINT}, #{limitNum,jdbcType=INTEGER}, 
-      #{soldNum,jdbcType=INTEGER}, #{version,jdbcType=INTEGER}, #{isDeleted,jdbcType=BIT}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+      #{soldNum,jdbcType=INTEGER}, 0,
+      NOW(), NOW())
+      /*LimitInfoDao.insert*/
   </insert>
   <insert id="insertSelective" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
     insert into limit_info

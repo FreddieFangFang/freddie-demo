@@ -23,6 +23,7 @@
     <mysql.version>5.1.35</mysql.version>
     <druid.version>1.0.21-cat-SNAPSHOT</druid.version>
     <dubbo-version>2.7.0-weimob-RELEASE</dubbo-version>
+    <genId.version>1.0.0-SNAPSHOT</genId.version>
   </properties>
 
   <dependencies>
@@ -31,12 +32,6 @@
       <groupId>com.weimob.saas</groupId>
       <artifactId>ec-limitation-interface</artifactId>
       <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>com.weimob.saas</groupId>
-          <artifactId>ec-common</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
@@ -113,6 +108,27 @@
       <groupId>org.mybatis</groupId>
       <artifactId>mybatis-spring</artifactId>
       <version>${mybatis-spring.version}</version>
+    </dependency>
+
+    <!-- 生成全局id -->
+    <dependency>
+      <groupId>com.weimob.saas</groupId>
+      <artifactId>genId</artifactId>
+      <version>${genId.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-io</groupId>
+          <artifactId>commons-io</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.alibaba</groupId>
+          <artifactId>druid</artifactId>
+        </exclusion>
+        <exclusion>
+          <artifactId>mysql-connector-java</artifactId>
+          <groupId>org.wisdom-framework</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
   <build>

@@ -2,10 +2,8 @@ package com.weimob.saas.ec.limitation.dao;
 
 import com.weimob.saas.ec.limitation.entity.SkuLimitInfoEntity;
 
-public interface SkuLimitInfoDao {
+public interface SkuLimitInfoDao extends BaseDao<SkuLimitInfoEntity>{
     int deleteByPrimaryKey(Long id);
-
-    int insert(SkuLimitInfoEntity record);
 
     int insertSelective(SkuLimitInfoEntity record);
 

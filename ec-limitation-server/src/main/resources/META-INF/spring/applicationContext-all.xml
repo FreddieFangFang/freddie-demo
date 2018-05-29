@@ -15,5 +15,8 @@
 	<import resource="classpath*:META-INF/spring/applicationContext-datasource.xml"/>
 	<import resource="classpath*:META-INF/spring/applicationContext-dubbo.xml"/>
 	<import resource="classpath*:META-INF/spring/applicationContext-reference.xml"/>
+
+	<!-- genId -->
+	<import resource="classpath*:META-INF/genId/spring/applicationContext-genId-all.xml" />
 </beans>
 

@@ -49,4 +49,7 @@
 	<dubbo:monitor protocol="${dubbo.monitor.protocol}" address="${dubbo.monitor.address}"/>
 	<dubbo:provider retries="0" timeout="${dubbo.provider.timeout}" threads="${dubbo.provider.threads}" />
 
+	<dubbo:service ref="limitationQueryExportService" interface="com.weimob.saas.ec.limitation.service.LimitationQueryService" />
+	<dubbo:service ref="limitationUpdateExportService" interface="com.weimob.saas.ec.limitation.service.LimitationUpdateService" />
+
 </beans>

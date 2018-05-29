@@ -2,10 +2,8 @@ package com.weimob.saas.ec.limitation.dao;
 
 import com.weimob.saas.ec.limitation.entity.LimitStoreRelationshipEntity;
 
-public interface LimitStoreRelationshipDao {
+public interface LimitStoreRelationshipDao extends BaseDao<LimitStoreRelationshipEntity> {
     int deleteByPrimaryKey(Long id);
-
-    int insert(LimitStoreRelationshipEntity record);
 
     int insertSelective(LimitStoreRelationshipEntity record);
 

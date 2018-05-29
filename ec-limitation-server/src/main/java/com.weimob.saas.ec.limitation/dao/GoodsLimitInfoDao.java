@@ -2,10 +2,8 @@ package com.weimob.saas.ec.limitation.dao;
 
 import com.weimob.saas.ec.limitation.entity.GoodsLimitInfoEntity;
 
-public interface GoodsLimitInfoDao {
+public interface GoodsLimitInfoDao extends BaseDao<GoodsLimitInfoEntity>{
     int deleteByPrimaryKey(Long id);
-
-    int insert(GoodsLimitInfoEntity record);
 
     int insertSelective(GoodsLimitInfoEntity record);
 

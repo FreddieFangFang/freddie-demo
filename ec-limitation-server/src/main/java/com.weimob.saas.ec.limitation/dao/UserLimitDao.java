@@ -2,10 +2,8 @@ package com.weimob.saas.ec.limitation.dao;
 
 import com.weimob.saas.ec.limitation.entity.UserLimitEntity;
 
-public interface UserLimitDao {
+public interface UserLimitDao extends BaseDao<UserLimitEntity>{
     int deleteByPrimaryKey(Long id);
-
-    int insert(UserLimitEntity record);
 
     int insertSelective(UserLimitEntity record);
 

@@ -15,6 +15,15 @@ public class LimitationUpdateResponseVo implements Serializable {
 
     private Boolean status;
 
+    public LimitationUpdateResponseVo() {
+
+    }
+
+    public LimitationUpdateResponseVo(Long limitId, Boolean status) {
+        this.limitId = limitId;
+        this.status = status;
+    }
+
     public Long getLimitId() {
         return limitId;
     }

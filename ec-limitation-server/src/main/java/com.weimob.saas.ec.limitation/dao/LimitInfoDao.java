@@ -2,10 +2,8 @@ package com.weimob.saas.ec.limitation.dao;
 
 import com.weimob.saas.ec.limitation.entity.LimitInfoEntity;
 
-public interface LimitInfoDao {
+public interface LimitInfoDao extends BaseDao<LimitInfoEntity> {
     int deleteByPrimaryKey(Long limitId);
-
-    int insert(LimitInfoEntity record);
 
     int insertSelective(LimitInfoEntity record);
 
