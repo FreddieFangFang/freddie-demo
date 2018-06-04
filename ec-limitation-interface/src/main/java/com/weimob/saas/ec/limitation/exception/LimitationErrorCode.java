@@ -34,15 +34,16 @@ public enum LimitationErrorCode {
     WID_IS_NULL("1080000100002", "用户身份为空"),
     STORE_IS_NULL("1080000100003", "限购门店为空"),
     REQUEST_PARAM_IS_NULL("1080000100005", "请求参数为空"),
-    FAIL_LIST_PARAM_TOO_LONG("1080000100006","请求参数太长"),
-    CHANNELTYPE_IS_NULL("1080000100007","限购渠道为空"),
-    BIZID_IS_NULL("1080000100008","限购bizid为空"),
-    BIZTYPE_IS_NULL("1080000100009","限购biztype为空"),
-    LIMITLEVEL_IS_NULL("1080000100010","限购级别为空"),
-    LIMITNUM_IS_NULL("1080000100011","活动限购数量为空"),
-    LIMITTYPE_IS_NULL("1080000100012","限购维度limittype为空"),
-    SOURCE_IS_NULL("1080000100013","限购来源为空"),
-    LIMITATION_IS_NULL("1080000100014","限购信息记录为空");
+    FAIL_LIST_PARAM_TOO_LONG("1080000100006", "请求参数太长"),
+    CHANNELTYPE_IS_NULL("1080000100007", "限购渠道为空"),
+    BIZID_IS_NULL("1080000100008", "限购bizid为空"),
+    BIZTYPE_IS_NULL("1080000100009", "限购biztype为空"),
+    LIMITLEVEL_IS_NULL("1080000100010", "限购级别为空"),
+    LIMITNUM_IS_NULL("1080000100011", "活动限购数量为空"),
+    LIMITTYPE_IS_NULL("1080000100012", "限购维度limittype为空"),
+    SOURCE_IS_NULL("1080000100013", "限购来源为空"),
+    LIMITATION_IS_NULL("1080000100014", "限购信息记录为空"),
+    GOODSID_IS_NULL("1080000100015", "商品id为空");
 
     private String errorCode;
     private String errorMsg;

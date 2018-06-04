@@ -9,9 +9,15 @@ public class LimitParam {
     private Long pid;
     private Long bizId;
     private Integer bizType;
+    private Long limitId;
 
     public LimitParam() {
 
+    }
+
+    public LimitParam(Long pid, Long limitId) {
+        this.pid = pid;
+        this.limitId = limitId;
     }
 
     public LimitParam(Long pid, Long bizId, Integer bizType) {
@@ -42,5 +48,13 @@ public class LimitParam {
 
     public void setBizType(Integer bizType) {
         this.bizType = bizType;
+    }
+
+    public Long getLimitId() {
+        return limitId;
+    }
+
+    public void setLimitId(Long limitId) {
+        this.limitId = limitId;
     }
 }

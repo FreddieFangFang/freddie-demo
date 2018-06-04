@@ -1,6 +1,7 @@
 package com.weimob.saas.ec.limitation.dao;
 
 import com.weimob.saas.ec.limitation.entity.GoodsLimitInfoEntity;
+import com.weimob.saas.ec.limitation.model.DeleteGoodsParam;
 
 public interface GoodsLimitInfoDao extends BaseDao<GoodsLimitInfoEntity>{
     int deleteByPrimaryKey(Long id);
@@ -9,7 +10,7 @@ public interface GoodsLimitInfoDao extends BaseDao<GoodsLimitInfoEntity>{
 
     GoodsLimitInfoEntity selectByPrimaryKey(Long id);
 
-    int updateByPrimaryKeySelective(GoodsLimitInfoEntity record);
+    void deleteGoodsLimit(DeleteGoodsParam entity);
 
-    int updateByPrimaryKey(GoodsLimitInfoEntity record);
+    void deleteLimit(DeleteGoodsParam entity);
 }

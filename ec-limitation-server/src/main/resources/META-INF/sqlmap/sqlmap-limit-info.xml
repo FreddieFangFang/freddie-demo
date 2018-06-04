@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.weimob.saas.ec.limitation.dao.LimitInfoDao">
-  <resultMap id="BaseResultMap" type="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
-    <id column="limit_id" jdbcType="BIGINT" property="limitId" />
-    <result column="pid" jdbcType="BIGINT" property="pid" />
-    <result column="channel_type" jdbcType="VARCHAR" property="channelType" />
-    <result column="source" jdbcType="VARCHAR" property="source" />
-    <result column="limit_level" jdbcType="TINYINT" property="limitLevel" />
-    <result column="biz_id" jdbcType="BIGINT" property="bizId" />
-    <result column="biz_type" jdbcType="TINYINT" property="bizType" />
-    <result column="limit_type" jdbcType="TINYINT" property="limitType" />
-    <result column="limit_num" jdbcType="INTEGER" property="limitNum" />
-    <result column="sold_num" jdbcType="INTEGER" property="soldNum" />
-    <result column="version" jdbcType="INTEGER" property="version" />
-    <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-  </resultMap>
-  <sql id="Base_Column_List">
+    <resultMap id="BaseResultMap" type="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
+        <id column="limit_id" jdbcType="BIGINT" property="limitId"/>
+        <result column="pid" jdbcType="BIGINT" property="pid"/>
+        <result column="channel_type" jdbcType="VARCHAR" property="channelType"/>
+        <result column="source" jdbcType="VARCHAR" property="source"/>
+        <result column="limit_level" jdbcType="TINYINT" property="limitLevel"/>
+        <result column="biz_id" jdbcType="BIGINT" property="bizId"/>
+        <result column="biz_type" jdbcType="TINYINT" property="bizType"/>
+        <result column="limit_type" jdbcType="TINYINT" property="limitType"/>
+        <result column="limit_num" jdbcType="INTEGER" property="limitNum"/>
+        <result column="sold_num" jdbcType="INTEGER" property="soldNum"/>
+        <result column="version" jdbcType="INTEGER" property="version"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
     limit_id, pid, channel_type, source, limit_level, biz_id, biz_type, limit_type, limit_num, 
     sold_num, version, is_deleted, create_time, update_time
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from limit_info
-    where limit_id = #{limitId,jdbcType=BIGINT}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from limit_info
+        where limit_id = #{limitId,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from limit_info
     where limit_id = #{limitId,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
+    <insert id="insert" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
     insert into limit_info (limit_id, pid, channel_type, 
       source, limit_level, biz_id, 
       biz_type, limit_type, limit_num, 
@@ -45,43 +45,51 @@
       /*LimitInfoDao.insert*/
   </insert>
 
-  <select id="selectByLimitParam" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from limit_info
-    where pid = #{pid}
-    and   biz_id = #{bizId}
-    and   biz_type = #{bizType}
-    /*LimitInfoDao.selectByLimitParam*/
-  </select>
+    <select id="selectByLimitParam" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from limit_info
+        where pid = #{pid}
+        and biz_id = #{bizId}
+        and biz_type = #{bizType}
+        /*LimitInfoDao.selectByLimitParam*/
+    </select>
 
-  <update id="update" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
+    <update id="update" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
+        update limit_info
+        <set>
+            <if test="channelType != null">
+                channel_type = #{channelType},
+            </if>
+            <if test="source != null">
+                source = #{source},
+            </if>
+            <if test="limitType != null">
+                limit_type = #{limitType},
+            </if>
+            <if test="limitNum != null">
+                limit_num = #{limitNum},
+            </if>
+            <if test="soldNum != null">
+                sold_num = #{soldNum},
+            </if>
+            <if test="version != null">
+                version = #{version},
+            </if>
+            <if test="isDeleted != null">
+                is_deleted = #{isDeleted},
+            </if>
+            update_time = NOW()
+        </set>
+        where limit_id = #{limitId}
+        /*LimitInfoDao.update*/
+    </update>
+
+    <update id="delete" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
     update limit_info
-    <set>
-      <if test="channelType != null">
-        channel_type = #{channelType},
-      </if>
-      <if test="source != null">
-        source = #{source},
-      </if>
-      <if test="limitType != null">
-        limit_type = #{limitType},
-      </if>
-      <if test="limitNum != null">
-        limit_num = #{limitNum},
-      </if>
-      <if test="soldNum != null">
-        sold_num = #{soldNum},
-      </if>
-      <if test="version != null">
-        version = #{version},
-      </if>
-      <if test="isDeleted != null">
-        is_deleted = #{isDeleted},
-      </if>
-        update_time = NOW()
-    </set>
-    where limit_id = #{limitId}
-    /*LimitInfoDao.update*/
+    set is_deleted = 1
+    where limit_id=#{limitId}
+    /*LimitInfoDao.delete*/
   </update>
 </mapper>
