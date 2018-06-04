@@ -1,6 +1,9 @@
 package com.weimob.saas.ec.limitation.facade;
 
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
+import com.weimob.saas.ec.limitation.model.request.BatchDeleteGoodsLimitRequestVo;
+import com.weimob.saas.ec.limitation.model.request.BatchDeleteGoodsLimitVo;
+import com.weimob.saas.ec.limitation.model.request.DeleteLimitationRequestVo;
 import com.weimob.saas.ec.limitation.model.request.LimitationInfoRequestVo;
 import com.weimob.saas.ec.limitation.model.response.LimitationUpdateResponseVo;
 import com.weimob.saas.ec.limitation.service.LimitationUpdateBizService;
@@ -56,6 +59,39 @@ public class LimitationUpdateFacadeService {
         validateRequestParam(requestVo);
 
         return limitationUpdateBizService.updateLimitationInfo(requestVo);
+    }
+
+
+    public LimitationUpdateResponseVo deleteLimitationInfo(DeleteLimitationRequestVo requestVo) {
+
+        validateDeleteRequestParam(requestVo);
+
+        return limitationUpdateBizService.deleteLimitationInfo(requestVo);
+    }
+
+    private void validateDeleteRequestParam(DeleteLimitationRequestVo requestVo) {
+        VerifyParamUtils.checkParam(LimitationErrorCode.REQUEST_PARAM_IS_NULL, requestVo);
+        VerifyParamUtils.checkParam(LimitationErrorCode.PID_IS_NULL, requestVo.getPid());
+        VerifyParamUtils.checkParam(LimitationErrorCode.BIZID_IS_NULL, requestVo.getBizId());
+        VerifyParamUtils.checkParam(LimitationErrorCode.BIZTYPE_IS_NULL, requestVo.getBizType());
+    }
+
+    public LimitationUpdateResponseVo batchDeleteGoodsLimit(BatchDeleteGoodsLimitRequestVo requestVo) {
+
+        validateBatchDeleteRequestParam(requestVo);
+
+        return limitationUpdateBizService.batchDeleteGoodsLimit(requestVo);
+    }
+
+    private void validateBatchDeleteRequestParam(BatchDeleteGoodsLimitRequestVo requestVo) {
+        VerifyParamUtils.checkParam(LimitationErrorCode.REQUEST_PARAM_IS_NULL, requestVo);
+        for (BatchDeleteGoodsLimitVo request : requestVo.getDeleteGoodsLimitVoList()) {
+            VerifyParamUtils.checkParam(LimitationErrorCode.PID_IS_NULL, request.getPid());
+            VerifyParamUtils.checkParam(LimitationErrorCode.STORE_IS_NULL, request.getStoreId());
+            VerifyParamUtils.checkParam(LimitationErrorCode.BIZID_IS_NULL, request.getBizId());
+            VerifyParamUtils.checkParam(LimitationErrorCode.BIZTYPE_IS_NULL, request.getBizType());
+            VerifyParamUtils.checkParam(LimitationErrorCode.GOODSID_IS_NULL, request.getBizType());
+        }
     }
 
 }

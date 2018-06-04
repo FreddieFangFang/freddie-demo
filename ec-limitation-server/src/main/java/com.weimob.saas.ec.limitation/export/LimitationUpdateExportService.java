@@ -3,6 +3,8 @@ package com.weimob.saas.ec.limitation.export;
 import com.weimob.saas.ec.common.export.BaseExportService;
 import com.weimob.saas.ec.limitation.common.LimitationCommonErrorVo;
 import com.weimob.saas.ec.limitation.facade.LimitationUpdateFacadeService;
+import com.weimob.saas.ec.limitation.model.request.BatchDeleteGoodsLimitRequestVo;
+import com.weimob.saas.ec.limitation.model.request.DeleteLimitationRequestVo;
 import com.weimob.saas.ec.limitation.model.request.LimitationInfoRequestVo;
 import com.weimob.saas.ec.limitation.model.response.LimitationUpdateResponseVo;
 import com.weimob.saas.ec.limitation.service.LimitationUpdateService;
@@ -34,6 +36,24 @@ public class LimitationUpdateExportService extends BaseExportService implements 
     @Override
     public SoaResponse<LimitationUpdateResponseVo, LimitationCommonErrorVo> updateLimitationInfo(LimitationInfoRequestVo requestVo) {
         SoaResponse<LimitationUpdateResponseVo, LimitationCommonErrorVo> soaResponse = process(limitationUpdateFacadeService, "updateLimitationInfo", requestVo);
+        if (soaResponse.getResponseVo() != null) {
+            soaResponse.setLogBizData(String.valueOf(soaResponse.getResponseVo().getLimitId()));
+        }
+        return soaResponse;
+    }
+
+    @Override
+    public SoaResponse<LimitationUpdateResponseVo, LimitationCommonErrorVo> deleteLimitationInfo(DeleteLimitationRequestVo requestVo) {
+        SoaResponse<LimitationUpdateResponseVo, LimitationCommonErrorVo> soaResponse = process(limitationUpdateFacadeService, "deleteLimitationInfo", requestVo);
+        if (soaResponse.getResponseVo() != null) {
+            soaResponse.setLogBizData(String.valueOf(soaResponse.getResponseVo().getLimitId()));
+        }
+        return soaResponse;
+    }
+
+    @Override
+    public SoaResponse<LimitationUpdateResponseVo, LimitationCommonErrorVo> batchDeleteGoodsLimit(BatchDeleteGoodsLimitRequestVo requestVo) {
+        SoaResponse<LimitationUpdateResponseVo, LimitationCommonErrorVo> soaResponse = process(limitationUpdateFacadeService, "batchDeleteGoodsLimit", requestVo);
         if (soaResponse.getResponseVo() != null) {
             soaResponse.setLogBizData(String.valueOf(soaResponse.getResponseVo().getLimitId()));
         }

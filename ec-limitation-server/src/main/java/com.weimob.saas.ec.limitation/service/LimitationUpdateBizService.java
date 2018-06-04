@@ -1,5 +1,7 @@
 package com.weimob.saas.ec.limitation.service;
 
+import com.weimob.saas.ec.limitation.model.request.BatchDeleteGoodsLimitRequestVo;
+import com.weimob.saas.ec.limitation.model.request.DeleteLimitationRequestVo;
 import com.weimob.saas.ec.limitation.model.request.LimitationInfoRequestVo;
 import com.weimob.saas.ec.limitation.model.response.LimitationUpdateResponseVo;
 
@@ -13,4 +15,8 @@ public interface LimitationUpdateBizService {
     LimitationUpdateResponseVo saveLimitationInfo(LimitationInfoRequestVo requestVo);
 
     LimitationUpdateResponseVo updateLimitationInfo(LimitationInfoRequestVo requestVo);
+
+    LimitationUpdateResponseVo deleteLimitationInfo(DeleteLimitationRequestVo requestVo);
+
+    LimitationUpdateResponseVo batchDeleteGoodsLimit(BatchDeleteGoodsLimitRequestVo requestVo);
 }

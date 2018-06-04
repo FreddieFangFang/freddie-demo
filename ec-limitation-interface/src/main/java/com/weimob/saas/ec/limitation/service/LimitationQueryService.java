@@ -6,4 +6,6 @@ package com.weimob.saas.ec.limitation.service;
  * @date 2018/5/29 10:21
  */
 public interface LimitationQueryService {
+
+
 }
