@@ -86,4 +86,16 @@ public class LimitationServiceImpl {
         }
     }
 
+    public void saveGoodsLimitInfo(LimitInfoEntity limitInfoEntity, GoodsLimitInfoEntity goodsLimitInfoEntity) {
+        limitInfoDao.insert(limitInfoEntity);
+        goodsLimitInfoDao.insert(goodsLimitInfoEntity);
+    }
+
+    public void addGoodsLimitInfoEntity(GoodsLimitInfoEntity goodsLimitInfoEntity) {
+        goodsLimitInfoDao.insert(goodsLimitInfoEntity);
+    }
+
+    public void addSkuLimitInfoList(List<SkuLimitInfoEntity> skuLimitInfoList) {
+        skuLimitInfoDao.batchInsert(skuLimitInfoList);
+    }
 }

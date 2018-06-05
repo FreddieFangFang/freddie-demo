@@ -4,7 +4,9 @@ import com.weimob.saas.ec.limitation.common.LimitationCommonErrorVo;
 import com.weimob.saas.ec.limitation.model.request.BatchDeleteGoodsLimitRequestVo;
 import com.weimob.saas.ec.limitation.model.request.DeleteLimitationRequestVo;
 import com.weimob.saas.ec.limitation.model.request.LimitationInfoRequestVo;
+import com.weimob.saas.ec.limitation.model.request.SaveGoodsLimitInfoRequestVo;
 import com.weimob.saas.ec.limitation.model.response.LimitationUpdateResponseVo;
+import com.weimob.saas.ec.limitation.model.response.SaveGoodsLimitInfoResponseVo;
 import com.weimob.soa.common.response.SoaResponse;
 
 /**
@@ -50,15 +52,26 @@ public interface LimitationUpdateService {
     SoaResponse<LimitationUpdateResponseVo, LimitationCommonErrorVo> deleteLimitationInfo(DeleteLimitationRequestVo requestVo);
 
     /**
-     *
+     * @param
+     * @return
      * @title 批量移除商品
      * @author lujialin
      * @date 2018/5/31 10:32
      * @useScene 批量移除商品
      * @parameterExample
      * @returnExample
-     * @param
-     * @return
      */
     SoaResponse<LimitationUpdateResponseVo, LimitationCommonErrorVo> batchDeleteGoodsLimit(BatchDeleteGoodsLimitRequestVo requestVo);
+
+    /**
+     * @param
+     * @return
+     * @title 添加限购商品
+     * @author lujialin
+     * @date 2018/6/5 14:29
+     * @useScene 添加限购商品
+     * @parameterExample {	"bizId": 32783928,	"bizType": 30,	"pid": 1000,	"storeId": 200,	"limitLevel": 0,	"goodsLimitType": 0,	"goodsId": 32783928,	"goodsLimitNum": 12,	"channelType": 0,	"source": "0,1"}
+     * @returnExample {	"errT":null,	"globalTicket":null,	"logBizData":null,	"monitorTrackId":"a479a80e-bd7a-4ec7-b5b0-3a29161d9f50",	"processResult":true,	"responseVo":{		"limitId":17000,		"status":true	},	"returnCode":"000000",	"returnMsg":"处理成功",	"successForMornitor":true,	"timestamp":"1528180120353"}
+     */
+    SoaResponse<SaveGoodsLimitInfoResponseVo, LimitationCommonErrorVo> saveGoodsLimitInfo(SaveGoodsLimitInfoRequestVo requestVo);
 }

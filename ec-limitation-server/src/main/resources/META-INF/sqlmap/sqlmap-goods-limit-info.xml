@@ -4,6 +4,7 @@
     <resultMap id="BaseResultMap" type="com.weimob.saas.ec.limitation.entity.GoodsLimitInfoEntity">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="pid" jdbcType="BIGINT" property="pid"/>
+        <result column="store_id" jdbcType="BIGINT" property="storeId"/>
         <result column="limit_id" jdbcType="BIGINT" property="limitId"/>
         <result column="limit_type" jdbcType="TINYINT" property="limitType"/>
         <result column="goods_id" jdbcType="BIGINT" property="goodsId"/>
@@ -15,7 +16,7 @@
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, pid, limit_id, limit_type, goods_id, limit_num, sold_num, version, is_deleted, 
+    id, pid,store_id, limit_id, limit_type, goods_id, limit_num, sold_num, version, is_deleted,
     create_time, update_time
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -24,20 +25,60 @@
         from goods_limit_info
         where id = #{id,jdbcType=BIGINT}
     </select>
+
+    <select id="queryGoodsLimitInfoList"
+            resultMap="BaseResultMap" parameterType="java.util.List">
+        select
+        <include refid="Base_Column_List"/>
+        from goods_limit_info
+        where
+        <foreach item="item" index="index" collection="list"
+                 separator="or">
+            (pid = #{item.pid}
+            and store_id = #{item.storeId}
+            and goods_id = #{item.goodsId}
+            and limit_id = #{item.limitId}
+            and is_deleted = 0)
+        </foreach>
+        /*GoodsLimitInfoDao.queryGoodsLimitInfoList*/
+    </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from goods_limit_info
     where id = #{id,jdbcType=BIGINT}
   </delete>
     <insert id="insert" parameterType="com.weimob.saas.ec.limitation.entity.GoodsLimitInfoEntity">
-    insert into goods_limit_info (id, pid, limit_id, 
-      limit_type, goods_id, limit_num, 
-      sold_num, version, is_deleted, 
-      create_time, update_time)
-    values (#{id,jdbcType=BIGINT}, #{pid,jdbcType=BIGINT}, #{limitId,jdbcType=BIGINT}, 
-      #{limitType,jdbcType=TINYINT}, #{goodsId,jdbcType=BIGINT}, #{limitNum,jdbcType=INTEGER}, 
-      #{soldNum,jdbcType=INTEGER}, #{version,jdbcType=INTEGER}, #{isDeleted,jdbcType=BIT}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+    insert into goods_limit_info
+    (
+    pid,
+    store_id,
+    limit_id,
+    limit_type,
+    goods_id,
+    limit_num,
+    sold_num,
+    version,
+    is_deleted,
+    create_time,
+    update_time
+    )
+    values
+    (
+    #{pid},
+    #{storeId},
+    #{limitId},
+    #{limitType},
+    #{goodsId},
+    #{limitNum},
+    0,
+    0,
+    0,
+    NOW(),
+    NOW()
+    )
+    /*GoodsLimitInfoDao.insert*/
   </insert>
+
     <insert id="insertSelective" parameterType="com.weimob.saas.ec.limitation.entity.GoodsLimitInfoEntity">
         insert into goods_limit_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -113,7 +154,8 @@
     </insert>
     <update id="deleteLimit" parameterType="com.weimob.saas.ec.limitation.model.DeleteGoodsParam">
     update goods_limit_info
-    set is_deleted = 1
+    set is_deleted = 1,
+    update_time = NOW()
     where pid = #{pid}
     and   limit_id=#{limitId}
     /*GoodsLimitInfoDao.deleteLimit*/
@@ -122,7 +164,8 @@
 
     <update id="deleteGoodsLimit" parameterType="com.weimob.saas.ec.limitation.model.DeleteGoodsParam">
         update goods_limit_info
-        set is_deleted = 1
+        set is_deleted = 1,
+        update_time = NOW()
         where pid = #{pid}
         and limit_id=#{limitId}
         AND

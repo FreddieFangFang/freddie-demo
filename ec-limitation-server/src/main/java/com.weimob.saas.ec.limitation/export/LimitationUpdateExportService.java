@@ -6,7 +6,9 @@ import com.weimob.saas.ec.limitation.facade.LimitationUpdateFacadeService;
 import com.weimob.saas.ec.limitation.model.request.BatchDeleteGoodsLimitRequestVo;
 import com.weimob.saas.ec.limitation.model.request.DeleteLimitationRequestVo;
 import com.weimob.saas.ec.limitation.model.request.LimitationInfoRequestVo;
+import com.weimob.saas.ec.limitation.model.request.SaveGoodsLimitInfoRequestVo;
 import com.weimob.saas.ec.limitation.model.response.LimitationUpdateResponseVo;
+import com.weimob.saas.ec.limitation.model.response.SaveGoodsLimitInfoResponseVo;
 import com.weimob.saas.ec.limitation.service.LimitationUpdateService;
 import com.weimob.soa.common.response.SoaResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +60,11 @@ public class LimitationUpdateExportService extends BaseExportService implements 
             soaResponse.setLogBizData(String.valueOf(soaResponse.getResponseVo().getLimitId()));
         }
         return soaResponse;
+    }
+
+    @Override
+    public SoaResponse<SaveGoodsLimitInfoResponseVo, LimitationCommonErrorVo> saveGoodsLimitInfo(SaveGoodsLimitInfoRequestVo requestVo) {
+        return process(limitationUpdateFacadeService, "saveGoodsLimitInfo", requestVo);
     }
 
 }

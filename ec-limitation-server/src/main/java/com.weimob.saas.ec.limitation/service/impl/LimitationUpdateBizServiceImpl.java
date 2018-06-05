@@ -2,16 +2,16 @@ package com.weimob.saas.ec.limitation.service.impl;
 
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.limitation.dao.LimitInfoDao;
+import com.weimob.saas.ec.limitation.entity.GoodsLimitInfoEntity;
 import com.weimob.saas.ec.limitation.entity.LimitInfoEntity;
 import com.weimob.saas.ec.limitation.entity.LimitStoreRelationshipEntity;
+import com.weimob.saas.ec.limitation.entity.SkuLimitInfoEntity;
 import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.model.LimitParam;
-import com.weimob.saas.ec.limitation.model.request.BatchDeleteGoodsLimitRequestVo;
-import com.weimob.saas.ec.limitation.model.request.BatchDeleteGoodsLimitVo;
-import com.weimob.saas.ec.limitation.model.request.DeleteLimitationRequestVo;
-import com.weimob.saas.ec.limitation.model.request.LimitationInfoRequestVo;
+import com.weimob.saas.ec.limitation.model.request.*;
 import com.weimob.saas.ec.limitation.model.response.LimitationUpdateResponseVo;
+import com.weimob.saas.ec.limitation.model.response.SaveGoodsLimitInfoResponseVo;
 import com.weimob.saas.ec.limitation.service.LimitationServiceImpl;
 import com.weimob.saas.ec.limitation.service.LimitationUpdateBizService;
 import com.weimob.saas.ec.limitation.utils.IdUtils;
@@ -155,6 +155,84 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         }
 
         return new LimitationUpdateResponseVo(bizId, true);
+    }
+
+    @Override
+    public SaveGoodsLimitInfoResponseVo saveGoodsLimitInfo(SaveGoodsLimitInfoRequestVo requestVo) {
+        Long limitId = null;
+        GoodsLimitInfoEntity goodsLimitInfoEntity = null;
+        switch (requestVo.getBizType()) {
+            case 3:
+            case 10:
+                //限时折扣,特权价，先查询limitId，再插入限购商品表
+                /** 1 查询限购主表信息*/
+                LimitInfoEntity oldLimitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
+                if (oldLimitInfoEntity == null) {
+                    throw new LimitationBizException(LimitationErrorCode.LIMITATION_IS_NULL);
+                }
+                limitId = oldLimitInfoEntity.getLimitId();
+                /** 2 插入商品限购表*/
+                goodsLimitInfoEntity = buildGoodsLimitInfoEntity(limitId, requestVo);
+                limitationService.addGoodsLimitInfoEntity(goodsLimitInfoEntity);
+                /** 3 如果是特权价，插入sku限购表*/
+                if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), requestVo.getBizType())) {
+                    List<SkuLimitInfoEntity> skuLimitInfoList = buildSkuLimitInfoEntity(limitId, requestVo);
+                    limitationService.addSkuLimitInfoList(skuLimitInfoList);
+                }
+                break;
+            case 30:
+                //积分商城商品限购
+                /** 1 生成全局id */
+                limitId = IdUtils.getLimitId(requestVo.getPid());
+                /** 2 构建限购主表信息*/
+                LimitInfoEntity limitInfoEntity = buildPointGoodsLimitInfoEntity(limitId, requestVo);
+                goodsLimitInfoEntity = buildGoodsLimitInfoEntity(limitId, requestVo);
+                limitationService.saveGoodsLimitInfo(limitInfoEntity, goodsLimitInfoEntity);
+                break;
+            default:
+                break;
+        }
+        return new SaveGoodsLimitInfoResponseVo(true, limitId);
+    }
+
+    private List<SkuLimitInfoEntity> buildSkuLimitInfoEntity(Long limitId, SaveGoodsLimitInfoRequestVo requestVo) {
+        List<SkuLimitInfoEntity> skuLimitInfoEntityList = new ArrayList<>();
+        for (SkuLimitInfo info : requestVo.getSkuLimitInfoList()) {
+            SkuLimitInfoEntity skuLimitInfoEntity = new SkuLimitInfoEntity();
+            skuLimitInfoEntity.setLimitId(limitId);
+            skuLimitInfoEntity.setPid(requestVo.getPid());
+            skuLimitInfoEntity.setStoreId(requestVo.getStoreId());
+            skuLimitInfoEntity.setGoodsId(requestVo.getGoodsId());
+            skuLimitInfoEntity.setSkuId(info.getSkuId());
+            skuLimitInfoEntity.setLimitNum(info.getSkuLimitNum());
+            skuLimitInfoEntity.setLimitType(info.getSkuLimitType());
+            skuLimitInfoEntityList.add(skuLimitInfoEntity);
+        }
+        return skuLimitInfoEntityList;
+    }
+
+    private GoodsLimitInfoEntity buildGoodsLimitInfoEntity(Long limitId, SaveGoodsLimitInfoRequestVo requestVo) {
+        GoodsLimitInfoEntity infoEntity = new GoodsLimitInfoEntity();
+        infoEntity.setLimitId(limitId);
+        infoEntity.setPid(requestVo.getPid());
+        infoEntity.setStoreId(requestVo.getStoreId());
+        infoEntity.setGoodsId(requestVo.getGoodsId());
+        infoEntity.setLimitNum(requestVo.getGoodsLimitNum());
+        infoEntity.setLimitType(requestVo.getGoodsLimitType());
+        return infoEntity;
+    }
+
+    private LimitInfoEntity buildPointGoodsLimitInfoEntity(Long limitId, SaveGoodsLimitInfoRequestVo requestVo) {
+        LimitInfoEntity limitInfoEntity = new LimitInfoEntity();
+        limitInfoEntity.setPid(requestVo.getPid());
+        limitInfoEntity.setBizId(requestVo.getBizId());
+        limitInfoEntity.setBizType(requestVo.getBizType());
+        limitInfoEntity.setLimitId(limitId);
+        limitInfoEntity.setLimitLevel(requestVo.getLimitLevel());
+        limitInfoEntity.setLimitType(requestVo.getGoodsLimitType());
+        limitInfoEntity.setChannelType(requestVo.getChannelType());
+        limitInfoEntity.setSource(requestVo.getSource());
+        return limitInfoEntity;
     }
 
     private List<LimitStoreRelationshipEntity> buildStoreInfoList(LimitationInfoRequestVo requestVo) {

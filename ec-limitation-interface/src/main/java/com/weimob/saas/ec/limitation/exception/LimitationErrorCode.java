@@ -29,6 +29,7 @@ public enum LimitationErrorCode {
      * 00001开始，自增
      */
 
+    /*****************************应用级异常01**********************************/
     SUCCESS("000000", "处理成功"), FAIL("999999", "处理失败"),
     PID_IS_NULL("1080000100001", "商户PID为空"),
     WID_IS_NULL("1080000100002", "用户身份为空"),
@@ -43,7 +44,14 @@ public enum LimitationErrorCode {
     LIMITTYPE_IS_NULL("1080000100012", "限购维度limittype为空"),
     SOURCE_IS_NULL("1080000100013", "限购来源为空"),
     LIMITATION_IS_NULL("1080000100014", "限购信息记录为空"),
-    GOODSID_IS_NULL("1080000100015", "商品id为空");
+    GOODSID_IS_NULL("1080000100015", "商品id为空"),
+    GOODSNUM_IS_NULL("1080000100016", "商品购买数量为空"),
+    GOODSLIMITNUM_IS_NULL("1080000100017", "商品限购数量为空"),
+    SKUINFO_IS_NULL("1080000100018", "限购sku信息为空"),
+
+
+    /*****************************交互异常02**********************************/
+    BEYOND_GOODS_LIMIT_NUM("1080000200017", "超出商品限购");
 
     private String errorCode;
     private String errorMsg;

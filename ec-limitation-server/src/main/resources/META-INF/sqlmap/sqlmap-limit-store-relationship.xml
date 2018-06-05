@@ -41,7 +41,8 @@
         store_id,
         is_deleted,
         create_time,
-        update_time)
+        update_time
+        )
         VALUES
         <foreach collection="list" item="item" index="index"
                  separator=",">
@@ -59,7 +60,8 @@
 
     <update id="delete" parameterType="com.weimob.saas.ec.limitation.entity.LimitStoreRelationshipEntity">
     update limit_store_relationship
-    set is_deleted = 1
+    set is_deleted = 1,
+    update_time = NOW()
     where pid = #{pid}
     and   limit_id=#{limitId}
     /*LimitStoreRelationshipDao.delete*/

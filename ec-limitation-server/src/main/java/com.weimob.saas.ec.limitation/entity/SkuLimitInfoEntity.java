@@ -7,6 +7,8 @@ public class SkuLimitInfoEntity {
 
     private Long pid;
 
+    private Long storeId;
+
     private Long limitId;
 
     private Integer limitType;
@@ -41,6 +43,14 @@ public class SkuLimitInfoEntity {
 
     public void setPid(Long pid) {
         this.pid = pid;
+    }
+
+    public Long getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(Long storeId) {
+        this.storeId = storeId;
     }
 
     public Long getLimitId() {

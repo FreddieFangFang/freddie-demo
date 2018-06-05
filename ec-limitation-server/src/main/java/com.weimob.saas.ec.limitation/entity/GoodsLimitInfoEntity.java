@@ -7,6 +7,8 @@ public class GoodsLimitInfoEntity {
 
     private Long pid;
 
+    private Long storeId;
+
     private Long limitId;
 
     private Integer limitType;
@@ -111,5 +113,13 @@ public class GoodsLimitInfoEntity {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Long getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(Long storeId) {
+        this.storeId = storeId;
     }
 }

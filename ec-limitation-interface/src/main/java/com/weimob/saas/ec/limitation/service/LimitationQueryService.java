@@ -1,5 +1,10 @@
 package com.weimob.saas.ec.limitation.service;
 
+import com.weimob.saas.ec.limitation.common.LimitationCommonErrorVo;
+import com.weimob.saas.ec.limitation.model.request.GoodsLimitInfoListRequestVo;
+import com.weimob.saas.ec.limitation.model.response.GoodsLimitInfoListResponseVo;
+import com.weimob.soa.common.response.SoaResponse;
+
 /**
  * @author lujialin
  * @description 限购查询service
@@ -7,5 +12,16 @@ package com.weimob.saas.ec.limitation.service;
  */
 public interface LimitationQueryService {
 
-
+    /**
+     *
+     * @title 查询商品限购信息
+     * @author lujialin
+     * @date 2018/6/4 17:31
+     * @useScene 结算、商详、活动页
+     * @parameterExample {	"goodsDetailList": [{			"pid": 1000,			"storeId": 200,			"wid": 212123,			"bizId": 212121,			"bizType": 3,			"limitType": 0,			"limitLevel": 1,			"goodsId": 221312,			"checkLimit": false		},		{			"pid": 1000,			"storeId": 200,			"wid": 212123,			"bizId": 210000,			"bizType": 3,			"limitType": 0,			"limitLevel": 1,			"goodsId": 212121,			"checkLimit": true,                        "goodsBuyNum":1		}	]}
+     * @returnExample {	"errT":null,	"globalTicket":null,	"logBizData":null,	"monitorTrackId":"a3913d87-c7cd-4491-aa76-106819a5596b",	"processResult":true,	"responseVo":{		"goodsLimitInfoList":[			{				"appid":null,				"bizId":212121,				"bizType":3,				"canBuyNum":3,				"goodsId":221312,				"invokeByOpenApi":false,				"limitStatus":true,				"operationSource":null,				"originalRefer":null,				"pid":1000,				"refer":null,				"sceneType":null,				"siteId":null,				"skuId":null,				"storeId":200,				"wechatTemplateId":null,				"wid":null			},			{				"appid":null,				"bizId":210000,				"bizType":3,				"canBuyNum":1,				"goodsId":212121,				"invokeByOpenApi":false,				"limitStatus":true,				"operationSource":null,				"originalRefer":null,				"pid":1000,				"refer":null,				"sceneType":null,				"siteId":null,				"skuId":null,				"storeId":200,				"wechatTemplateId":null,				"wid":null			}		]	},	"returnCode":"000000",	"returnMsg":"处理成功",	"successForMornitor":true,	"timestamp":"1528102472790"}
+     * @param
+     * @return
+     */
+    SoaResponse<GoodsLimitInfoListResponseVo,LimitationCommonErrorVo> queryGoodsLimitInfoList(GoodsLimitInfoListRequestVo requestVo);
 }

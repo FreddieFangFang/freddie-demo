@@ -1,15 +1,16 @@
 package com.weimob.saas.ec.limitation.facade;
 
+import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
-import com.weimob.saas.ec.limitation.model.request.BatchDeleteGoodsLimitRequestVo;
-import com.weimob.saas.ec.limitation.model.request.BatchDeleteGoodsLimitVo;
-import com.weimob.saas.ec.limitation.model.request.DeleteLimitationRequestVo;
-import com.weimob.saas.ec.limitation.model.request.LimitationInfoRequestVo;
+import com.weimob.saas.ec.limitation.model.request.*;
 import com.weimob.saas.ec.limitation.model.response.LimitationUpdateResponseVo;
+import com.weimob.saas.ec.limitation.model.response.SaveGoodsLimitInfoResponseVo;
 import com.weimob.saas.ec.limitation.service.LimitationUpdateBizService;
 import com.weimob.saas.ec.limitation.utils.VerifyParamUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 /**
  * @author lujialin
@@ -91,6 +92,33 @@ public class LimitationUpdateFacadeService {
             VerifyParamUtils.checkParam(LimitationErrorCode.BIZID_IS_NULL, request.getBizId());
             VerifyParamUtils.checkParam(LimitationErrorCode.BIZTYPE_IS_NULL, request.getBizType());
             VerifyParamUtils.checkParam(LimitationErrorCode.GOODSID_IS_NULL, request.getBizType());
+        }
+    }
+
+    public SaveGoodsLimitInfoResponseVo saveGoodsLimitInfo(SaveGoodsLimitInfoRequestVo requestVo) {
+        valiateSaveGoodsLimitInfoRequsetVo(requestVo);
+
+        return limitationUpdateBizService.saveGoodsLimitInfo(requestVo);
+    }
+
+    private void valiateSaveGoodsLimitInfoRequsetVo(SaveGoodsLimitInfoRequestVo requestVo) {
+        VerifyParamUtils.checkParam(LimitationErrorCode.PID_IS_NULL, requestVo.getPid());
+        VerifyParamUtils.checkParam(LimitationErrorCode.STORE_IS_NULL, requestVo.getStoreId());
+        VerifyParamUtils.checkParam(LimitationErrorCode.BIZID_IS_NULL, requestVo.getBizId());
+        VerifyParamUtils.checkParam(LimitationErrorCode.BIZTYPE_IS_NULL, requestVo.getBizType());
+        VerifyParamUtils.checkParam(LimitationErrorCode.GOODSID_IS_NULL, requestVo.getBizType());
+        VerifyParamUtils.checkParam(LimitationErrorCode.LIMITLEVEL_IS_NULL, requestVo.getLimitLevel());
+        VerifyParamUtils.checkParam(LimitationErrorCode.LIMITTYPE_IS_NULL, requestVo.getGoodsLimitType());
+        VerifyParamUtils.checkParam(LimitationErrorCode.GOODSLIMITNUM_IS_NULL, requestVo.getGoodsLimitNum());
+        VerifyParamUtils.checkParam(LimitationErrorCode.CHANNELTYPE_IS_NULL, requestVo.getChannelType());
+        VerifyParamUtils.checkParam(LimitationErrorCode.SOURCE_IS_NULL, requestVo.getSource());
+        if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), requestVo.getBizType())) {
+            VerifyParamUtils.checkListParam(LimitationErrorCode.SKUINFO_IS_NULL, requestVo.getSkuLimitInfoList());
+            for (SkuLimitInfo info : requestVo.getSkuLimitInfoList()) {
+                VerifyParamUtils.checkParam(LimitationErrorCode.SKUINFO_IS_NULL, info.getSkuId());
+                VerifyParamUtils.checkParam(LimitationErrorCode.SKUINFO_IS_NULL, info.getSkuLimitNum());
+                VerifyParamUtils.checkParam(LimitationErrorCode.SKUINFO_IS_NULL, info.getSkuLimitType());
+            }
         }
     }
 
