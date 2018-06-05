@@ -13,6 +13,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -75,6 +76,7 @@ public class LimitationServiceImpl {
     }
 
     public void deleteSkuLimitInfo(Long pid, Long limitId, List<Long> goodsIdList) {
+        deleteGoodsLimitInfo(pid, limitId, null);
         DeleteGoodsParam param = new DeleteGoodsParam();
         param.setPid(pid);
         param.setLimitId(limitId);
@@ -95,7 +97,75 @@ public class LimitationServiceImpl {
         goodsLimitInfoDao.insert(goodsLimitInfoEntity);
     }
 
-    public void addSkuLimitInfoList(List<SkuLimitInfoEntity> skuLimitInfoList) {
+    public void addSkuLimitInfoList(List<SkuLimitInfoEntity> skuLimitInfoList, GoodsLimitInfoEntity goodsLimitInfoEntity) {
+        goodsLimitInfoDao.insert(goodsLimitInfoEntity);
+        skuLimitInfoDao.batchInsert(skuLimitInfoList);
+    }
+
+    public void updateGoodsLimitInfoEntity(GoodsLimitInfoEntity goodsLimitInfoEntity) {
+        goodsLimitInfoDao.updateGoodsLimitInfoEntity(goodsLimitInfoEntity);
+    }
+
+    public void deleteDiscountLimitInfo(LimitInfoEntity oldLimitInfoEntity) {
+        limitInfoDao.delete(oldLimitInfoEntity);
+
+        LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
+        deleteEntity.setPid(oldLimitInfoEntity.getPid());
+        deleteEntity.setLimitId(oldLimitInfoEntity.getLimitId());
+
+        limitStoreRelationshipDao.delete(deleteEntity);
+
+        deleteGoodsLimitInfo(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId(), null);
+    }
+
+    public void deletePrivilegePriceLimitInfo(LimitInfoEntity oldLimitInfoEntity) {
+        limitInfoDao.delete(oldLimitInfoEntity);
+
+        LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
+        deleteEntity.setPid(oldLimitInfoEntity.getPid());
+        deleteEntity.setLimitId(oldLimitInfoEntity.getLimitId());
+        limitStoreRelationshipDao.delete(deleteEntity);
+
+        deleteSkuLimitInfo(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId(), null);
+    }
+
+    public void deleteNynjLimitInfo(LimitInfoEntity oldLimitInfoEntity) {
+        limitInfoDao.delete(oldLimitInfoEntity);
+
+        LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
+        deleteEntity.setPid(oldLimitInfoEntity.getPid());
+        deleteEntity.setLimitId(oldLimitInfoEntity.getLimitId());
+        limitStoreRelationshipDao.delete(deleteEntity);
+    }
+
+    public void deleteCombinationLimitInfo(LimitInfoEntity oldLimitInfoEntity) {
+        limitInfoDao.delete(oldLimitInfoEntity);
+
+        LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
+        deleteEntity.setPid(oldLimitInfoEntity.getPid());
+        deleteEntity.setLimitId(oldLimitInfoEntity.getLimitId());
+        limitStoreRelationshipDao.delete(deleteEntity);
+    }
+
+    public void deletePointGoodsLimitInfo(LimitInfoEntity entity, List<Long> pointGoodsIdList) {
+        limitInfoDao.delete(entity);
+
+        deleteGoodsLimitInfo(entity.getPid(), entity.getLimitId(), pointGoodsIdList);
+    }
+
+    public void updatePrivilegePriceGoodsLimitInfo(GoodsLimitInfoEntity oldGoodsLimitInfoEntity, List<SkuLimitInfoEntity> skuLimitInfoList) {
+
+        goodsLimitInfoDao.updateGoodsLimitInfoEntity(oldGoodsLimitInfoEntity);
+
+
+        DeleteGoodsParam param = new DeleteGoodsParam();
+        param.setPid(oldGoodsLimitInfoEntity.getPid());
+        param.setLimitId(oldGoodsLimitInfoEntity.getLimitId());
+        List<Long> goodsIdList = new ArrayList<>();
+        goodsIdList.add(oldGoodsLimitInfoEntity.getGoodsId());
+        param.setGoodsIdList(goodsIdList);
+        skuLimitInfoDao.deleteSkuLimit(param);
+
         skuLimitInfoDao.batchInsert(skuLimitInfoList);
     }
 }

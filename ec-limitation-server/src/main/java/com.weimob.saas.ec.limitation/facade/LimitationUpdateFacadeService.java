@@ -122,4 +122,10 @@ public class LimitationUpdateFacadeService {
         }
     }
 
+    public SaveGoodsLimitInfoResponseVo updateGoodsLimitInfo(SaveGoodsLimitInfoRequestVo requestVo) {
+        valiateSaveGoodsLimitInfoRequsetVo(requestVo);
+
+        return limitationUpdateBizService.updateGoodsLimitInfo(requestVo);
+    }
+
 }

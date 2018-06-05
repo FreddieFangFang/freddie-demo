@@ -88,23 +88,21 @@
             <if test="soldNum != null">
                 sold_num = #{soldNum},
             </if>
-            <if test="version != null">
-                version = #{version},
-            </if>
-            <if test="isDeleted != null">
-                is_deleted = #{isDeleted},
-            </if>
-            update_time = NOW()
         </set>
+        version = version+1,
+        update_time = NOW()
         where limit_id = #{limitId}
+        and version=#{version}
         /*LimitInfoDao.update*/
     </update>
 
     <update id="delete" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
     update limit_info
     set is_deleted = 1,
-    update_time = NOW()
+    update_time = NOW(),
+    version = version+1
     where limit_id=#{limitId}
+    and version=#{version}
     /*LimitInfoDao.delete*/
   </update>
 </mapper>

@@ -74,4 +74,7 @@ public interface LimitationUpdateService {
      * @returnExample {	"errT":null,	"globalTicket":null,	"logBizData":null,	"monitorTrackId":"a479a80e-bd7a-4ec7-b5b0-3a29161d9f50",	"processResult":true,	"responseVo":{		"limitId":17000,		"status":true	},	"returnCode":"000000",	"returnMsg":"处理成功",	"successForMornitor":true,	"timestamp":"1528180120353"}
      */
     SoaResponse<SaveGoodsLimitInfoResponseVo, LimitationCommonErrorVo> saveGoodsLimitInfo(SaveGoodsLimitInfoRequestVo requestVo);
+
+    
+    SoaResponse<SaveGoodsLimitInfoResponseVo, LimitationCommonErrorVo> updateGoodsLimitInfo(SaveGoodsLimitInfoRequestVo requestVo);
 }

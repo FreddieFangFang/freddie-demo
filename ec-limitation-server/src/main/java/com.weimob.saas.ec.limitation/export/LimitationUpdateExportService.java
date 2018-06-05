@@ -67,4 +67,9 @@ public class LimitationUpdateExportService extends BaseExportService implements 
         return process(limitationUpdateFacadeService, "saveGoodsLimitInfo", requestVo);
     }
 
+    @Override
+    public SoaResponse<SaveGoodsLimitInfoResponseVo, LimitationCommonErrorVo> updateGoodsLimitInfo(SaveGoodsLimitInfoRequestVo requestVo) {
+        return process(limitationUpdateFacadeService, "updateGoodsLimitInfo", requestVo);
+    }
+
 }

@@ -79,6 +79,19 @@
     /*GoodsLimitInfoDao.insert*/
   </insert>
 
+    <update id="updateGoodsLimitInfoEntity" parameterType="com.weimob.saas.ec.limitation.entity.GoodsLimitInfoEntity">
+      UPDATE goods_limit_info
+      set limit_num=#{limitNum},
+          limit_type=#{limitType},
+          update_time=NOW()
+      WHERE pid = #{pid}
+      AND   limit_id=#{limitId}
+      AND   goods_id=#{goodsId}
+      AND   store_id=#{storeId}
+      AND   is_deleted = 0
+      /*GoodsLimitInfoDao.updateGoodsLimitInfoEntity*/
+    </update>
+
     <insert id="insertSelective" parameterType="com.weimob.saas.ec.limitation.entity.GoodsLimitInfoEntity">
         insert into goods_limit_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
