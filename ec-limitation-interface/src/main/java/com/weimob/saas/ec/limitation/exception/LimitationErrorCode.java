@@ -48,10 +48,14 @@ public enum LimitationErrorCode {
     GOODSNUM_IS_NULL("1080000100016", "商品购买数量为空"),
     GOODSLIMITNUM_IS_NULL("1080000100017", "商品限购数量为空"),
     SKUINFO_IS_NULL("1080000100018", "限购sku信息为空"),
+    ORDERNO_IS_NULL("1080000100019", "订单号为空"),
 
 
     /*****************************交互异常02**********************************/
-    BEYOND_GOODS_LIMIT_NUM("1080000200017", "超出商品限购");
+    BEYOND_GOODS_LIMIT_NUM("1080000200001", "超出商品限购"),
+    LIMIT_GOODS_IS_NULL("1080000200002", "限购商品为空"),
+    BEYOND_ACTIVITY_LIMIT_NUM("1080000200003", "超出活动限购"),
+    BEYOND_SKU_LIMIT_NUM("1080000200003", "超出sku限购");
 
     private String errorCode;
     private String errorMsg;

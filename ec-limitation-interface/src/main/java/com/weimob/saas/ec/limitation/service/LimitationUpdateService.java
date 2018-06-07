@@ -58,8 +58,8 @@ public interface LimitationUpdateService {
      * @author lujialin
      * @date 2018/5/31 10:32
      * @useScene 批量移除商品
-     * @parameterExample
-     * @returnExample
+     * @parameterExample {	"deleteGoodsLimitVoList": [{		"bizId": 212122,		"bizType": 10,		"pid": 1000,		"storeId": 200,		"goodsId": 32783928	}]}
+     * @returnExample {	"errT":null,	"globalTicket":null,	"logBizData":"212122",	"monitorTrackId":"9ec48ee7-9023-4d10-8992-1d7c0adafd45",	"processResult":true,	"responseVo":{		"limitId":212122,		"status":true	},	"returnCode":"000000",	"returnMsg":"处理成功",	"successForMornitor":true,	"timestamp":"1528181547697"}
      */
     SoaResponse<LimitationUpdateResponseVo, LimitationCommonErrorVo> batchDeleteGoodsLimit(BatchDeleteGoodsLimitRequestVo requestVo);
 
@@ -75,6 +75,16 @@ public interface LimitationUpdateService {
      */
     SoaResponse<SaveGoodsLimitInfoResponseVo, LimitationCommonErrorVo> saveGoodsLimitInfo(SaveGoodsLimitInfoRequestVo requestVo);
 
-    
+    /**
+     *
+     * @title 更改限购商品
+     * @author lujialin
+     * @date 2018/6/5 18:13
+     * @useScene 更改限购商品
+     * @parameterExample {	"bizId": 212122,	"bizType": 10,	"pid": 1000,	"storeId": 200,	"limitLevel": 0,	"goodsLimitType": 0,	"goodsId": 32783928,	"goodsLimitNum": 12,	"channelType": 0,	"source": "0,1",	"skuLimitInfoList": [{			"skuId": 21938219,			"skuLimitNum": 2,			"skuLimitType": 0		},		{			"skuId": 21938210,			"skuLimitNum": 1,			"skuLimitType": 0		}	]}
+     * @returnExample {	"errT":null,	"globalTicket":null,	"logBizData":null,	"monitorTrackId":"030bceca-2cbb-4e56-841c-16b432458e44",	"processResult":true,	"responseVo":{		"limitId":18000,		"status":true	},	"returnCode":"000000",	"returnMsg":"处理成功",	"successForMornitor":true,	"timestamp":"1528188496257"}
+     * @param
+     * @return
+     */
     SoaResponse<SaveGoodsLimitInfoResponseVo, LimitationCommonErrorVo> updateGoodsLimitInfo(SaveGoodsLimitInfoRequestVo requestVo);
 }

@@ -11,6 +11,10 @@ public class UserLimitEntity {
 
     private Long wid;
 
+    private Long bizId;
+
+    private Integer bizType;
+
     private Long limitId;
 
     private Integer buyNum;
@@ -91,5 +95,21 @@ public class UserLimitEntity {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Long getBizId() {
+        return bizId;
+    }
+
+    public void setBizId(Long bizId) {
+        this.bizId = bizId;
+    }
+
+    public Integer getBizType() {
+        return bizType;
+    }
+
+    public void setBizType(Integer bizType) {
+        this.bizType = bizType;
     }
 }

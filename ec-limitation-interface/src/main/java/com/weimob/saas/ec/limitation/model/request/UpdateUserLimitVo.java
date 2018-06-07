@@ -7,7 +7,7 @@ import com.weimob.saas.ec.common.request.BaseRequest;
  * @description 减少、增加限购入参vo
  * @date 2018/6/5 17:38
  */
-public class UpdateUserLimitVo extends BaseRequest {
+public class UpdateUserLimitVo extends BaseRequest implements Comparable<UpdateUserLimitVo> {
 
     /**
      * 活动id、商品id
@@ -85,5 +85,10 @@ public class UpdateUserLimitVo extends BaseRequest {
 
     public void setOrderNo(Long orderNo) {
         this.orderNo = orderNo;
+    }
+
+    @Override
+    public int compareTo(UpdateUserLimitVo o) {
+        return 0;
     }
 }

@@ -92,79 +92,6 @@
       /*GoodsLimitInfoDao.updateGoodsLimitInfoEntity*/
     </update>
 
-    <insert id="insertSelective" parameterType="com.weimob.saas.ec.limitation.entity.GoodsLimitInfoEntity">
-        insert into goods_limit_info
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                id,
-            </if>
-            <if test="pid != null">
-                pid,
-            </if>
-            <if test="limitId != null">
-                limit_id,
-            </if>
-            <if test="limitType != null">
-                limit_type,
-            </if>
-            <if test="goodsId != null">
-                goods_id,
-            </if>
-            <if test="limitNum != null">
-                limit_num,
-            </if>
-            <if test="soldNum != null">
-                sold_num,
-            </if>
-            <if test="version != null">
-                version,
-            </if>
-            <if test="isDeleted != null">
-                is_deleted,
-            </if>
-            <if test="createTime != null">
-                create_time,
-            </if>
-            <if test="updateTime != null">
-                update_time,
-            </if>
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                #{id,jdbcType=BIGINT},
-            </if>
-            <if test="pid != null">
-                #{pid,jdbcType=BIGINT},
-            </if>
-            <if test="limitId != null">
-                #{limitId,jdbcType=BIGINT},
-            </if>
-            <if test="limitType != null">
-                #{limitType,jdbcType=TINYINT},
-            </if>
-            <if test="goodsId != null">
-                #{goodsId,jdbcType=BIGINT},
-            </if>
-            <if test="limitNum != null">
-                #{limitNum,jdbcType=INTEGER},
-            </if>
-            <if test="soldNum != null">
-                #{soldNum,jdbcType=INTEGER},
-            </if>
-            <if test="version != null">
-                #{version,jdbcType=INTEGER},
-            </if>
-            <if test="isDeleted != null">
-                #{isDeleted,jdbcType=BIT},
-            </if>
-            <if test="createTime != null">
-                #{createTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="updateTime != null">
-                #{updateTime,jdbcType=TIMESTAMP},
-            </if>
-        </trim>
-    </insert>
     <update id="deleteLimit" parameterType="com.weimob.saas.ec.limitation.model.DeleteGoodsParam">
     update goods_limit_info
     set is_deleted = 1,
@@ -189,4 +116,35 @@
         </foreach>
         /*GoodsLimitInfoDao.deleteGoodsLimit*/
     </update>
+
+    <select id="queryOrderGoodsLimitInfoList"
+            resultMap="BaseResultMap" parameterType="java.util.List">
+        select
+        goodslimitinfo.pid pid,
+        goodslimitinfo.store_id store_id,
+        goodslimitinfo.limit_id limit_id,
+        goodslimitinfo.limit_type limit_type,
+        goodslimitinfo.goods_id goods_id,
+        goodslimitinfo.limit_num limit_num,
+        goodslimitinfo.sold_num sold_num,
+        goodslimitinfo.version version
+        from
+        goods_limit_info as goodslimitinfo,
+        limit_info as limitinfo
+        where
+        limitinfo.limit_id=goodslimitinfo.limit_id
+        <foreach item="item" index="index" collection="list"
+                 separator="or">
+            (
+            and goodslimitinfo.pid = #{item.pid}
+            and goodslimitinfo.store_id = #{item.storeId}
+            and goodslimitinfo.goods_id = #{item.goodsId}
+            and limitinfo.biz_id = #{item.bizId}
+            and limitinfo.biz_type = #{item.bizType}
+            and goodslimitinfo.is_deleted = 0
+            and limitinfo.is_deleted = 0
+            )
+        </foreach>
+        /*GoodsLimitInfoDao.queryOrderGoodsLimitInfoList*/
+    </select>
 </mapper>
