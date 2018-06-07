@@ -56,7 +56,8 @@ public enum LimitationErrorCode {
     BEYOND_GOODS_LIMIT_NUM("1080000200001", "超出商品限购"),
     LIMIT_GOODS_IS_NULL("1080000200002", "限购商品为空"),
     BEYOND_ACTIVITY_LIMIT_NUM("1080000200003", "超出活动限购"),
-    BEYOND_SKU_LIMIT_NUM("1080000200003", "超出sku限购"),
+    BEYOND_SKU_LIMIT_NUM("1080000200004", "超出sku限购"),
+    LIMIT_ACTIVITY_IS_NULL("1080000200005", "活动限购记录为空"),
 
 
     /*****************************业务异常04**********************************/

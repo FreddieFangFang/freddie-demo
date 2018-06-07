@@ -28,10 +28,6 @@ public class LimitBo {
     List<UserLimitEntity> activityLimitEntityList;
     List<SkuLimitInfoEntity> activityGoodsSoldEntityList;
 
-    List<UserLimitEntity> activityLimitRecodeList;
-    List<UserGoodsLimitEntity> userGoodsLimitRecodeList;
-
-    Boolean isUpdate;
 
     public Map<String, Integer> getOrderGoodsLimitMap() {
         return orderGoodsLimitMap;
@@ -87,29 +83,5 @@ public class LimitBo {
 
     public void setActivityGoodsSoldEntityList(List<SkuLimitInfoEntity> activityGoodsSoldEntityList) {
         this.activityGoodsSoldEntityList = activityGoodsSoldEntityList;
-    }
-
-    public List<UserLimitEntity> getActivityLimitRecodeList() {
-        return activityLimitRecodeList;
-    }
-
-    public void setActivityLimitRecodeList(List<UserLimitEntity> activityLimitRecodeList) {
-        this.activityLimitRecodeList = activityLimitRecodeList;
-    }
-
-    public List<UserGoodsLimitEntity> getUserGoodsLimitRecodeList() {
-        return userGoodsLimitRecodeList;
-    }
-
-    public void setUserGoodsLimitRecodeList(List<UserGoodsLimitEntity> userGoodsLimitRecodeList) {
-        this.userGoodsLimitRecodeList = userGoodsLimitRecodeList;
-    }
-
-    public Boolean getUpdate() {
-        return isUpdate;
-    }
-
-    public void setUpdate(Boolean update) {
-        isUpdate = update;
     }
 }

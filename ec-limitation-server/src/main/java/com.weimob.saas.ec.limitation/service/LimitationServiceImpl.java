@@ -170,15 +170,14 @@ public class LimitationServiceImpl {
     }
 
     public void saveUserLimitRecode(List<UserGoodsLimitEntity> goodsLimitEntityList, List<UserLimitEntity> activityLimitEntityList,
-                                    List<SkuLimitInfoEntity> activityGoodsSoldEntityList,
-                                    List<UserLimitEntity> activityLimitRecodeList,
-                                    List<UserGoodsLimitEntity> userGoodsLimitRecodeList, Boolean update) {
+                                    List<SkuLimitInfoEntity> activityGoodsSoldEntityList) {
 
         Long updateResult = 0l;
         if (!org.springframework.util.CollectionUtils.isEmpty(goodsLimitEntityList)) {
             for (UserGoodsLimitEntity goodsLimitEntity : goodsLimitEntityList) {
                 try {
-                    if (!update && org.springframework.util.CollectionUtils.isEmpty(userGoodsLimitRecodeList)) {
+                    UserGoodsLimitEntity oldUserGoodsLimitEntity = userGoodsLimitDao.getUserGoodsLimitEntity(goodsLimitEntity);
+                    if (oldUserGoodsLimitEntity == null) {
                         updateResult = userGoodsLimitDao.insert(goodsLimitEntity);
                     } else {
                         updateResult = userGoodsLimitDao.update(goodsLimitEntity);
@@ -195,7 +194,8 @@ public class LimitationServiceImpl {
         if (!org.springframework.util.CollectionUtils.isEmpty(activityLimitEntityList)) {
             for (UserLimitEntity activityLimitEntity : activityLimitEntityList) {
                 try {
-                    if (!update && org.springframework.util.CollectionUtils.isEmpty(activityLimitRecodeList)) {
+                    UserLimitEntity oldUserLimitEntity = userLimitDao.getUserLimitEntity(activityLimitEntity);
+                    if (oldUserLimitEntity == null) {
                         updateResult = userLimitDao.insert(activityLimitEntity);
                     } else {
                         updateResult = userLimitDao.update(activityLimitEntity);
