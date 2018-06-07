@@ -67,7 +67,7 @@
     /*SkuLimitInfoDao.deleteLimit*/
   </update>
 
-    <update id="deleteSkuLimit" parameterType="com.weimob.saas.ec.limitation.entity.SkuLimitInfoEntity">
+    <update id="deleteSkuLimit" parameterType="com.weimob.saas.ec.limitation.model.DeleteGoodsParam">
         update sku_limit_info
         set is_deleted = 1,
         update_time = NOW()
@@ -82,4 +82,18 @@
         /*SkuLimitInfoDao.deleteSkuLimit*/
     </update>
 
+    <update id="update" parameterType="com.weimob.saas.ec.limitation.entity.SkuLimitInfoEntity">
+      update sku_limit_info
+      SET
+        sold_num = sold_num +#{soldNum},
+        update_time = NOW()
+      WHERE
+          pid = #{pid}
+      AND store_id = #{storeId}
+      AND limit_id = #{limitId}
+      AND goods_id = #{goodsId}
+      AND sku_id = #{skuId}
+      AND threshold >= sold_num + #{soldNum}
+      /*SkuLimitInfoDao.update*/
+    </update>
 </mapper>

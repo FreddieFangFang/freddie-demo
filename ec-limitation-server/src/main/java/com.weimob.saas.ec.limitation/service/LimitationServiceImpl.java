@@ -1,13 +1,9 @@
 package com.weimob.saas.ec.limitation.service;
 
-import com.weimob.saas.ec.limitation.dao.GoodsLimitInfoDao;
-import com.weimob.saas.ec.limitation.dao.LimitInfoDao;
-import com.weimob.saas.ec.limitation.dao.LimitStoreRelationshipDao;
-import com.weimob.saas.ec.limitation.dao.SkuLimitInfoDao;
-import com.weimob.saas.ec.limitation.entity.GoodsLimitInfoEntity;
-import com.weimob.saas.ec.limitation.entity.LimitInfoEntity;
-import com.weimob.saas.ec.limitation.entity.LimitStoreRelationshipEntity;
-import com.weimob.saas.ec.limitation.entity.SkuLimitInfoEntity;
+import com.weimob.saas.ec.limitation.dao.*;
+import com.weimob.saas.ec.limitation.entity.*;
+import com.weimob.saas.ec.limitation.exception.LimitationBizException;
+import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.model.DeleteGoodsParam;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +29,10 @@ public class LimitationServiceImpl {
     private GoodsLimitInfoDao goodsLimitInfoDao;
     @Autowired
     private SkuLimitInfoDao skuLimitInfoDao;
+    @Autowired
+    private UserGoodsLimitDao userGoodsLimitDao;
+    @Autowired
+    private UserLimitDao userLimitDao;
 
     public void saveLimitationInfo(LimitInfoEntity limitInfoEntity, List<LimitStoreRelationshipEntity> storeInfoList) {
         limitInfoDao.insert(limitInfoEntity);
@@ -167,5 +167,60 @@ public class LimitationServiceImpl {
         skuLimitInfoDao.deleteSkuLimit(param);
 
         skuLimitInfoDao.batchInsert(skuLimitInfoList);
+    }
+
+    public void saveUserLimitRecode(List<UserGoodsLimitEntity> goodsLimitEntityList, List<UserLimitEntity> activityLimitEntityList,
+                                    List<SkuLimitInfoEntity> activityGoodsSoldEntityList,
+                                    List<UserLimitEntity> activityLimitRecodeList,
+                                    List<UserGoodsLimitEntity> userGoodsLimitRecodeList, Boolean update) {
+
+        Long updateResult = 0l;
+        if (!org.springframework.util.CollectionUtils.isEmpty(goodsLimitEntityList)) {
+            for (UserGoodsLimitEntity goodsLimitEntity : goodsLimitEntityList) {
+                try {
+                    if (!update && org.springframework.util.CollectionUtils.isEmpty(userGoodsLimitRecodeList)) {
+                        updateResult = userGoodsLimitDao.insert(goodsLimitEntity);
+                    } else {
+                        updateResult = userGoodsLimitDao.update(goodsLimitEntity);
+                    }
+                } catch (Exception e) {
+                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_GOODS_LIMIT_ERROR, e);
+                }
+                if (updateResult == 0) {
+                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_GOODS_LIMIT_ERROR);
+                }
+            }
+        }
+
+        if (!org.springframework.util.CollectionUtils.isEmpty(activityLimitEntityList)) {
+            for (UserLimitEntity activityLimitEntity : activityLimitEntityList) {
+                try {
+                    if (!update && org.springframework.util.CollectionUtils.isEmpty(activityLimitRecodeList)) {
+                        updateResult = userLimitDao.insert(activityLimitEntity);
+                    } else {
+                        updateResult = userLimitDao.update(activityLimitEntity);
+                    }
+                } catch (Exception e) {
+                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_LIMIT_ERROR, e);
+                }
+                if (updateResult == 0) {
+                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_LIMIT_ERROR);
+                }
+            }
+        }
+
+        if (!org.springframework.util.CollectionUtils.isEmpty(activityGoodsSoldEntityList)) {
+            for (SkuLimitInfoEntity activitySoldEntity : activityGoodsSoldEntityList) {
+                try {
+                    updateResult = skuLimitInfoDao.update(activitySoldEntity);
+                } catch (Exception e) {
+                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_SKU_LIMIT_ERROR, e);
+                }
+                if (updateResult == 0) {
+                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_SKU_LIMIT_ERROR);
+                }
+            }
+        }
+
     }
 }

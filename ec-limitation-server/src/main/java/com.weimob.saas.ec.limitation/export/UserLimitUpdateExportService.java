@@ -34,7 +34,7 @@ public class UserLimitUpdateExportService extends BaseExportService implements U
 
     @Override
     public SoaResponse<UpdateUserLimitResponseVo, LimitationErrorCode> saveUserLimit(SaveUserLimitRequestVo requestVo) {
-        SoaResponse<UpdateUserLimitResponseVo, LimitationErrorCode> soaResponse = null;
+        SoaResponse<UpdateUserLimitResponseVo, LimitationErrorCode> soaResponse = new SoaResponse<>();
         try {
             LimitContext.setTicket(soaResponse.getMonitorTrackId());
             UpdateUserLimitResponseVo updateUserLimitResponseVo = userLimitUpdateFacadeService.saveUserLimit(requestVo);
@@ -52,7 +52,7 @@ public class UserLimitUpdateExportService extends BaseExportService implements U
             soaResponse.setReturnCode(CommonErrorCode.FAIL.getErrorCode());
             soaResponse.setReturnMsg(CommonErrorCode.FAIL.getErrorMsg());
         }
-        return null;
+        return soaResponse;
     }
 
     @Override

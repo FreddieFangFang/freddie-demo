@@ -133,10 +133,11 @@
         limit_info as limitinfo
         where
         limitinfo.limit_id=goodslimitinfo.limit_id
+        AND
         <foreach item="item" index="index" collection="list"
                  separator="or">
             (
-            and goodslimitinfo.pid = #{item.pid}
+            goodslimitinfo.pid = #{item.pid}
             and goodslimitinfo.store_id = #{item.storeId}
             and goodslimitinfo.goods_id = #{item.goodsId}
             and limitinfo.biz_id = #{item.bizId}

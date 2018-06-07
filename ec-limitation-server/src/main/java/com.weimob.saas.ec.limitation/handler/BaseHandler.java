@@ -1,10 +1,12 @@
 package com.weimob.saas.ec.limitation.handler;
 
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
+import com.weimob.saas.ec.limitation.dao.LimitInfoDao;
 import com.weimob.saas.ec.limitation.entity.*;
 import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.model.LimitBo;
+import com.weimob.saas.ec.limitation.model.LimitParam;
 import com.weimob.saas.ec.limitation.model.UserLimitBaseBo;
 import com.weimob.saas.ec.limitation.model.convertor.LimitConvertor;
 import com.weimob.saas.ec.limitation.model.request.SkuLimitInfo;
@@ -12,6 +14,7 @@ import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
 import com.weimob.saas.ec.limitation.utils.LimitContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
@@ -21,6 +24,9 @@ import java.util.*;
  * @date 2018/6/6 13:49
  */
 public abstract class BaseHandler<T extends Comparable<T>> implements Handeler<T> {
+
+    @Autowired
+    protected LimitInfoDao limitInfoDao;
 
     protected final String LIMIT_PREFIX_ACTIVITY = "LIMIT_ACTIVITY_";
     protected final String LIMIT_PREFIX_GOODS = "LIMIT_GOODS_";
@@ -261,13 +267,14 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handeler<T
     }
 
     protected void updateUserLimitRecord(Map<String, Integer> orderGoodsLimitMap,
-                                             List<UserLimitEntity> activityLimitList,
-                                         List<UserGoodsLimitEntity> GoodsLimitList,
+                                         List<UserLimitEntity> activityLimitList,
+                                         List<UserGoodsLimitEntity> userGoodsLimitRecodeList,
                                          Boolean isUpdate) {
         List<UserGoodsLimitEntity> goodsLimitEntityList = new ArrayList<>();
         List<UserLimitEntity> activityLimitEntityList = new ArrayList<>();
         List<SkuLimitInfoEntity> activityGoodsSoldEntityList = new ArrayList<>();
         UserLimitBaseBo baseBo = null;
+        LimitInfoEntity limitInfoEntity =null;
         for (Map.Entry<String, Integer> entry : orderGoodsLimitMap.entrySet()) {
             int lastIndex = entry.getKey().lastIndexOf("_") + 1;
             String entryKey = entry.getKey();
@@ -278,25 +285,33 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handeler<T
                 case LIMIT_PREFIX_GOODS:
                     long goodsId = Long.parseLong(entry.getKey().substring(lastIndex));
                     baseBo = LimitContext.getLimitBo().getGoodsIdLimitMap().get(goodsId);
-                    goodsLimitEntityList.add(LimitConvertor.convertGoodsLimit(baseBo, goodsId, entry.getValue()));
+                    limitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(baseBo.getPid(), baseBo.getBizId(), baseBo.getBizType()));
+                    goodsLimitEntityList.add(LimitConvertor.convertGoodsLimit(baseBo, goodsId, entry.getValue(), limitInfoEntity));
                     break;
                 //保存活动限购记录,多门店的时候是否会出现问题？
                 case LIMIT_PREFIX_ACTIVITY:
                     long activityId = Long.parseLong(entry.getKey().substring(lastIndex));
                     baseBo = LimitContext.getLimitBo().getActivityIdLimitMap().get(activityId);
-                    activityLimitEntityList.add(LimitConvertor.convertActivityLimit(baseBo, activityId, entry.getValue()));
+                    limitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(baseBo.getPid(), baseBo.getBizId(), baseBo.getBizType()));
+                    activityLimitEntityList.add(LimitConvertor.convertActivityLimit(baseBo, activityId, entry.getValue(),limitInfoEntity));
                     break;
                 //更新sku的售卖数量
                 case LIMIT_PREFIX_SKU:
                     long skuId = Long.parseLong(entry.getKey().substring(lastIndex));
                     baseBo = LimitContext.getLimitBo().getSkuIdLimitMap().get(skuId);
-                    activityGoodsSoldEntityList.add(LimitConvertor.convertActivitySoldEntity(baseBo, skuId, entry.getValue()));
+                    limitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(baseBo.getPid(), baseBo.getBizId(), baseBo.getBizType()));
+                    activityGoodsSoldEntityList.add(LimitConvertor.convertActivitySoldEntity(baseBo, skuId, entry.getValue(),limitInfoEntity));
                     break;
                 default:
                     break;
             }
         }
-
+        LimitContext.getLimitBo().setGoodsLimitEntityList(goodsLimitEntityList);
+        LimitContext.getLimitBo().setActivityLimitEntityList(activityLimitEntityList);
+        LimitContext.getLimitBo().setActivityGoodsSoldEntityList(activityGoodsSoldEntityList);
+        LimitContext.getLimitBo().setActivityLimitRecodeList(activityLimitList);
+        LimitContext.getLimitBo().setUserGoodsLimitRecodeList(userGoodsLimitRecodeList);
+        LimitContext.getLimitBo().setUpdate(isUpdate);
 
     }
 

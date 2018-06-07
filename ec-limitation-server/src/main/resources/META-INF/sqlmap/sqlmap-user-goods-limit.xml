@@ -30,7 +30,7 @@
         from user_goods_limit
         where
         <foreach item="item" index="index" collection="list"
-                 separator="or" >
+                 separator="or">
             (pid = #{item.pid}
             and store_id = #{item.storeId}
             and goods_id = #{item.goodsId}
@@ -46,15 +46,46 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
     <insert id="insert" parameterType="com.weimob.saas.ec.limitation.entity.UserGoodsLimitEntity">
-    insert into user_goods_limit (id, pid, store_id, 
-      wid, limit_id, goods_id, 
-      buy_num, is_deleted, create_time, 
-      update_time)
-    values (#{id,jdbcType=BIGINT}, #{pid,jdbcType=BIGINT}, #{storeId,jdbcType=BIGINT}, 
-      #{wid,jdbcType=BIGINT}, #{limitId,jdbcType=BIGINT}, #{goodsId,jdbcType=BIGINT}, 
-      #{buyNum,jdbcType=INTEGER}, #{isDeleted,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP})
+    insert into user_goods_limit
+    (
+    pid,
+    store_id,
+    wid,
+    limit_id,
+    goods_id,
+    buy_num,
+    is_deleted,
+    create_time,
+    update_time
+    )
+    values
+    (
+     #{pid},
+     #{storeId},
+     #{wid},
+     #{limitId},
+     #{goodsId},
+     #{buyNum},
+     0,
+     NOW(),
+     NOW()
+     )
+     /*UserGoodsLimitDao.insert*/
   </insert>
+
+    <update id="update" parameterType="com.weimob.saas.ec.limitation.entity.UserGoodsLimitEntity">
+        UPDATE user_goods_limit
+        SET
+        buy_num = buy_num+#{buyNum},
+        update_time = NOW()
+        WHERE
+             pid = #{pid}
+        AND store_id = #{storeId}
+        AND wid = #{wid}
+        AND limit_id = #{limitId}
+        AND goods_id = #{goodsId}
+        /*UserGoodsLimitDao.update*/
+    </update>
 
     <select id="queryUserOrderGoodsLimitList"
             resultMap="BaseResultMap" parameterType="java.util.List">
@@ -69,10 +100,11 @@
         limit_info as limitinfo
         where
         limitinfo.limit_id=usergoodslimit.limit_id
+        AND
         <foreach item="item" index="index" collection="list"
-                 separator="or" >
+                 separator="or">
             (
-            and limitinfo.pid = #{item.pid}
+            limitinfo.pid = #{item.pid}
             and usergoodslimit.store_id = #{item.storeId}
             and limitinfo.biz_id = #{item.bizId}
             and limitinfo.biz_type = #{item.bizType}

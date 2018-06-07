@@ -44,12 +44,12 @@ public class GoodsLimitBizHandler extends BaseHandler implements LimitBizHandler
             throw new LimitationBizException(LimitationErrorCode.LIMIT_GOODS_IS_NULL);
         }
 
-        List<UserGoodsLimitEntity> userGoodsLimitEntityList = userGoodsLimitDao.queryUserOrderGoodsLimitList(vos);
+        List<UserGoodsLimitEntity> userGoodsLimitRecodeList = userGoodsLimitDao.queryUserOrderGoodsLimitList(vos);
 
         Boolean isUpdate = validLimitation(null, goodsLimitInfoEntityList, null,
-                userGoodsLimitEntityList, null, LimitContext.getLimitBo().getOrderGoodsLimitMap());
+                userGoodsLimitRecodeList, null, LimitContext.getLimitBo().getOrderGoodsLimitMap());
 
-        updateUserLimitRecord(LimitContext.getLimitBo().getOrderGoodsLimitMap(),  null, userGoodsLimitEntityList, isUpdate);
+        updateUserLimitRecord(LimitContext.getLimitBo().getOrderGoodsLimitMap(),  null, userGoodsLimitRecodeList, isUpdate);
 
     }
 
