@@ -36,20 +36,47 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.weimob.saas.ec.limitation.entity.LimitOrderChangeLogEntity">
-    insert into limit_order_change_log (id, pid, store_id, 
-      wid, biz_id, biz_type, 
-      limit_id, goods_id, sku_id, 
-      buy_num, ticket, service_name, 
-      content, refer_id, status, 
-      is_deleted, create_time, update_time
+    insert into limit_order_change_log
+    (
+      pid,
+      store_id,
+      wid,
+      biz_id,
+      biz_type,
+      limit_id,
+      goods_id,
+      sku_id,
+      buy_num,
+      ticket,
+      service_name,
+      content,
+      refer_id,
+      status,
+      is_deleted,
+      create_time,
+      update_time
       )
-    values (#{id,jdbcType=BIGINT}, #{pid,jdbcType=BIGINT}, #{storeId,jdbcType=BIGINT}, 
-      #{wid,jdbcType=BIGINT}, #{bizId,jdbcType=BIGINT}, #{bizType,jdbcType=TINYINT}, 
-      #{limitId,jdbcType=BIGINT}, #{goodsId,jdbcType=BIGINT}, #{skuId,jdbcType=BIGINT}, 
-      #{buyNum,jdbcType=INTEGER}, #{ticket,jdbcType=VARCHAR}, #{serviceName,jdbcType=VARCHAR}, 
-      #{content,jdbcType=VARCHAR}, #{referId,jdbcType=CHAR}, #{status,jdbcType=BIT}, 
-      #{isDeleted,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+    values
+    (
+      #{pid},
+      #{storeId},
+      #{wid},
+      #{bizId},
+      #{bizType},
+      #{limitId},
+      #{goodsId},
+      #{skuId},
+      #{buyNum},
+      #{ticket},
+      #{serviceName},
+      #{content},
+      #{referId},
+      #{status},
+      0,
+      NOW(),
+      NOW()
       )
+      /*LimitOrderChangeLogDao.insert*/
   </insert>
   <insert id="insertSelective" parameterType="com.weimob.saas.ec.limitation.entity.LimitOrderChangeLogEntity">
     insert into limit_order_change_log

@@ -31,7 +31,7 @@ public class LimitOrderChangeLogEntity {
 
     private String referId;
 
-    private Boolean status;
+    private Integer status;
 
     private Boolean isDeleted;
 
@@ -151,11 +151,11 @@ public class LimitOrderChangeLogEntity {
         this.referId = referId == null ? null : referId.trim();
     }
 
-    public Boolean getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(Boolean status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
