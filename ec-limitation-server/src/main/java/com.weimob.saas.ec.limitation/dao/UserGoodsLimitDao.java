@@ -14,4 +14,5 @@ public interface UserGoodsLimitDao extends BaseDao<UserGoodsLimitEntity>{
 
     List<UserGoodsLimitEntity> queryUserOrderGoodsLimitList(List<UpdateUserLimitVo> vos);
 
+    UserGoodsLimitEntity getUserGoodsLimitEntity(UserGoodsLimitEntity goodsLimitEntity);
 }

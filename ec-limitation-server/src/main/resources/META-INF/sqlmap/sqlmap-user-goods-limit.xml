@@ -115,4 +115,21 @@
         </foreach>
         /*UserGoodsLimitDao.queryUserOrderGoodsLimitList*/
     </select>
+
+    <select id="getUserGoodsLimitEntity"
+            resultType="com.weimob.saas.ec.limitation.entity.UserGoodsLimitEntity"
+            parameterType="com.weimob.saas.ec.limitation.entity.UserGoodsLimitEntity">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        user_goods_limit
+        where
+        pid = #{pid}
+        and store_id = #{storeId}
+        and wid = #{wid}
+        and limit_id = #{limitId}
+        and goods_id = #{goodsId}
+        and is_deleted = 0
+        /*UserGoodsLimitDao.getUserGoodsLimitEntity*/
+    </select>
 </mapper>

@@ -63,9 +63,7 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         if (Objects.equals(vos.get(0).getBizType(), LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel())) {
             goodsLimitBizHandler.doLimitHandler(vos);
             limitationService.saveUserLimitRecode(LimitContext.getLimitBo().getGoodsLimitEntityList(),
-                    LimitContext.getLimitBo().getActivityLimitEntityList(), LimitContext.getLimitBo().getActivityGoodsSoldEntityList(),
-                    LimitContext.getLimitBo().getActivityLimitRecodeList(),
-                    LimitContext.getLimitBo().getUserGoodsLimitRecodeList(), LimitContext.getLimitBo().getUpdate());
+                    LimitContext.getLimitBo().getActivityLimitEntityList(), LimitContext.getLimitBo().getActivityGoodsSoldEntityList());
         }
     }
 

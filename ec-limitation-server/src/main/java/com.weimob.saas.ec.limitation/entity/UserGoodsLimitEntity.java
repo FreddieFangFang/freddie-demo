@@ -102,4 +102,12 @@ public class UserGoodsLimitEntity {
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
 }

@@ -170,4 +170,18 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+    <select id="getUserLimitEntity" parameterType="com.weimob.saas.ec.limitation.entity.UserLimitEntity"
+            resultType="com.weimob.saas.ec.limitation.entity.UserLimitEntity">
+        select
+        <include refid="Base_Column_List"/>
+        from user_limit
+        where
+        pid = #{pid}
+        and store_id = #{storeId}
+        and wid = #{wid}
+        and limit_id = #{limitId}
+        and is_deleted = 0
+        /*UserLimitDao.getUserLimitEntity*/
+    </select>
 </mapper>

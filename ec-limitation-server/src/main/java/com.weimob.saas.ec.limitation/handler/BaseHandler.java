@@ -99,6 +99,15 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handeler<T
 
     }
 
+    protected void groupingOrderActivityRequestVoList(Map<String, Integer> orderGoodsLimitMap, Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap, List<UpdateUserLimitVo> vos) {
+        for (UpdateUserLimitVo requestVo : vos) {
+
+            String goodsKey = generateActivityKey(requestVo);
+            updateOrderGoodsMap(orderGoodsLimitMap, orderGoodsQueryMap, requestVo, goodsKey);
+        }
+
+    }
+
     private void updateOrderGoodsMap(Map<String, Integer> orderGoodsLimitMap,
                                      Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap,
                                      UpdateUserLimitVo requestVo,
@@ -174,20 +183,13 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handeler<T
         return key.toString();
     }
 
-    protected Boolean validLimitation(List<LimitInfoEntity> limitInfoEntityList,
-                                      List<GoodsLimitInfoEntity> goodsLimitInfoEntityList,
-                                      List<UserLimitEntity> activityLimitList,
-                                      List<UserGoodsLimitEntity> userGoodsLimitList,
-                                      List<SkuLimitInfoEntity> skuLimitInfoEntityList,
-                                      Map<String, Integer> orderGoodsLimitMap) {
+    protected void validLimitation(List<LimitInfoEntity> limitInfoEntityList,
+                                   List<GoodsLimitInfoEntity> goodsLimitInfoEntityList,
+                                   List<UserLimitEntity> activityLimitList,
+                                   List<UserGoodsLimitEntity> userGoodsLimitList,
+                                   List<SkuLimitInfoEntity> skuLimitInfoEntityList,
+                                   Map<String, Integer> orderGoodsLimitMap) {
 
-
-        Boolean isUpdate = true;
-        //1. 判断用户是否有下单记录
-        if (org.springframework.util.CollectionUtils.isEmpty(activityLimitList) || org.springframework.util.CollectionUtils.isEmpty(userGoodsLimitList)) {
-            //用户第一次下单
-            isUpdate = false;
-        }
 
         //2. 将活动以及商品的后台设置限购信息分组，活动Id对应的限购数，goodsId对应的限购数
         Map<Long, LimitInfoEntity> activityMap = MapUtils.EMPTY_MAP;
@@ -283,14 +285,10 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handeler<T
                     break;
             }
         }
-        return isUpdate;
 
     }
 
-    protected void updateUserLimitRecord(Map<String, Integer> orderGoodsLimitMap,
-                                         List<UserLimitEntity> activityLimitList,
-                                         List<UserGoodsLimitEntity> userGoodsLimitRecodeList,
-                                         Boolean isUpdate) {
+    protected void updateUserLimitRecord(Map<String, Integer> orderGoodsLimitMap) {
         List<UserGoodsLimitEntity> goodsLimitEntityList = new ArrayList<>();
         List<UserLimitEntity> activityLimitEntityList = new ArrayList<>();
         List<SkuLimitInfoEntity> activityGoodsSoldEntityList = new ArrayList<>();
@@ -330,9 +328,6 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handeler<T
         LimitContext.getLimitBo().setGoodsLimitEntityList(goodsLimitEntityList);
         LimitContext.getLimitBo().setActivityLimitEntityList(activityLimitEntityList);
         LimitContext.getLimitBo().setActivityGoodsSoldEntityList(activityGoodsSoldEntityList);
-        LimitContext.getLimitBo().setActivityLimitRecodeList(activityLimitList);
-        LimitContext.getLimitBo().setUserGoodsLimitRecodeList(userGoodsLimitRecodeList);
-        LimitContext.getLimitBo().setUpdate(isUpdate);
 
     }
 
