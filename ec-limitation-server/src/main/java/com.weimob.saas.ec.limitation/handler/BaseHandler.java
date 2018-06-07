@@ -1,7 +1,9 @@
 package com.weimob.saas.ec.limitation.handler;
 
+import com.weimob.saas.ec.limitation.common.LimitServiceNameEnum;
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
 import com.weimob.saas.ec.limitation.dao.LimitInfoDao;
+import com.weimob.saas.ec.limitation.dao.LimitOrderChangeLogDao;
 import com.weimob.saas.ec.limitation.entity.*;
 import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
@@ -11,10 +13,12 @@ import com.weimob.saas.ec.limitation.model.UserLimitBaseBo;
 import com.weimob.saas.ec.limitation.model.convertor.LimitConvertor;
 import com.weimob.saas.ec.limitation.model.request.SkuLimitInfo;
 import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
+import com.weimob.saas.ec.limitation.thread.SaveLimitChangeLogThread;
 import com.weimob.saas.ec.limitation.utils.LimitContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.*;
 
@@ -27,6 +31,10 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handeler<T
 
     @Autowired
     protected LimitInfoDao limitInfoDao;
+    @Autowired
+    protected LimitOrderChangeLogDao limitOrderChangeLogDao;
+    @Autowired
+    private ThreadPoolTaskExecutor threadExecutor;
 
     protected final String LIMIT_PREFIX_ACTIVITY = "LIMIT_ACTIVITY_";
     protected final String LIMIT_PREFIX_GOODS = "LIMIT_GOODS_";
@@ -53,6 +61,19 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handeler<T
     }
 
     protected void saveOrderChangeLog(List<T> vos) {
+        //调用dao保存日志
+        //异步写日志 SaveLimitChangeLogThread
+        List<LimitOrderChangeLogEntity> logEntityList = new ArrayList<>();
+        LimitOrderChangeLogEntity logEntity = null;
+        for (T inputVo : vos) {
+            logEntity = createOrderChangeLog(inputVo);
+            logEntityList.add(logEntity);
+        }
+        threadExecutor.execute(new SaveLimitChangeLogThread(limitOrderChangeLogDao, logEntityList));
+    }
+
+    protected LimitOrderChangeLogEntity createOrderChangeLog(T vo) {
+        return null;
     }
 
     protected void doBatchBizLogic(List<T> vos) {
@@ -274,7 +295,7 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handeler<T
         List<UserLimitEntity> activityLimitEntityList = new ArrayList<>();
         List<SkuLimitInfoEntity> activityGoodsSoldEntityList = new ArrayList<>();
         UserLimitBaseBo baseBo = null;
-        LimitInfoEntity limitInfoEntity =null;
+        LimitInfoEntity limitInfoEntity = null;
         for (Map.Entry<String, Integer> entry : orderGoodsLimitMap.entrySet()) {
             int lastIndex = entry.getKey().lastIndexOf("_") + 1;
             String entryKey = entry.getKey();
@@ -293,14 +314,14 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handeler<T
                     long activityId = Long.parseLong(entry.getKey().substring(lastIndex));
                     baseBo = LimitContext.getLimitBo().getActivityIdLimitMap().get(activityId);
                     limitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(baseBo.getPid(), baseBo.getBizId(), baseBo.getBizType()));
-                    activityLimitEntityList.add(LimitConvertor.convertActivityLimit(baseBo, activityId, entry.getValue(),limitInfoEntity));
+                    activityLimitEntityList.add(LimitConvertor.convertActivityLimit(baseBo, activityId, entry.getValue(), limitInfoEntity));
                     break;
                 //更新sku的售卖数量
                 case LIMIT_PREFIX_SKU:
                     long skuId = Long.parseLong(entry.getKey().substring(lastIndex));
                     baseBo = LimitContext.getLimitBo().getSkuIdLimitMap().get(skuId);
                     limitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(baseBo.getPid(), baseBo.getBizId(), baseBo.getBizType()));
-                    activityGoodsSoldEntityList.add(LimitConvertor.convertActivitySoldEntity(baseBo, skuId, entry.getValue(),limitInfoEntity));
+                    activityGoodsSoldEntityList.add(LimitConvertor.convertActivitySoldEntity(baseBo, skuId, entry.getValue(), limitInfoEntity));
                     break;
                 default:
                     break;
@@ -334,5 +355,9 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handeler<T
     @Override
     public void doReverse(List<LimitOrderChangeLogEntity> logList) {
 
+    }
+
+    protected LimitServiceNameEnum getServiceName() {
+        return null;
     }
 }

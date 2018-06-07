@@ -7,4 +7,6 @@ package com.weimob.saas.ec.limitation.constant;
  */
 public class LimitConstant {
     public static final int UNLIMITED_NUM                                           = 0;
+    public static final int ORDER_LOG_STATUS_INIT                                           = 0;
+    public static final int ORDER_LOG_STATUS_OVER                                           = 1;
 }
