@@ -1,7 +1,6 @@
 package com.weimob.saas.ec.limitation.handler.biz;
 
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
-import com.weimob.saas.ec.common.constant.BizTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitServiceNameEnum;
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
@@ -9,11 +8,9 @@ import com.weimob.saas.ec.limitation.entity.*;
 import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.handler.BaseHandler;
-import com.weimob.saas.ec.limitation.handler.LimitBizChain;
 import com.weimob.saas.ec.limitation.handler.limit.ActivityLimitBizHandler;
 import com.weimob.saas.ec.limitation.handler.limit.GoodsLimitBizHandler;
 import com.weimob.saas.ec.limitation.handler.limit.SkuLimitBizHandler;
-import com.weimob.saas.ec.limitation.model.LimitBo;
 import com.weimob.saas.ec.limitation.model.LimitParam;
 import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
 import com.weimob.saas.ec.limitation.service.LimitationServiceImpl;
@@ -22,9 +19,7 @@ import com.weimob.saas.ec.limitation.utils.VerifyParamUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -59,7 +54,7 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
             }
             VerifyParamUtils.checkParam(LimitationErrorCode.ORDERNO_IS_NULL, limitVo.getOrderNo());
             VerifyParamUtils.checkParam(LimitationErrorCode.WID_IS_NULL, limitVo.getWid());
-            if(Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(),limitVo.getBizType())){
+            if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), limitVo.getBizType())) {
                 VerifyParamUtils.checkParam(LimitationErrorCode.SKUINFO_IS_NULL, limitVo.getSkuId());
             }
         }
@@ -72,7 +67,7 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         //limitBizChain.execute();
         if (Objects.equals(vos.get(0).getBizType(), LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel())) {
             goodsLimitBizHandler.doLimitHandler(vos);
-            limitationService.saveUserLimitRecode(LimitContext.getLimitBo().getGoodsLimitEntityList(),
+            limitationService.saveUserLimitRecord(LimitContext.getLimitBo().getGoodsLimitEntityList(),
                     LimitContext.getLimitBo().getActivityLimitEntityList(), LimitContext.getLimitBo().getActivityGoodsSoldEntityList());
         }
 
@@ -81,7 +76,7 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
             goodsLimitBizHandler.doLimitHandler(vos);
             activityLimitBizHandler.doLimitHandler(vos);
             skuLimitBizHandler.doLimitHandler(vos);
-            limitationService.saveUserLimitRecode(LimitContext.getLimitBo().getGoodsLimitEntityList(),
+            limitationService.saveUserLimitRecord(LimitContext.getLimitBo().getGoodsLimitEntityList(),
                     LimitContext.getLimitBo().getActivityLimitEntityList(), LimitContext.getLimitBo().getActivityGoodsSoldEntityList());
         }
 

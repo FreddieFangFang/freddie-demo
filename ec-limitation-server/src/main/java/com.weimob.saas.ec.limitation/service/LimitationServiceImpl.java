@@ -169,7 +169,7 @@ public class LimitationServiceImpl {
         skuLimitInfoDao.batchInsert(skuLimitInfoList);
     }
 
-    public void saveUserLimitRecode(List<UserGoodsLimitEntity> goodsLimitEntityList, List<UserLimitEntity> activityLimitEntityList,
+    public void saveUserLimitRecord(List<UserGoodsLimitEntity> goodsLimitEntityList, List<UserLimitEntity> activityLimitEntityList,
                                     List<SkuLimitInfoEntity> activityGoodsSoldEntityList) {
 
         Long updateResult = 0l;

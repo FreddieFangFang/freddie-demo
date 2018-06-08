@@ -8,48 +8,51 @@
 	License for the specific language governing permissions and - limitations 
 	under the License. -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 	http://www.springframework.org/schema/context    
     http://www.springframework.org/schema/context/spring-context-3.0.xsd
 	http://code.alibabatech.com/schema/dubbo 
 	http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
-	<!--为防止冲突WccPropertyPlaceholderConfigurer不需要定义ID-->
-	<!--当前应用的相关dubbo定义，主要包含应用名称和负责人 -->
-	<bean class="com.weimob.soa.configcenter.WccPropertyPlaceholderConfigurer">
-		<property name="ignoreUnresolvablePlaceholders" value="true"/>
-		<property name="locations">
-			<list>
-				<value>dubbo.properties</value>
-			</list>
-		</property>
-		<property name="applicationName" value="saas.ec-limitation-service"/>
-	</bean>
-	
-	<!-- dubbo-common配置信息，为防止冲突WccPropertyPlaceholderConfigurer不需要定义ID -->
-	<bean class="com.weimob.soa.configcenter.WccPropertyPlaceholderConfigurer">
-		<property name="ignoreUnresolvablePlaceholders" value="true" />
-		<property name="locations">
-			<list>
-				<value>dubbo-common.properties</value>
-			</list>
-		</property>
-		<property name="applicationName" value="weimob.arch-common" />
-	</bean>
+    <!--为防止冲突WccPropertyPlaceholderConfigurer不需要定义ID-->
+    <!--当前应用的相关dubbo定义，主要包含应用名称和负责人 -->
+    <bean class="com.weimob.soa.configcenter.WccPropertyPlaceholderConfigurer">
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+        <property name="locations">
+            <list>
+                <value>dubbo.properties</value>
+            </list>
+        </property>
+        <property name="applicationName" value="saas.ec-limitation-service"/>
+    </bean>
+
+    <!-- dubbo-common配置信息，为防止冲突WccPropertyPlaceholderConfigurer不需要定义ID -->
+    <bean class="com.weimob.soa.configcenter.WccPropertyPlaceholderConfigurer">
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+        <property name="locations">
+            <list>
+                <value>dubbo-common.properties</value>
+            </list>
+        </property>
+        <property name="applicationName" value="weimob.arch-common"/>
+    </bean>
 
 
- 	<!-- 本机服务dubbo 服务定义 -->
-	<dubbo:application name="${dubbo.application.name}" owner="${dubbo.application.owner}" logger="log4j"/>
-	<!-- 通用配置 -->
-	<dubbo:protocol name="${dubbo.protocol.name}" port="${dubbo.protocol.port}" />
-	<dubbo:registry address="${dubbo.registry.address}" />
-	<dubbo:monitor protocol="${dubbo.monitor.protocol}" address="${dubbo.monitor.address}"/>
-	<dubbo:provider retries="0" timeout="${dubbo.provider.timeout}" threads="${dubbo.provider.threads}" />
+    <!-- 本机服务dubbo 服务定义 -->
+    <dubbo:application name="${dubbo.application.name}" owner="${dubbo.application.owner}" logger="log4j"/>
+    <!-- 通用配置 -->
+    <dubbo:protocol name="${dubbo.protocol.name}" port="${dubbo.protocol.port}"/>
+    <dubbo:registry address="${dubbo.registry.address}"/>
+    <dubbo:monitor protocol="${dubbo.monitor.protocol}" address="${dubbo.monitor.address}"/>
+    <dubbo:provider retries="0" timeout="${dubbo.provider.timeout}" threads="${dubbo.provider.threads}"/>
 
-	<dubbo:service ref="limitationQueryExportService" interface="com.weimob.saas.ec.limitation.service.LimitationQueryService" />
-	<dubbo:service ref="limitationUpdateExportService" interface="com.weimob.saas.ec.limitation.service.LimitationUpdateService" />
-
+    <dubbo:service ref="limitationQueryExportService"
+                   interface="com.weimob.saas.ec.limitation.service.LimitationQueryService"/>
+    <dubbo:service ref="limitationUpdateExportService"
+                   interface="com.weimob.saas.ec.limitation.service.LimitationUpdateService"/>
+    <dubbo:service ref="userLimitUpdateExportService"
+                   interface="com.weimob.saas.ec.limitation.service.UserLimitUpdateService"/>
 </beans>
