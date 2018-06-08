@@ -105,4 +105,19 @@
     and version=#{version}
     /*LimitInfoDao.delete*/
   </update>
+
+    <select id="queryOrderLimitInfoList" resultMap="BaseResultMap" parameterType="java.util.List">
+        select
+        <include refid="Base_Column_List"/>
+        from limit_info
+        where
+        <foreach item="item" index="index" collection="list"
+                 separator="or">
+            (pid = #{item.pid}
+            and biz_id = #{item.bizId}
+            and biz_type = #{item.bizType}
+            and is_deleted = 0)
+        </foreach>
+        /*LimitInfoDao.queryOrderLimitInfoList*/
+    </select>
 </mapper>

@@ -90,20 +90,32 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handeler<T
     }
 
 
-    protected void groupingOrderGoodsRequestVoList(Map<String, Integer> orderGoodsLimitMap, Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap, List<UpdateUserLimitVo> vos) {
+    protected void groupingOrderGoodsRequestVoList(Map<String, Integer> orderGoodsLimitMap, Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap, List<UpdateUserLimitVo> vos, Map<String, Integer> orderGoodsValidMap) {
         for (UpdateUserLimitVo requestVo : vos) {
 
             String goodsKey = generateGoodsKey(requestVo);
             updateOrderGoodsMap(orderGoodsLimitMap, orderGoodsQueryMap, requestVo, goodsKey);
+            updateOrderGoodsMap(orderGoodsValidMap, orderGoodsQueryMap, requestVo, goodsKey);
         }
 
     }
 
-    protected void groupingOrderActivityRequestVoList(Map<String, Integer> orderGoodsLimitMap, Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap, List<UpdateUserLimitVo> vos) {
+    protected void groupingOrderActivityRequestVoList(Map<String, Integer> orderGoodsLimitMap, Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap, List<UpdateUserLimitVo> vos, Map<String, Integer> orderActivityValidMap) {
         for (UpdateUserLimitVo requestVo : vos) {
 
             String goodsKey = generateActivityKey(requestVo);
             updateOrderGoodsMap(orderGoodsLimitMap, orderGoodsQueryMap, requestVo, goodsKey);
+            updateOrderGoodsMap(orderActivityValidMap, orderGoodsQueryMap, requestVo, goodsKey);
+        }
+
+    }
+
+    protected void groupingOrderSkuRequestVoList(Map<String, Integer> orderGoodsLimitMap, Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap, List<UpdateUserLimitVo> vos, Map<String, Integer> orderSkuValidMap) {
+        for (UpdateUserLimitVo requestVo : vos) {
+
+            String goodsKey = generateSKUKey(requestVo);
+            updateOrderGoodsMap(orderGoodsLimitMap, orderGoodsQueryMap, requestVo, goodsKey);
+            updateOrderGoodsMap(orderSkuValidMap, orderGoodsQueryMap, requestVo, goodsKey);
         }
 
     }
@@ -124,6 +136,7 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handeler<T
             limitBaseBo.setWid(requestVo.getWid());
             limitBaseBo.setBizId(requestVo.getBizId());
             limitBaseBo.setBizType(requestVo.getBizType());
+            limitBaseBo.setGoodsId(requestVo.getGoodsId());
 
 
             //判断原先的map里是否有响应的值
@@ -196,7 +209,10 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handeler<T
         if (CollectionUtils.isNotEmpty(limitInfoEntityList)) {
             activityMap = groupingActivityEntityMap(limitInfoEntityList);
         }
-        Map<Long, GoodsLimitInfoEntity> activityGoodsMap = groupingActivityGoodsEntityMap(goodsLimitInfoEntityList);
+        Map<Long, GoodsLimitInfoEntity> activityGoodsMap = MapUtils.EMPTY_MAP;
+        if (CollectionUtils.isNotEmpty(goodsLimitInfoEntityList)) {
+            activityGoodsMap = groupingActivityGoodsEntityMap(goodsLimitInfoEntityList);
+        }
 
         //3. 校验某个活动的限购、活动商品的限购 (如果超过限购，文案提示需要显示较大的限购数量)
 
@@ -211,6 +227,9 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handeler<T
                 case LIMIT_PREFIX_GOODS:
                     long goodsId = Long.parseLong(entryKey.substring(lastIndex));
                     // 当用户没有购买记录的时候, 需要查看购买的记录, 当购买的商品超过商品限购记录则抛出异常
+                    if (activityGoodsMap.get(goodsId) == null) {
+                        throw new LimitationBizException(LimitationErrorCode.LIMIT_GOODS_IS_NULL);
+                    }
                     if (activityGoodsMap.get(goodsId).getLimitNum() == LimitConstant.UNLIMITED_NUM) {
                         break;
                     }
@@ -325,10 +344,15 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handeler<T
                     break;
             }
         }
-        LimitContext.getLimitBo().setGoodsLimitEntityList(goodsLimitEntityList);
-        LimitContext.getLimitBo().setActivityLimitEntityList(activityLimitEntityList);
-        LimitContext.getLimitBo().setActivityGoodsSoldEntityList(activityGoodsSoldEntityList);
-
+        if (CollectionUtils.isNotEmpty(goodsLimitEntityList)) {
+            LimitContext.getLimitBo().setGoodsLimitEntityList(goodsLimitEntityList);
+        }
+        if (CollectionUtils.isNotEmpty(activityLimitEntityList)) {
+            LimitContext.getLimitBo().setActivityLimitEntityList(activityLimitEntityList);
+        }
+        if (CollectionUtils.isNotEmpty(activityGoodsSoldEntityList)) {
+            LimitContext.getLimitBo().setActivityGoodsSoldEntityList(activityGoodsSoldEntityList);
+        }
     }
 
     private Map<Long, LimitInfoEntity> groupingActivityEntityMap(List<LimitInfoEntity> limitInfoEntityList) {

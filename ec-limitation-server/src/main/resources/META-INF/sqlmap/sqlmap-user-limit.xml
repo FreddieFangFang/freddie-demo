@@ -7,6 +7,8 @@
         <result column="store_id" jdbcType="BIGINT" property="storeId"/>
         <result column="wid" jdbcType="BIGINT" property="wid"/>
         <result column="limit_id" jdbcType="BIGINT" property="limitId"/>
+        <result column="biz_id" jdbcType="BIGINT" property="bizId"/>
+        <result column="biz_type" jdbcType="TINYINT" property="bizType"/>
         <result column="buy_num" jdbcType="INTEGER" property="buyNum"/>
         <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -183,5 +185,32 @@
         and limit_id = #{limitId}
         and is_deleted = 0
         /*UserLimitDao.getUserLimitEntity*/
+    </select>
+
+    <select id="queryUserLimitInfoList" resultMap="BaseResultMap" parameterType="java.util.List">
+        select
+        userlimit.pid pid,
+        userlimit.store_id store_id,
+        userlimit.limit_id limit_id,
+        userlimit.biz_id biz_id,
+        userlimit.biz_type biz_type,
+        userlimit.buy_num buy_num
+        from
+        user_limit as userlimit,
+        limit_info as limitinfo
+        where
+        limitinfo.limit_id=userlimit.limit_id
+        AND
+        <foreach item="item" index="index" collection="list"
+                 separator="or">
+            userlimit.pid = #{item.pid}
+            and userlimit.store_id = #{item.storeId}
+            and userlimit.wid =#{item.wid}
+            and userlimit.biz_id =#{item.bizId}
+            and userlimit.biz_type=#{item.bizType}
+            and userlimit.is_deleted = 0
+            and limitinfo.is_deleted = 0
+        </foreach>
+        /*UserLimitDao.queryUserLimitInfoList*/
     </select>
 </mapper>

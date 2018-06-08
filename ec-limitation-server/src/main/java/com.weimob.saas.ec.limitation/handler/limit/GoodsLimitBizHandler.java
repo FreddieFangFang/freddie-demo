@@ -37,7 +37,8 @@ public class GoodsLimitBizHandler extends BaseHandler implements LimitBizHandler
     @Override
     public void doLimitHandler(List<UpdateUserLimitVo> vos) {
         Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap = new HashMap<>();
-        groupingOrderGoodsRequestVoList(LimitContext.getLimitBo().getOrderGoodsLimitMap(), orderGoodsQueryMap, vos);
+        Map<String, Integer> orderGoodsValidMap = new HashMap();
+        groupingOrderGoodsRequestVoList(LimitContext.getLimitBo().getOrderGoodsLimitMap(), orderGoodsQueryMap, vos, orderGoodsValidMap);
 
         List<GoodsLimitInfoEntity> goodsLimitInfoEntityList = goodsLimitInfoDao.queryOrderGoodsLimitInfoList(orderGoodsQueryMap.get(LIMIT_PREFIX_GOODS));
         if (CollectionUtils.isEmpty(goodsLimitInfoEntityList)) {
@@ -47,7 +48,7 @@ public class GoodsLimitBizHandler extends BaseHandler implements LimitBizHandler
         List<UserGoodsLimitEntity> userGoodsLimitRecodeList = userGoodsLimitDao.queryUserOrderGoodsLimitList(vos);
 
         validLimitation(null, goodsLimitInfoEntityList, null,
-                userGoodsLimitRecodeList, null, LimitContext.getLimitBo().getOrderGoodsLimitMap());
+                userGoodsLimitRecodeList, null, orderGoodsValidMap);
 
         updateUserLimitRecord(LimitContext.getLimitBo().getOrderGoodsLimitMap());
 

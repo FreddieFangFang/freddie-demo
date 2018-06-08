@@ -24,9 +24,9 @@ public class LimitBo {
     private Map<Long, UserLimitBaseBo> skuIdLimitMap = new HashMap<>();
 
 
-    List<UserGoodsLimitEntity> goodsLimitEntityList;
-    List<UserLimitEntity> activityLimitEntityList;
-    List<SkuLimitInfoEntity> activityGoodsSoldEntityList;
+    List<UserGoodsLimitEntity> goodsLimitEntityList = new ArrayList<>();
+    List<UserLimitEntity> activityLimitEntityList = new ArrayList<>();
+    List<SkuLimitInfoEntity> activityGoodsSoldEntityList = new ArrayList<>();
 
 
     public Map<String, Integer> getOrderGoodsLimitMap() {

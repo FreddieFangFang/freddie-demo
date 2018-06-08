@@ -1,5 +1,6 @@
 package com.weimob.saas.ec.limitation.handler.biz;
 
+import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.common.constant.BizTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitServiceNameEnum;
@@ -9,7 +10,9 @@ import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.handler.BaseHandler;
 import com.weimob.saas.ec.limitation.handler.LimitBizChain;
+import com.weimob.saas.ec.limitation.handler.limit.ActivityLimitBizHandler;
 import com.weimob.saas.ec.limitation.handler.limit.GoodsLimitBizHandler;
+import com.weimob.saas.ec.limitation.handler.limit.SkuLimitBizHandler;
 import com.weimob.saas.ec.limitation.model.LimitBo;
 import com.weimob.saas.ec.limitation.model.LimitParam;
 import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
@@ -35,6 +38,10 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
     @Autowired
     private GoodsLimitBizHandler goodsLimitBizHandler;
     @Autowired
+    private ActivityLimitBizHandler activityLimitBizHandler;
+    @Autowired
+    private SkuLimitBizHandler skuLimitBizHandler;
+    @Autowired
     private LimitationServiceImpl limitationService;
 
     @Override
@@ -52,6 +59,9 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
             }
             VerifyParamUtils.checkParam(LimitationErrorCode.ORDERNO_IS_NULL, limitVo.getOrderNo());
             VerifyParamUtils.checkParam(LimitationErrorCode.WID_IS_NULL, limitVo.getWid());
+            if(Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(),limitVo.getBizType())){
+                VerifyParamUtils.checkParam(LimitationErrorCode.SKUINFO_IS_NULL, limitVo.getSkuId());
+            }
         }
     }
 
@@ -65,12 +75,22 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
             limitationService.saveUserLimitRecode(LimitContext.getLimitBo().getGoodsLimitEntityList(),
                     LimitContext.getLimitBo().getActivityLimitEntityList(), LimitContext.getLimitBo().getActivityGoodsSoldEntityList());
         }
+
+
+        if (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.PRIVILEGE_PRICE.getType())) {
+            goodsLimitBizHandler.doLimitHandler(vos);
+            activityLimitBizHandler.doLimitHandler(vos);
+            skuLimitBizHandler.doLimitHandler(vos);
+            limitationService.saveUserLimitRecode(LimitContext.getLimitBo().getGoodsLimitEntityList(),
+                    LimitContext.getLimitBo().getActivityLimitEntityList(), LimitContext.getLimitBo().getActivityGoodsSoldEntityList());
+        }
+
     }
 
     @Override
     protected LimitOrderChangeLogEntity createOrderChangeLog(UpdateUserLimitVo vo) {
         LimitInfoEntity limitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(vo.getPid(), vo.getBizId(), vo.getBizType()));
-        LimitOrderChangeLogEntity orderChangeLogEntity=new LimitOrderChangeLogEntity();
+        LimitOrderChangeLogEntity orderChangeLogEntity = new LimitOrderChangeLogEntity();
         orderChangeLogEntity.setPid(vo.getPid());
         orderChangeLogEntity.setStoreId(vo.getStoreId());
         orderChangeLogEntity.setBizId(vo.getBizId());

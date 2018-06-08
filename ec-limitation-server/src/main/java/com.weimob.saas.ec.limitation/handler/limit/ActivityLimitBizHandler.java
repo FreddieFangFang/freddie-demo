@@ -35,7 +35,8 @@ public class ActivityLimitBizHandler extends BaseHandler implements LimitBizHand
     @Override
     public void doLimitHandler(List<UpdateUserLimitVo> vos) {
         Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap = new HashMap<>();
-        groupingOrderActivityRequestVoList(LimitContext.getLimitBo().getOrderGoodsLimitMap(), orderGoodsQueryMap, vos);
+        Map<String, Integer> orderActivityValidMap = new HashMap();
+        groupingOrderActivityRequestVoList(LimitContext.getLimitBo().getOrderGoodsLimitMap(), orderGoodsQueryMap, vos, orderActivityValidMap);
 
         List<LimitInfoEntity> limitInfoEntityList = limitInfoDao.queryOrderLimitInfoList(orderGoodsQueryMap.get(LIMIT_PREFIX_ACTIVITY));
         if (CollectionUtils.isEmpty(limitInfoEntityList)) {
@@ -43,6 +44,11 @@ public class ActivityLimitBizHandler extends BaseHandler implements LimitBizHand
         }
 
         List<UserLimitEntity> userLimitEntityList = userLimitDao.queryUserLimitInfoList(vos);
+
+        validLimitation(limitInfoEntityList, null, userLimitEntityList,
+                null, null, orderActivityValidMap);
+
+        updateUserLimitRecord(LimitContext.getLimitBo().getOrderGoodsLimitMap());
 
     }
 }
