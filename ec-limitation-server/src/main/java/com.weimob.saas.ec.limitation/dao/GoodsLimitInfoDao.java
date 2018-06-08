@@ -2,6 +2,7 @@ package com.weimob.saas.ec.limitation.dao;
 
 import com.weimob.saas.ec.limitation.entity.GoodsLimitInfoEntity;
 import com.weimob.saas.ec.limitation.model.DeleteGoodsParam;
+import com.weimob.saas.ec.limitation.model.request.QueryGoodsLimitInfoRequestVo;
 import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
 
 import java.util.List;
@@ -20,4 +21,6 @@ public interface GoodsLimitInfoDao extends BaseDao<GoodsLimitInfoEntity> {
     void updateGoodsLimitInfoEntity(GoodsLimitInfoEntity goodsLimitInfoEntity);
 
     List<GoodsLimitInfoEntity> queryOrderGoodsLimitInfoList(List<UpdateUserLimitVo> updateUserLimitVoList);
+
+    GoodsLimitInfoEntity getGoodsLimitInfoEntity(QueryGoodsLimitInfoRequestVo requestVo);
 }

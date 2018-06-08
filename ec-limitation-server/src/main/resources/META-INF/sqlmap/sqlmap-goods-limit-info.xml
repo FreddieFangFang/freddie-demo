@@ -148,4 +148,30 @@
         </foreach>
         /*GoodsLimitInfoDao.queryOrderGoodsLimitInfoList*/
     </select>
+
+    <select id="getGoodsLimitInfoEntity"
+            resultMap="BaseResultMap" parameterType="com.weimob.saas.ec.limitation.model.request.QueryGoodsLimitInfoRequestVo">
+        select
+        goodslimitinfo.pid pid,
+        goodslimitinfo.store_id store_id,
+        goodslimitinfo.limit_id limit_id,
+        goodslimitinfo.limit_type limit_type,
+        goodslimitinfo.goods_id goods_id,
+        goodslimitinfo.limit_num limit_num,
+        goodslimitinfo.sold_num sold_num,
+        goodslimitinfo.version version
+        from
+        goods_limit_info as goodslimitinfo,
+        limit_info as limitinfo
+        where
+        limitinfo.limit_id=goodslimitinfo.limit_id
+        AND limitinfo.pid = #{pid}
+        and goodslimitinfo.store_id = #{storeId}
+        and goodslimitinfo.goods_id = #{goodsId}
+        and limitinfo.biz_id = #{bizId}
+        and limitinfo.biz_type = #{bizType}
+        and goodslimitinfo.is_deleted = 0
+        and limitinfo.is_deleted = 0
+        /*GoodsLimitInfoDao.getGoodsLimitInfoEntity*/
+    </select>
 </mapper>
