@@ -57,11 +57,50 @@ public class UserLimitUpdateExportService extends BaseExportService implements U
 
     @Override
     public SoaResponse<UpdateUserLimitResponseVo, LimitationErrorCode> deductUserLimit(DeductUserLimitRequestVo requestVo) {
-        return null;
+
+        SoaResponse<UpdateUserLimitResponseVo, LimitationErrorCode> soaResponse = new SoaResponse<>();
+        UpdateUserLimitResponseVo updateUserLimitResponseVo = null;
+
+        try {
+            LimitContext.setTicket(soaResponse.getMonitorTrackId());
+            updateUserLimitResponseVo = userLimitUpdateFacadeService.deductUserLimit(requestVo);
+            soaResponse.setResponseVo(updateUserLimitResponseVo);
+        } catch (BaseException baseException) {
+            LOGGER.error(" throw biz exception!, monitorTrackId:" + soaResponse.getMonitorTrackId(), baseException);
+            soaResponse.setProcessResult(false);
+            soaResponse.setReturnCode(baseException.getErrorCode());
+            soaResponse.setReturnMsg(baseException.getErrorMsg());
+        } catch (Throwable t) {
+            LOGGER.error(" throw system exception!, monitorTrackId:" + soaResponse.getMonitorTrackId(), t);
+            soaResponse.setProcessResult(false);
+            soaResponse.setReturnCode(CommonErrorCode.FAIL.getErrorCode());
+            soaResponse.setReturnMsg(CommonErrorCode.FAIL.getErrorMsg());
+        }
+
+        return soaResponse;
     }
 
     @Override
     public SoaResponse<ReverseUserLimitResponseVo, LimitationErrorCode> reverseUserLimit(ReverseUserLimitRequestVo requestVo) {
-        return null;
-    }
+
+        SoaResponse soaResponse = new SoaResponse<>();
+        ReverseUserLimitResponseVo reverseUserLimitResponseVo = null;
+
+        try {
+            LimitContext.setTicket(soaResponse.getMonitorTrackId());
+            reverseUserLimitResponseVo = userLimitUpdateFacadeService.reverseUserLimit(requestVo);
+            soaResponse.setResponseVo(reverseUserLimitResponseVo);
+        } catch (BaseException baseException) {
+            LOGGER.error(" throw biz exception!, monitorTrackId:" + soaResponse.getMonitorTrackId(), baseException);
+            soaResponse.setProcessResult(false);
+            soaResponse.setReturnCode(baseException.getErrorCode());
+            soaResponse.setReturnMsg(baseException.getErrorMsg());
+        } catch (Throwable t) {
+            LOGGER.error(" throw system exception!, monitorTrackId:" + soaResponse.getMonitorTrackId(), t);
+            soaResponse.setProcessResult(false);
+            soaResponse.setReturnCode(CommonErrorCode.FAIL.getErrorCode());
+            soaResponse.setReturnMsg(CommonErrorCode.FAIL.getErrorMsg());
+        }
+
+        return soaResponse;    }
 }

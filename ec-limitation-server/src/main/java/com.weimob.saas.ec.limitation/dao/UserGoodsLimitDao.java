@@ -6,6 +6,7 @@ import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
 import java.util.List;
 
 public interface UserGoodsLimitDao extends BaseDao<UserGoodsLimitEntity>{
+
     int deleteByPrimaryKey(Long id);
 
     UserGoodsLimitEntity selectByPrimaryKey(Long id);
@@ -15,4 +16,6 @@ public interface UserGoodsLimitDao extends BaseDao<UserGoodsLimitEntity>{
     List<UserGoodsLimitEntity> queryUserOrderGoodsLimitList(List<UpdateUserLimitVo> vos);
 
     UserGoodsLimitEntity getUserGoodsLimitEntity(UserGoodsLimitEntity goodsLimitEntity);
+
+    int deductUserGoodsLimit(UserGoodsLimitEntity goodsLimitEntity);
 }

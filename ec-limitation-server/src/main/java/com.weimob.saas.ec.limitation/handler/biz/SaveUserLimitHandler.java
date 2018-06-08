@@ -4,6 +4,7 @@ import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitServiceNameEnum;
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
+import com.weimob.saas.ec.limitation.dao.UserGoodsLimitDao;
 import com.weimob.saas.ec.limitation.entity.*;
 import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
@@ -19,6 +20,7 @@ import com.weimob.saas.ec.limitation.utils.VerifyParamUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -59,7 +61,6 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
             }
         }
     }
-
 
     @Override
     protected void doBatchBizLogic(List<UpdateUserLimitVo> vos) {
@@ -105,5 +106,31 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
     @Override
     protected LimitServiceNameEnum getServiceName() {
         return LimitServiceNameEnum.SAVE_USER_LIMIT;
+    }
+
+    @Override
+    public void doReverse(List<LimitOrderChangeLogEntity> logList) {
+
+        //1. 分组商品，统计wid下活动，商品的回滚数量
+        List<UserGoodsLimitEntity> userGoodsLimitEntityList = new ArrayList<>(logList.size());
+        UserGoodsLimitEntity userGoodsLimitEntity = null;
+
+        for (LimitOrderChangeLogEntity logEntity : logList) {
+            userGoodsLimitEntity = new UserGoodsLimitEntity();
+            userGoodsLimitEntity.setPid(logEntity.getPid());
+            userGoodsLimitEntity.setStoreId(logEntity.getStoreId());
+            userGoodsLimitEntity.setLimitId(logEntity.getLimitId());
+            userGoodsLimitEntity.setGoodsId(logEntity.getGoodsId());
+            userGoodsLimitEntity.setWid(logEntity.getWid());
+            userGoodsLimitEntity.setBuyNum(logEntity.getBuyNum());
+            userGoodsLimitEntityList.add(userGoodsLimitEntity);
+        }
+
+        //2. 回滚活动商品的下单记录
+        try {
+            limitationService.updateUserLimitRecord(userGoodsLimitEntityList, null, null);
+        } catch (Exception e) {
+            throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_GOODS_LIMIT_ERROR, e);
+        }
     }
 }

@@ -15,6 +15,15 @@ public class ReverseUserLimitResponseVo implements Serializable{
 
     private Boolean status;
 
+    public ReverseUserLimitResponseVo() {
+
+    }
+
+    public ReverseUserLimitResponseVo(Boolean status) {
+
+        this.status = status;
+    }
+
     public Boolean getStatus() {
         return status;
     }

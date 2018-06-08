@@ -29,7 +29,8 @@
     select 
     <include refid="Base_Column_List" />
     from limit_order_change_log
-    where id = #{id,jdbcType=BIGINT}
+    where refer_id = #{id,jdbcType=BIGINT}
+    and service_name = "DEDUCT_USER_LIMIT"
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from limit_order_change_log
@@ -271,4 +272,24 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  <update id="updateOrderChangeLogListToReversed" parameterType="java.lang.String">
+    UPDATE
+      limit_order_change_log
+    SET
+      status = 1
+    WHERE
+      ticket = #{ticket}
+      AND
+      is_deleted = 0
+  </update>
+  <select id="queryOrderChangeLogListByTicket" parameterType="java.lang.String" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM
+      limit_order_change_log
+    WHERE
+      ticket = #{ticket}
+      and status = 0
+    /*orderChangeLog.queryOrderChangeLogListByTicket*/
+  </select>
 </mapper>

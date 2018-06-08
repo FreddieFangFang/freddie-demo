@@ -132,4 +132,18 @@
         and is_deleted = 0
         /*UserGoodsLimitDao.getUserGoodsLimitEntity*/
     </select>
+
+    <update id="deductUserGoodsLimit" parameterType="com.weimob.saas.ec.limitation.entity.UserGoodsLimitEntity">
+        UPDATE user_goods_limit
+        SET
+        buy_num = buy_num - #{buyNum},
+        update_time = NOW()
+        WHERE
+        pid = #{pid}
+        AND store_id = #{storeId}
+        AND wid = #{wid}
+        AND limit_id = #{limitId}
+        AND goods_id = #{goodsId}
+        /*UserGoodsLimitDao.deduct*/
+    </update>
 </mapper>

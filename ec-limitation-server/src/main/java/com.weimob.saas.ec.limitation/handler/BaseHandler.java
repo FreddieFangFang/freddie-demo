@@ -7,11 +7,9 @@ import com.weimob.saas.ec.limitation.dao.LimitOrderChangeLogDao;
 import com.weimob.saas.ec.limitation.entity.*;
 import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
-import com.weimob.saas.ec.limitation.model.LimitBo;
 import com.weimob.saas.ec.limitation.model.LimitParam;
 import com.weimob.saas.ec.limitation.model.UserLimitBaseBo;
 import com.weimob.saas.ec.limitation.model.convertor.LimitConvertor;
-import com.weimob.saas.ec.limitation.model.request.SkuLimitInfo;
 import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
 import com.weimob.saas.ec.limitation.thread.SaveLimitChangeLogThread;
 import com.weimob.saas.ec.limitation.utils.LimitContext;
@@ -27,7 +25,7 @@ import java.util.*;
  * @description base
  * @date 2018/6/6 13:49
  */
-public abstract class BaseHandler<T extends Comparable<T>> implements Handeler<T> {
+public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T> {
 
     @Autowired
     protected LimitInfoDao limitInfoDao;

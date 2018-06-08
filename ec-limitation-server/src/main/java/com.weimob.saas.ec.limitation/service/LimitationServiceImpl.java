@@ -1,7 +1,17 @@
 package com.weimob.saas.ec.limitation.service;
 
-import com.weimob.saas.ec.limitation.dao.*;
-import com.weimob.saas.ec.limitation.entity.*;
+import com.weimob.saas.ec.limitation.dao.GoodsLimitInfoDao;
+import com.weimob.saas.ec.limitation.dao.LimitInfoDao;
+import com.weimob.saas.ec.limitation.dao.LimitStoreRelationshipDao;
+import com.weimob.saas.ec.limitation.dao.SkuLimitInfoDao;
+import com.weimob.saas.ec.limitation.dao.UserGoodsLimitDao;
+import com.weimob.saas.ec.limitation.dao.UserLimitDao;
+import com.weimob.saas.ec.limitation.entity.GoodsLimitInfoEntity;
+import com.weimob.saas.ec.limitation.entity.LimitInfoEntity;
+import com.weimob.saas.ec.limitation.entity.LimitStoreRelationshipEntity;
+import com.weimob.saas.ec.limitation.entity.SkuLimitInfoEntity;
+import com.weimob.saas.ec.limitation.entity.UserGoodsLimitEntity;
+import com.weimob.saas.ec.limitation.entity.UserLimitEntity;
 import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.model.DeleteGoodsParam;
@@ -10,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -222,5 +231,59 @@ public class LimitationServiceImpl {
             }
         }
 
+    }
+
+    /**
+     * 修改限购记录
+     *
+     * @scenes 取消下单
+     * @author Pengqin ZHOU
+     * @date 2018/6/8
+     * @param goodsLimitEntityList
+     * @param activityLimitEntityList
+     * @param activityGoodsSoldEntityList
+     */
+    public void updateUserLimitRecord(List<UserGoodsLimitEntity> goodsLimitEntityList, List<UserLimitEntity> activityLimitEntityList,
+                                      List<SkuLimitInfoEntity> activityGoodsSoldEntityList) {
+
+        Integer updateResult = 0;
+        if (!CollectionUtils.isEmpty(goodsLimitEntityList)) {
+            for (UserGoodsLimitEntity goodsLimitEntity : goodsLimitEntityList) {
+                try {
+                    updateResult = userGoodsLimitDao.deductUserGoodsLimit(goodsLimitEntity);
+                } catch (Exception e) {
+                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_GOODS_LIMIT_ERROR, e);
+                }
+                if (updateResult.equals(0)) {
+                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_GOODS_LIMIT_ERROR);
+                }
+            }
+        }
+
+        if (!CollectionUtils.isEmpty(activityLimitEntityList)) {
+            for (UserLimitEntity activityLimitEntity : activityLimitEntityList) {
+                try {
+                    // TODO
+                } catch (Exception e) {
+                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_LIMIT_ERROR, e);
+                }
+                if (updateResult.equals(0)) {
+                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_LIMIT_ERROR);
+                }
+            }
+        }
+
+        if (!CollectionUtils.isEmpty(activityGoodsSoldEntityList)) {
+            for (SkuLimitInfoEntity activitySoldEntity : activityGoodsSoldEntityList) {
+                try {
+                    // TODO
+                } catch (Exception e) {
+                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_SKU_LIMIT_ERROR, e);
+                }
+                if (updateResult == 0) {
+                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_SKU_LIMIT_ERROR);
+                }
+            }
+        }
     }
 }
