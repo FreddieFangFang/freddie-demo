@@ -11,10 +11,12 @@ import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.model.LimitParam;
 import com.weimob.saas.ec.limitation.model.request.GoodsLimitInfoListRequestVo;
+import com.weimob.saas.ec.limitation.model.request.QueryActivityLimitInfoRequestVo;
 import com.weimob.saas.ec.limitation.model.request.QueryGoodsLimitInfoListVo;
 import com.weimob.saas.ec.limitation.model.request.QueryGoodsLimitInfoRequestVo;
 import com.weimob.saas.ec.limitation.model.response.GoodsLimitInfoListResponseVo;
 import com.weimob.saas.ec.limitation.model.response.GoodsLimitInfoListVo;
+import com.weimob.saas.ec.limitation.model.response.QueryActivityLimitInfoResponseVo;
 import com.weimob.saas.ec.limitation.model.response.QueryGoodsLimitInfoResponseVo;
 import com.weimob.saas.ec.limitation.service.LimitationQueryBizService;
 import com.weimob.saas.ec.limitation.utils.MapKeyUtil;
@@ -105,6 +107,18 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         responseVo.setGoodsId(requestVo.getGoodsId());
         responseVo.setStoreId(requestVo.getStoreId());
         responseVo.setGoodsLimitNum(goodsLimitInfoEntity.getLimitNum());
+        return responseVo;
+    }
+
+    @Override
+    public QueryActivityLimitInfoResponseVo queryActivityLimitInfo(QueryActivityLimitInfoRequestVo requestVo) {
+        QueryActivityLimitInfoResponseVo responseVo = new QueryActivityLimitInfoResponseVo();
+        LimitInfoEntity infoEntity = limitInfoDao.selectByLimitParam(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
+        responseVo.setPid(requestVo.getPid());
+        responseVo.setStoreId(requestVo.getStoreId());
+        responseVo.setBizId(requestVo.getBizId());
+        responseVo.setBizType(requestVo.getBizType());
+        responseVo.setActivityLimitNum(infoEntity.getLimitNum());
         return responseVo;
     }
 

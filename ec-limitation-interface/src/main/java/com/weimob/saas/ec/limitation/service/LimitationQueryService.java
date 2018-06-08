@@ -3,8 +3,10 @@ package com.weimob.saas.ec.limitation.service;
 import com.weimob.saas.ec.limitation.common.LimitationCommonErrorVo;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.model.request.GoodsLimitInfoListRequestVo;
+import com.weimob.saas.ec.limitation.model.request.QueryActivityLimitInfoRequestVo;
 import com.weimob.saas.ec.limitation.model.request.QueryGoodsLimitInfoRequestVo;
 import com.weimob.saas.ec.limitation.model.response.GoodsLimitInfoListResponseVo;
+import com.weimob.saas.ec.limitation.model.response.QueryActivityLimitInfoResponseVo;
 import com.weimob.saas.ec.limitation.model.response.QueryGoodsLimitInfoResponseVo;
 import com.weimob.soa.common.response.SoaResponse;
 
@@ -34,8 +36,20 @@ public interface LimitationQueryService {
      * @author lujialin
      * @date 2018/6/8 14:32
      * @useScene
-     * @parameterExample {		"bizId":2212122,		"bizType":10,		"goodsId":32700928,		"pid":1000,		"storeId":200,	}
+     * @parameterExample {		"bizId":2212122,		"bizType":10,		"goodsId":32700928,		"pid":1000,		"storeId":200	}
      * @returnExample {	"errT":null,	"globalTicket":null,	"logBizData":null,	"monitorTrackId":"be6beca8-3350-4f67-8c63-0fcc29b0ae9a",	"processResult":true,	"responseVo":{		"goodsId":32700928,		"goodsLimitNum":12,		"pid":1000,		"skuLimitInfoList":null,		"storeId":200	},	"returnCode":"000000",	"returnMsg":"处理成功",	"successForMornitor":true,	"timestamp":"1528439593540"}
      */
     SoaResponse<QueryGoodsLimitInfoResponseVo, LimitationErrorCode> queryGoodsLimitInfo(QueryGoodsLimitInfoRequestVo requestVo);
+
+    /**
+     * @param
+     * @return
+     * @title B端查询活动限购数量
+     * @author lujialin
+     * @date 2018/6/8 14:50
+     * @useScene
+     * @parameterExample {		"bizId":2212122,		"bizType":10,		"pid":1000,		"storeId":200	}
+     * @returnExample {	"errT":null,	"globalTicket":null,	"logBizData":null,	"monitorTrackId":"7116bc05-54e7-4f92-ba6d-07386f4ccc78",	"processResult":true,	"responseVo":{		"activityLimitNum":3,		"appid":null,		"bizId":2212122,		"bizType":10,		"invokeByOpenApi":false,		"operationSource":null,		"originalRefer":null,		"pid":1000,		"refer":null,		"sceneType":null,		"siteId":null,		"storeId":200,		"wechatTemplateId":null,		"wid":null	},	"returnCode":"000000",	"returnMsg":"处理成功",	"successForMornitor":true,	"timestamp":"1528441104934"}
+     */
+    SoaResponse<QueryActivityLimitInfoResponseVo, LimitationErrorCode> queryActivityLimitInfo(QueryActivityLimitInfoRequestVo requestVo);
 }

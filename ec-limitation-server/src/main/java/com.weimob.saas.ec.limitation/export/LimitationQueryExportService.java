@@ -5,8 +5,10 @@ import com.weimob.saas.ec.limitation.common.LimitationCommonErrorVo;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.facade.LimitationQueryFacadeService;
 import com.weimob.saas.ec.limitation.model.request.GoodsLimitInfoListRequestVo;
+import com.weimob.saas.ec.limitation.model.request.QueryActivityLimitInfoRequestVo;
 import com.weimob.saas.ec.limitation.model.request.QueryGoodsLimitInfoRequestVo;
 import com.weimob.saas.ec.limitation.model.response.GoodsLimitInfoListResponseVo;
+import com.weimob.saas.ec.limitation.model.response.QueryActivityLimitInfoResponseVo;
 import com.weimob.saas.ec.limitation.model.response.QueryGoodsLimitInfoResponseVo;
 import com.weimob.saas.ec.limitation.service.LimitationQueryService;
 import com.weimob.soa.common.response.SoaResponse;
@@ -32,5 +34,10 @@ public class LimitationQueryExportService extends BaseExportService implements L
     @Override
     public SoaResponse<QueryGoodsLimitInfoResponseVo, LimitationErrorCode> queryGoodsLimitInfo(QueryGoodsLimitInfoRequestVo requestVo) {
         return process(limitationQueryFacadeService, "queryGoodsLimitInfo", requestVo);
+    }
+
+    @Override
+    public SoaResponse<QueryActivityLimitInfoResponseVo, LimitationErrorCode> queryActivityLimitInfo(QueryActivityLimitInfoRequestVo requestVo) {
+        return process(limitationQueryFacadeService, "queryActivityLimitInfo", requestVo);
     }
 }
