@@ -93,7 +93,38 @@
       AND limit_id = #{limitId}
       AND goods_id = #{goodsId}
       AND sku_id = #{skuId}
-      AND threshold >= sold_num + #{soldNum}
+      AND limit_num >= sold_num + #{soldNum}
       /*SkuLimitInfoDao.update*/
     </update>
+
+    <select id="queryOrderSkuLimitInfoList" resultMap="BaseResultMap" parameterType="java.util.List">
+        select
+        skulimtinfo.pid pid,
+        skulimtinfo.store_id store_id,
+        skulimtinfo.limit_id limit_id,
+        skulimtinfo.limit_type limit_type,
+        skulimtinfo.goods_id goods_id,
+        skulimtinfo.sku_id sku_id,
+        skulimtinfo.limit_num limit_num,
+        skulimtinfo.sold_num sold_num,
+        skulimtinfo.version version
+        from
+        sku_limit_info as skulimtinfo,
+        limit_info as limitinfo
+        where
+        limitinfo.limit_id=skulimtinfo.limit_id
+        AND
+        <foreach item="item" index="index" collection="list"
+                 separator="or">
+            (
+            skulimtinfo.pid = #{item.pid}
+            and skulimtinfo.store_id = #{item.storeId}
+            and skulimtinfo.goods_id = #{item.goodsId}
+            and skulimtinfo.sku_id =#{item.skuId}
+            and skulimtinfo.is_deleted = 0
+            and limitinfo.is_deleted = 0
+            )
+        </foreach>
+        /*SkuLimitInfoDao.queryOrderSkuLimitInfoList*/
+    </select>
 </mapper>
