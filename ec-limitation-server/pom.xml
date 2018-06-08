@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.weimob.saas</groupId>
     <artifactId>ec-limitation-service</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
   </parent>
   <artifactId>ec-limitation-server</artifactId>
   <packaging>war</packaging>
