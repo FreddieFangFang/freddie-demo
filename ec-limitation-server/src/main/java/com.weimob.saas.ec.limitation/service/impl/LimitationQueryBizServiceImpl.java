@@ -11,9 +11,13 @@ import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.model.LimitParam;
 import com.weimob.saas.ec.limitation.model.request.GoodsLimitInfoListRequestVo;
+import com.weimob.saas.ec.limitation.model.request.QueryActivityLimitInfoRequestVo;
 import com.weimob.saas.ec.limitation.model.request.QueryGoodsLimitInfoListVo;
+import com.weimob.saas.ec.limitation.model.request.QueryGoodsLimitInfoRequestVo;
 import com.weimob.saas.ec.limitation.model.response.GoodsLimitInfoListResponseVo;
 import com.weimob.saas.ec.limitation.model.response.GoodsLimitInfoListVo;
+import com.weimob.saas.ec.limitation.model.response.QueryActivityLimitInfoResponseVo;
+import com.weimob.saas.ec.limitation.model.response.QueryGoodsLimitInfoResponseVo;
 import com.weimob.saas.ec.limitation.service.LimitationQueryBizService;
 import com.weimob.saas.ec.limitation.utils.MapKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,6 +97,29 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
 
 
         return buildGoodsLimitInfoListResponseVo(requestVo, limitIdMap, goodsLimitNumMap, userGoodsLimitNumMap);
+    }
+
+    @Override
+    public QueryGoodsLimitInfoResponseVo queryGoodsLimitInfo(QueryGoodsLimitInfoRequestVo requestVo) {
+        QueryGoodsLimitInfoResponseVo responseVo = new QueryGoodsLimitInfoResponseVo();
+        GoodsLimitInfoEntity goodsLimitInfoEntity = goodsLimitInfoDao.getGoodsLimitInfoEntity(requestVo);
+        responseVo.setPid(requestVo.getPid());
+        responseVo.setGoodsId(requestVo.getGoodsId());
+        responseVo.setStoreId(requestVo.getStoreId());
+        responseVo.setGoodsLimitNum(goodsLimitInfoEntity.getLimitNum());
+        return responseVo;
+    }
+
+    @Override
+    public QueryActivityLimitInfoResponseVo queryActivityLimitInfo(QueryActivityLimitInfoRequestVo requestVo) {
+        QueryActivityLimitInfoResponseVo responseVo = new QueryActivityLimitInfoResponseVo();
+        LimitInfoEntity infoEntity = limitInfoDao.selectByLimitParam(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
+        responseVo.setPid(requestVo.getPid());
+        responseVo.setStoreId(requestVo.getStoreId());
+        responseVo.setBizId(requestVo.getBizId());
+        responseVo.setBizType(requestVo.getBizType());
+        responseVo.setActivityLimitNum(infoEntity.getLimitNum());
+        return responseVo;
     }
 
     private GoodsLimitInfoListResponseVo buildGoodsLimitInfoListResponseVo(GoodsLimitInfoListRequestVo requestVo, Map<String, Long> limitIdMap, Map<String, Integer> goodsLimitNumMap, Map<String, Integer> userGoodsLimitNumMap) {
