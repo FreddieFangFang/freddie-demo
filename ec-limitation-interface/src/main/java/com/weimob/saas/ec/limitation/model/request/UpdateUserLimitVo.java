@@ -1,6 +1,7 @@
 package com.weimob.saas.ec.limitation.model.request;
 
 import com.weimob.saas.ec.common.request.BaseRequest;
+import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
 
 /**
  * @author lujialin
@@ -10,12 +11,12 @@ import com.weimob.saas.ec.common.request.BaseRequest;
 public class UpdateUserLimitVo extends BaseRequest implements Comparable<UpdateUserLimitVo> {
 
     /**
-     * 活动id、商品id
+     * 活动限购的活动id、商品限购的goodsid
      */
     private Long bizId;
 
     /**
-     * 活动类型、商品限购类型
+     * 活动类型、商品限购类型，积分商城使用枚举LimitBizTypeEnum.BIZ_TYPE_POINT
      */
     private Integer bizType;
 
@@ -25,7 +26,7 @@ public class UpdateUserLimitVo extends BaseRequest implements Comparable<UpdateU
     private Long goodsId;
 
     /**
-     * skuid
+     * skuid，商品限购不需要传skuid，活动限购到sku级别的需要传
      */
     private Long skuId;
 

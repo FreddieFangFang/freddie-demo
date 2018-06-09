@@ -9,7 +9,9 @@ import java.io.Serializable;
  */
 public class ReverseUserLimitRequestVo implements Serializable {
     private static final long serialVersionUID = 2540649098549215112L;
-    
+    /**
+     * 限购回滚凭证
+     */
     private String ticket;
 
     public String getTicket() {
