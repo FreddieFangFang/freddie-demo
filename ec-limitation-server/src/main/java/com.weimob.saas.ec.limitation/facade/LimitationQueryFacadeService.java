@@ -1,13 +1,10 @@
 package com.weimob.saas.ec.limitation.facade;
 
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
-import com.weimob.saas.ec.limitation.model.request.GoodsLimitInfoListRequestVo;
-import com.weimob.saas.ec.limitation.model.request.QueryActivityLimitInfoRequestVo;
-import com.weimob.saas.ec.limitation.model.request.QueryGoodsLimitInfoListVo;
-import com.weimob.saas.ec.limitation.model.request.QueryGoodsLimitInfoRequestVo;
+import com.weimob.saas.ec.limitation.model.request.*;
 import com.weimob.saas.ec.limitation.model.response.GoodsLimitInfoListResponseVo;
 import com.weimob.saas.ec.limitation.model.response.QueryActivityLimitInfoResponseVo;
-import com.weimob.saas.ec.limitation.model.response.QueryGoodsLimitInfoResponseVo;
+import com.weimob.saas.ec.limitation.model.response.QueryGoodsLimitNumListResponseVo;
 import com.weimob.saas.ec.limitation.service.LimitationQueryBizService;
 import com.weimob.saas.ec.limitation.utils.VerifyParamUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +28,10 @@ public class LimitationQueryFacadeService {
         return limitationQueryBizService.queryGoodsLimitInfoList(requestVo);
     }
 
-    public QueryGoodsLimitInfoResponseVo queryGoodsLimitInfo(QueryGoodsLimitInfoRequestVo requestVo) {
+    public QueryGoodsLimitNumListResponseVo queryGoodsLimitNumList(QueryGoodsLimitNumRequestVo requestVo) {
 
         validateQueryGoodsLimitInfoRequestVo(requestVo);
-        return limitationQueryBizService.queryGoodsLimitInfo(requestVo);
+        return limitationQueryBizService.queryGoodsLimitNumList(requestVo);
     }
 
     public QueryActivityLimitInfoResponseVo queryActivityLimitInfo(QueryActivityLimitInfoRequestVo requestVo) {
@@ -50,12 +47,15 @@ public class LimitationQueryFacadeService {
         VerifyParamUtils.checkParam(LimitationErrorCode.BIZTYPE_IS_NULL, requestVo.getBizType());
     }
 
-    private void validateQueryGoodsLimitInfoRequestVo(QueryGoodsLimitInfoRequestVo requestVo) {
-        VerifyParamUtils.checkParam(LimitationErrorCode.PID_IS_NULL, requestVo.getPid());
-        VerifyParamUtils.checkParam(LimitationErrorCode.STORE_IS_NULL, requestVo.getStoreId());
-        VerifyParamUtils.checkParam(LimitationErrorCode.BIZID_IS_NULL, requestVo.getBizId());
-        VerifyParamUtils.checkParam(LimitationErrorCode.BIZTYPE_IS_NULL, requestVo.getBizType());
-        VerifyParamUtils.checkParam(LimitationErrorCode.GOODSID_IS_NULL, requestVo.getGoodsId());
+    private void validateQueryGoodsLimitInfoRequestVo(QueryGoodsLimitNumRequestVo requestVo) {
+        VerifyParamUtils.checkListParam(LimitationErrorCode.REQUEST_PARAM_IS_NULL, requestVo.getQueryGoodslimitNumVoList());
+        for (QueryGoodslimitNumListVo vo : requestVo.getQueryGoodslimitNumVoList()) {
+            VerifyParamUtils.checkParam(LimitationErrorCode.PID_IS_NULL, vo.getPid());
+            VerifyParamUtils.checkParam(LimitationErrorCode.STORE_IS_NULL, vo.getStoreId());
+            VerifyParamUtils.checkParam(LimitationErrorCode.BIZID_IS_NULL, vo.getBizId());
+            VerifyParamUtils.checkParam(LimitationErrorCode.BIZTYPE_IS_NULL, vo.getBizType());
+            VerifyParamUtils.checkParam(LimitationErrorCode.GOODSID_IS_NULL, vo.getGoodsId());
+        }
     }
 
     private void validateRequestParam(GoodsLimitInfoListRequestVo requestVo) {

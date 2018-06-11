@@ -4,10 +4,10 @@ import com.weimob.saas.ec.common.request.BaseRequest;
 
 /**
  * @author lujialin
- * @description 查询商品限购信息入参
- * @date 2018/6/8 14:15
+ * @description 批量查询商品限购数量
+ * @date 2018/6/11 15:42
  */
-public class QueryGoodsLimitInfoRequestVo extends BaseRequest {
+public class QueryGoodslimitNumListVo extends BaseRequest {
 
     private Long goodsId;
 

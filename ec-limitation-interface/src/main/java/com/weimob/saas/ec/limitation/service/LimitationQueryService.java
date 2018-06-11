@@ -4,10 +4,10 @@ import com.weimob.saas.ec.limitation.common.LimitationCommonErrorVo;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.model.request.GoodsLimitInfoListRequestVo;
 import com.weimob.saas.ec.limitation.model.request.QueryActivityLimitInfoRequestVo;
-import com.weimob.saas.ec.limitation.model.request.QueryGoodsLimitInfoRequestVo;
+import com.weimob.saas.ec.limitation.model.request.QueryGoodsLimitNumRequestVo;
 import com.weimob.saas.ec.limitation.model.response.GoodsLimitInfoListResponseVo;
 import com.weimob.saas.ec.limitation.model.response.QueryActivityLimitInfoResponseVo;
-import com.weimob.saas.ec.limitation.model.response.QueryGoodsLimitInfoResponseVo;
+import com.weimob.saas.ec.limitation.model.response.QueryGoodsLimitNumListResponseVo;
 import com.weimob.soa.common.response.SoaResponse;
 
 /**
@@ -39,7 +39,7 @@ public interface LimitationQueryService {
      * @parameterExample {		"bizId":2212122,		"bizType":10,		"goodsId":32700928,		"pid":1000,		"storeId":200	}
      * @returnExample {	"errT":null,	"globalTicket":null,	"logBizData":null,	"monitorTrackId":"be6beca8-3350-4f67-8c63-0fcc29b0ae9a",	"processResult":true,	"responseVo":{		"goodsId":32700928,		"goodsLimitNum":12,		"pid":1000,		"skuLimitInfoList":null,		"storeId":200	},	"returnCode":"000000",	"returnMsg":"处理成功",	"successForMornitor":true,	"timestamp":"1528439593540"}
      */
-    SoaResponse<QueryGoodsLimitInfoResponseVo, LimitationErrorCode> queryGoodsLimitInfo(QueryGoodsLimitInfoRequestVo requestVo);
+    SoaResponse<QueryGoodsLimitNumListResponseVo, LimitationErrorCode> queryGoodsLimitNumList(QueryGoodsLimitNumRequestVo requestVo);
 
     /**
      * @param

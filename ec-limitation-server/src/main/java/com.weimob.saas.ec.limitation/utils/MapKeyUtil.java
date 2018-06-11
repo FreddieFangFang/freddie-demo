@@ -18,4 +18,8 @@ public class MapKeyUtil {
     public static String buildUserGoodsLimitNumMap(Long pid, Long storeId, Long wid, Long limitId, Long goodsId) {
         return pid + "_" + storeId + "_" + wid + "_" + limitId + "_" + goodsId;
     }
+
+    public static String buildPidStoreIdGoodsId(Long pid, Long storeId, Long goodsId) {
+        return pid + "_" + storeId + "_" + goodsId;
+    }
 }

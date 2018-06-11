@@ -7,12 +7,11 @@ import java.util.List;
 
 /**
  * @author lujialin
- * @description 查询商品限购信息出参
- * @date 2018/6/8 14:02
+ * @description 查询商品限购出参
+ * @date 2018/6/11 15:46
  */
-public class QueryGoodsLimitInfoResponseVo implements Serializable {
-    private static final long serialVersionUID = -6945843800219764729L;
-
+public class QueryGoodsLimitNumVo implements Serializable {
+    private static final long serialVersionUID = -7855186589695354286L;
     /**
      * 商户id
      */

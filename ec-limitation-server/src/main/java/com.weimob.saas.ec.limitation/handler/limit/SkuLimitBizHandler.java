@@ -41,7 +41,7 @@ public class SkuLimitBizHandler extends BaseHandler implements LimitBizHandler {
         /** 3 校验商品是否超出限购 **/
         validLimitation(null, null,
                 null, null, skuLimitInfoList, orderSkuValidMap);
-        /** 5 封装更新数据库入参 **/
+        /** 4 封装更新数据库入参 **/
         updateUserLimitRecord(LimitContext.getLimitBo().getOrderGoodsLimitMap());
 
     }
