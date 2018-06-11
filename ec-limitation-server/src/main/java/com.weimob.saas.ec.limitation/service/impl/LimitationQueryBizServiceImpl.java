@@ -96,8 +96,8 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         QueryGoodsLimitNumListResponseVo responseVo = new QueryGoodsLimitNumListResponseVo();
         List<QueryGoodsLimitNumVo> queryGoodsLimitNumList = new ArrayList<>();
         List<GoodsLimitInfoEntity> goodsLimitInfoEntityList = goodsLimitInfoDao.queryGoodsLimitNumList(requestVo.getQueryGoodslimitNumVoList());
-        if (CollectionUtils.isEmpty(goodsLimitInfoEntityList) || !Objects.equals(goodsLimitInfoEntityList.size(), requestVo.getQueryGoodslimitNumVoList().size())) {
-            throw new LimitationBizException(LimitationErrorCode.LIMIT_GOODS_IS_NULL);
+        if (CollectionUtils.isEmpty(goodsLimitInfoEntityList)) {
+            return responseVo;
         }
         Map<String, Integer> goodsLimitNumMap = buildGoodsLimitMap(goodsLimitInfoEntityList);
         for (QueryGoodsLimitNumListVo request : requestVo.getQueryGoodslimitNumVoList()) {
