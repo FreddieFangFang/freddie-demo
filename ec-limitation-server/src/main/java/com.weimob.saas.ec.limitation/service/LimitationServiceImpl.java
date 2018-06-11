@@ -182,7 +182,7 @@ public class LimitationServiceImpl {
                                     List<SkuLimitInfoEntity> activityGoodsSoldEntityList) {
 
         Long updateResult = 0l;
-        if (!org.springframework.util.CollectionUtils.isEmpty(goodsLimitEntityList)) {
+        if (CollectionUtils.isNotEmpty(goodsLimitEntityList)) {
             for (UserGoodsLimitEntity goodsLimitEntity : goodsLimitEntityList) {
                 try {
                     UserGoodsLimitEntity oldUserGoodsLimitEntity = userGoodsLimitDao.getUserGoodsLimitEntity(goodsLimitEntity);
@@ -200,7 +200,7 @@ public class LimitationServiceImpl {
             }
         }
 
-        if (!org.springframework.util.CollectionUtils.isEmpty(activityLimitEntityList)) {
+        if (CollectionUtils.isNotEmpty(activityLimitEntityList)) {
             for (UserLimitEntity activityLimitEntity : activityLimitEntityList) {
                 try {
                     UserLimitEntity oldUserLimitEntity = userLimitDao.getUserLimitEntity(activityLimitEntity);
@@ -218,7 +218,7 @@ public class LimitationServiceImpl {
             }
         }
 
-        if (!org.springframework.util.CollectionUtils.isEmpty(activityGoodsSoldEntityList)) {
+        if (CollectionUtils.isNotEmpty(activityGoodsSoldEntityList)) {
             for (SkuLimitInfoEntity activitySoldEntity : activityGoodsSoldEntityList) {
                 try {
                     updateResult = skuLimitInfoDao.update(activitySoldEntity);
@@ -236,12 +236,12 @@ public class LimitationServiceImpl {
     /**
      * 修改限购记录
      *
-     * @scenes 取消下单
-     * @author Pengqin ZHOU
-     * @date 2018/6/8
      * @param goodsLimitEntityList
      * @param activityLimitEntityList
      * @param activityGoodsSoldEntityList
+     * @scenes 取消下单
+     * @author Pengqin ZHOU
+     * @date 2018/6/8
      */
     public void updateUserLimitRecord(List<UserGoodsLimitEntity> goodsLimitEntityList, List<UserLimitEntity> activityLimitEntityList,
                                       List<SkuLimitInfoEntity> activityGoodsSoldEntityList) {

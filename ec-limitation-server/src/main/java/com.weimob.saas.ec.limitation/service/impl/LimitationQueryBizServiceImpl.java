@@ -14,13 +14,11 @@ import com.weimob.saas.ec.limitation.model.request.*;
 import com.weimob.saas.ec.limitation.model.response.*;
 import com.weimob.saas.ec.limitation.service.LimitationQueryBizService;
 import com.weimob.saas.ec.limitation.utils.MapKeyUtil;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author lujialin
@@ -98,6 +96,9 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         QueryGoodsLimitNumListResponseVo responseVo = new QueryGoodsLimitNumListResponseVo();
         List<QueryGoodsLimitNumVo> queryGoodsLimitNumList = new ArrayList<>();
         List<GoodsLimitInfoEntity> goodsLimitInfoEntityList = goodsLimitInfoDao.queryGoodsLimitNumList(requestVo.getQueryGoodslimitNumVoList());
+        if (CollectionUtils.isEmpty(goodsLimitInfoEntityList) || !Objects.equals(goodsLimitInfoEntityList.size(), requestVo.getQueryGoodslimitNumVoList().size())) {
+            throw new LimitationBizException(LimitationErrorCode.LIMIT_GOODS_IS_NULL);
+        }
         Map<String, Integer> goodsLimitNumMap = buildGoodsLimitMap(goodsLimitInfoEntityList);
         for (QueryGoodsLimitNumListVo request : requestVo.getQueryGoodslimitNumVoList()) {
             QueryGoodsLimitNumVo queryGoodsLimitNumVo = new QueryGoodsLimitNumVo();
