@@ -49,7 +49,7 @@ public class LimitationQueryFacadeService {
 
     private void validateQueryGoodsLimitInfoRequestVo(QueryGoodsLimitNumRequestVo requestVo) {
         VerifyParamUtils.checkListParam(LimitationErrorCode.REQUEST_PARAM_IS_NULL, requestVo.getQueryGoodslimitNumVoList());
-        for (QueryGoodslimitNumListVo vo : requestVo.getQueryGoodslimitNumVoList()) {
+        for (QueryGoodsLimitNumListVo vo : requestVo.getQueryGoodslimitNumVoList()) {
             VerifyParamUtils.checkParam(LimitationErrorCode.PID_IS_NULL, vo.getPid());
             VerifyParamUtils.checkParam(LimitationErrorCode.STORE_IS_NULL, vo.getStoreId());
             VerifyParamUtils.checkParam(LimitationErrorCode.BIZID_IS_NULL, vo.getBizId());

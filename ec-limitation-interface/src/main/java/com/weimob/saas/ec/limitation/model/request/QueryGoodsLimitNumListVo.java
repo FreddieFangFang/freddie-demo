@@ -7,7 +7,7 @@ import com.weimob.saas.ec.common.request.BaseRequest;
  * @description 批量查询商品限购数量
  * @date 2018/6/11 15:42
  */
-public class QueryGoodslimitNumListVo extends BaseRequest {
+public class QueryGoodsLimitNumListVo extends BaseRequest {
 
     private Long goodsId;
 

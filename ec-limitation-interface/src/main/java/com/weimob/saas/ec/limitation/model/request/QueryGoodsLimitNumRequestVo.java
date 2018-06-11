@@ -10,13 +10,13 @@ import java.util.List;
  */
 public class QueryGoodsLimitNumRequestVo implements Serializable {
 
-    private List<QueryGoodslimitNumListVo> queryGoodslimitNumVoList;
+    private List<QueryGoodsLimitNumListVo> queryGoodslimitNumVoList;
 
-    public List<QueryGoodslimitNumListVo> getQueryGoodslimitNumVoList() {
+    public List<QueryGoodsLimitNumListVo> getQueryGoodslimitNumVoList() {
         return queryGoodslimitNumVoList;
     }
 
-    public void setQueryGoodslimitNumVoList(List<QueryGoodslimitNumListVo> queryGoodslimitNumVoList) {
+    public void setQueryGoodslimitNumVoList(List<QueryGoodsLimitNumListVo> queryGoodslimitNumVoList) {
         this.queryGoodslimitNumVoList = queryGoodslimitNumVoList;
     }
 }
