@@ -29,8 +29,9 @@
     <select id="queryGoodsLimitInfoList"
             resultMap="BaseResultMap" parameterType="java.util.List">
         select
-        <include refid="Base_Column_List"/>
-        from goods_limit_info
+            <include refid="Base_Column_List"/>
+        from
+            goods_limit_info
         where
         <foreach item="item" index="index" collection="list"
                  separator="or">
@@ -48,7 +49,8 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
     <insert id="insert" parameterType="com.weimob.saas.ec.limitation.entity.GoodsLimitInfoEntity">
-    insert into goods_limit_info
+    insert into
+    goods_limit_info
     (
     pid,
     store_id,
@@ -80,36 +82,44 @@
   </insert>
 
     <update id="updateGoodsLimitInfoEntity" parameterType="com.weimob.saas.ec.limitation.entity.GoodsLimitInfoEntity">
-      UPDATE goods_limit_info
+      UPDATE
+          goods_limit_info
       set limit_num=#{limitNum},
           limit_type=#{limitType},
           update_time=NOW()
-      WHERE pid = #{pid}
-      AND   limit_id=#{limitId}
-      AND   goods_id=#{goodsId}
-      AND   store_id=#{storeId}
-      AND   is_deleted = 0
+      WHERE
+          pid = #{pid}
+          AND   limit_id=#{limitId}
+          AND   goods_id=#{goodsId}
+          AND   store_id=#{storeId}
+          AND   is_deleted = 0
       /*GoodsLimitInfoDao.updateGoodsLimitInfoEntity*/
     </update>
 
     <update id="deleteLimit" parameterType="com.weimob.saas.ec.limitation.model.DeleteGoodsParam">
-    update goods_limit_info
-    set is_deleted = 1,
-    update_time = NOW()
-    where pid = #{pid}
-    and   limit_id=#{limitId}
+    update
+        goods_limit_info
+    set
+        is_deleted = 1,
+        update_time = NOW()
+    where
+        pid = #{pid}
+        and   limit_id=#{limitId}
     /*GoodsLimitInfoDao.deleteLimit*/
   </update>
 
 
     <update id="deleteGoodsLimit" parameterType="com.weimob.saas.ec.limitation.model.DeleteGoodsParam">
-        update goods_limit_info
-        set is_deleted = 1,
-        update_time = NOW()
-        where pid = #{pid}
-        and limit_id=#{limitId}
-        AND
-        goods_id IN
+        update
+            goods_limit_info
+        set
+            is_deleted = 1,
+            update_time = NOW()
+        where
+            pid = #{pid}
+            and limit_id=#{limitId}
+            AND
+            goods_id IN
         <foreach item="id" index="index" collection="goodsIdList"
                  open="(" separator="," close=")">
             #{id}
@@ -120,19 +130,19 @@
     <select id="queryOrderGoodsLimitInfoList"
             resultMap="BaseResultMap" parameterType="java.util.List">
         select
-        goodslimitinfo.pid pid,
-        goodslimitinfo.store_id store_id,
-        goodslimitinfo.limit_id limit_id,
-        goodslimitinfo.limit_type limit_type,
-        goodslimitinfo.goods_id goods_id,
-        goodslimitinfo.limit_num limit_num,
-        goodslimitinfo.sold_num sold_num,
-        goodslimitinfo.version version
+            goodslimitinfo.pid pid,
+            goodslimitinfo.store_id store_id,
+            goodslimitinfo.limit_id limit_id,
+            goodslimitinfo.limit_type limit_type,
+            goodslimitinfo.goods_id goods_id,
+            goodslimitinfo.limit_num limit_num,
+            goodslimitinfo.sold_num sold_num,
+            goodslimitinfo.version version
         from
-        goods_limit_info as goodslimitinfo,
-        limit_info as limitinfo
+            goods_limit_info as goodslimitinfo,
+            limit_info as limitinfo
         where
-        limitinfo.limit_id=goodslimitinfo.limit_id
+            limitinfo.limit_id=goodslimitinfo.limit_id
         AND
         <foreach item="item" index="index" collection="list"
                  separator="or">
@@ -152,26 +162,26 @@
     <select id="getGoodsLimitInfoEntity"
             resultMap="BaseResultMap" parameterType="com.weimob.saas.ec.limitation.model.request.QueryGoodsLimitInfoRequestVo">
         select
-        goodslimitinfo.pid pid,
-        goodslimitinfo.store_id store_id,
-        goodslimitinfo.limit_id limit_id,
-        goodslimitinfo.limit_type limit_type,
-        goodslimitinfo.goods_id goods_id,
-        goodslimitinfo.limit_num limit_num,
-        goodslimitinfo.sold_num sold_num,
-        goodslimitinfo.version version
+            goodslimitinfo.pid pid,
+            goodslimitinfo.store_id store_id,
+            goodslimitinfo.limit_id limit_id,
+            goodslimitinfo.limit_type limit_type,
+            goodslimitinfo.goods_id goods_id,
+            goodslimitinfo.limit_num limit_num,
+            goodslimitinfo.sold_num sold_num,
+            goodslimitinfo.version version
         from
-        goods_limit_info as goodslimitinfo,
-        limit_info as limitinfo
+            goods_limit_info as goodslimitinfo,
+            limit_info as limitinfo
         where
-        limitinfo.limit_id=goodslimitinfo.limit_id
-        AND limitinfo.pid = #{pid}
-        and goodslimitinfo.store_id = #{storeId}
-        and goodslimitinfo.goods_id = #{goodsId}
-        and limitinfo.biz_id = #{bizId}
-        and limitinfo.biz_type = #{bizType}
-        and goodslimitinfo.is_deleted = 0
-        and limitinfo.is_deleted = 0
+            limitinfo.limit_id=goodslimitinfo.limit_id
+            AND limitinfo.pid = #{pid}
+            and goodslimitinfo.store_id = #{storeId}
+            and goodslimitinfo.goods_id = #{goodsId}
+            and limitinfo.biz_id = #{bizId}
+            and limitinfo.biz_type = #{bizType}
+            and goodslimitinfo.is_deleted = 0
+            and limitinfo.is_deleted = 0
         /*GoodsLimitInfoDao.getGoodsLimitInfoEntity*/
     </select>
 </mapper>

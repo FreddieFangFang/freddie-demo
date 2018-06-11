@@ -57,15 +57,16 @@
       /*UserLimitDao.insert*/
   </insert>
     <update id="update" parameterType="com.weimob.saas.ec.limitation.entity.UserLimitEntity">
-        UPDATE user_limit
+        UPDATE
+            user_limit
         SET
-        buy_num = buy_num + #{buyNum},
-        update_time = NOW()
+            buy_num = buy_num + #{buyNum},
+            update_time = NOW()
         where
             pid = #{pid}
-        AND store_id = #{storeId}
-        AND wid = #{wid}
-        AND limit_id = #{limitId}
+            AND store_id = #{storeId}
+            AND wid = #{wid}
+            AND limit_id = #{limitId}
         /*UserLimitDao.update*/
     </update>
 
@@ -176,30 +177,31 @@
     <select id="getUserLimitEntity" parameterType="com.weimob.saas.ec.limitation.entity.UserLimitEntity"
             resultType="com.weimob.saas.ec.limitation.entity.UserLimitEntity">
         select
-        <include refid="Base_Column_List"/>
-        from user_limit
+            <include refid="Base_Column_List"/>
+        from
+            user_limit
         where
-        pid = #{pid}
-        and store_id = #{storeId}
-        and wid = #{wid}
-        and limit_id = #{limitId}
-        and is_deleted = 0
+            pid = #{pid}
+            and store_id = #{storeId}
+            and wid = #{wid}
+            and limit_id = #{limitId}
+            and is_deleted = 0
         /*UserLimitDao.getUserLimitEntity*/
     </select>
 
     <select id="queryUserLimitInfoList" resultMap="BaseResultMap" parameterType="java.util.List">
         select
-        userlimit.pid pid,
-        userlimit.store_id store_id,
-        userlimit.limit_id limit_id,
-        userlimit.biz_id biz_id,
-        userlimit.biz_type biz_type,
-        userlimit.buy_num buy_num
+            userlimit.pid pid,
+            userlimit.store_id store_id,
+            userlimit.limit_id limit_id,
+            userlimit.biz_id biz_id,
+            userlimit.biz_type biz_type,
+            userlimit.buy_num buy_num
         from
-        user_limit as userlimit,
-        limit_info as limitinfo
+            user_limit as userlimit,
+            limit_info as limitinfo
         where
-        limitinfo.limit_id=userlimit.limit_id
+            limitinfo.limit_id=userlimit.limit_id
         AND
         <foreach item="item" index="index" collection="list"
                  separator="or">

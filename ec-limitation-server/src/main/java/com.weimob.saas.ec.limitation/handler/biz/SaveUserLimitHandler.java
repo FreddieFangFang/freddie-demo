@@ -66,14 +66,12 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
     protected void doBatchBizLogic(List<UpdateUserLimitVo> vos) {
         //处理限购逻辑，分成三个handler，分别处理活动级别、商品级别、sku级别的限购校验
         //limitBizChain.execute();
+        //TODO 商品限购的分组
         if (Objects.equals(vos.get(0).getBizType(), LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel())) {
             goodsLimitBizHandler.doLimitHandler(vos);
             limitationService.saveUserLimitRecord(LimitContext.getLimitBo().getGoodsLimitEntityList(),
                     LimitContext.getLimitBo().getActivityLimitEntityList(), LimitContext.getLimitBo().getActivityGoodsSoldEntityList());
-        }
-
-
-        if (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.PRIVILEGE_PRICE.getType())) {
+        } else if (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.PRIVILEGE_PRICE.getType())) {
             goodsLimitBizHandler.doLimitHandler(vos);
             activityLimitBizHandler.doLimitHandler(vos);
             skuLimitBizHandler.doLimitHandler(vos);

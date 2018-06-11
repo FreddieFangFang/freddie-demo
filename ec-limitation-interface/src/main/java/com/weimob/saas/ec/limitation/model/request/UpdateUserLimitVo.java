@@ -17,6 +17,7 @@ public class UpdateUserLimitVo extends BaseRequest implements Comparable<UpdateU
 
     /**
      * 活动类型、商品限购类型，积分商城使用枚举LimitBizTypeEnum.BIZ_TYPE_POINT
+     * @see LimitBizTypeEnum
      */
     private Integer bizType;
 

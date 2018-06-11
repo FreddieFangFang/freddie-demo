@@ -37,7 +37,8 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.weimob.saas.ec.limitation.entity.LimitOrderChangeLogEntity">
-    insert into limit_order_change_log
+    insert into
+        limit_order_change_log
     (
       pid,
       store_id,
@@ -80,7 +81,8 @@
       /*LimitOrderChangeLogDao.insert*/
   </insert>
   <insert id="insertSelective" parameterType="com.weimob.saas.ec.limitation.entity.LimitOrderChangeLogEntity">
-    insert into limit_order_change_log
+    insert into
+        limit_order_change_log
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -252,8 +254,10 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.weimob.saas.ec.limitation.entity.LimitOrderChangeLogEntity">
-    update limit_order_change_log
-    set pid = #{pid,jdbcType=BIGINT},
+    update
+        limit_order_change_log
+    set
+      pid = #{pid,jdbcType=BIGINT},
       store_id = #{storeId,jdbcType=BIGINT},
       wid = #{wid,jdbcType=BIGINT},
       biz_id = #{bizId,jdbcType=BIGINT},
@@ -284,12 +288,12 @@
   </update>
   <select id="queryOrderChangeLogListByTicket" parameterType="java.lang.String" resultMap="BaseResultMap">
     SELECT
-    <include refid="Base_Column_List" />
+        <include refid="Base_Column_List" />
     FROM
-      limit_order_change_log
+        limit_order_change_log
     WHERE
-      ticket = #{ticket}
-      and status = 0
+        ticket = #{ticket}
+        and status = 0
     /*orderChangeLog.queryOrderChangeLogListByTicket*/
   </select>
 </mapper>

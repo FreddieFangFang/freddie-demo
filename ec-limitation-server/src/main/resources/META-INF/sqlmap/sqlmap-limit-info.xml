@@ -32,12 +32,15 @@
     where limit_id = #{limitId,jdbcType=BIGINT}
   </delete>
     <insert id="insert" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
-    insert into limit_info (limit_id, pid, channel_type, 
+    insert into
+    limit_info
+    (limit_id, pid, channel_type,
       source, limit_level, biz_id, 
       biz_type, limit_type, limit_num, 
       sold_num, is_deleted,
       create_time, update_time)
-    values (#{limitId,jdbcType=BIGINT}, #{pid,jdbcType=BIGINT}, #{channelType,jdbcType=VARCHAR}, 
+    values
+    (#{limitId,jdbcType=BIGINT}, #{pid,jdbcType=BIGINT}, #{channelType,jdbcType=VARCHAR},
       #{source,jdbcType=VARCHAR}, #{limitLevel,jdbcType=TINYINT}, #{bizId,jdbcType=BIGINT}, 
       #{bizType,jdbcType=TINYINT}, #{limitType,jdbcType=TINYINT}, #{limitNum,jdbcType=INTEGER}, 
       #{soldNum,jdbcType=INTEGER}, 0,
@@ -48,17 +51,20 @@
     <select id="selectByLimitParam" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity"
             resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"/>
-        from limit_info
-        where pid = #{pid}
-        and biz_id = #{bizId}
-        and biz_type = #{bizType}
+            <include refid="Base_Column_List"/>
+        from
+            limit_info
+        where
+            pid = #{pid}
+            and biz_id = #{bizId}
+            and biz_type = #{bizType}
         /*LimitInfoDao.selectByLimitParam*/
     </select>
     <select id="queryLimitInfoList" resultMap="BaseResultMap" parameterType="java.util.List">
         select
-        <include refid="Base_Column_List"/>
-        from limit_info
+            <include refid="Base_Column_List"/>
+        from
+            limit_info
         where
         <foreach item="item" index="index" collection="list"
                  separator="or">
@@ -71,7 +77,8 @@
     </select>
 
     <update id="update" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
-        update limit_info
+        update
+        limit_info
         <set>
             <if test="channelType != null">
                 channel_type = #{channelType},
@@ -91,25 +98,30 @@
         </set>
         version = version+1,
         update_time = NOW()
-        where limit_id = #{limitId}
-        and version=#{version}
+        where
+            limit_id = #{limitId}
+            and version=#{version}
         /*LimitInfoDao.update*/
     </update>
 
     <update id="delete" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
-    update limit_info
-    set is_deleted = 1,
-    update_time = NOW(),
-    version = version+1
-    where limit_id=#{limitId}
-    and version=#{version}
+    update
+        limit_info
+    set
+        is_deleted = 1,
+        update_time = NOW(),
+        version = version+1
+    where
+        limit_id=#{limitId}
+        and version=#{version}
     /*LimitInfoDao.delete*/
   </update>
 
     <select id="queryOrderLimitInfoList" resultMap="BaseResultMap" parameterType="java.util.List">
         select
-        <include refid="Base_Column_List"/>
-        from limit_info
+            <include refid="Base_Column_List"/>
+        from
+            limit_info
         where
         <foreach item="item" index="index" collection="list"
                  separator="or">

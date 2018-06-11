@@ -27,7 +27,8 @@
             resultMap="BaseResultMap" parameterType="java.util.List">
         select
         <include refid="Base_Column_List"/>
-        from user_goods_limit
+        from
+        user_goods_limit
         where
         <foreach item="item" index="index" collection="list"
                  separator="or">
@@ -46,7 +47,8 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
     <insert id="insert" parameterType="com.weimob.saas.ec.limitation.entity.UserGoodsLimitEntity">
-    insert into user_goods_limit
+    insert into
+    user_goods_limit
     (
     pid,
     store_id,
@@ -74,10 +76,11 @@
   </insert>
 
     <update id="update" parameterType="com.weimob.saas.ec.limitation.entity.UserGoodsLimitEntity">
-        UPDATE user_goods_limit
+        UPDATE
+            user_goods_limit
         SET
-        buy_num = buy_num+#{buyNum},
-        update_time = NOW()
+            buy_num = buy_num+#{buyNum},
+            update_time = NOW()
         WHERE
              pid = #{pid}
         AND store_id = #{storeId}
@@ -134,16 +137,18 @@
     </select>
 
     <update id="deductUserGoodsLimit" parameterType="com.weimob.saas.ec.limitation.entity.UserGoodsLimitEntity">
-        UPDATE user_goods_limit
+        UPDATE
+            user_goods_limit
         SET
-        buy_num = buy_num - #{buyNum},
-        update_time = NOW()
+            buy_num = buy_num - #{buyNum},
+            update_time = NOW()
         WHERE
-        pid = #{pid}
-        AND store_id = #{storeId}
-        AND wid = #{wid}
-        AND limit_id = #{limitId}
-        AND goods_id = #{goodsId}
-        /*UserGoodsLimitDao.deduct*/
+            pid = #{pid}
+            AND store_id = #{storeId}
+            AND wid = #{wid}
+            AND limit_id = #{limitId}
+            AND goods_id = #{goodsId}
+            AND buy_num >= #{buyNum}
+        /*UserGoodsLimitDao.deductUserGoodsLimit*/
     </update>
 </mapper>

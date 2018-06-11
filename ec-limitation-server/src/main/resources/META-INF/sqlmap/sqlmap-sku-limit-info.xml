@@ -22,7 +22,8 @@
   </sql>
 
     <insert id="batchInsert" parameterType="java.util.List">
-        insert into sku_limit_info
+        insert into
+        sku_limit_info
         (
         pid,
         store_id,
@@ -59,22 +60,28 @@
     </insert>
 
     <update id="deleteLimit" parameterType="com.weimob.saas.ec.limitation.entity.SkuLimitInfoEntity">
-    update sku_limit_info
-    set is_deleted = 1,
-    update_time = NOW()
-    where pid = #{pid}
-    and   limit_id=#{limitId}
+    update
+        sku_limit_info
+    set
+        is_deleted = 1,
+        update_time = NOW()
+    where
+        pid = #{pid}
+        and   limit_id=#{limitId}
     /*SkuLimitInfoDao.deleteLimit*/
   </update>
 
     <update id="deleteSkuLimit" parameterType="com.weimob.saas.ec.limitation.model.DeleteGoodsParam">
-        update sku_limit_info
-        set is_deleted = 1,
-        update_time = NOW()
-        where pid = #{pid}
-        and limit_id=#{limitId}
-        AND
-        goods_id IN
+        update
+            sku_limit_info
+        set
+            is_deleted = 1,
+            update_time = NOW()
+        where
+            pid = #{pid}
+            and limit_id=#{limitId}
+            AND
+            goods_id IN
         <foreach item="id" index="index" collection="goodsIdList"
                  open="(" separator="," close=")">
             #{id}
@@ -83,7 +90,8 @@
     </update>
 
     <update id="update" parameterType="com.weimob.saas.ec.limitation.entity.SkuLimitInfoEntity">
-      update sku_limit_info
+      update
+          sku_limit_info
       SET
         sold_num = sold_num +#{soldNum},
         update_time = NOW()
@@ -99,20 +107,20 @@
 
     <select id="queryOrderSkuLimitInfoList" resultMap="BaseResultMap" parameterType="java.util.List">
         select
-        skulimtinfo.pid pid,
-        skulimtinfo.store_id store_id,
-        skulimtinfo.limit_id limit_id,
-        skulimtinfo.limit_type limit_type,
-        skulimtinfo.goods_id goods_id,
-        skulimtinfo.sku_id sku_id,
-        skulimtinfo.limit_num limit_num,
-        skulimtinfo.sold_num sold_num,
-        skulimtinfo.version version
+            skulimtinfo.pid pid,
+            skulimtinfo.store_id store_id,
+            skulimtinfo.limit_id limit_id,
+            skulimtinfo.limit_type limit_type,
+            skulimtinfo.goods_id goods_id,
+            skulimtinfo.sku_id sku_id,
+            skulimtinfo.limit_num limit_num,
+            skulimtinfo.sold_num sold_num,
+            skulimtinfo.version version
         from
-        sku_limit_info as skulimtinfo,
-        limit_info as limitinfo
+            sku_limit_info as skulimtinfo,
+            limit_info as limitinfo
         where
-        limitinfo.limit_id=skulimtinfo.limit_id
+            limitinfo.limit_id=skulimtinfo.limit_id
         AND
         <foreach item="item" index="index" collection="list"
                  separator="or">

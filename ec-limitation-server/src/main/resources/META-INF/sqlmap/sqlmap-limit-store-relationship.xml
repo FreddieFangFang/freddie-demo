@@ -59,11 +59,14 @@
     </insert>
 
     <update id="delete" parameterType="com.weimob.saas.ec.limitation.entity.LimitStoreRelationshipEntity">
-    update limit_store_relationship
-    set is_deleted = 1,
-    update_time = NOW()
-    where pid = #{pid}
-    and   limit_id=#{limitId}
+    update
+        limit_store_relationship
+    set
+        is_deleted = 1,
+        update_time = NOW()
+    where
+        pid = #{pid}
+        and   limit_id=#{limitId}
     /*LimitStoreRelationshipDao.delete*/
   </update>
 </mapper>
