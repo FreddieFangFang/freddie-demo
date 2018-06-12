@@ -234,7 +234,7 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
 
 
                     boolean includeCurrentGoods = false;
-                    if (!org.springframework.util.CollectionUtils.isEmpty(userGoodsLimitList)) {
+                    if (CollectionUtils.isNotEmpty(userGoodsLimitList)) {
                         //用户有购买记录
                         for (UserGoodsLimitEntity goodsLimitEntity : userGoodsLimitList) {
                             if (goodsLimitEntity.getGoodsId() == goodsId) {
@@ -264,7 +264,7 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                         break;
                     }
                     boolean included = false;
-                    if (!org.springframework.util.CollectionUtils.isEmpty(activityLimitList)) {
+                    if (CollectionUtils.isNotEmpty(activityLimitList)) {
                         for (UserLimitEntity activityLimitEntity : activityLimitList) {
                             if (activityLimitEntity.getBizId() == activityId) {
                                 included = true;
