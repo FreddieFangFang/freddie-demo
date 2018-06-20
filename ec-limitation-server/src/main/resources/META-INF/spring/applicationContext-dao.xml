@@ -21,13 +21,13 @@
 	<!-- 限购订单日志记录表 -->
 	<bean id="limitOrderChangeLogDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
 		<property name="mapperInterface" value="com.weimob.saas.ec.limitation.dao.LimitOrderChangeLogDao" />
-		<property name="sqlSessionFactory" ref="limitationSqlSessionFactory" />
+		<property name="sqlSessionFactory" ref="globalSqlSessionFactory" />
 	</bean>
 	
 	<!-- 限购门店关系表 -->
 	<bean id="limitStoreRelationshipDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
 		<property name="mapperInterface" value="com.weimob.saas.ec.limitation.dao.LimitStoreRelationshipDao" />
-		<property name="sqlSessionFactory" ref="limitationSqlSessionFactory" />
+		<property name="sqlSessionFactory" ref="globalSqlSessionFactory" />
 	</bean>
 	
 	<!-- sku限购表 -->

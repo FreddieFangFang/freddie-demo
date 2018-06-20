@@ -21,8 +21,6 @@
         <!-- 定义限购实体别名 -->
         <typeAlias type="com.weimob.saas.ec.limitation.entity.GoodsLimitInfoEntity" alias="GoodsLimitInfoEntity"/>
         <typeAlias type="com.weimob.saas.ec.limitation.entity.LimitInfoEntity" alias="LimitInfoEntity"/>
-        <typeAlias type="com.weimob.saas.ec.limitation.entity.LimitOrderChangeLogEntity" alias="LimitOrderChangeLogEntity"/>
-        <typeAlias type="com.weimob.saas.ec.limitation.entity.LimitStoreRelationshipEntity" alias="LimitStoreRelationshipEntity"/>
         <typeAlias type="com.weimob.saas.ec.limitation.entity.SkuLimitInfoEntity" alias="SkuLimitInfoEntity"/>
         <typeAlias type="com.weimob.saas.ec.limitation.entity.UserGoodsLimitEntity" alias="UserGoodsLimitEntity"/>
         <typeAlias type="com.weimob.saas.ec.limitation.entity.UserLimitEntity" alias="UserLimitEntity"/>
@@ -33,8 +31,6 @@
     <mappers>
         <mapper resource="META-INF/sqlmap/sqlmap-goods-limit-info.xml"/>
         <mapper resource="META-INF/sqlmap/sqlmap-limit-info.xml"/>
-        <mapper resource="META-INF/sqlmap/sqlmap-limit-order-change-log.xml"/>
-        <mapper resource="META-INF/sqlmap/sqlmap-limit-store-relationship.xml"/>
         <mapper resource="META-INF/sqlmap/sqlmap-sku-limit-info.xml"/>
         <mapper resource="META-INF/sqlmap/sqlmap-user-goods-limit.xml"/>
         <mapper resource="META-INF/sqlmap/sqlmap-user-limit.xml"/>

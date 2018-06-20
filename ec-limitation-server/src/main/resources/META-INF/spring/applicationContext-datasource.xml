@@ -8,16 +8,24 @@
 
     <!-- 数据源定义 -->
     <bean id="datasource_ec_limitation" class="com.weimob.arch.wdd.datasource.DynamicDataSource"/>
+    <bean id="datasource_ec_limitation_global" class="com.weimob.arch.wdd.datasource.DynamicDataSource"/>
 
-    <!-- 使用别名 -->
-    <alias name="datasource_ec_limitation" alias="datasource_genId"/>
 
     <bean id="limitationSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="configLocation">
-            <value>classpath:META-INF/sqlmap/sqlMapConfig.xml</value>
+            <value>classpath:META-INF/sqlmap/sqlMapConfig-limitation.xml</value>
         </property>
         <property name="dataSource" ref="datasource_ec_limitation"/>
     </bean>
+
+    <bean id="globalSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="configLocation">
+            <value>classpath:META-INF/sqlmap/sqlMapConfig-global.xml</value>
+        </property>
+        <property name="dataSource" ref="datasource_ec_limitation_global"/>
+    </bean>
+
+    <alias name="datasource_ec_limitation_global" alias="datasource_genId"/>
 
     <bean id="limitationTransactionManager"
           class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
