@@ -158,6 +158,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             if (vo.getCheckLimit() && vo.getGoodsBuyNum() > canBuyNum) {
                 throw new LimitationBizException(LimitationErrorCode.BEYOND_GOODS_LIMIT_NUM);
             }
+            goodsLimitInfoListVo.setAlreadyBuyNum(userBuyNum == null ? 0 : userBuyNum);
             goodsLimitInfoListVo.setCanBuyNum(canBuyNum < 0 ? 0 : canBuyNum);
             goodsLimitInfoList.add(goodsLimitInfoListVo);
         }

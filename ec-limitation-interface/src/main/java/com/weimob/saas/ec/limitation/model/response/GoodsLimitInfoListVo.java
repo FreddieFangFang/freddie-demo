@@ -20,6 +20,10 @@ public class GoodsLimitInfoListVo extends BaseRequest {
      * 还能购买的数量
      */
     private Integer canBuyNum;
+    /**
+     * 已经购买的数量
+     */
+    private Integer alreadyBuyNum;
 
     private Long bizId;
 
@@ -71,5 +75,13 @@ public class GoodsLimitInfoListVo extends BaseRequest {
 
     public void setBizType(Integer bizType) {
         this.bizType = bizType;
+    }
+
+    public Integer getAlreadyBuyNum() {
+        return alreadyBuyNum;
+    }
+
+    public void setAlreadyBuyNum(Integer alreadyBuyNum) {
+        this.alreadyBuyNum = alreadyBuyNum;
     }
 }
