@@ -215,4 +215,22 @@
         </foreach>
         /*UserLimitDao.queryUserLimitInfoList*/
     </select>
+
+    <select id="queryUserLimitEntityList" parameterType="java.util.List"
+            resultType="com.weimob.saas.ec.limitation.entity.UserLimitEntity">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        user_limit
+        where
+        <foreach item="item" index="index" collection="list"
+                 separator="or">
+            pid = #{item.pid}
+            and store_id = #{item.storeId}
+            and wid = #{item.wid}
+            and limit_id = #{item.limitId}
+            and is_deleted = 0
+        </foreach>
+        /*UserLimitDao.queryUserLimitEntityList*/
+    </select>
 </mapper>

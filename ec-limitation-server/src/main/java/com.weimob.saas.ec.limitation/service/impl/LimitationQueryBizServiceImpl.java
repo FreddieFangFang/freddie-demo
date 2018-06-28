@@ -1,12 +1,9 @@
 package com.weimob.saas.ec.limitation.service.impl;
 
+import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
-import com.weimob.saas.ec.limitation.dao.GoodsLimitInfoDao;
-import com.weimob.saas.ec.limitation.dao.LimitInfoDao;
-import com.weimob.saas.ec.limitation.dao.UserGoodsLimitDao;
-import com.weimob.saas.ec.limitation.entity.GoodsLimitInfoEntity;
-import com.weimob.saas.ec.limitation.entity.LimitInfoEntity;
-import com.weimob.saas.ec.limitation.entity.UserGoodsLimitEntity;
+import com.weimob.saas.ec.limitation.dao.*;
+import com.weimob.saas.ec.limitation.entity.*;
 import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.model.LimitParam;
@@ -34,6 +31,10 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
     private GoodsLimitInfoDao goodsLimitInfoDao;
     @Autowired
     private UserGoodsLimitDao userGoodsLimitDao;
+    @Autowired
+    private UserLimitDao userLimitDao;
+    @Autowired
+    private SkuLimitInfoDao skuLimitInfoDao;
 
 
     @Override
@@ -44,7 +45,13 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         List<GoodsLimitInfoEntity> queryGoodsLimitList = new ArrayList<>();
         //查询用户购买商品记录
         List<UserGoodsLimitEntity> queryUserGoodsLimitList = new ArrayList<>();
+        //查询用户活动购买记录
+        List<UserLimitEntity> queryUserLimitList = new ArrayList<>();
+        //查询用户sku购买记录
+        List<SkuLimitInfoEntity> querySkuLimitList = new ArrayList<>();
         Map<String, Long> limitIdMap = new HashMap<>();
+        Map<String, Integer> activityLimitNumMap = new HashMap<>();
+        Map<String, Integer> activityUserLimitNumMap = new HashMap<>();
         Map<String, Integer> goodsLimitNumMap = new HashMap<>();
         Map<String, Integer> userGoodsLimitNumMap = new HashMap<>();
         for (QueryGoodsLimitInfoListVo vo : requestVo.getGoodsDetailList()) {
@@ -58,8 +65,115 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         List<LimitInfoEntity> limitInfoEntityList = limitInfoDao.queryLimitInfoList(queryLimitInfoList);
         for (LimitInfoEntity entity : limitInfoEntityList) {
             limitIdMap.put(MapKeyUtil.buildLimitIdMapKey(entity.getPid(), entity.getBizType(), entity.getBizId()), entity.getLimitId());
+            activityLimitNumMap.put(MapKeyUtil.buildLimitIdMapKey(entity.getPid(), entity.getBizType(), entity.getBizId()), entity.getLimitNum());
+        }
+        //构建查询数据库入参
+        buidQueryEntity(requestVo, limitIdMap, queryGoodsLimitList, queryUserGoodsLimitList, queryUserLimitList, querySkuLimitList);
+
+        //查询商品限购信息
+        List<GoodsLimitInfoEntity> goodsLimitInfoList = goodsLimitInfoDao.queryGoodsLimitInfoList(queryGoodsLimitList);
+        for (GoodsLimitInfoEntity entity : goodsLimitInfoList) {
+            goodsLimitNumMap.put(MapKeyUtil.buildGoodsLimitNumMap(entity.getPid(), entity.getStoreId(), entity.getLimitId(), entity.getGoodsId()), entity.getLimitNum());
+        }
+        //查询用户商品下单记录
+        List<UserGoodsLimitEntity> userGoodsLimitList = userGoodsLimitDao.queryUserGoodsLimitList(queryUserGoodsLimitList);
+        for (UserGoodsLimitEntity entity : userGoodsLimitList) {
+            userGoodsLimitNumMap.put(MapKeyUtil.buildUserGoodsLimitNumMap(entity.getPid(), entity.getStoreId(), entity.getWid(), entity.getLimitId(), entity.getGoodsId()), entity.getBuyNum());
         }
 
+        if (Objects.equals(requestVo.getGoodsDetailList().get(0).getBizType(), ActivityTypeEnum.DISCOUNT.getType())) {
+            //限时折扣要校验活动限购
+            List<UserLimitEntity> userLimitEntityList = userLimitDao.queryUserLimitEntityList(queryUserLimitList);
+            for (UserLimitEntity vo : userLimitEntityList) {
+                activityUserLimitNumMap.put(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId()), vo.getBuyNum());
+            }
+
+            return buildResponseVo(requestVo, limitIdMap, activityLimitNumMap, activityUserLimitNumMap, goodsLimitNumMap, userGoodsLimitNumMap);
+
+        } else if (Objects.equals(requestVo.getGoodsDetailList().get(0).getBizType(), ActivityTypeEnum.PRIVILEGE_PRICE.getType())) {
+            //特权价要校验活动限购和sku可售数量
+            List<SkuLimitInfoEntity> skuLimitList = skuLimitInfoDao.querySkuLimitList(querySkuLimitList);
+            List<UserLimitEntity> userLimitEntityList = userLimitDao.queryUserLimitEntityList(queryUserLimitList);
+            for (UserLimitEntity vo : userLimitEntityList) {
+                activityUserLimitNumMap.put(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId()), vo.getBuyNum());
+            }
+            GoodsLimitInfoListResponseVo responseVo = buildResponseVo(requestVo, limitIdMap, activityLimitNumMap, activityUserLimitNumMap, goodsLimitNumMap, userGoodsLimitNumMap);
+            //处理sku的限购
+            volidSkuLimit(limitIdMap, skuLimitList, responseVo);
+            return responseVo;
+        }
+
+        return buildGoodsLimitInfoListResponseVo(requestVo, limitIdMap, goodsLimitNumMap, userGoodsLimitNumMap);
+    }
+
+    private void volidSkuLimit(Map<String, Long> limitIdMap, List<SkuLimitInfoEntity> skuLimitList, GoodsLimitInfoListResponseVo responseVo) {
+        Map<String, SkuLimitInfoEntity> skuLimitMap = new HashMap<>();
+        for (SkuLimitInfoEntity entity : skuLimitList) {
+            skuLimitMap.put(MapKeyUtil.buildSkuLimitMapKey(entity.getPid(), entity.getStoreId(), entity.getLimitId(), entity.getGoodsId(), entity.getSkuId()), entity);
+        }
+        for (GoodsLimitInfoListVo vo : responseVo.getGoodsLimitInfoList()) {
+            vo.setLimitStatus(true);
+            Long limitId = limitIdMap.get(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId()));
+            Integer alreadyBuyNum = skuLimitMap.get(MapKeyUtil.buildSkuLimitMapKey(vo.getPid(), vo.getStoreId(), limitId, vo.getGoodsId(), vo.getSkuId())).getSoldNum();
+            vo.setAlreadyBuyNum(alreadyBuyNum == null ? 0 : alreadyBuyNum);
+            Integer skuLimitNum = skuLimitMap.get(MapKeyUtil.buildSkuLimitMapKey(vo.getPid(), vo.getStoreId(), limitId, vo.getGoodsId(), vo.getSkuId())).getLimitNum();
+            Integer canBuyNum = skuLimitNum - (alreadyBuyNum == null ? 0 : alreadyBuyNum);
+            vo.setCanBuyNum(vo.getCanBuyNum() > canBuyNum ? canBuyNum : vo.getCanBuyNum());
+        }
+    }
+
+    private GoodsLimitInfoListResponseVo buildResponseVo(GoodsLimitInfoListRequestVo requestVo, Map<String, Long> limitIdMap, Map<String, Integer> activityLimitNumMap, Map<String, Integer> activityUserLimitNumMap, Map<String, Integer> goodsLimitNumMap, Map<String, Integer> userGoodsLimitNumMap) {
+        GoodsLimitInfoListResponseVo responseVo = new GoodsLimitInfoListResponseVo();
+        List<GoodsLimitInfoListVo> goodsLimitInfoList = new ArrayList<>();
+        volidActivityLimit(requestVo, limitIdMap, activityLimitNumMap, activityUserLimitNumMap, goodsLimitInfoList);
+        volidGoodsLimit(requestVo, limitIdMap, goodsLimitNumMap, userGoodsLimitNumMap, goodsLimitInfoList);
+        responseVo.setGoodsLimitInfoList(goodsLimitInfoList);
+        return responseVo;
+    }
+
+    private void volidGoodsLimit(GoodsLimitInfoListRequestVo requestVo, Map<String, Long> limitIdMap, Map<String, Integer> goodsLimitNumMap, Map<String, Integer> userGoodsLimitNumMap, List<GoodsLimitInfoListVo> goodsLimitInfoList) {
+        for (GoodsLimitInfoListVo vo : goodsLimitInfoList) {
+            Long limitId = limitIdMap.get(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId()));
+            Integer alreadyBuyNum = userGoodsLimitNumMap.get(MapKeyUtil.buildUserGoodsLimitNumMap(vo.getPid(), vo.getStoreId(), vo.getWid(), limitId, vo.getGoodsId()));
+            Integer goodsLimitNum = goodsLimitNumMap.get(MapKeyUtil.buildGoodsLimitNumMap(vo.getPid(), vo.getStoreId(), limitId, vo.getGoodsId()));
+            vo.setAlreadyBuyNum(alreadyBuyNum == null ? 0 : alreadyBuyNum);
+            if (goodsLimitNum == LimitConstant.UNLIMITED_NUM) {
+
+            } else {
+                vo.setLimitStatus(true);
+                Integer canBuyNum = goodsLimitNum - (alreadyBuyNum == null ? 0 : alreadyBuyNum);
+                vo.setCanBuyNum(vo.getCanBuyNum() < canBuyNum ? vo.getCanBuyNum() : canBuyNum);
+            }
+        }
+    }
+
+    private void volidActivityLimit(GoodsLimitInfoListRequestVo requestVo, Map<String, Long> limitIdMap, Map<String, Integer> activityLimitNumMap, Map<String, Integer> activityUserLimitNumMap, List<GoodsLimitInfoListVo> goodsLimitInfoList) {
+        for (QueryGoodsLimitInfoListVo vo : requestVo.getGoodsDetailList()) {
+            GoodsLimitInfoListVo goodsLimitInfoListVo = new GoodsLimitInfoListVo();
+            goodsLimitInfoListVo.setPid(vo.getPid());
+            goodsLimitInfoListVo.setStoreId(vo.getStoreId());
+            goodsLimitInfoListVo.setWid(vo.getWid());
+            goodsLimitInfoListVo.setBizType(vo.getBizType());
+            goodsLimitInfoListVo.setBizId(vo.getBizId());
+            goodsLimitInfoListVo.setGoodsId(vo.getGoodsId());
+            goodsLimitInfoListVo.setSkuId(vo.getSkuId());
+            Integer alreadyBuyNum = activityUserLimitNumMap.get(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId()));
+            goodsLimitInfoListVo.setAlreadyBuyNum(alreadyBuyNum == null ? 0 : alreadyBuyNum);
+            Integer activityLimitNum = activityLimitNumMap.get(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId()));
+            if (activityLimitNum == LimitConstant.UNLIMITED_NUM) {
+                goodsLimitInfoListVo.setLimitStatus(false);
+            } else {
+                goodsLimitInfoListVo.setLimitStatus(true);
+                goodsLimitInfoListVo.setCanBuyNum(activityLimitNum - (alreadyBuyNum == null ? 0 : alreadyBuyNum));
+            }
+            goodsLimitInfoList.add(goodsLimitInfoListVo);
+        }
+    }
+
+    private void buidQueryEntity(GoodsLimitInfoListRequestVo requestVo, Map<String, Long> limitIdMap,
+                                 List<GoodsLimitInfoEntity> queryGoodsLimitList,
+                                 List<UserGoodsLimitEntity> queryUserGoodsLimitList,
+                                 List<UserLimitEntity> queryUserLimitList, List<SkuLimitInfoEntity> querySkuLimitList) {
         for (QueryGoodsLimitInfoListVo vo : requestVo.getGoodsDetailList()) {
             GoodsLimitInfoEntity goodsLimitInfoEntity = new GoodsLimitInfoEntity();
             goodsLimitInfoEntity.setPid(vo.getPid());
@@ -75,20 +189,24 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             userGoodsLimitEntity.setGoodsId(vo.getGoodsId());
             userGoodsLimitEntity.setLimitId(limitIdMap.get(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId())));
             queryUserGoodsLimitList.add(userGoodsLimitEntity);
-        }
-        //查询商品限购信息
-        List<GoodsLimitInfoEntity> goodsLimitInfoList = goodsLimitInfoDao.queryGoodsLimitInfoList(queryGoodsLimitList);
-        for (GoodsLimitInfoEntity entity : goodsLimitInfoList) {
-            goodsLimitNumMap.put(MapKeyUtil.buildGoodsLimitNumMap(entity.getPid(), entity.getStoreId(), entity.getLimitId(), entity.getGoodsId()), entity.getLimitNum());
-        }
-        //查询用户商品下单记录
-        List<UserGoodsLimitEntity> userGoodsLimitList = userGoodsLimitDao.queryUserGoodsLimitList(queryUserGoodsLimitList);
-        for (UserGoodsLimitEntity entity : userGoodsLimitList) {
-            userGoodsLimitNumMap.put(MapKeyUtil.buildUserGoodsLimitNumMap(entity.getPid(), entity.getStoreId(), entity.getWid(), entity.getLimitId(), entity.getGoodsId()), entity.getBuyNum());
-        }
 
+            UserLimitEntity userLimitEntity = new UserLimitEntity();
+            userLimitEntity.setLimitId(limitIdMap.get(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId())));
+            userLimitEntity.setPid(vo.getPid());
+            userLimitEntity.setStoreId(vo.getStoreId());
+            userLimitEntity.setBizType(vo.getBizType());
+            userLimitEntity.setBizId(vo.getBizId());
+            userLimitEntity.setWid(vo.getWid());
+            queryUserLimitList.add(userLimitEntity);
 
-        return buildGoodsLimitInfoListResponseVo(requestVo, limitIdMap, goodsLimitNumMap, userGoodsLimitNumMap);
+            SkuLimitInfoEntity skuLimitInfoEntity = new SkuLimitInfoEntity();
+            skuLimitInfoEntity.setLimitId(limitIdMap.get(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId())));
+            skuLimitInfoEntity.setPid(vo.getPid());
+            skuLimitInfoEntity.setStoreId(vo.getStoreId());
+            skuLimitInfoEntity.setGoodsId(vo.getGoodsId());
+            skuLimitInfoEntity.setSkuId(vo.getSkuId());
+            querySkuLimitList.add(skuLimitInfoEntity);
+        }
     }
 
     @Override

@@ -73,15 +73,15 @@
 
     <update id="deleteSkuLimit" parameterType="com.weimob.saas.ec.limitation.model.DeleteGoodsParam">
         update
-            sku_limit_info
+        sku_limit_info
         set
-            is_deleted = 1,
-            update_time = NOW()
+        is_deleted = 1,
+        update_time = NOW()
         where
-            pid = #{pid}
-            and limit_id=#{limitId}
-            AND
-            goods_id IN
+        pid = #{pid}
+        and limit_id=#{limitId}
+        AND
+        goods_id IN
         <foreach item="id" index="index" collection="goodsIdList"
                  open="(" separator="," close=")">
             #{id}
@@ -107,20 +107,20 @@
 
     <select id="queryOrderSkuLimitInfoList" resultMap="BaseResultMap" parameterType="java.util.List">
         select
-            skulimtinfo.pid pid,
-            skulimtinfo.store_id store_id,
-            skulimtinfo.limit_id limit_id,
-            skulimtinfo.limit_type limit_type,
-            skulimtinfo.goods_id goods_id,
-            skulimtinfo.sku_id sku_id,
-            skulimtinfo.limit_num limit_num,
-            skulimtinfo.sold_num sold_num,
-            skulimtinfo.version version
+        skulimtinfo.pid pid,
+        skulimtinfo.store_id store_id,
+        skulimtinfo.limit_id limit_id,
+        skulimtinfo.limit_type limit_type,
+        skulimtinfo.goods_id goods_id,
+        skulimtinfo.sku_id sku_id,
+        skulimtinfo.limit_num limit_num,
+        skulimtinfo.sold_num sold_num,
+        skulimtinfo.version version
         from
-            sku_limit_info as skulimtinfo,
-            limit_info as limitinfo
+        sku_limit_info as skulimtinfo,
+        limit_info as limitinfo
         where
-            limitinfo.limit_id=skulimtinfo.limit_id
+        limitinfo.limit_id=skulimtinfo.limit_id
         AND
         <foreach item="item" index="index" collection="list"
                  separator="or">
@@ -134,5 +134,33 @@
             )
         </foreach>
         /*SkuLimitInfoDao.queryOrderSkuLimitInfoList*/
+    </select>
+
+    <select id="querySkuLimitList" resultMap="BaseResultMap" parameterType="java.util.List">
+        select
+        pid,
+        store_id,
+        limit_id,
+        limit_type,
+        goods_id,
+        sku_id,
+        limit_num,
+        sold_num,
+        version
+        from
+        sku_limit_info
+        where
+        <foreach item="item" index="index" collection="list"
+                 separator="or">
+            (
+            pid = #{item.pid}
+            and store_id = #{item.storeId}
+            and goods_id = #{item.goodsId}
+            and sku_id =#{item.skuId}
+            and is_deleted = 0
+            and limit_id = #{item.limitId}
+            )
+        </foreach>
+        /*SkuLimitInfoDao.querySkuLimitList*/
     </select>
 </mapper>

@@ -22,4 +22,8 @@ public class MapKeyUtil {
     public static String buildPidStoreIdGoodsId(Long pid, Long storeId, Long goodsId) {
         return pid + "_" + storeId + "_" + goodsId;
     }
+
+    public static String buildSkuLimitMapKey(Long pid, Long storeId, Long limitId, Long goodsId, Long skuId) {
+        return pid + "_" + storeId + "_" + limitId + "_" + goodsId + "_" + skuId;
+    }
 }
