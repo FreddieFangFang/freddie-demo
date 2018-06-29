@@ -20,9 +20,7 @@ import com.weimob.saas.ec.limitation.utils.VerifyParamUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author lujialin
@@ -110,23 +108,61 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
     public void doReverse(List<LimitOrderChangeLogEntity> logList) {
 
         //1. 分组商品，统计wid下活动，商品的回滚数量
-        List<UserGoodsLimitEntity> userGoodsLimitEntityList = new ArrayList<>(logList.size());
-        UserGoodsLimitEntity userGoodsLimitEntity = null;
+        Map<Long, UserLimitEntity> activityMap = new HashMap<>();
+        Map<Long, UserGoodsLimitEntity> goodsLimitMap = new HashMap<>();
+        Map<Long, SkuLimitInfoEntity> skuLimitMap = new HashMap<>();
+        Integer bizType = null;
 
         for (LimitOrderChangeLogEntity logEntity : logList) {
-            userGoodsLimitEntity = new UserGoodsLimitEntity();
-            userGoodsLimitEntity.setPid(logEntity.getPid());
-            userGoodsLimitEntity.setStoreId(logEntity.getStoreId());
-            userGoodsLimitEntity.setLimitId(logEntity.getLimitId());
-            userGoodsLimitEntity.setGoodsId(logEntity.getGoodsId());
-            userGoodsLimitEntity.setWid(logEntity.getWid());
-            userGoodsLimitEntity.setBuyNum(logEntity.getBuyNum());
-            userGoodsLimitEntityList.add(userGoodsLimitEntity);
+            bizType = logEntity.getBizType();
+            if (goodsLimitMap.get(logEntity.getGoodsId()) == null) {
+                UserGoodsLimitEntity userGoodsLimitEntity = new UserGoodsLimitEntity();
+                userGoodsLimitEntity.setPid(logEntity.getPid());
+                userGoodsLimitEntity.setStoreId(logEntity.getStoreId());
+                userGoodsLimitEntity.setLimitId(logEntity.getLimitId());
+                userGoodsLimitEntity.setGoodsId(logEntity.getGoodsId());
+                userGoodsLimitEntity.setWid(logEntity.getWid());
+                userGoodsLimitEntity.setBuyNum(logEntity.getBuyNum());
+                goodsLimitMap.put(logEntity.getGoodsId(), userGoodsLimitEntity);
+            } else {
+                goodsLimitMap.get(logEntity.getGoodsId()).setBuyNum(goodsLimitMap.get(logEntity.getGoodsId()).getBuyNum() + logEntity.getBuyNum());
+            }
+
+            if (activityMap.get(logEntity.getBizId()) == null) {
+                UserLimitEntity userLimitEntity = new UserLimitEntity();
+                userLimitEntity.setPid(logEntity.getPid());
+                userLimitEntity.setStoreId(logEntity.getStoreId());
+                userLimitEntity.setLimitId(logEntity.getLimitId());
+                userLimitEntity.setWid(logEntity.getWid());
+                userLimitEntity.setBuyNum(logEntity.getBuyNum());
+                activityMap.put(logEntity.getBizId(), userLimitEntity);
+            } else {
+                activityMap.get(logEntity.getBizId()).setBuyNum(activityMap.get(logEntity.getBizId()).getBuyNum() + logEntity.getBuyNum());
+            }
+
+            if (skuLimitMap.get(logEntity.getSkuId()) == null) {
+                SkuLimitInfoEntity skuLimitInfoEntity = new SkuLimitInfoEntity();
+                skuLimitInfoEntity.setPid(logEntity.getPid());
+                skuLimitInfoEntity.setStoreId(logEntity.getStoreId());
+                skuLimitInfoEntity.setLimitId(logEntity.getLimitId());
+                skuLimitInfoEntity.setGoodsId(logEntity.getGoodsId());
+                skuLimitInfoEntity.setSoldNum(logEntity.getBuyNum());
+                skuLimitInfoEntity.setSkuId(logEntity.getSkuId());
+                skuLimitMap.put(logEntity.getSkuId(), skuLimitInfoEntity);
+            } else {
+                skuLimitMap.get(logEntity.getSkuId()).setSoldNum(skuLimitMap.get(logEntity.getSkuId()).getSoldNum() + logEntity.getBuyNum());
+            }
         }
 
         //2. 回滚活动商品的下单记录
         try {
-            limitationService.updateUserLimitRecord(userGoodsLimitEntityList, null, null);
+            if (Objects.equals(bizType, ActivityTypeEnum.PRIVILEGE_PRICE.getType())) {
+                limitationService.updateUserLimitRecord(new ArrayList<UserGoodsLimitEntity>(goodsLimitMap.values()), new ArrayList<UserLimitEntity>(activityMap.values()), new ArrayList<SkuLimitInfoEntity>(skuLimitMap.values()));
+            } else if (Objects.equals(bizType, ActivityTypeEnum.DISCOUNT.getType())) {
+                limitationService.updateUserLimitRecord(new ArrayList<UserGoodsLimitEntity>(goodsLimitMap.values()), new ArrayList<UserLimitEntity>(activityMap.values()), null);
+            } else if (Objects.equals(bizType, LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel())) {
+                limitationService.updateUserLimitRecord(new ArrayList<UserGoodsLimitEntity>(goodsLimitMap.values()), null, null);
+            }
         } catch (Exception e) {
             throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_GOODS_LIMIT_ERROR, e);
         }

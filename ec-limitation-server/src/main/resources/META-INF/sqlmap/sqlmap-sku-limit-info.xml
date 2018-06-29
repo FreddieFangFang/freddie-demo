@@ -163,4 +163,20 @@
         </foreach>
         /*SkuLimitInfoDao.querySkuLimitList*/
     </select>
+
+    <update id="deductSkuLimit" parameterType="com.weimob.saas.ec.limitation.entity.SkuLimitInfoEntity">
+        UPDATE
+        sku_limit_info
+        SET
+        sold_num = sold_num - #{soldNum},
+        update_time = NOW()
+        WHERE
+        pid = #{pid}
+        AND store_id = #{storeId}
+        AND limit_id = #{limitId}
+        AND goods_id = #{goodsId}
+        AND sku_id =#{skuId}
+        AND sold_num >= #{soldNum}
+        /*SkuLimitInfoDao.deductSkuLimit*/
+    </update>
 </mapper>

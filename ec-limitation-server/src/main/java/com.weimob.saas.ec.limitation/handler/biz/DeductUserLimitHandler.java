@@ -1,16 +1,16 @@
 package com.weimob.saas.ec.limitation.handler.biz;
 
+import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitServiceNameEnum;
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
 import com.weimob.saas.ec.limitation.dao.UserGoodsLimitDao;
-import com.weimob.saas.ec.limitation.entity.LimitInfoEntity;
-import com.weimob.saas.ec.limitation.entity.LimitOrderChangeLogEntity;
-import com.weimob.saas.ec.limitation.entity.UserGoodsLimitEntity;
+import com.weimob.saas.ec.limitation.entity.*;
 import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.handler.BaseHandler;
 import com.weimob.saas.ec.limitation.model.LimitParam;
+import com.weimob.saas.ec.limitation.model.request.SkuLimitInfo;
 import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
 import com.weimob.saas.ec.limitation.service.LimitationServiceImpl;
 import com.weimob.saas.ec.limitation.utils.LimitContext;
@@ -50,7 +50,7 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         Map<String, Integer> orderGoodsLimitMap = new HashMap<>();
         Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap = new HashMap<>();
 
-        super.groupingOrderGoodsRequestVoList(orderGoodsLimitMap, orderGoodsQueryMap, vos, new HashMap<String, Integer>());
+        super.groupingOrderGoodsRequestVoList(LimitContext.getLimitBo().getOrderGoodsLimitMap(), orderGoodsQueryMap, vos, orderGoodsLimitMap);
 
         //3.更新限购记录
         //3.1 判断活动类型
@@ -58,6 +58,19 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
             super.updateUserLimitRecord(orderGoodsLimitMap);
             // 3.2 操作数据库
             limitationService.updateUserLimitRecord(LimitContext.getLimitBo().getGoodsLimitEntityList(), null, null);
+        } else if (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.PRIVILEGE_PRICE.getType())) {
+
+            groupingOrderActivityRequestVoList(LimitContext.getLimitBo().getOrderGoodsLimitMap(), orderGoodsQueryMap, vos, orderGoodsLimitMap);
+            groupingOrderSkuRequestVoList(LimitContext.getLimitBo().getOrderGoodsLimitMap(), orderGoodsQueryMap, vos, orderGoodsLimitMap);
+            super.updateUserLimitRecord(LimitContext.getLimitBo().getOrderGoodsLimitMap());
+
+            limitationService.updateUserLimitRecord(LimitContext.getLimitBo().getGoodsLimitEntityList(), LimitContext.getLimitBo().getActivityLimitEntityList(), LimitContext.getLimitBo().getActivityGoodsSoldEntityList());
+        } else if (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.DISCOUNT.getType())) {
+
+            groupingOrderActivityRequestVoList(LimitContext.getLimitBo().getOrderGoodsLimitMap(), orderGoodsQueryMap, vos, orderGoodsLimitMap);
+            super.updateUserLimitRecord(LimitContext.getLimitBo().getOrderGoodsLimitMap());
+
+            limitationService.updateUserLimitRecord(LimitContext.getLimitBo().getGoodsLimitEntityList(), LimitContext.getLimitBo().getActivityLimitEntityList(), null);
         }
     }
 
@@ -89,7 +102,7 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         LimitOrderChangeLogEntity limitOrderChangeLogEntity = null;
         try {
             // SQL 默认查询 service_name = "DEDUCT_USER_LIMIT"
-            limitOrderChangeLogEntity =limitOrderChangeLogDao.selectByPrimaryKey(Long.valueOf(queryLogParameter.getReferId()));
+            limitOrderChangeLogEntity = limitOrderChangeLogDao.selectByPrimaryKey(Long.valueOf(queryLogParameter.getReferId()));
         } catch (Exception e) {
             throw new LimitationBizException(LimitationErrorCode.SQL_QUERY_ORDER_CHANGE_LOG_ERROR, e);
         }
@@ -130,23 +143,61 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
     public void doReverse(List<LimitOrderChangeLogEntity> logList) {
 
         //1. 分组商品，统计wid下活动，商品的回滚数量
-        List<UserGoodsLimitEntity> userGoodsLimitEntityList = new ArrayList<>(logList.size());
-        UserGoodsLimitEntity userGoodsLimitEntity = null;
+        Map<Long, UserLimitEntity> activityMap = new HashMap<>();
+        Map<Long, UserGoodsLimitEntity> goodsLimitMap = new HashMap<>();
+        Map<Long, SkuLimitInfoEntity> skuLimitMap = new HashMap<>();
+        Integer bizType = null;
 
         for (LimitOrderChangeLogEntity logEntity : logList) {
-            userGoodsLimitEntity = new UserGoodsLimitEntity();
-            userGoodsLimitEntity.setPid(logEntity.getPid());
-            userGoodsLimitEntity.setStoreId(logEntity.getStoreId());
-            userGoodsLimitEntity.setLimitId(logEntity.getLimitId());
-            userGoodsLimitEntity.setGoodsId(logEntity.getGoodsId());
-            userGoodsLimitEntity.setWid(logEntity.getWid());
-            userGoodsLimitEntity.setBuyNum(logEntity.getBuyNum());
-            userGoodsLimitEntityList.add(userGoodsLimitEntity);
+            bizType = logEntity.getBizType();
+            if (goodsLimitMap.get(logEntity.getGoodsId()) == null) {
+                UserGoodsLimitEntity userGoodsLimitEntity = new UserGoodsLimitEntity();
+                userGoodsLimitEntity.setPid(logEntity.getPid());
+                userGoodsLimitEntity.setStoreId(logEntity.getStoreId());
+                userGoodsLimitEntity.setLimitId(logEntity.getLimitId());
+                userGoodsLimitEntity.setGoodsId(logEntity.getGoodsId());
+                userGoodsLimitEntity.setWid(logEntity.getWid());
+                userGoodsLimitEntity.setBuyNum(logEntity.getBuyNum());
+                goodsLimitMap.put(logEntity.getGoodsId(), userGoodsLimitEntity);
+            } else {
+                goodsLimitMap.get(logEntity.getGoodsId()).setBuyNum(goodsLimitMap.get(logEntity.getGoodsId()).getBuyNum() + logEntity.getBuyNum());
+            }
+
+            if (activityMap.get(logEntity.getBizId()) == null) {
+                UserLimitEntity userLimitEntity = new UserLimitEntity();
+                userLimitEntity.setPid(logEntity.getPid());
+                userLimitEntity.setStoreId(logEntity.getStoreId());
+                userLimitEntity.setLimitId(logEntity.getLimitId());
+                userLimitEntity.setWid(logEntity.getWid());
+                userLimitEntity.setBuyNum(logEntity.getBuyNum());
+                activityMap.put(logEntity.getBizId(), userLimitEntity);
+            } else {
+                activityMap.get(logEntity.getBizId()).setBuyNum(activityMap.get(logEntity.getBizId()).getBuyNum() + logEntity.getBuyNum());
+            }
+
+            if (skuLimitMap.get(logEntity.getSkuId()) == null) {
+                SkuLimitInfoEntity skuLimitInfoEntity = new SkuLimitInfoEntity();
+                skuLimitInfoEntity.setPid(logEntity.getPid());
+                skuLimitInfoEntity.setStoreId(logEntity.getStoreId());
+                skuLimitInfoEntity.setLimitId(logEntity.getLimitId());
+                skuLimitInfoEntity.setGoodsId(logEntity.getGoodsId());
+                skuLimitInfoEntity.setSoldNum(logEntity.getBuyNum());
+                skuLimitInfoEntity.setSkuId(logEntity.getSkuId());
+                skuLimitMap.put(logEntity.getSkuId(), skuLimitInfoEntity);
+            } else {
+                skuLimitMap.get(logEntity.getSkuId()).setSoldNum(skuLimitMap.get(logEntity.getSkuId()).getSoldNum() + logEntity.getBuyNum());
+            }
         }
 
         //2. 回滚活动商品的下单记录
         try {
-            limitationService.saveUserLimitRecord(userGoodsLimitEntityList, null, null);
+            if (Objects.equals(bizType, ActivityTypeEnum.PRIVILEGE_PRICE.getType())) {
+                limitationService.saveUserLimitRecord(new ArrayList<UserGoodsLimitEntity>(goodsLimitMap.values()), new ArrayList<UserLimitEntity>(activityMap.values()), new ArrayList<SkuLimitInfoEntity>(skuLimitMap.values()));
+            } else if (Objects.equals(bizType, ActivityTypeEnum.DISCOUNT.getType())) {
+                limitationService.saveUserLimitRecord(new ArrayList<UserGoodsLimitEntity>(goodsLimitMap.values()), new ArrayList<UserLimitEntity>(activityMap.values()), null);
+            } else if (Objects.equals(bizType, LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel())) {
+                limitationService.saveUserLimitRecord(new ArrayList<UserGoodsLimitEntity>(goodsLimitMap.values()), null, null);
+            }
         } catch (Exception e) {
             throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_GOODS_LIMIT_ERROR, e);
         }

@@ -21,4 +21,6 @@ public interface UserLimitDao extends BaseDao<UserLimitEntity> {
     UserLimitEntity getUserLimitEntity(UserLimitEntity activityLimitEntity);
 
     List<UserLimitEntity> queryUserLimitEntityList(List<UserLimitEntity> vos);
+
+    Integer deductUserLimit(UserLimitEntity activityLimitEntity);
 }

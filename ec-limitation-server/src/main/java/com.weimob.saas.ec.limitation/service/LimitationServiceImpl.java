@@ -263,7 +263,7 @@ public class LimitationServiceImpl {
         if (!CollectionUtils.isEmpty(activityLimitEntityList)) {
             for (UserLimitEntity activityLimitEntity : activityLimitEntityList) {
                 try {
-                    // TODO
+                    updateResult = userLimitDao.deductUserLimit(activityLimitEntity);
                 } catch (Exception e) {
                     throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_LIMIT_ERROR, e);
                 }
@@ -276,7 +276,7 @@ public class LimitationServiceImpl {
         if (!CollectionUtils.isEmpty(activityGoodsSoldEntityList)) {
             for (SkuLimitInfoEntity activitySoldEntity : activityGoodsSoldEntityList) {
                 try {
-                    // TODO
+                    updateResult = skuLimitInfoDao.deductSkuLimit(activitySoldEntity);
                 } catch (Exception e) {
                     throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_SKU_LIMIT_ERROR, e);
                 }
