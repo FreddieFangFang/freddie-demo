@@ -151,4 +151,18 @@
             AND buy_num >= #{buyNum}
         /*UserGoodsLimitDao.deductUserGoodsLimit*/
     </update>
+
+    <update id="deleteDiscountUserLimitInfo"
+            parameterType="com.weimob.saas.ec.limitation.model.LimitParam">
+        UPDATE
+        user_goods_limit
+        SET
+        is_deleted = 2,
+        update_time = NOW()
+        WHERE
+        pid = #{pid}
+        AND limit_id = #{limitId}
+        AND is_deleted = 0
+        /*UserGoodsLimitDao.deleteDiscountUserLimitInfo*/
+    </update>
 </mapper>

@@ -1,10 +1,8 @@
 package com.weimob.saas.ec.limitation.service;
 
 import com.weimob.saas.ec.limitation.common.LimitationCommonErrorVo;
-import com.weimob.saas.ec.limitation.model.request.BatchDeleteGoodsLimitRequestVo;
-import com.weimob.saas.ec.limitation.model.request.DeleteLimitationRequestVo;
-import com.weimob.saas.ec.limitation.model.request.LimitationInfoRequestVo;
-import com.weimob.saas.ec.limitation.model.request.SaveGoodsLimitInfoRequestVo;
+import com.weimob.saas.ec.limitation.model.request.*;
+import com.weimob.saas.ec.limitation.model.response.DeleteDiscountUserLimitInfoResponseVo;
 import com.weimob.saas.ec.limitation.model.response.LimitationUpdateResponseVo;
 import com.weimob.saas.ec.limitation.model.response.SaveGoodsLimitInfoResponseVo;
 import com.weimob.soa.common.response.SoaResponse;
@@ -87,4 +85,17 @@ public interface LimitationUpdateService {
      * @return
      */
     SoaResponse<SaveGoodsLimitInfoResponseVo, LimitationCommonErrorVo> updateGoodsLimitInfo(SaveGoodsLimitInfoRequestVo requestVo);
+    
+    /**
+     *  
+     * @title 周期性清除限时折扣用户购买记录
+     * @author lujialin
+     * @date 2018/6/29 14:37
+     * @useScene 周期性清除限时折扣用户购买记录
+     * @parameterExample 
+     * @returnExample 
+     * @param 
+     * @return 
+     */
+    SoaResponse<DeleteDiscountUserLimitInfoResponseVo,LimitationCommonErrorVo> deleteDiscountUserLimitInfo(DeleteDiscountUserLimitInfoRequestVo requestVo);
 }

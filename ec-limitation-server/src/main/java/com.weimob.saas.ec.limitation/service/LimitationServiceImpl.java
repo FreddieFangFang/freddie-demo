@@ -15,6 +15,8 @@ import com.weimob.saas.ec.limitation.entity.UserLimitEntity;
 import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.model.DeleteGoodsParam;
+import com.weimob.saas.ec.limitation.model.LimitParam;
+import com.weimob.saas.ec.limitation.model.request.DeleteDiscountUserLimitInfoRequestVo;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -284,6 +286,16 @@ public class LimitationServiceImpl {
                     throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_SKU_LIMIT_ERROR);
                 }
             }
+        }
+    }
+
+    public void deleteDiscountUserLimitInfo(DeleteDiscountUserLimitInfoRequestVo requestVo) {
+        LimitInfoEntity limitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
+        if (limitInfoEntity != null) {
+            userLimitDao.deleteDiscountUserLimitInfo(requestVo);
+            userGoodsLimitDao.deleteDiscountUserLimitInfo(new LimitParam(requestVo.getPid(), limitInfoEntity.getLimitId()));
+        } else {
+            throw new LimitationBizException(LimitationErrorCode.LIMIT_ACTIVITY_IS_NULL);
         }
     }
 }

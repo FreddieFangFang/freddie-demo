@@ -10,6 +10,7 @@ import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.model.LimitParam;
 import com.weimob.saas.ec.limitation.model.request.*;
+import com.weimob.saas.ec.limitation.model.response.DeleteDiscountUserLimitInfoResponseVo;
 import com.weimob.saas.ec.limitation.model.response.LimitationUpdateResponseVo;
 import com.weimob.saas.ec.limitation.model.response.SaveGoodsLimitInfoResponseVo;
 import com.weimob.saas.ec.limitation.service.LimitationServiceImpl;
@@ -213,6 +214,14 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         }
 
         return new SaveGoodsLimitInfoResponseVo(true, limitId);
+    }
+
+    @Override
+    public DeleteDiscountUserLimitInfoResponseVo deleteDiscountUserLimitInfo(DeleteDiscountUserLimitInfoRequestVo requestVo) {
+        DeleteDiscountUserLimitInfoResponseVo responseVo = new DeleteDiscountUserLimitInfoResponseVo();
+        limitationService.deleteDiscountUserLimitInfo(requestVo);
+        responseVo.setStatus(true);
+        return responseVo;
     }
 
     private List<SkuLimitInfoEntity> buildSkuLimitInfoEntity(Long limitId, SaveGoodsLimitInfoRequestVo requestVo) {
