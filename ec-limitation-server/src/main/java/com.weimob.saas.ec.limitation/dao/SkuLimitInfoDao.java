@@ -13,4 +13,8 @@ public interface SkuLimitInfoDao extends BaseDao<SkuLimitInfoEntity>{
     void deleteLimit(DeleteGoodsParam entity);
 
     List<SkuLimitInfo> queryOrderSkuLimitInfoList(List<UpdateUserLimitVo> vos);
+
+    List<SkuLimitInfoEntity> querySkuLimitList(List<SkuLimitInfoEntity> querySkuLimitList);
+
+    Integer deductSkuLimit(SkuLimitInfoEntity activitySoldEntity);
 }

@@ -1,5 +1,6 @@
 package com.weimob.saas.ec.limitation.facade;
 
+import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.model.request.*;
 import com.weimob.saas.ec.limitation.model.response.GoodsLimitInfoListResponseVo;
@@ -9,6 +10,8 @@ import com.weimob.saas.ec.limitation.service.LimitationQueryBizService;
 import com.weimob.saas.ec.limitation.utils.VerifyParamUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 /**
  * @author lujialin
@@ -72,6 +75,9 @@ public class LimitationQueryFacadeService {
             VerifyParamUtils.checkParam(LimitationErrorCode.REQUEST_PARAM_IS_NULL, request.getCheckLimit());
             if (request.getCheckLimit()) {
                 VerifyParamUtils.checkParam(LimitationErrorCode.GOODSNUM_IS_NULL, request.getGoodsBuyNum());
+            }
+            if (Objects.equals(request.getBizType(), ActivityTypeEnum.PRIVILEGE_PRICE.getType())) {
+                VerifyParamUtils.checkParam(LimitationErrorCode.SKUID_IS_NULL, request.getSkuId());
             }
         }
     }

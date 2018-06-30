@@ -3,6 +3,7 @@ package com.weimob.saas.ec.limitation.facade;
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.model.request.*;
+import com.weimob.saas.ec.limitation.model.response.DeleteDiscountUserLimitInfoResponseVo;
 import com.weimob.saas.ec.limitation.model.response.LimitationUpdateResponseVo;
 import com.weimob.saas.ec.limitation.model.response.SaveGoodsLimitInfoResponseVo;
 import com.weimob.saas.ec.limitation.service.LimitationUpdateBizService;
@@ -126,6 +127,20 @@ public class LimitationUpdateFacadeService {
         valiateSaveGoodsLimitInfoRequsetVo(requestVo);
 
         return limitationUpdateBizService.updateGoodsLimitInfo(requestVo);
+    }
+
+    public DeleteDiscountUserLimitInfoResponseVo deleteDiscountUserLimitInfo(DeleteDiscountUserLimitInfoRequestVo requestVo) {
+        valiateDeleteDiscountUserLimitInfoRequestVo(requestVo);
+
+        return limitationUpdateBizService.deleteDiscountUserLimitInfo(requestVo);
+    }
+
+    private void valiateDeleteDiscountUserLimitInfoRequestVo(DeleteDiscountUserLimitInfoRequestVo requestVo) {
+
+        VerifyParamUtils.checkParam(LimitationErrorCode.PID_IS_NULL, requestVo.getPid());
+        VerifyParamUtils.checkParam(LimitationErrorCode.BIZID_IS_NULL, requestVo.getBizId());
+        VerifyParamUtils.checkParam(LimitationErrorCode.BIZTYPE_IS_NULL, requestVo.getBizType());
+
     }
 
 }

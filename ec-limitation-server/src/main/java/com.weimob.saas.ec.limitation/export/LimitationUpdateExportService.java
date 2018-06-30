@@ -3,10 +3,8 @@ package com.weimob.saas.ec.limitation.export;
 import com.weimob.saas.ec.common.export.BaseExportService;
 import com.weimob.saas.ec.limitation.common.LimitationCommonErrorVo;
 import com.weimob.saas.ec.limitation.facade.LimitationUpdateFacadeService;
-import com.weimob.saas.ec.limitation.model.request.BatchDeleteGoodsLimitRequestVo;
-import com.weimob.saas.ec.limitation.model.request.DeleteLimitationRequestVo;
-import com.weimob.saas.ec.limitation.model.request.LimitationInfoRequestVo;
-import com.weimob.saas.ec.limitation.model.request.SaveGoodsLimitInfoRequestVo;
+import com.weimob.saas.ec.limitation.model.request.*;
+import com.weimob.saas.ec.limitation.model.response.DeleteDiscountUserLimitInfoResponseVo;
 import com.weimob.saas.ec.limitation.model.response.LimitationUpdateResponseVo;
 import com.weimob.saas.ec.limitation.model.response.SaveGoodsLimitInfoResponseVo;
 import com.weimob.saas.ec.limitation.service.LimitationUpdateService;
@@ -70,6 +68,11 @@ public class LimitationUpdateExportService extends BaseExportService implements 
     @Override
     public SoaResponse<SaveGoodsLimitInfoResponseVo, LimitationCommonErrorVo> updateGoodsLimitInfo(SaveGoodsLimitInfoRequestVo requestVo) {
         return process(limitationUpdateFacadeService, "updateGoodsLimitInfo", requestVo);
+    }
+
+    @Override
+    public SoaResponse<DeleteDiscountUserLimitInfoResponseVo, LimitationCommonErrorVo> deleteDiscountUserLimitInfo(DeleteDiscountUserLimitInfoRequestVo requestVo) {
+        return process(limitationUpdateFacadeService, "deleteDiscountUserLimitInfo", requestVo);
     }
 
 }

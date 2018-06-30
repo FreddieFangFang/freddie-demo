@@ -51,6 +51,7 @@ public enum LimitationErrorCode {
     ORDERNO_IS_NULL("1080000100019", "订单号为空"),
     GOODSNUM_IS_ILLEGAL("1080000100020", "商品购买数量不合法"),
     REPEAT_ORDER_DEDUCT_LIMIT("1080000100021", "重复取消限购"),
+    SKUID_IS_NULL("1080000100022", "skuId为空"),
 
 
     /*****************************交互异常02**********************************/
