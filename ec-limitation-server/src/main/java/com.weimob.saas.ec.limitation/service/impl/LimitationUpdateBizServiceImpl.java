@@ -153,67 +153,72 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
     }
 
     @Override
-    public SaveGoodsLimitInfoResponseVo saveGoodsLimitInfo(SaveGoodsLimitInfoRequestVo requestVo) {
-        Long limitId = null;
-        GoodsLimitInfoEntity goodsLimitInfoEntity = null;
-        switch (requestVo.getBizType()) {
-            case 3:
-            case 10:
-                //限时折扣,特权价，先查询limitId，再插入限购商品表
-                /** 1 查询限购主表信息*/
-                LimitInfoEntity oldLimitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
-                if (oldLimitInfoEntity == null) {
-                    throw new LimitationBizException(LimitationErrorCode.LIMITATION_IS_NULL);
-                }
-                limitId = oldLimitInfoEntity.getLimitId();
-                goodsLimitInfoEntity = buildGoodsLimitInfoEntity(limitId, requestVo);
-                /** 2 如果是特权价，插入goods、sku限购表*/
-                if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), requestVo.getBizType())) {
-                    List<SkuLimitInfoEntity> skuLimitInfoList = buildSkuLimitInfoEntity(limitId, requestVo);
-                    limitationService.addSkuLimitInfoList(skuLimitInfoList, goodsLimitInfoEntity);
-                } else {
-                    /** 3 插入商品限购表*/
-                    limitationService.addGoodsLimitInfoEntity(goodsLimitInfoEntity);
-                }
-                break;
-            case 30:
-                //积分商城商品限购
-                /** 1 生成全局id */
-                limitId = IdUtils.getLimitId(requestVo.getPid());
-                /** 2 构建限购主表信息*/
-                LimitInfoEntity limitInfoEntity = buildPointGoodsLimitInfoEntity(limitId, requestVo);
-                goodsLimitInfoEntity = buildGoodsLimitInfoEntity(limitId, requestVo);
-                limitationService.saveGoodsLimitInfo(limitInfoEntity, goodsLimitInfoEntity);
-                break;
-            default:
-                break;
+    public SaveGoodsLimitInfoResponseVo saveGoodsLimitInfo(SaveGoodsLimitInfoRequestVo saveGoodsLimitInfoRequestVo) {
+        for (SaveGoodsLimitInfoVo requestVo : saveGoodsLimitInfoRequestVo.getGoodsList()) {
+            Long limitId = null;
+            GoodsLimitInfoEntity goodsLimitInfoEntity = null;
+            switch (requestVo.getBizType()) {
+                case 3:
+                case 10:
+                    //限时折扣,特权价，先查询limitId，再插入限购商品表
+                    /** 1 查询限购主表信息*/
+                    LimitInfoEntity oldLimitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
+                    if (oldLimitInfoEntity == null) {
+                        throw new LimitationBizException(LimitationErrorCode.LIMITATION_IS_NULL);
+                    }
+                    limitId = oldLimitInfoEntity.getLimitId();
+                    goodsLimitInfoEntity = buildGoodsLimitInfoEntity(limitId, requestVo);
+                    /** 2 如果是特权价，插入goods、sku限购表*/
+                    if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), requestVo.getBizType())) {
+                        List<SkuLimitInfoEntity> skuLimitInfoList = buildSkuLimitInfoEntity(limitId, requestVo);
+                        limitationService.addSkuLimitInfoList(skuLimitInfoList, goodsLimitInfoEntity);
+                    } else {
+                        /** 3 插入商品限购表*/
+                        limitationService.addGoodsLimitInfoEntity(goodsLimitInfoEntity);
+                    }
+                    break;
+                case 30:
+                    //积分商城商品限购
+                    /** 1 生成全局id */
+                    limitId = IdUtils.getLimitId(requestVo.getPid());
+                    /** 2 构建限购主表信息*/
+                    LimitInfoEntity limitInfoEntity = buildPointGoodsLimitInfoEntity(limitId, requestVo);
+                    goodsLimitInfoEntity = buildGoodsLimitInfoEntity(limitId, requestVo);
+                    limitationService.saveGoodsLimitInfo(limitInfoEntity, goodsLimitInfoEntity);
+                    break;
+                default:
+                    break;
+            }
+
         }
-        return new SaveGoodsLimitInfoResponseVo(true, limitId);
+        return new SaveGoodsLimitInfoResponseVo(true, null);
     }
 
     @Override
-    public SaveGoodsLimitInfoResponseVo updateGoodsLimitInfo(SaveGoodsLimitInfoRequestVo requestVo) {
-        //直接处理限购商品表，需要判断类型决定是否处理sku限购表
-        /** 1 查询限购主表信息*/
-        LimitInfoEntity oldLimitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
-        if (oldLimitInfoEntity == null) {
-            throw new LimitationBizException(LimitationErrorCode.LIMITATION_IS_NULL);
+    public SaveGoodsLimitInfoResponseVo updateGoodsLimitInfo(SaveGoodsLimitInfoRequestVo saveGoodsLimitInfoRequestVo) {
+        for (SaveGoodsLimitInfoVo requestVo : saveGoodsLimitInfoRequestVo.getGoodsList()) {
+            //直接处理限购商品表，需要判断类型决定是否处理sku限购表
+            /** 1 查询限购主表信息*/
+            LimitInfoEntity oldLimitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
+            if (oldLimitInfoEntity == null) {
+                throw new LimitationBizException(LimitationErrorCode.LIMITATION_IS_NULL);
+            }
+            Long limitId = oldLimitInfoEntity.getLimitId();
+
+            /** 2 更新商品限购表限购值*/
+            GoodsLimitInfoEntity oldGoodsLimitInfoEntity = buildGoodsLimitInfoEntity(limitId, requestVo);
+
+            if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), requestVo.getBizType())) {
+                /** 3 特权价需要更新商品限购值，删除sku商品记录，插入新的sku商品记录*/
+                List<SkuLimitInfoEntity> skuLimitInfoList = buildSkuLimitInfoEntity(limitId, requestVo);
+                limitationService.updatePrivilegePriceGoodsLimitInfo(oldGoodsLimitInfoEntity, skuLimitInfoList);
+
+            } else {
+                limitationService.updateGoodsLimitInfoEntity(oldGoodsLimitInfoEntity);
+            }
         }
-        Long limitId = oldLimitInfoEntity.getLimitId();
 
-        /** 2 更新商品限购表限购值*/
-        GoodsLimitInfoEntity oldGoodsLimitInfoEntity = buildGoodsLimitInfoEntity(limitId, requestVo);
-
-        if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), requestVo.getBizType())) {
-            /** 3 特权价需要更新商品限购值，删除sku商品记录，插入新的sku商品记录*/
-            List<SkuLimitInfoEntity> skuLimitInfoList = buildSkuLimitInfoEntity(limitId, requestVo);
-            limitationService.updatePrivilegePriceGoodsLimitInfo(oldGoodsLimitInfoEntity, skuLimitInfoList);
-
-        } else {
-            limitationService.updateGoodsLimitInfoEntity(oldGoodsLimitInfoEntity);
-        }
-
-        return new SaveGoodsLimitInfoResponseVo(true, limitId);
+        return new SaveGoodsLimitInfoResponseVo(true, null);
     }
 
     @Override
@@ -224,7 +229,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         return responseVo;
     }
 
-    private List<SkuLimitInfoEntity> buildSkuLimitInfoEntity(Long limitId, SaveGoodsLimitInfoRequestVo requestVo) {
+    private List<SkuLimitInfoEntity> buildSkuLimitInfoEntity(Long limitId, SaveGoodsLimitInfoVo requestVo) {
         List<SkuLimitInfoEntity> skuLimitInfoEntityList = new ArrayList<>();
         for (SkuLimitInfo info : requestVo.getSkuLimitInfoList()) {
             SkuLimitInfoEntity skuLimitInfoEntity = new SkuLimitInfoEntity();
@@ -240,7 +245,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         return skuLimitInfoEntityList;
     }
 
-    private GoodsLimitInfoEntity buildGoodsLimitInfoEntity(Long limitId, SaveGoodsLimitInfoRequestVo requestVo) {
+    private GoodsLimitInfoEntity buildGoodsLimitInfoEntity(Long limitId, SaveGoodsLimitInfoVo requestVo) {
         GoodsLimitInfoEntity infoEntity = new GoodsLimitInfoEntity();
         infoEntity.setLimitId(limitId);
         infoEntity.setPid(requestVo.getPid());
@@ -251,7 +256,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         return infoEntity;
     }
 
-    private LimitInfoEntity buildPointGoodsLimitInfoEntity(Long limitId, SaveGoodsLimitInfoRequestVo requestVo) {
+    private LimitInfoEntity buildPointGoodsLimitInfoEntity(Long limitId, SaveGoodsLimitInfoVo requestVo) {
         LimitInfoEntity limitInfoEntity = new LimitInfoEntity();
         limitInfoEntity.setPid(requestVo.getPid());
         limitInfoEntity.setBizId(requestVo.getBizId());
