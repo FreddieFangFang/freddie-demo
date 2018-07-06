@@ -24,7 +24,7 @@ public class LimitationInfoRequestVo extends BaseRequest{
     /**
      * 限购渠道类型
      */
-    private String channelType;
+    private String saleChannelType;
     /**
      * 限购来源
      */
@@ -66,12 +66,12 @@ public class LimitationInfoRequestVo extends BaseRequest{
         this.storeIdList = storeIdList;
     }
 
-    public String getChannelType() {
-        return channelType;
+    public String getSaleChannelType() {
+        return saleChannelType;
     }
 
-    public void setChannelType(String channelType) {
-        this.channelType = channelType;
+    public void setSaleChannelType(String saleChannelType) {
+        this.saleChannelType = saleChannelType;
     }
 
     public String getSource() {

@@ -14,7 +14,7 @@ public class LimitInfoEntity {
     /**
      * 限购渠道类型
      */
-    private String channelType;
+    private String saleChannelType;
     /**
      * 限购来源
      */
@@ -68,12 +68,12 @@ public class LimitInfoEntity {
         this.pid = pid;
     }
 
-    public String getChannelType() {
-        return channelType;
+    public String getSaleChannelType() {
+        return saleChannelType;
     }
 
-    public void setChannelType(String channelType) {
-        this.channelType = channelType == null ? null : channelType.trim();
+    public void setSaleChannelType(String saleChannelType) {
+        this.saleChannelType = saleChannelType == null ? null : saleChannelType.trim();
     }
 
     public String getSource() {

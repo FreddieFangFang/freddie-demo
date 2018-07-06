@@ -277,7 +277,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         limitInfoEntity.setLimitId(limitId);
         limitInfoEntity.setLimitLevel(requestVo.getLimitLevel());
         limitInfoEntity.setLimitType(requestVo.getGoodsLimitType());
-        limitInfoEntity.setChannelType(requestVo.getChannelType());
+        limitInfoEntity.setSaleChannelType(requestVo.getChannelType());
         limitInfoEntity.setSource(requestVo.getSource());
         return limitInfoEntity;
     }
@@ -299,7 +299,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         limitInfoEntity.setLimitId(requestVo.getLimitId());
         limitInfoEntity.setBizId(requestVo.getBizId());
         limitInfoEntity.setBizType(requestVo.getBizType());
-        limitInfoEntity.setChannelType(requestVo.getChannelType());
+        limitInfoEntity.setSaleChannelType(requestVo.getSaleChannelType());
         limitInfoEntity.setLimitLevel(requestVo.getLimitLevel());
         limitInfoEntity.setLimitNum(requestVo.getLimitNum());
         limitInfoEntity.setLimitType(requestVo.getLimitType());

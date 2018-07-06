@@ -4,7 +4,7 @@
     <resultMap id="BaseResultMap" type="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
         <id column="limit_id" jdbcType="BIGINT" property="limitId"/>
         <result column="pid" jdbcType="BIGINT" property="pid"/>
-        <result column="channel_type" jdbcType="VARCHAR" property="channelType"/>
+        <result column="sale_channeltype" jdbcType="VARCHAR" property="saleChannelType"/>
         <result column="source" jdbcType="VARCHAR" property="source"/>
         <result column="limit_level" jdbcType="TINYINT" property="limitLevel"/>
         <result column="biz_id" jdbcType="BIGINT" property="bizId"/>
@@ -18,7 +18,7 @@
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
     </resultMap>
     <sql id="Base_Column_List">
-    limit_id, pid, channel_type, source, limit_level, biz_id, biz_type, limit_type, limit_num, 
+    limit_id, pid, sale_channeltype, source, limit_level, biz_id, biz_type, limit_type, limit_num,
     sold_num, version, is_deleted, create_time, update_time
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -34,13 +34,13 @@
     <insert id="insert" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
     insert into
     limit_info
-    (limit_id, pid, channel_type,
+    (limit_id, pid, sale_channeltype,
       source, limit_level, biz_id, 
       biz_type, limit_type, limit_num, 
       sold_num, is_deleted,
       create_time, update_time)
     values
-    (#{limitId,jdbcType=BIGINT}, #{pid,jdbcType=BIGINT}, #{channelType,jdbcType=VARCHAR},
+    (#{limitId,jdbcType=BIGINT}, #{pid,jdbcType=BIGINT}, #{saleChannelType,jdbcType=VARCHAR},
       #{source,jdbcType=VARCHAR}, #{limitLevel,jdbcType=TINYINT}, #{bizId,jdbcType=BIGINT}, 
       #{bizType,jdbcType=TINYINT}, #{limitType,jdbcType=TINYINT}, #{limitNum,jdbcType=INTEGER}, 
       #{soldNum,jdbcType=INTEGER}, 0,
@@ -80,8 +80,8 @@
         update
         limit_info
         <set>
-            <if test="channelType != null">
-                channel_type = #{channelType},
+            <if test="saleChannelType != null">
+                sale_channeltype = #{saleChannelType},
             </if>
             <if test="source != null">
                 source = #{source},
