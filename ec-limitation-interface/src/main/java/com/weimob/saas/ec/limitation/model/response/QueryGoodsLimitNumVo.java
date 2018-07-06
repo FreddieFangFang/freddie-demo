@@ -31,6 +31,10 @@ public class QueryGoodsLimitNumVo implements Serializable {
      */
     private Integer goodsLimitNum;
     /**
+     * 店铺级限购
+     */
+    private Integer pidGoodsLimitNum;
+    /**
      * sku的限购信息
      */
     private List<SkuLimitInfo> skuLimitInfoList;
@@ -73,5 +77,13 @@ public class QueryGoodsLimitNumVo implements Serializable {
 
     public void setSkuLimitInfoList(List<SkuLimitInfo> skuLimitInfoList) {
         this.skuLimitInfoList = skuLimitInfoList;
+    }
+
+    public Integer getPidGoodsLimitNum() {
+        return pidGoodsLimitNum;
+    }
+
+    public void setPidGoodsLimitNum(Integer pidGoodsLimitNum) {
+        this.pidGoodsLimitNum = pidGoodsLimitNum;
     }
 }

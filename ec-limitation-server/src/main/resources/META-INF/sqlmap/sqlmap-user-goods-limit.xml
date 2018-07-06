@@ -33,7 +33,6 @@
         <foreach item="item" index="index" collection="list"
                  separator="or">
             (pid = #{item.pid}
-            and store_id = #{item.storeId}
             and goods_id = #{item.goodsId}
             and limit_id = #{item.limitId}
             and wid = #{item.wid}
@@ -108,7 +107,6 @@
                  separator="or">
             (
             limitinfo.pid = #{item.pid}
-            and usergoodslimit.store_id = #{item.storeId}
             and limitinfo.biz_id = #{item.bizId}
             and limitinfo.biz_type = #{item.bizType}
             and wid = #{item.wid}

@@ -103,6 +103,8 @@ public class LimitationUpdateFacadeService {
     }
 
     private void valiateSaveGoodsLimitInfoRequsetVo(SaveGoodsLimitInfoRequestVo saveGoodsLimitInfoRequestVo) {
+        VerifyParamUtils.checkParam(LimitationErrorCode.REQUEST_PARAM_IS_NULL, saveGoodsLimitInfoRequestVo);
+        VerifyParamUtils.checkParam(LimitationErrorCode.REQUEST_PARAM_IS_NULL, saveGoodsLimitInfoRequestVo.getGoodsList());
         for (SaveGoodsLimitInfoVo requestVo : saveGoodsLimitInfoRequestVo.getGoodsList()) {
             VerifyParamUtils.checkParam(LimitationErrorCode.PID_IS_NULL, requestVo.getPid());
             VerifyParamUtils.checkParam(LimitationErrorCode.STORE_IS_NULL, requestVo.getStoreId());

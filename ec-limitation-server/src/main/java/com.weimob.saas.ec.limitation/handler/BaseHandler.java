@@ -207,7 +207,7 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
         if (CollectionUtils.isNotEmpty(limitInfoEntityList)) {
             activityMap = groupingActivityEntityMap(limitInfoEntityList);
         }
-        Map<Long, GoodsLimitInfoEntity> activityGoodsMap = MapUtils.EMPTY_MAP;
+        Map<Long, List<GoodsLimitInfoEntity>> activityGoodsMap = MapUtils.EMPTY_MAP;
         if (CollectionUtils.isNotEmpty(goodsLimitInfoEntityList)) {
             activityGoodsMap = groupingActivityGoodsEntityMap(goodsLimitInfoEntityList);
         }
@@ -224,35 +224,59 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
             switch (entryKeyPrefix) {
                 case LIMIT_PREFIX_GOODS:
                     long goodsId = Long.parseLong(entryKey.substring(lastIndex));
+                    Long storeId = Long.parseLong(entryKey.split("_")[3]);
                     // 当用户没有购买记录的时候, 需要查看购买的记录, 当购买的商品超过商品限购记录则抛出异常
-                    if (activityGoodsMap.get(goodsId) == null) {
+                    if (CollectionUtils.isEmpty(activityGoodsMap.get(goodsId))) {
                         throw new LimitationBizException(LimitationErrorCode.LIMIT_GOODS_IS_NULL);
                     }
-                    if (activityGoodsMap.get(goodsId).getLimitNum() == LimitConstant.UNLIMITED_NUM) {
+                    Integer goodsLimitNum = null;
+                    Integer pidGoodsLimitNum = null;
+                    for (GoodsLimitInfoEntity goodsLimitInfoEntity : activityGoodsMap.get(goodsId)) {
+                        if (goodsLimitInfoEntity.getLimitLevel() == 0) {
+                            goodsLimitNum = goodsLimitInfoEntity.getLimitNum();
+                        } else {
+                            pidGoodsLimitNum = goodsLimitInfoEntity.getLimitNum();
+                        }
+                    }
+                    if (LimitConstant.UNLIMITED_NUM == goodsLimitNum && LimitConstant.UNLIMITED_NUM == pidGoodsLimitNum) {
                         break;
                     }
 
 
                     boolean includeCurrentGoods = false;
                     if (CollectionUtils.isNotEmpty(userGoodsLimitList)) {
+                        Map<Long, Integer> goodsAlreadayBuyNumMap = new HashMap<>();
                         //用户有购买记录
                         for (UserGoodsLimitEntity goodsLimitEntity : userGoodsLimitList) {
-                            if (goodsLimitEntity.getGoodsId() == goodsId) {
+                            if (goodsLimitEntity.getGoodsId() == goodsId && storeId == goodsLimitEntity.getStoreId()) {
                                 includeCurrentGoods = true;
                                 int finalGoodsNum = entry.getValue() + goodsLimitEntity.getBuyNum();
-                                //判断是否超出商品设置的限购数量
-                                GoodsLimitInfoEntity GoodsEntity = activityGoodsMap.get(goodsId);
                                 //等于0表示不限购
-                                if (GoodsEntity.getLimitNum() != LimitConstant.UNLIMITED_NUM) {
-                                    if (finalGoodsNum > activityGoodsMap.get(goodsId).getLimitNum()) {
+                                if (goodsLimitNum != LimitConstant.UNLIMITED_NUM) {
+                                    if (finalGoodsNum > goodsLimitNum) {
                                         throw new LimitationBizException(LimitationErrorCode.BEYOND_GOODS_LIMIT_NUM);
                                     }
                                 }
                             }
+                            if (goodsAlreadayBuyNumMap.get(goodsLimitEntity.getGoodsId()) == null) {
+                                goodsAlreadayBuyNumMap.put(goodsLimitEntity.getGoodsId(), goodsLimitEntity.getBuyNum());
+                            } else {
+                                goodsAlreadayBuyNumMap.put(goodsLimitEntity.getGoodsId(), goodsAlreadayBuyNumMap.get(goodsLimitEntity.getGoodsId()) + goodsLimitEntity.getBuyNum());
+                            }
+                        }
+                        //校验店铺级商品限购
+                        if (pidGoodsLimitNum != LimitConstant.UNLIMITED_NUM) {
+                            int finalGoodsNum = entry.getValue() + (goodsAlreadayBuyNumMap.get(goodsId) == null ? 0 : goodsAlreadayBuyNumMap.get(goodsId));
+                            if (finalGoodsNum > pidGoodsLimitNum) {
+                                throw new LimitationBizException(LimitationErrorCode.BEYOND_GOODS_LIMIT_NUM);
+                            }
                         }
                     }
                     if (!includeCurrentGoods) {
-                        if (entry.getValue() > activityGoodsMap.get(goodsId).getLimitNum()) {
+                        if (goodsLimitNum != LimitConstant.UNLIMITED_NUM && entry.getValue() > goodsLimitNum) {
+                            throw new LimitationBizException(LimitationErrorCode.BEYOND_GOODS_LIMIT_NUM);
+                        }
+                        if (pidGoodsLimitNum != LimitConstant.UNLIMITED_NUM && entry.getValue() > pidGoodsLimitNum) {
                             throw new LimitationBizException(LimitationErrorCode.BEYOND_GOODS_LIMIT_NUM);
                         }
                     }
@@ -361,10 +385,16 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
         return resultMap;
     }
 
-    private Map<Long, GoodsLimitInfoEntity> groupingActivityGoodsEntityMap(List<GoodsLimitInfoEntity> goodsLimitInfoEntityList) {
-        Map<Long, GoodsLimitInfoEntity> resultMap = new HashMap<>();
+    private Map<Long, List<GoodsLimitInfoEntity>> groupingActivityGoodsEntityMap(List<GoodsLimitInfoEntity> goodsLimitInfoEntityList) {
+        Map<Long, List<GoodsLimitInfoEntity>> resultMap = new HashMap<>();
         for (GoodsLimitInfoEntity entity : goodsLimitInfoEntityList) {
-            resultMap.put(entity.getGoodsId(), entity);
+            if (CollectionUtils.isEmpty(resultMap.get(entity.getGoodsId()))) {
+                List<GoodsLimitInfoEntity> entityList = new ArrayList<>();
+                entityList.add(entity);
+                resultMap.put(entity.getGoodsId(), entityList);
+            } else {
+                resultMap.get(entity.getGoodsId()).add(entity);
+            }
         }
         return resultMap;
     }

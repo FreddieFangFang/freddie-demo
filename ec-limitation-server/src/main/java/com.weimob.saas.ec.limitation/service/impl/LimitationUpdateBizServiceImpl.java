@@ -156,7 +156,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
     public SaveGoodsLimitInfoResponseVo saveGoodsLimitInfo(SaveGoodsLimitInfoRequestVo saveGoodsLimitInfoRequestVo) {
         for (SaveGoodsLimitInfoVo requestVo : saveGoodsLimitInfoRequestVo.getGoodsList()) {
             Long limitId = null;
-            GoodsLimitInfoEntity goodsLimitInfoEntity = null;
+            List<GoodsLimitInfoEntity> goodsLimitInfoEntityList = null;
             switch (requestVo.getBizType()) {
                 case 3:
                 case 10:
@@ -167,14 +167,14 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
                         throw new LimitationBizException(LimitationErrorCode.LIMITATION_IS_NULL);
                     }
                     limitId = oldLimitInfoEntity.getLimitId();
-                    goodsLimitInfoEntity = buildGoodsLimitInfoEntity(limitId, requestVo);
+                    goodsLimitInfoEntityList = buildGoodsLimitInfoEntity(limitId, requestVo);
                     /** 2 如果是特权价，插入goods、sku限购表*/
                     if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), requestVo.getBizType())) {
                         List<SkuLimitInfoEntity> skuLimitInfoList = buildSkuLimitInfoEntity(limitId, requestVo);
-                        limitationService.addSkuLimitInfoList(skuLimitInfoList, goodsLimitInfoEntity);
+                        limitationService.addSkuLimitInfoList(skuLimitInfoList, goodsLimitInfoEntityList);
                     } else {
                         /** 3 插入商品限购表*/
-                        limitationService.addGoodsLimitInfoEntity(goodsLimitInfoEntity);
+                        limitationService.addGoodsLimitInfoEntity(goodsLimitInfoEntityList);
                     }
                     break;
                 case 30:
@@ -183,8 +183,8 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
                     limitId = IdUtils.getLimitId(requestVo.getPid());
                     /** 2 构建限购主表信息*/
                     LimitInfoEntity limitInfoEntity = buildPointGoodsLimitInfoEntity(limitId, requestVo);
-                    goodsLimitInfoEntity = buildGoodsLimitInfoEntity(limitId, requestVo);
-                    limitationService.saveGoodsLimitInfo(limitInfoEntity, goodsLimitInfoEntity);
+                    goodsLimitInfoEntityList = buildGoodsLimitInfoEntity(limitId, requestVo);
+                    limitationService.saveGoodsLimitInfo(limitInfoEntity, goodsLimitInfoEntityList);
                     break;
                 default:
                     break;
@@ -206,7 +206,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
             Long limitId = oldLimitInfoEntity.getLimitId();
 
             /** 2 更新商品限购表限购值*/
-            GoodsLimitInfoEntity oldGoodsLimitInfoEntity = buildGoodsLimitInfoEntity(limitId, requestVo);
+            List<GoodsLimitInfoEntity> oldGoodsLimitInfoEntity = buildGoodsLimitInfoEntity(limitId, requestVo);
 
             if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), requestVo.getBizType())) {
                 /** 3 特权价需要更新商品限购值，删除sku商品记录，插入新的sku商品记录*/
@@ -245,15 +245,28 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         return skuLimitInfoEntityList;
     }
 
-    private GoodsLimitInfoEntity buildGoodsLimitInfoEntity(Long limitId, SaveGoodsLimitInfoVo requestVo) {
+    private List<GoodsLimitInfoEntity> buildGoodsLimitInfoEntity(Long limitId, SaveGoodsLimitInfoVo requestVo) {
+        List<GoodsLimitInfoEntity> infoEntityList = new ArrayList<>();
         GoodsLimitInfoEntity infoEntity = new GoodsLimitInfoEntity();
         infoEntity.setLimitId(limitId);
         infoEntity.setPid(requestVo.getPid());
         infoEntity.setStoreId(requestVo.getStoreId());
         infoEntity.setGoodsId(requestVo.getGoodsId());
+        infoEntity.setLimitLevel(0);
         infoEntity.setLimitNum(requestVo.getGoodsLimitNum());
         infoEntity.setLimitType(requestVo.getGoodsLimitType());
-        return infoEntity;
+        infoEntityList.add(infoEntity);
+
+        GoodsLimitInfoEntity infoEntity2 = new GoodsLimitInfoEntity();
+        infoEntity2.setLimitId(limitId);
+        infoEntity2.setPid(requestVo.getPid());
+        infoEntity2.setStoreId(requestVo.getStoreId());
+        infoEntity2.setGoodsId(requestVo.getGoodsId());
+        infoEntity2.setLimitLevel(1);
+        infoEntity2.setLimitNum(requestVo.getPidGoodsLimitNum() == null ? 0 : requestVo.getPidGoodsLimitNum());
+        infoEntity2.setLimitType(requestVo.getGoodsLimitType());
+        infoEntityList.add(infoEntity2);
+        return infoEntityList;
     }
 
     private LimitInfoEntity buildPointGoodsLimitInfoEntity(Long limitId, SaveGoodsLimitInfoVo requestVo) {

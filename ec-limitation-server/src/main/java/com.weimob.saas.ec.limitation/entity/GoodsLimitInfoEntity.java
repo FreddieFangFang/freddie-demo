@@ -15,6 +15,8 @@ public class GoodsLimitInfoEntity {
 
     private Long goodsId;
 
+    private Integer limitLevel;
+
     private Integer limitNum;
 
     private Integer soldNum;
@@ -121,5 +123,13 @@ public class GoodsLimitInfoEntity {
 
     public void setStoreId(Long storeId) {
         this.storeId = storeId;
+    }
+
+    public Integer getLimitLevel() {
+        return limitLevel;
+    }
+
+    public void setLimitLevel(Integer limitLevel) {
+        this.limitLevel = limitLevel;
     }
 }

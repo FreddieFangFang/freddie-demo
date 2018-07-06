@@ -99,22 +99,24 @@ public class LimitationServiceImpl {
         }
     }
 
-    public void saveGoodsLimitInfo(LimitInfoEntity limitInfoEntity, GoodsLimitInfoEntity goodsLimitInfoEntity) {
+    public void saveGoodsLimitInfo(LimitInfoEntity limitInfoEntity, List<GoodsLimitInfoEntity> goodsLimitInfoEntity) {
         limitInfoDao.insert(limitInfoEntity);
-        goodsLimitInfoDao.insert(goodsLimitInfoEntity);
+        goodsLimitInfoDao.batchInsert(goodsLimitInfoEntity);
     }
 
-    public void addGoodsLimitInfoEntity(GoodsLimitInfoEntity goodsLimitInfoEntity) {
-        goodsLimitInfoDao.insert(goodsLimitInfoEntity);
+    public void addGoodsLimitInfoEntity(List<GoodsLimitInfoEntity> goodsLimitInfoEntity) {
+        goodsLimitInfoDao.batchInsert(goodsLimitInfoEntity);
     }
 
-    public void addSkuLimitInfoList(List<SkuLimitInfoEntity> skuLimitInfoList, GoodsLimitInfoEntity goodsLimitInfoEntity) {
-        goodsLimitInfoDao.insert(goodsLimitInfoEntity);
+    public void addSkuLimitInfoList(List<SkuLimitInfoEntity> skuLimitInfoList, List<GoodsLimitInfoEntity> goodsLimitInfoEntity) {
+        goodsLimitInfoDao.batchInsert(goodsLimitInfoEntity);
         skuLimitInfoDao.batchInsert(skuLimitInfoList);
     }
 
-    public void updateGoodsLimitInfoEntity(GoodsLimitInfoEntity goodsLimitInfoEntity) {
-        goodsLimitInfoDao.updateGoodsLimitInfoEntity(goodsLimitInfoEntity);
+    public void updateGoodsLimitInfoEntity(List<GoodsLimitInfoEntity> goodsLimitInfoEntityList) {
+        for (GoodsLimitInfoEntity goodsLimitInfoEntity : goodsLimitInfoEntityList) {
+            goodsLimitInfoDao.updateGoodsLimitInfoEntity(goodsLimitInfoEntity);
+        }
     }
 
     public void deleteDiscountLimitInfo(LimitInfoEntity oldLimitInfoEntity) {
@@ -164,16 +166,18 @@ public class LimitationServiceImpl {
         deleteGoodsLimitInfo(entity.getPid(), entity.getLimitId(), pointGoodsIdList);
     }
 
-    public void updatePrivilegePriceGoodsLimitInfo(GoodsLimitInfoEntity oldGoodsLimitInfoEntity, List<SkuLimitInfoEntity> skuLimitInfoList) {
+    public void updatePrivilegePriceGoodsLimitInfo(List<GoodsLimitInfoEntity> oldGoodsLimitInfoEntityList, List<SkuLimitInfoEntity> skuLimitInfoList) {
 
-        goodsLimitInfoDao.updateGoodsLimitInfoEntity(oldGoodsLimitInfoEntity);
+        for (GoodsLimitInfoEntity oldGoodsLimitInfoEntity : oldGoodsLimitInfoEntityList) {
+            goodsLimitInfoDao.updateGoodsLimitInfoEntity(oldGoodsLimitInfoEntity);
+        }
 
 
         DeleteGoodsParam param = new DeleteGoodsParam();
-        param.setPid(oldGoodsLimitInfoEntity.getPid());
-        param.setLimitId(oldGoodsLimitInfoEntity.getLimitId());
+        param.setPid(oldGoodsLimitInfoEntityList.get(0).getPid());
+        param.setLimitId(oldGoodsLimitInfoEntityList.get(0).getLimitId());
         List<Long> goodsIdList = new ArrayList<>();
-        goodsIdList.add(oldGoodsLimitInfoEntity.getGoodsId());
+        goodsIdList.add(oldGoodsLimitInfoEntityList.get(0).getGoodsId());
         param.setGoodsIdList(goodsIdList);
         skuLimitInfoDao.deleteSkuLimit(param);
 
