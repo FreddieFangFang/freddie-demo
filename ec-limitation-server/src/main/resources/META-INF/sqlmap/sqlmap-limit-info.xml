@@ -51,20 +51,20 @@
     <select id="selectByLimitParam" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity"
             resultMap="BaseResultMap">
         select
-            <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List"/>
         from
-            limit_info
+        limit_info
         where
-            pid = #{pid}
-            and biz_id = #{bizId}
-            and biz_type = #{bizType}
+        pid = #{pid}
+        and biz_id = #{bizId}
+        and biz_type = #{bizType}
         /*LimitInfoDao.selectByLimitParam*/
     </select>
     <select id="queryLimitInfoList" resultMap="BaseResultMap" parameterType="java.util.List">
         select
-            <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List"/>
         from
-            limit_info
+        limit_info
         where
         <foreach item="item" index="index" collection="list"
                  separator="or">
@@ -95,12 +95,12 @@
             <if test="soldNum != null">
                 sold_num = #{soldNum},
             </if>
+            version = version+1,
+            update_time = NOW()
         </set>
-        version = version+1,
-        update_time = NOW()
         where
-            limit_id = #{limitId}
-            and version=#{version}
+        limit_id = #{limitId}
+        and version=#{version}
         /*LimitInfoDao.update*/
     </update>
 
@@ -119,9 +119,9 @@
 
     <select id="queryOrderLimitInfoList" resultMap="BaseResultMap" parameterType="java.util.List">
         select
-            <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List"/>
         from
-            limit_info
+        limit_info
         where
         <foreach item="item" index="index" collection="list"
                  separator="or">
