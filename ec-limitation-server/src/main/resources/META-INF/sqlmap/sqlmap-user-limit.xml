@@ -254,7 +254,7 @@
         UPDATE
         user_limit
         SET
-        is_deleted = 2,
+        pid =pid * -1,
         update_time = NOW()
         WHERE
         pid = #{pid}
