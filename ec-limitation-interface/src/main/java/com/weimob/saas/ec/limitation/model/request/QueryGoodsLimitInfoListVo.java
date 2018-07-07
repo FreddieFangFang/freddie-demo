@@ -22,6 +22,11 @@ public class QueryGoodsLimitInfoListVo extends BaseRequest {
     private Integer bizType;
 
     /**
+     * 限时折扣1.冻结库存；2.可用sku
+     */
+    private Integer activityStockType;
+
+    /**
      * 商品id
      */
     private Long goodsId;
@@ -111,5 +116,13 @@ public class QueryGoodsLimitInfoListVo extends BaseRequest {
 
     public void setLimitType(Integer limitType) {
         this.limitType = limitType;
+    }
+
+    public Integer getActivityStockType() {
+        return activityStockType;
+    }
+
+    public void setActivityStockType(Integer activityStockType) {
+        this.activityStockType = activityStockType;
     }
 }

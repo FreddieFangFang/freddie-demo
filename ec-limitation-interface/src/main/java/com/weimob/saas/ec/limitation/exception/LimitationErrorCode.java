@@ -52,6 +52,7 @@ public enum LimitationErrorCode {
     GOODSNUM_IS_ILLEGAL("1080000100020", "商品购买数量不合法"),
     REPEAT_ORDER_DEDUCT_LIMIT("1080000100021", "重复取消限购"),
     SKUID_IS_NULL("1080000100022", "skuId为空"),
+    ACTIVITY_STOCK_TYPE_IS_NULL("1080000100023", "限时折扣活动库存设置类型为空"),
 
 
     /*****************************交互异常02**********************************/
@@ -70,8 +71,7 @@ public enum LimitationErrorCode {
     SQL_UPDATE_SKU_LIMIT_ERROR("1080000400003", "数据库更新异常"),
     SQL_INSERT_ORDER_LOG_ERROR("1080000400004", "数据库插入异常"),
     SQL_QUERY_ORDER_CHANGE_LOG_ERROR("1080000400005", "查询下单记录异常"),
-    SQL_UPDATE_ORDER_CHANGE_LOG_ERROR("1080000400006", "更新下单的日志状态异常"),
-    ;
+    SQL_UPDATE_ORDER_CHANGE_LOG_ERROR("1080000400006", "更新下单的日志状态异常"),;
 
     private String errorCode;
     private String errorMsg;

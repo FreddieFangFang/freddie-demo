@@ -58,7 +58,9 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
             super.updateUserLimitRecord(orderGoodsLimitMap);
             // 3.2 操作数据库
             limitationService.updateUserLimitRecord(LimitContext.getLimitBo().getGoodsLimitEntityList(), null, null);
-        } else if (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.PRIVILEGE_PRICE.getType())) {
+        } else if (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.PRIVILEGE_PRICE.getType())
+                || (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.DISCOUNT.getType())
+                && Objects.equals(vos.get(0).getActivityStockType(), LimitConstant.ACTIVITY_SKU_TYPE))) {
 
             groupingOrderActivityRequestVoList(LimitContext.getLimitBo().getOrderGoodsLimitMap(), orderGoodsQueryMap, vos, orderGoodsLimitMap);
             groupingOrderSkuRequestVoList(LimitContext.getLimitBo().getOrderGoodsLimitMap(), orderGoodsQueryMap, vos, orderGoodsLimitMap);

@@ -94,7 +94,8 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             }
         }
 
-        if (Objects.equals(requestVo.getGoodsDetailList().get(0).getBizType(), ActivityTypeEnum.DISCOUNT.getType())) {
+        if (Objects.equals(requestVo.getGoodsDetailList().get(0).getBizType(), ActivityTypeEnum.DISCOUNT.getType())
+                && Objects.equals(requestVo.getGoodsDetailList().get(0).getActivityStockType(), LimitConstant.ACTIVITY_STOCK_TYPE)) {
             //限时折扣要校验活动限购
             List<UserLimitEntity> userLimitEntityList = userLimitDao.queryUserLimitEntityList(queryUserLimitList);
             for (UserLimitEntity vo : userLimitEntityList) {
@@ -103,7 +104,9 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
 
             return buildResponseVo(requestVo, limitIdMap, activityLimitNumMap, activityUserLimitNumMap, goodsLimitNumMap, userGoodsLimitNumMap, userPidGoodsLimitNumMap);
 
-        } else if (Objects.equals(requestVo.getGoodsDetailList().get(0).getBizType(), ActivityTypeEnum.PRIVILEGE_PRICE.getType())) {
+        } else if (Objects.equals(requestVo.getGoodsDetailList().get(0).getBizType(), ActivityTypeEnum.PRIVILEGE_PRICE.getType())
+                || (Objects.equals(requestVo.getGoodsDetailList().get(0).getBizType(), ActivityTypeEnum.DISCOUNT.getType())
+                && Objects.equals(requestVo.getGoodsDetailList().get(0).getActivityStockType(), LimitConstant.ACTIVITY_SKU_TYPE))) {
             //特权价要校验活动限购和sku可售数量
             List<SkuLimitInfoEntity> skuLimitList = skuLimitInfoDao.querySkuLimitList(querySkuLimitList);
             List<UserLimitEntity> userLimitEntityList = userLimitDao.queryUserLimitEntityList(queryUserLimitList);

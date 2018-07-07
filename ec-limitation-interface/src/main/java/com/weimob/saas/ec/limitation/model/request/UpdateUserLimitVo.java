@@ -22,6 +22,11 @@ public class UpdateUserLimitVo extends BaseRequest implements Comparable<UpdateU
     private Integer bizType;
 
     /**
+     * 限时折扣1.冻结库存；2.可用sku
+     */
+    private Integer activityStockType;
+
+    /**
      * 商品id
      */
     private Long goodsId;
@@ -87,6 +92,14 @@ public class UpdateUserLimitVo extends BaseRequest implements Comparable<UpdateU
 
     public void setOrderNo(Long orderNo) {
         this.orderNo = orderNo;
+    }
+
+    public Integer getActivityStockType() {
+        return activityStockType;
+    }
+
+    public void setActivityStockType(Integer activityStockType) {
+        this.activityStockType = activityStockType;
     }
 
     @Override

@@ -52,6 +52,10 @@ public class SaveGoodsLimitInfoVo extends BaseRequest {
      * 限购来源
      */
     private String source;
+    /**
+     * 限时折扣1.冻结库存；2.可用sku
+     */
+    private Integer activityStockType;
 
     public Long getBizId() {
         return bizId;
@@ -131,5 +135,13 @@ public class SaveGoodsLimitInfoVo extends BaseRequest {
 
     public void setPidGoodsLimitNum(Integer pidGoodsLimitNum) {
         this.pidGoodsLimitNum = pidGoodsLimitNum;
+    }
+
+    public Integer getActivityStockType() {
+        return activityStockType;
+    }
+
+    public void setActivityStockType(Integer activityStockType) {
+        this.activityStockType = activityStockType;
     }
 }

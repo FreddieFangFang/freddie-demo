@@ -1,6 +1,7 @@
 package com.weimob.saas.ec.limitation.service.impl;
 
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
+import com.weimob.saas.ec.limitation.constant.LimitConstant;
 import com.weimob.saas.ec.limitation.dao.LimitInfoDao;
 import com.weimob.saas.ec.limitation.entity.GoodsLimitInfoEntity;
 import com.weimob.saas.ec.limitation.entity.LimitInfoEntity;
@@ -169,7 +170,9 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
                     limitId = oldLimitInfoEntity.getLimitId();
                     goodsLimitInfoEntityList = buildGoodsLimitInfoEntity(limitId, requestVo);
                     /** 2 如果是特权价，插入goods、sku限购表*/
-                    if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), requestVo.getBizType())) {
+                    if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), requestVo.getBizType())
+                            || (Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), requestVo.getBizType())
+                            && Objects.equals(requestVo.getActivityStockType(), LimitConstant.ACTIVITY_SKU_TYPE))) {
                         List<SkuLimitInfoEntity> skuLimitInfoList = buildSkuLimitInfoEntity(limitId, requestVo);
                         limitationService.addSkuLimitInfoList(skuLimitInfoList, goodsLimitInfoEntityList);
                     } else {
@@ -208,7 +211,9 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
             /** 2 更新商品限购表限购值*/
             List<GoodsLimitInfoEntity> oldGoodsLimitInfoEntity = buildGoodsLimitInfoEntity(limitId, requestVo);
 
-            if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), requestVo.getBizType())) {
+            if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), requestVo.getBizType())
+                    || (Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), requestVo.getBizType())
+                    && Objects.equals(requestVo.getActivityStockType(), LimitConstant.ACTIVITY_SKU_TYPE))) {
                 /** 3 特权价需要更新商品限购值，删除sku商品记录，插入新的sku商品记录*/
                 List<SkuLimitInfoEntity> skuLimitInfoList = buildSkuLimitInfoEntity(limitId, requestVo);
                 limitationService.updatePrivilegePriceGoodsLimitInfo(oldGoodsLimitInfoEntity, skuLimitInfoList);

@@ -1,6 +1,7 @@
 package com.weimob.saas.ec.limitation.facade;
 
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
+import com.weimob.saas.ec.limitation.constant.LimitConstant;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.model.request.*;
 import com.weimob.saas.ec.limitation.model.response.DeleteDiscountUserLimitInfoResponseVo;
@@ -116,7 +117,12 @@ public class LimitationUpdateFacadeService {
             VerifyParamUtils.checkParam(LimitationErrorCode.GOODSLIMITNUM_IS_NULL, requestVo.getGoodsLimitNum());
             VerifyParamUtils.checkParam(LimitationErrorCode.CHANNELTYPE_IS_NULL, requestVo.getChannelType());
             VerifyParamUtils.checkParam(LimitationErrorCode.SOURCE_IS_NULL, requestVo.getSource());
-            if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), requestVo.getBizType())) {
+            if (Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), requestVo.getBizType())) {
+                VerifyParamUtils.checkParam(LimitationErrorCode.ACTIVITY_STOCK_TYPE_IS_NULL, requestVo.getActivityStockType());
+            }
+            if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), requestVo.getBizType())
+                    || (Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), requestVo.getBizType())
+                    && Objects.equals(requestVo.getActivityStockType(), LimitConstant.ACTIVITY_SKU_TYPE))) {
                 VerifyParamUtils.checkListParam(LimitationErrorCode.SKUINFO_IS_NULL, requestVo.getSkuLimitInfoList());
                 for (SkuLimitInfo info : requestVo.getSkuLimitInfoList()) {
                     VerifyParamUtils.checkParam(LimitationErrorCode.SKUINFO_IS_NULL, info.getSkuId());
@@ -124,7 +130,6 @@ public class LimitationUpdateFacadeService {
                     VerifyParamUtils.checkParam(LimitationErrorCode.SKUINFO_IS_NULL, info.getSkuLimitType());
                 }
             }
-
         }
     }
 
