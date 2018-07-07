@@ -46,9 +46,9 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         /** 2 构建限购主表信息*/
         LimitInfoEntity limitInfoEntity = buildLimitInfoEntity(requestVo);
         /** 3 构建限购门店表信息*/
-        List<LimitStoreRelationshipEntity> storeInfoList = buildStoreInfoList(requestVo);
+        //List<LimitStoreRelationshipEntity> storeInfoList = buildStoreInfoList(requestVo);
         /** 4 保存数据库*/
-        limitationService.saveLimitationInfo(limitInfoEntity, storeInfoList);
+        limitationService.saveLimitationInfo(limitInfoEntity, null);
 
         return new LimitationUpdateResponseVo(limitId, true);
     }
@@ -66,9 +66,9 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         LimitInfoEntity limitInfoEntity = buildLimitInfoEntity(requestVo);
         limitInfoEntity.setVersion(oldLimitInfoEntity.getVersion());
         /** 3 构建限购门店表信息*/
-        List<LimitStoreRelationshipEntity> storeInfoList = buildStoreInfoList(requestVo);
+        //List<LimitStoreRelationshipEntity> storeInfoList = buildStoreInfoList(requestVo);
         /** 4 更新数据库*/
-        limitationService.updateLimitationInfo(limitInfoEntity, storeInfoList);
+        limitationService.updateLimitationInfo(limitInfoEntity, null);
 
         return new LimitationUpdateResponseVo(oldLimitInfoEntity.getLimitId(), true);
     }
