@@ -339,6 +339,9 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             queryGoodsLimitNumVo.setGoodsId(request.getGoodsId());
             queryGoodsLimitNumVo.setStoreId(request.getStoreId());
             List<GoodsLimitInfoEntity> entityList = goodsLimitNumMap.get(MapKeyUtil.buildPidStoreIdGoodsId(request.getPid(), request.getStoreId(), request.getGoodsId()));
+            if (CollectionUtils.isEmpty(entityList)) {
+                continue;
+            }
             for (GoodsLimitInfoEntity entity : entityList) {
                 if (entity.getLimitLevel() == 0) {
                     queryGoodsLimitNumVo.setGoodsLimitNum(entity.getLimitNum());
