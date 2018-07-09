@@ -343,10 +343,10 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 continue;
             }
             for (GoodsLimitInfoEntity entity : entityList) {
-                if (entity.getLimitLevel() == 0) {
-                    queryGoodsLimitNumVo.setGoodsLimitNum(entity.getLimitNum());
-                } else {
+                if (entity.getLimitLevel() != null && entity.getLimitLevel() == 1) {
                     queryGoodsLimitNumVo.setPidGoodsLimitNum(entity.getLimitNum());
+                } else {
+                    queryGoodsLimitNumVo.setGoodsLimitNum(entity.getLimitNum());
                 }
             }
             queryGoodsLimitNumList.add(queryGoodsLimitNumVo);
