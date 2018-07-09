@@ -48,7 +48,7 @@
       /*LimitInfoDao.insert*/
   </insert>
 
-    <select id="selectByLimitParam" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity"
+    <select id="selectByLimitParam" parameterType="com.weimob.saas.ec.limitation.model.LimitParam"
             resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -60,6 +60,7 @@
         and biz_type = #{bizType}
         /*LimitInfoDao.selectByLimitParam*/
     </select>
+
     <select id="queryLimitInfoList" resultMap="BaseResultMap" parameterType="java.util.List">
         select
         <include refid="Base_Column_List"/>

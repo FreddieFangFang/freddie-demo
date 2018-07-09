@@ -375,6 +375,9 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
     public QueryActivityLimitInfoResponseVo queryActivityLimitInfo(QueryActivityLimitInfoRequestVo requestVo) {
         QueryActivityLimitInfoResponseVo responseVo = new QueryActivityLimitInfoResponseVo();
         LimitInfoEntity infoEntity = limitInfoDao.selectByLimitParam(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
+        if (infoEntity == null) {
+            return responseVo;
+        }
         responseVo.setPid(requestVo.getPid());
         responseVo.setStoreId(requestVo.getStoreId());
         responseVo.setBizId(requestVo.getBizId());
