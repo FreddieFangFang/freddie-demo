@@ -39,6 +39,10 @@ public class QueryGoodsLimitNumVo implements Serializable {
      */
     private List<SkuLimitInfo> skuLimitInfoList;
 
+    private Long bizId;
+
+    private Integer bizType;
+
     public Long getPid() {
         return pid;
     }
@@ -85,5 +89,21 @@ public class QueryGoodsLimitNumVo implements Serializable {
 
     public void setPidGoodsLimitNum(Integer pidGoodsLimitNum) {
         this.pidGoodsLimitNum = pidGoodsLimitNum;
+    }
+
+    public Long getBizId() {
+        return bizId;
+    }
+
+    public void setBizId(Long bizId) {
+        this.bizId = bizId;
+    }
+
+    public Integer getBizType() {
+        return bizType;
+    }
+
+    public void setBizType(Integer bizType) {
+        this.bizType = bizType;
     }
 }
