@@ -68,7 +68,7 @@ public interface LimitationUpdateService {
      * @author lujialin
      * @date 2018/6/5 14:29
      * @useScene 添加限购商品
-     * @parameterExample {	"bizId": 32783928,	"bizType": 30,	"pid": 1000,	"storeId": 200,	"limitLevel": 0,	"goodsLimitType": 0,	"goodsId": 32783928,	"goodsLimitNum": 12,	"channelType": 0,	"source": "0,1"}
+     * @parameterExample {	"goodsList": [{		"goodsId": 5072010200,		"channelType": "0,1",		"limitLevel": 1,		"pid": 100000068000,		"goodsLimitType": 0,		"invokeByOpenApi": false,		"source": "0,1",		"goodsLimitNum": 3,		"pidGoodsLimitNum": 0,		"bizType": 30,		"storeId": 2401000,		"bizId": 5072010200	}]}
      * @returnExample {	"errT":null,	"globalTicket":null,	"logBizData":null,	"monitorTrackId":"a479a80e-bd7a-4ec7-b5b0-3a29161d9f50",	"processResult":true,	"responseVo":{		"limitId":17000,		"status":true	},	"returnCode":"000000",	"returnMsg":"处理成功",	"successForMornitor":true,	"timestamp":"1528180120353"}
      */
     SoaResponse<SaveGoodsLimitInfoResponseVo, LimitationCommonErrorVo> saveGoodsLimitInfo(SaveGoodsLimitInfoRequestVo requestVo);
@@ -79,7 +79,7 @@ public interface LimitationUpdateService {
      * @author lujialin
      * @date 2018/6/5 18:13
      * @useScene 更改限购商品
-     * @parameterExample {	"bizId": 212122,	"bizType": 10,	"pid": 1000,	"storeId": 200,	"limitLevel": 0,	"goodsLimitType": 0,	"goodsId": 32783928,	"goodsLimitNum": 12,	"channelType": 0,	"source": "0,1",	"skuLimitInfoList": [{			"skuId": 21938219,			"skuLimitNum": 2,			"skuLimitType": 0		},		{			"skuId": 21938210,			"skuLimitNum": 1,			"skuLimitType": 0		}	]}
+     * @parameterExample {	"goodsList": [{		"goodsId": 5072010200,		"channelType": "0,1",		"limitLevel": 1,		"pid": 100000068000,		"goodsLimitType": 0,		"invokeByOpenApi": false,		"source": "0,1",		"goodsLimitNum": 3,		"pidGoodsLimitNum": 0,		"bizType": 30,		"storeId": 2401000,		"bizId": 5072010200	}]}
      * @returnExample {	"errT":null,	"globalTicket":null,	"logBizData":null,	"monitorTrackId":"030bceca-2cbb-4e56-841c-16b432458e44",	"processResult":true,	"responseVo":{		"limitId":18000,		"status":true	},	"returnCode":"000000",	"returnMsg":"处理成功",	"successForMornitor":true,	"timestamp":"1528188496257"}
      * @param
      * @return
