@@ -2,13 +2,16 @@ package com.weimob.saas.ec.limitation.model.request;
 
 import com.weimob.saas.ec.limitation.common.LimitTypeEnum;
 
+import java.io.Serializable;
+
 /**
  * @author lujialin
  * @description sku的限购信息
  * @date 2018/6/4 18:00
  */
-public class SkuLimitInfo {
+public class SkuLimitInfo implements Serializable{
 
+    private static final long serialVersionUID = 628342779876026582L;
     private Long skuId;
     /**
      * sku限购数
