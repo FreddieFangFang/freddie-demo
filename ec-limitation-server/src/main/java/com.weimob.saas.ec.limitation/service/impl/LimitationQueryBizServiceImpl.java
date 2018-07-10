@@ -12,6 +12,7 @@ import com.weimob.saas.ec.limitation.model.response.*;
 import com.weimob.saas.ec.limitation.service.LimitationQueryBizService;
 import com.weimob.saas.ec.limitation.utils.MapKeyUtil;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -332,6 +333,14 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         if (CollectionUtils.isEmpty(goodsLimitInfoEntityList)) {
             return responseVo;
         }
+        //如果是特权价或者限时折扣可售数量的，需要查询sku的限购数量
+        Map<String, List<SkuLimitInfoEntity>> skuLimitNumMap = null;
+        if (Objects.equals(requestVo.getQueryGoodslimitNumVoList().get(0).getBizType(), ActivityTypeEnum.PRIVILEGE_PRICE.getType())
+                || (Objects.equals(requestVo.getQueryGoodslimitNumVoList().get(0).getBizType(), ActivityTypeEnum.DISCOUNT.getType())
+                && Objects.equals(requestVo.getQueryGoodslimitNumVoList().get(0).getActivityStockType(), LimitConstant.ACTIVITY_SKU_TYPE))) {
+            List<SkuLimitInfoEntity> skuLimitInfoEntityList = skuLimitInfoDao.queryGoodsSkuLimitList(requestVo.getQueryGoodslimitNumVoList());
+            skuLimitNumMap = buildSkuLimitMap(skuLimitInfoEntityList);
+        }
         Map<String, List<GoodsLimitInfoEntity>> goodsLimitNumMap = buildGoodsLimitMap(goodsLimitInfoEntityList);
         for (QueryGoodsLimitNumListVo request : requestVo.getQueryGoodslimitNumVoList()) {
             QueryGoodsLimitNumVo queryGoodsLimitNumVo = new QueryGoodsLimitNumVo();
@@ -351,10 +360,37 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                     queryGoodsLimitNumVo.setGoodsLimitNum(entity.getLimitNum());
                 }
             }
+            //如果是特权价或者限时折扣可售数量的，需要查询sku的限购数量
+            List<SkuLimitInfo> skuLimitInfoList = new ArrayList<>();
+            if (MapUtils.isNotEmpty(skuLimitNumMap)) {
+                for (SkuLimitInfoEntity entity : skuLimitNumMap.get(MapKeyUtil.buildPidStoreIdGoodsId(request.getPid(), request.getStoreId(), request.getGoodsId()))) {
+                    SkuLimitInfo skuLimitInfo = new SkuLimitInfo();
+                    skuLimitInfo.setSkuId(entity.getSkuId());
+                    skuLimitInfo.setSkuLimitNum(entity.getLimitNum());
+                    skuLimitInfo.setAlreadySoldNum(entity.getSoldNum());
+                    skuLimitInfo.setSkuLimitType(entity.getLimitType());
+                    skuLimitInfoList.add(skuLimitInfo);
+                }
+            }
+            queryGoodsLimitNumVo.setSkuLimitInfoList(skuLimitInfoList);
             queryGoodsLimitNumList.add(queryGoodsLimitNumVo);
         }
         responseVo.setQueryGoodsLimitNumList(queryGoodsLimitNumList);
         return responseVo;
+    }
+
+    private Map<String, List<SkuLimitInfoEntity>> buildSkuLimitMap(List<SkuLimitInfoEntity> skuLimitInfoEntityList) {
+        Map<String, List<SkuLimitInfoEntity>> skuLimitNumMap = new HashMap<>();
+        for (SkuLimitInfoEntity entity : skuLimitInfoEntityList) {
+            if (CollectionUtils.isEmpty(skuLimitNumMap.get(MapKeyUtil.buildPidStoreIdGoodsId(entity.getPid(), entity.getStoreId(), entity.getGoodsId())))) {
+                List<SkuLimitInfoEntity> entityList = new ArrayList<>();
+                entityList.add(entity);
+                skuLimitNumMap.put(MapKeyUtil.buildPidStoreIdGoodsId(entity.getPid(), entity.getStoreId(), entity.getGoodsId()), entityList);
+            } else {
+                skuLimitNumMap.get(MapKeyUtil.buildPidStoreIdGoodsId(entity.getPid(), entity.getStoreId(), entity.getGoodsId())).add(entity);
+            }
+        }
+        return skuLimitNumMap;
     }
 
     private Map<String, List<GoodsLimitInfoEntity>> buildGoodsLimitMap(List<GoodsLimitInfoEntity> goodsLimitInfoEntityList) {

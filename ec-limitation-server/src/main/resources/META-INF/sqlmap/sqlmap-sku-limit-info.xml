@@ -179,4 +179,37 @@
         AND sold_num >= #{soldNum}
         /*SkuLimitInfoDao.deductSkuLimit*/
     </update>
+
+    <select id="queryGoodsSkuLimitList" resultMap="BaseResultMap"
+            parameterType="java.util.List">
+        select
+        skulimitinfo.pid pid,
+        skulimitinfo.store_id store_id,
+        skulimitinfo.limit_id limit_id,
+        skulimitinfo.limit_type limit_type,
+        skulimitinfo.goods_id goods_id,
+        skulimitinfo.sku_id sku_id,
+        skulimitinfo.limit_num limit_num,
+        skulimitinfo.sold_num sold_num,
+        skulimitinfo.version version
+        from
+        sku_limit_info as skulimitinfo,
+        limit_info as limitinfo
+        where
+        limitinfo.limit_id=skulimitinfo.limit_id
+        AND
+        <foreach item="item" index="index" collection="list"
+                 separator="or">
+            (
+            limitinfo.pid = #{item.pid}
+            and skulimitinfo.store_id = #{item.storeId}
+            and skulimitinfo.goods_id = #{item.goodsId}
+            and limitinfo.biz_id = #{item.bizId}
+            and limitinfo.biz_type = #{item.bizType}
+            and skulimitinfo.is_deleted = 0
+            and limitinfo.is_deleted = 0
+            )
+        </foreach>
+        /*SkuLimitInfoDao.queryGoodsSkuLimitList*/
+    </select>
 </mapper>

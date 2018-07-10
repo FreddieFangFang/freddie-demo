@@ -15,6 +15,11 @@ public class QueryGoodsLimitNumListVo extends BaseRequest {
 
     private Integer bizType;
 
+    /**
+     * 限时折扣1.冻结库存；2.可用sku
+     */
+    private Integer activityStockType;
+
     public Long getGoodsId() {
         return goodsId;
     }
@@ -37,5 +42,13 @@ public class QueryGoodsLimitNumListVo extends BaseRequest {
 
     public void setBizType(Integer bizType) {
         this.bizType = bizType;
+    }
+
+    public Integer getActivityStockType() {
+        return activityStockType;
+    }
+
+    public void setActivityStockType(Integer activityStockType) {
+        this.activityStockType = activityStockType;
     }
 }

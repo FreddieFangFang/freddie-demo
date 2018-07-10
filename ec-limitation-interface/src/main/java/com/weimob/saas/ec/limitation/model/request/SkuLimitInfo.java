@@ -20,6 +20,11 @@ public class SkuLimitInfo {
      */
     private Integer skuLimitType;
 
+    /**
+     * 已经购买的sku数量
+     */
+    private Integer alreadySoldNum;
+
     public Long getSkuId() {
         return skuId;
     }
@@ -42,5 +47,13 @@ public class SkuLimitInfo {
 
     public void setSkuLimitType(Integer skuLimitType) {
         this.skuLimitType = skuLimitType;
+    }
+
+    public Integer getAlreadySoldNum() {
+        return alreadySoldNum;
+    }
+
+    public void setAlreadySoldNum(Integer alreadySoldNum) {
+        this.alreadySoldNum = alreadySoldNum;
     }
 }

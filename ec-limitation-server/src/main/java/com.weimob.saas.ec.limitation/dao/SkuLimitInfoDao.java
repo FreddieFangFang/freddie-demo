@@ -2,6 +2,7 @@ package com.weimob.saas.ec.limitation.dao;
 
 import com.weimob.saas.ec.limitation.entity.SkuLimitInfoEntity;
 import com.weimob.saas.ec.limitation.model.DeleteGoodsParam;
+import com.weimob.saas.ec.limitation.model.request.QueryGoodsLimitNumListVo;
 import com.weimob.saas.ec.limitation.model.request.SkuLimitInfo;
 import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
 
@@ -17,4 +18,6 @@ public interface SkuLimitInfoDao extends BaseDao<SkuLimitInfoEntity>{
     List<SkuLimitInfoEntity> querySkuLimitList(List<SkuLimitInfoEntity> querySkuLimitList);
 
     Integer deductSkuLimit(SkuLimitInfoEntity activitySoldEntity);
+
+    List<SkuLimitInfoEntity> queryGoodsSkuLimitList(List<QueryGoodsLimitNumListVo> queryGoodslimitNumVoList);
 }
