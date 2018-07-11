@@ -1,6 +1,7 @@
 package com.weimob.saas.ec.limitation.service.impl;
 
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
+import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
 import com.weimob.saas.ec.limitation.dao.LimitInfoDao;
 import com.weimob.saas.ec.limitation.entity.GoodsLimitInfoEntity;
@@ -83,20 +84,20 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         }
         Long pid = requestVo.getPid();
         Long limitId = oldLimitInfoEntity.getLimitId();
-        switch (requestVo.getBizType()) {
-            case 3:
+        switch (LimitBizTypeEnum.getLimitLevelEnumByLevel(requestVo.getBizType())) {
+            case BIZ_TYPE_DISCOUNT:
                 limitationService.deleteDiscountLimitInfo(oldLimitInfoEntity);
                 break;
-            case 10:
+            case BIZ_TYPE_PRIVILEGE_PRICE:
                 limitationService.deletePrivilegePriceLimitInfo(oldLimitInfoEntity);
                 break;
-            case 12:
+            case BIZ_TYPE_NYNJ:
                 limitationService.deleteNynjLimitInfo(oldLimitInfoEntity);
                 break;
-            case 13:
+            case BIZ_TYPE_COMBINATION_BUY:
                 limitationService.deleteCombinationLimitInfo(oldLimitInfoEntity);
                 break;
-            case 14:
+            case BIZ_TYPE_REDEMPTION:
                 break;
             default:
                 break;
@@ -112,9 +113,9 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         Long bizId = null;
         Integer bizType = null;
         List<Long> goodsIdList = new ArrayList<>();
-        switch (requestVo.getDeleteGoodsLimitVoList().get(0).getBizType()) {
-            case 3:
-            case 10:
+        switch (LimitBizTypeEnum.getLimitLevelEnumByLevel(requestVo.getDeleteGoodsLimitVoList().get(0).getBizType())) {
+            case BIZ_TYPE_DISCOUNT:
+            case BIZ_TYPE_PRIVILEGE_PRICE:
                 for (BatchDeleteGoodsLimitVo limitVo : requestVo.getDeleteGoodsLimitVoList()) {
                     pid = limitVo.getPid();
                     bizId = limitVo.getBizId();
@@ -131,7 +132,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
                     limitationService.deleteGoodsLimitInfo(pid, oldLimitInfoEntity.getLimitId(), goodsIdList);
                 }
                 break;
-            case 30:
+            case BIZ_TYPE_POINT:
                 //积分商城,删除主表信息，商品表信息
                 for (BatchDeleteGoodsLimitVo limitVo : requestVo.getDeleteGoodsLimitVoList()) {
                     List<Long> pointGoodsIdList = new ArrayList<>();
@@ -158,9 +159,9 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         for (SaveGoodsLimitInfoVo requestVo : saveGoodsLimitInfoRequestVo.getGoodsList()) {
             Long limitId = null;
             List<GoodsLimitInfoEntity> goodsLimitInfoEntityList = null;
-            switch (requestVo.getBizType()) {
-                case 3:
-                case 10:
+            switch (LimitBizTypeEnum.getLimitLevelEnumByLevel(requestVo.getBizType())) {
+                case BIZ_TYPE_DISCOUNT:
+                case BIZ_TYPE_PRIVILEGE_PRICE:
                     //限时折扣,特权价，先查询limitId，再插入限购商品表
                     /** 1 查询限购主表信息*/
                     LimitInfoEntity oldLimitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
@@ -172,7 +173,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
                     /** 2 如果是特权价，插入goods、sku限购表*/
                     if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), requestVo.getBizType())
                             || (Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), requestVo.getBizType())
-                            && Objects.equals(requestVo.getActivityStockType(), LimitConstant.ACTIVITY_SKU_TYPE))) {
+                            && Objects.equals(requestVo.getActivityStockType(), LimitConstant.DISCOUNT_TYPE_SKU))) {
                         List<SkuLimitInfoEntity> skuLimitInfoList = buildSkuLimitInfoEntity(limitId, requestVo);
                         limitationService.addSkuLimitInfoList(skuLimitInfoList, goodsLimitInfoEntityList);
                     } else {
@@ -180,7 +181,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
                         limitationService.addGoodsLimitInfoEntity(goodsLimitInfoEntityList);
                     }
                     break;
-                case 30:
+                case BIZ_TYPE_POINT:
                     //积分商城商品限购
                     /** 1 生成全局id */
                     limitId = IdUtils.getLimitId(requestVo.getPid());
@@ -213,7 +214,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
 
             if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), requestVo.getBizType())
                     || (Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), requestVo.getBizType())
-                    && Objects.equals(requestVo.getActivityStockType(), LimitConstant.ACTIVITY_SKU_TYPE))) {
+                    && Objects.equals(requestVo.getActivityStockType(), LimitConstant.DISCOUNT_TYPE_SKU))) {
                 /** 3 特权价需要更新商品限购值，删除sku商品记录，插入新的sku商品记录*/
                 List<SkuLimitInfoEntity> skuLimitInfoList = buildSkuLimitInfoEntity(limitId, requestVo);
                 limitationService.updatePrivilegePriceGoodsLimitInfo(oldGoodsLimitInfoEntity, skuLimitInfoList);

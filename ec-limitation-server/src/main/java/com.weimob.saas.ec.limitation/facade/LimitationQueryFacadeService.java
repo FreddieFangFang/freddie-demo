@@ -85,7 +85,7 @@ public class LimitationQueryFacadeService {
             }
             if (Objects.equals(request.getBizType(), ActivityTypeEnum.DISCOUNT.getType())) {
                 VerifyParamUtils.checkParam(LimitationErrorCode.ACTIVITY_STOCK_TYPE_IS_NULL, request.getActivityStockType());
-                if (Objects.equals(request.getActivityStockType(), LimitConstant.ACTIVITY_SKU_TYPE)) {
+                if (Objects.equals(request.getActivityStockType(), LimitConstant.DISCOUNT_TYPE_SKU)) {
                     VerifyParamUtils.checkParam(LimitationErrorCode.SKUID_IS_NULL, request.getSkuId());
                 }
             }

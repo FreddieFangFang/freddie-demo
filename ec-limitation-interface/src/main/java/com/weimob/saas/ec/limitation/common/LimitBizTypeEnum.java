@@ -1,5 +1,7 @@
 package com.weimob.saas.ec.limitation.common;
 
+import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,7 +12,12 @@ import java.util.Map;
  */
 public enum LimitBizTypeEnum {
 
-    BIZ_TYPE_POINT(30, "积分商城");
+    BIZ_TYPE_POINT(30, "积分商城"),
+    BIZ_TYPE_DISCOUNT(ActivityTypeEnum.DISCOUNT.getType(), "限时折扣"),
+    BIZ_TYPE_PRIVILEGE_PRICE(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), "特权价"),
+    BIZ_TYPE_NYNJ(ActivityTypeEnum.NYNJ.getType(), "N元N件"),
+    BIZ_TYPE_COMBINATION_BUY(ActivityTypeEnum.COMBINATION_BUY.getType(), "优惠套装"),
+    BIZ_TYPE_REDEMPTION(ActivityTypeEnum.REDEMPTION.getType(), "加价购");
 
     private Integer level;
 

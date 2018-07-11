@@ -4,7 +4,6 @@ import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitServiceNameEnum;
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
-import com.weimob.saas.ec.limitation.dao.UserGoodsLimitDao;
 import com.weimob.saas.ec.limitation.entity.*;
 import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
@@ -59,7 +58,7 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
             }
             if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), limitVo.getBizType())
                     || (Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), limitVo.getBizType())
-                    && Objects.equals(limitVo.getActivityStockType(), LimitConstant.ACTIVITY_SKU_TYPE))) {
+                    && Objects.equals(limitVo.getActivityStockType(), LimitConstant.DISCOUNT_TYPE_SKU))) {
                 VerifyParamUtils.checkParam(LimitationErrorCode.SKUINFO_IS_NULL, limitVo.getSkuId());
             }
         }
@@ -75,7 +74,7 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
 
         } else if (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.PRIVILEGE_PRICE.getType())
                 || (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.DISCOUNT.getType())
-                && Objects.equals(vos.get(0).getActivityStockType(), LimitConstant.ACTIVITY_SKU_TYPE))) {
+                && Objects.equals(vos.get(0).getActivityStockType(), LimitConstant.DISCOUNT_TYPE_SKU))) {
             goodsLimitBizHandler.doLimitHandler(vos);
             activityLimitBizHandler.doLimitHandler(vos);
             skuLimitBizHandler.doLimitHandler(vos);
