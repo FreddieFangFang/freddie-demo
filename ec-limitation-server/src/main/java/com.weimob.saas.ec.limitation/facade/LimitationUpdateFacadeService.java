@@ -2,6 +2,7 @@ package com.weimob.saas.ec.limitation.facade;
 
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
+import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.model.request.*;
 import com.weimob.saas.ec.limitation.model.response.DeleteDiscountUserLimitInfoResponseVo;
@@ -48,6 +49,9 @@ public class LimitationUpdateFacadeService {
         VerifyParamUtils.checkParam(LimitationErrorCode.BIZTYPE_IS_NULL, requestVo.getBizType());
         VerifyParamUtils.checkParam(LimitationErrorCode.LIMITLEVEL_IS_NULL, requestVo.getLimitLevel());
         VerifyParamUtils.checkParam(LimitationErrorCode.LIMITNUM_IS_NULL, requestVo.getLimitNum());
+        if (requestVo.getLimitNum() < 0) {
+            throw new LimitationBizException(LimitationErrorCode.LIMIT_NUM_IS_INVALID);
+        }
         VerifyParamUtils.checkParam(LimitationErrorCode.LIMITTYPE_IS_NULL, requestVo.getLimitType());
     }
 
@@ -115,6 +119,9 @@ public class LimitationUpdateFacadeService {
             VerifyParamUtils.checkParam(LimitationErrorCode.LIMITLEVEL_IS_NULL, requestVo.getLimitLevel());
             VerifyParamUtils.checkParam(LimitationErrorCode.LIMITTYPE_IS_NULL, requestVo.getGoodsLimitType());
             VerifyParamUtils.checkParam(LimitationErrorCode.GOODSLIMITNUM_IS_NULL, requestVo.getGoodsLimitNum());
+            if (requestVo.getGoodsLimitNum() < 0) {
+                throw new LimitationBizException(LimitationErrorCode.LIMIT_NUM_IS_INVALID);
+            }
             VerifyParamUtils.checkParam(LimitationErrorCode.CHANNELTYPE_IS_NULL, requestVo.getChannelType());
             VerifyParamUtils.checkParam(LimitationErrorCode.SOURCE_IS_NULL, requestVo.getSource());
             if (Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), requestVo.getBizType())) {
@@ -127,6 +134,9 @@ public class LimitationUpdateFacadeService {
                 for (SkuLimitInfo info : requestVo.getSkuLimitInfoList()) {
                     VerifyParamUtils.checkParam(LimitationErrorCode.SKUINFO_IS_NULL, info.getSkuId());
                     VerifyParamUtils.checkParam(LimitationErrorCode.SKUINFO_IS_NULL, info.getSkuLimitNum());
+                    if (info.getSkuLimitNum() < 0) {
+                        throw new LimitationBizException(LimitationErrorCode.LIMIT_NUM_IS_INVALID);
+                    }
                     VerifyParamUtils.checkParam(LimitationErrorCode.SKUINFO_IS_NULL, info.getSkuLimitType());
                 }
             }

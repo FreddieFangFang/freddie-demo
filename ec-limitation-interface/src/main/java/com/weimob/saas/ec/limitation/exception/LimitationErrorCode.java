@@ -54,6 +54,7 @@ public enum LimitationErrorCode {
     SKUID_IS_NULL("1080000100022", "skuId为空"),
     ACTIVITY_STOCK_TYPE_IS_NULL("1080000100023", "限时折扣活动库存设置类型为空"),
     CHECK_DELETE_GOODS_IS_NULL("1080000100024", "checkDeleteActivityGoods字段为空"),
+    LIMIT_NUM_IS_INVALID("1080000100025", "限购值不能小于0"),
 
 
     /*****************************交互异常02**********************************/
