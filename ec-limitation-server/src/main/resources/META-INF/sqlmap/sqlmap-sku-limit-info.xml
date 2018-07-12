@@ -206,8 +206,24 @@
             and skulimitinfo.goods_id = #{item.goodsId}
             and limitinfo.biz_id = #{item.bizId}
             and limitinfo.biz_type = #{item.bizType}
-            and skulimitinfo.is_deleted = #{item.checkDeleteActivityGoods}
-            and limitinfo.is_deleted = #{item.checkDeleteActivityGoods}
+            and
+            <choose>
+                <when test="item.checkDeleteActivityGoods != null ">
+                    skulimitinfo.is_deleted = #{item.checkDeleteActivityGoods}
+                </when>
+                <when test="item.checkDeleteActivityGoods==null">
+                    skulimitinfo.is_deleted = 0
+                </when>
+            </choose>
+            and
+            <choose>
+                <when test="item.checkDeleteActivityGoods != null ">
+                    limitinfo.is_deleted = #{item.checkDeleteActivityGoods}
+                </when>
+                <when test="item.checkDeleteActivityGoods==null">
+                    limitinfo.is_deleted = 0
+                </when>
+            </choose>
             )
         </foreach>
         /*SkuLimitInfoDao.queryGoodsSkuLimitList*/
