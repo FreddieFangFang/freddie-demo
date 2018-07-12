@@ -98,6 +98,9 @@ public class LimitationUpdateFacadeService {
             VerifyParamUtils.checkParam(LimitationErrorCode.BIZID_IS_NULL, request.getBizId());
             VerifyParamUtils.checkParam(LimitationErrorCode.BIZTYPE_IS_NULL, request.getBizType());
             VerifyParamUtils.checkParam(LimitationErrorCode.GOODSID_IS_NULL, request.getGoodsId());
+            if (Objects.equals(request.getBizType(), ActivityTypeEnum.DISCOUNT.getType())) {
+                VerifyParamUtils.checkParam(LimitationErrorCode.ACTIVITY_STOCK_TYPE_IS_NULL, request.getActivityStockType());
+            }
         }
     }
 
