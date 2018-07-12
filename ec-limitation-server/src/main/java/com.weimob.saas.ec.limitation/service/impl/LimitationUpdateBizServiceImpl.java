@@ -144,6 +144,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
                         throw new LimitationBizException(LimitationErrorCode.LIMITATION_IS_NULL);
                     }
                     entity.setLimitId(oldPointLimitInfoEntity.getLimitId());
+                    entity.setVersion(oldPointLimitInfoEntity.getVersion());
                     limitationService.deletePointGoodsLimitInfo(entity, pointGoodsIdList);
                 }
                 break;

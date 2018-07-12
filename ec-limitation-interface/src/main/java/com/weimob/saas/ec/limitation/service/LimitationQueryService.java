@@ -36,7 +36,7 @@ public interface LimitationQueryService {
      * @author lujialin
      * @date 2018/6/8 14:32
      * @useScene
-     * @parameterExample {	"queryGoodsLimitNumVoList": [{		"bizId": 2212122,		"bizType": 30,		"goodsId": 32700928,		"pid": 1000,		"storeId": 200	}]}
+     * @parameterExample {	"queryGoodslimitNumVoList": [{		"goodsId": 32783954,		"pid": 1254,		"invokeByOpenApi": false,		"bizType": 10,		"storeId": 1470154,		"bizId": 212121,                "checkDeleteActivityGoods":1	}]}
      * @returnExample {	"errT": null,	"globalTicket": null,	"logBizData": null,	"monitorTrackId": "b999c0a5-a1ce-40b2-9875-c4689ed4c477",	"processResult": true,	"responseVo": {		"queryGoodsLimitNumList": [{			"bizId": 74410254,			"bizType": 30,			"goodsId": 74410254,			"goodsLimitNum": 5,			"pid": 1254,			"pidGoodsLimitNum": null,			"skuLimitInfoList": [{				"skuId": 2132123,				"skuLimitNum": 2,				"alreadySoldNum": 1,				"skuLimitType": 0			}],			"storeId": 1470154		}]	},	"returnCode": "000000",	"returnMsg": "处理成功",	"successForMornitor": true,	"timestamp": "1531207735181"}
      */
     SoaResponse<QueryGoodsLimitNumListResponseVo, LimitationErrorCode> queryGoodsLimitNumList(QueryGoodsLimitNumRequestVo requestVo);

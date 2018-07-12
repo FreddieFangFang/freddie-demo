@@ -206,8 +206,8 @@
             and skulimitinfo.goods_id = #{item.goodsId}
             and limitinfo.biz_id = #{item.bizId}
             and limitinfo.biz_type = #{item.bizType}
-            and skulimitinfo.is_deleted = 0
-            and limitinfo.is_deleted = 0
+            and skulimitinfo.is_deleted = #{item.checkDeleteActivityGoods}
+            and limitinfo.is_deleted = #{item.checkDeleteActivityGoods}
             )
         </foreach>
         /*SkuLimitInfoDao.queryGoodsSkuLimitList*/

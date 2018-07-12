@@ -19,6 +19,10 @@ public class QueryGoodsLimitNumListVo extends BaseRequest {
      * 限时折扣1.冻结库存；2.可用sku
      */
     private Integer activityStockType;
+    /**
+     * 活动过期查看商品传1，其他传0
+     */
+    private Integer checkDeleteActivityGoods;
 
     public Long getGoodsId() {
         return goodsId;
@@ -50,5 +54,13 @@ public class QueryGoodsLimitNumListVo extends BaseRequest {
 
     public void setActivityStockType(Integer activityStockType) {
         this.activityStockType = activityStockType;
+    }
+
+    public Integer getCheckDeleteActivityGoods() {
+        return checkDeleteActivityGoods;
+    }
+
+    public void setCheckDeleteActivityGoods(Integer checkDeleteActivityGoods) {
+        this.checkDeleteActivityGoods = checkDeleteActivityGoods;
     }
 }
