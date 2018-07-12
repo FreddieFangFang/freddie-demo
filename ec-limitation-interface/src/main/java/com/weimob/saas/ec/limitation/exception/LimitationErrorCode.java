@@ -53,6 +53,7 @@ public enum LimitationErrorCode {
     REPEAT_ORDER_DEDUCT_LIMIT("1080000100021", "重复取消限购"),
     SKUID_IS_NULL("1080000100022", "skuId为空"),
     ACTIVITY_STOCK_TYPE_IS_NULL("1080000100023", "限时折扣活动库存设置类型为空"),
+    CHECK_DELETE_GOODS_IS_NULL("1080000100024", "checkDeleteActivityGoods字段为空"),
 
 
     /*****************************交互异常02**********************************/
