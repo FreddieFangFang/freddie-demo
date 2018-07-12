@@ -378,13 +378,16 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             //如果是特权价或者限时折扣可售数量的，需要查询sku的限购数量
             List<SkuLimitInfo> skuLimitInfoList = new ArrayList<>();
             if (MapUtils.isNotEmpty(skuLimitNumMap)) {
-                for (SkuLimitInfoEntity entity : skuLimitNumMap.get(MapKeyUtil.buildPidStoreIdGoodsId(request.getPid(), request.getStoreId(), request.getGoodsId()))) {
-                    SkuLimitInfo skuLimitInfo = new SkuLimitInfo();
-                    skuLimitInfo.setSkuId(entity.getSkuId());
-                    skuLimitInfo.setSkuLimitNum(entity.getLimitNum());
-                    skuLimitInfo.setAlreadySoldNum(entity.getSoldNum());
-                    skuLimitInfo.setSkuLimitType(entity.getLimitType());
-                    skuLimitInfoList.add(skuLimitInfo);
+                List<SkuLimitInfoEntity> skuLimitInfoEntityList = skuLimitNumMap.get(MapKeyUtil.buildPidStoreIdGoodsId(request.getPid(), request.getStoreId(), request.getGoodsId()));
+                if (CollectionUtils.isNotEmpty(skuLimitInfoEntityList)) {
+                    for (SkuLimitInfoEntity entity : skuLimitInfoEntityList) {
+                        SkuLimitInfo skuLimitInfo = new SkuLimitInfo();
+                        skuLimitInfo.setSkuId(entity.getSkuId());
+                        skuLimitInfo.setSkuLimitNum(entity.getLimitNum());
+                        skuLimitInfo.setAlreadySoldNum(entity.getSoldNum());
+                        skuLimitInfo.setSkuLimitType(entity.getLimitType());
+                        skuLimitInfoList.add(skuLimitInfo);
+                    }
                 }
             }
             queryGoodsLimitNumVo.setSkuLimitInfoList(skuLimitInfoList);
