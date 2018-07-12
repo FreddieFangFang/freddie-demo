@@ -15,6 +15,11 @@ public class BatchDeleteGoodsLimitVo extends BaseRequest {
 
     private Long goodsId;
 
+    /**
+     * 限时折扣1.冻结库存；2.可用sku
+     */
+    private Integer activityStockType;
+
     public Long getBizId() {
         return bizId;
     }
@@ -37,5 +42,13 @@ public class BatchDeleteGoodsLimitVo extends BaseRequest {
 
     public void setGoodsId(Long goodsId) {
         this.goodsId = goodsId;
+    }
+
+    public Integer getActivityStockType() {
+        return activityStockType;
+    }
+
+    public void setActivityStockType(Integer activityStockType) {
+        this.activityStockType = activityStockType;
     }
 }

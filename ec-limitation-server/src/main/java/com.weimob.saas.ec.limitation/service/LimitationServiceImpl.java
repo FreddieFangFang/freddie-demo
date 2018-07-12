@@ -87,7 +87,7 @@ public class LimitationServiceImpl {
     }
 
     public void deleteSkuLimitInfo(Long pid, Long limitId, List<Long> goodsIdList) {
-        deleteGoodsLimitInfo(pid, limitId, null);
+        deleteGoodsLimitInfo(pid, limitId, goodsIdList);
         DeleteGoodsParam param = new DeleteGoodsParam();
         param.setPid(pid);
         param.setLimitId(limitId);
@@ -128,7 +128,7 @@ public class LimitationServiceImpl {
 
         limitStoreRelationshipDao.delete(deleteEntity);
 
-        deleteGoodsLimitInfo(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId(), null);
+        deleteSkuLimitInfo(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId(), null);
     }
 
     public void deletePrivilegePriceLimitInfo(LimitInfoEntity oldLimitInfoEntity) {

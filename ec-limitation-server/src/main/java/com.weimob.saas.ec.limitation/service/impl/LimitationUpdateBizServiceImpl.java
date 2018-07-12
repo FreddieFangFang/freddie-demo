@@ -112,6 +112,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         Long pid = null;
         Long bizId = null;
         Integer bizType = null;
+        Integer activityStockType = null;
         List<Long> goodsIdList = new ArrayList<>();
         switch (LimitBizTypeEnum.getLimitLevelEnumByLevel(requestVo.getDeleteGoodsLimitVoList().get(0).getBizType())) {
             case BIZ_TYPE_DISCOUNT:
@@ -120,13 +121,16 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
                     pid = limitVo.getPid();
                     bizId = limitVo.getBizId();
                     bizType = limitVo.getBizType();
+                    activityStockType = limitVo.getActivityStockType();
                     goodsIdList.add(limitVo.getGoodsId());
                 }
                 LimitInfoEntity oldLimitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(pid, bizId, bizType));
                 if (oldLimitInfoEntity == null) {
                     throw new LimitationBizException(LimitationErrorCode.LIMITATION_IS_NULL);
                 }
-                if (Objects.equals(bizType, ActivityTypeEnum.PRIVILEGE_PRICE.getType())) {
+                if (Objects.equals(bizType, ActivityTypeEnum.PRIVILEGE_PRICE.getType())
+                        || (Objects.equals(bizType, ActivityTypeEnum.DISCOUNT.getType()))
+                        && Objects.equals(activityStockType, LimitConstant.DISCOUNT_TYPE_SKU)) {
                     limitationService.deleteSkuLimitInfo(pid, oldLimitInfoEntity.getLimitId(), goodsIdList);
                 } else {
                     limitationService.deleteGoodsLimitInfo(pid, oldLimitInfoEntity.getLimitId(), goodsIdList);
