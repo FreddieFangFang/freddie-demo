@@ -82,8 +82,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         if (oldLimitInfoEntity == null) {
             throw new LimitationBizException(LimitationErrorCode.LIMITATION_IS_NULL);
         }
-        Long pid = requestVo.getPid();
-        Long limitId = oldLimitInfoEntity.getLimitId();
+
         switch (LimitBizTypeEnum.getLimitLevelEnumByLevel(requestVo.getBizType())) {
             case BIZ_TYPE_DISCOUNT:
                 limitationService.deleteDiscountLimitInfo(oldLimitInfoEntity);

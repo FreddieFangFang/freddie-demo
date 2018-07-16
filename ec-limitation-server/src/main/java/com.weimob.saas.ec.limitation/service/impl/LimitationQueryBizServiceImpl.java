@@ -149,6 +149,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             Integer alreadyBuyNum = skuLimitMap.get(MapKeyUtil.buildSkuLimitMapKey(vo.getPid(), vo.getStoreId(), limitId, vo.getGoodsId(), vo.getSkuId())).getSoldNum();
             vo.setAlreadyBuyNum(alreadyBuyNum == null ? 0 : alreadyBuyNum);
             Integer skuLimitNum = skuLimitMap.get(MapKeyUtil.buildSkuLimitMapKey(vo.getPid(), vo.getStoreId(), limitId, vo.getGoodsId(), vo.getSkuId())).getLimitNum();
+            vo.setSkuLimitNum(skuLimitNum);
             Integer canBuyNum = skuLimitNum - (alreadyBuyNum == null ? 0 : alreadyBuyNum);
             vo.setCanBuyNum(vo.getCanBuyNum() > canBuyNum ? canBuyNum : vo.getCanBuyNum());
         }

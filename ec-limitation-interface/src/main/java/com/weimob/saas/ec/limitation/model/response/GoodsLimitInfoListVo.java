@@ -24,6 +24,10 @@ public class GoodsLimitInfoListVo extends BaseRequest {
      * 已经购买的数量
      */
     private Integer alreadyBuyNum;
+    /**
+     * sku设置的可售数量
+     */
+    private Integer skuLimitNum;
 
     private Long bizId;
 
@@ -83,5 +87,13 @@ public class GoodsLimitInfoListVo extends BaseRequest {
 
     public void setAlreadyBuyNum(Integer alreadyBuyNum) {
         this.alreadyBuyNum = alreadyBuyNum;
+    }
+
+    public Integer getSkuLimitNum() {
+        return skuLimitNum;
+    }
+
+    public void setSkuLimitNum(Integer skuLimitNum) {
+        this.skuLimitNum = skuLimitNum;
     }
 }
