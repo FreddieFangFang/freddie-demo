@@ -17,17 +17,25 @@ public class GoodsLimitInfoListVo extends BaseRequest {
      */
     private Boolean limitStatus;
     /**
-     * 还能购买的数量
+     * 还能购买的数量，sku级别，购物车接口需要
      */
     private Integer canBuyNum;
     /**
-     * 已经购买的数量
+     * 已经购买的数量，sku级别
      */
     private Integer alreadyBuyNum;
     /**
      * sku设置的可售数量
      */
     private Integer skuLimitNum;
+    /**
+     * 商品限购
+     */
+    private Integer goodsLimitNum;
+    /**
+     * 商品级别还能购买的数量，0代表不可买，不限购返回Integer.MAX_VALUE
+     */
+    private Integer goodsCanBuyNum;
 
     private Long bizId;
 
@@ -95,5 +103,21 @@ public class GoodsLimitInfoListVo extends BaseRequest {
 
     public void setSkuLimitNum(Integer skuLimitNum) {
         this.skuLimitNum = skuLimitNum;
+    }
+
+    public Integer getGoodsLimitNum() {
+        return goodsLimitNum;
+    }
+
+    public void setGoodsLimitNum(Integer goodsLimitNum) {
+        this.goodsLimitNum = goodsLimitNum;
+    }
+
+    public Integer getGoodsCanBuyNum() {
+        return goodsCanBuyNum;
+    }
+
+    public void setGoodsCanBuyNum(Integer goodsCanBuyNum) {
+        this.goodsCanBuyNum = goodsCanBuyNum;
     }
 }

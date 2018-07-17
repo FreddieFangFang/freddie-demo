@@ -208,25 +208,33 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 }
             }
             vo.setAlreadyBuyNum(alreadyBuyNum == null ? 0 : alreadyBuyNum);
+            vo.setGoodsLimitNum(goodsLimitNum);
             if (LimitConstant.UNLIMITED_NUM == goodsLimitNum) {
                 if (LimitConstant.UNLIMITED_NUM == pidGoodsLimitNum) {
-
+                    if (vo.getLimitStatus()) {
+                        vo.setGoodsCanBuyNum(vo.getCanBuyNum());
+                    } else {
+                        vo.setGoodsCanBuyNum(Integer.MAX_VALUE);
+                    }
                 } else {
                     vo.setLimitStatus(true);
                     Integer canBuyNum = pidGoodsLimitNum - (pidAlreadyBuyNum == null ? 0 : pidAlreadyBuyNum);
                     vo.setCanBuyNum(vo.getCanBuyNum() < canBuyNum ? vo.getCanBuyNum() : canBuyNum);
+                    vo.setGoodsCanBuyNum(vo.getCanBuyNum());
                 }
             } else {
                 if (LimitConstant.UNLIMITED_NUM == pidGoodsLimitNum) {
                     vo.setLimitStatus(true);
                     Integer canBuyNum = goodsLimitNum - (alreadyBuyNum == null ? 0 : alreadyBuyNum);
                     vo.setCanBuyNum(vo.getCanBuyNum() < canBuyNum ? vo.getCanBuyNum() : canBuyNum);
+                    vo.setGoodsCanBuyNum(vo.getCanBuyNum());
                 } else {
                     vo.setLimitStatus(true);
                     Integer storeCanBuyNum = goodsLimitNum - (alreadyBuyNum == null ? 0 : alreadyBuyNum);
                     Integer pidCanBuyNum = pidGoodsLimitNum - (pidAlreadyBuyNum == null ? 0 : pidAlreadyBuyNum);
                     Integer canBuyNum = storeCanBuyNum < pidCanBuyNum ? storeCanBuyNum : pidCanBuyNum;
                     vo.setCanBuyNum(vo.getCanBuyNum() < canBuyNum ? vo.getCanBuyNum() : canBuyNum);
+                    vo.setGoodsCanBuyNum(vo.getCanBuyNum());
                 }
             }
         }
