@@ -18,6 +18,7 @@ import com.weimob.saas.ec.limitation.model.response.SaveGoodsLimitInfoResponseVo
 import com.weimob.saas.ec.limitation.service.LimitationServiceImpl;
 import com.weimob.saas.ec.limitation.service.LimitationUpdateBizService;
 import com.weimob.saas.ec.limitation.utils.IdUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,9 +48,12 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         /** 2 构建限购主表信息*/
         LimitInfoEntity limitInfoEntity = buildLimitInfoEntity(requestVo);
         /** 3 构建限购门店表信息*/
-        //List<LimitStoreRelationshipEntity> storeInfoList = buildStoreInfoList(requestVo);
+        List<LimitStoreRelationshipEntity> storeInfoList = null;
+        if (CollectionUtils.isNotEmpty(requestVo.getStoreIdList())) {
+            storeInfoList = buildStoreInfoList(requestVo);
+        }
         /** 4 保存数据库*/
-        limitationService.saveLimitationInfo(limitInfoEntity, null);
+        limitationService.saveLimitationInfo(limitInfoEntity, storeInfoList);
 
         return new LimitationUpdateResponseVo(limitId, true);
     }
@@ -67,9 +71,12 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         LimitInfoEntity limitInfoEntity = buildLimitInfoEntity(requestVo);
         limitInfoEntity.setVersion(oldLimitInfoEntity.getVersion());
         /** 3 构建限购门店表信息*/
-        //List<LimitStoreRelationshipEntity> storeInfoList = buildStoreInfoList(requestVo);
+        List<LimitStoreRelationshipEntity> storeInfoList = null;
+        if (CollectionUtils.isNotEmpty(requestVo.getStoreIdList())) {
+            storeInfoList = buildStoreInfoList(requestVo);
+        }
         /** 4 更新数据库*/
-        limitationService.updateLimitationInfo(limitInfoEntity, null);
+        limitationService.updateLimitationInfo(limitInfoEntity, storeInfoList);
 
         return new LimitationUpdateResponseVo(oldLimitInfoEntity.getLimitId(), true);
     }
@@ -245,7 +252,6 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
             SkuLimitInfoEntity skuLimitInfoEntity = new SkuLimitInfoEntity();
             skuLimitInfoEntity.setLimitId(limitId);
             skuLimitInfoEntity.setPid(requestVo.getPid());
-            skuLimitInfoEntity.setStoreId(requestVo.getStoreId());
             skuLimitInfoEntity.setGoodsId(requestVo.getGoodsId());
             skuLimitInfoEntity.setSkuId(info.getSkuId());
             skuLimitInfoEntity.setLimitNum(info.getSkuLimitNum());
@@ -260,7 +266,6 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         GoodsLimitInfoEntity infoEntity = new GoodsLimitInfoEntity();
         infoEntity.setLimitId(limitId);
         infoEntity.setPid(requestVo.getPid());
-        infoEntity.setStoreId(requestVo.getStoreId());
         infoEntity.setGoodsId(requestVo.getGoodsId());
         infoEntity.setLimitLevel(0);
         infoEntity.setLimitNum(requestVo.getGoodsLimitNum());
@@ -270,7 +275,6 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         GoodsLimitInfoEntity infoEntity2 = new GoodsLimitInfoEntity();
         infoEntity2.setLimitId(limitId);
         infoEntity2.setPid(requestVo.getPid());
-        infoEntity2.setStoreId(requestVo.getStoreId());
         infoEntity2.setGoodsId(requestVo.getGoodsId());
         infoEntity2.setLimitLevel(1);
         infoEntity2.setLimitNum(requestVo.getPidGoodsLimitNum() == null ? 0 : requestVo.getPidGoodsLimitNum());
@@ -315,6 +319,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         limitInfoEntity.setLimitType(requestVo.getLimitType());
         limitInfoEntity.setPid(requestVo.getPid());
         limitInfoEntity.setSource(requestVo.getSource());
+        limitInfoEntity.setSelectStoreType(requestVo.getSelectStoreType());
         return limitInfoEntity;
     }
 }

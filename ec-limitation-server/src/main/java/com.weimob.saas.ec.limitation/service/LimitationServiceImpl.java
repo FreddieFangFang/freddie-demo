@@ -47,19 +47,23 @@ public class LimitationServiceImpl {
 
     public void saveLimitationInfo(LimitInfoEntity limitInfoEntity, List<LimitStoreRelationshipEntity> storeInfoList) {
         limitInfoDao.insert(limitInfoEntity);
-        //limitStoreRelationshipDao.batchInsert(storeInfoList);
+        if (CollectionUtils.isNotEmpty(storeInfoList)) {
+            limitStoreRelationshipDao.batchInsert(storeInfoList);
+        }
     }
 
     public void updateLimitationInfo(LimitInfoEntity limitInfoEntity, List<LimitStoreRelationshipEntity> storeInfoList) {
 
         limitInfoDao.update(limitInfoEntity);
 
-        /*LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
+        LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
         deleteEntity.setPid(limitInfoEntity.getPid());
         deleteEntity.setLimitId(limitInfoEntity.getLimitId());
         limitStoreRelationshipDao.delete(deleteEntity);
 
-        limitStoreRelationshipDao.batchInsert(storeInfoList);*/
+        if (CollectionUtils.isNotEmpty(storeInfoList)) {
+            limitStoreRelationshipDao.batchInsert(storeInfoList);
+        }
     }
 
     public void deleteLimitInfo(LimitInfoEntity limitInfoEntity) {

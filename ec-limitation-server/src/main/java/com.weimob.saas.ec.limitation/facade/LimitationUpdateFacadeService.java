@@ -42,7 +42,6 @@ public class LimitationUpdateFacadeService {
     private void validateRequestParam(LimitationInfoRequestVo requestVo) {
         VerifyParamUtils.checkParam(LimitationErrorCode.REQUEST_PARAM_IS_NULL, requestVo);
         VerifyParamUtils.checkParam(LimitationErrorCode.PID_IS_NULL, requestVo.getPid());
-        //VerifyParamUtils.checkListParam(LimitationErrorCode.STORE_IS_NULL, requestVo.getStoreIdList());
         VerifyParamUtils.checkParam(LimitationErrorCode.CHANNELTYPE_IS_NULL, requestVo.getSaleChannelType());
         VerifyParamUtils.checkParam(LimitationErrorCode.SOURCE_IS_NULL, requestVo.getSource());
         VerifyParamUtils.checkParam(LimitationErrorCode.BIZID_IS_NULL, requestVo.getBizId());
@@ -53,6 +52,10 @@ public class LimitationUpdateFacadeService {
             throw new LimitationBizException(LimitationErrorCode.LIMIT_NUM_IS_INVALID);
         }
         VerifyParamUtils.checkParam(LimitationErrorCode.LIMITTYPE_IS_NULL, requestVo.getLimitType());
+        VerifyParamUtils.checkParam(LimitationErrorCode.REQUEST_PARAM_IS_NULL, requestVo.getSelectStoreType());
+        if (!Objects.equals(requestVo.getSelectStoreType(), 1)) {
+            VerifyParamUtils.checkListParam(LimitationErrorCode.STORE_IS_NULL, requestVo.getStoreIdList());
+        }
     }
 
     /**
@@ -115,7 +118,6 @@ public class LimitationUpdateFacadeService {
         VerifyParamUtils.checkParam(LimitationErrorCode.REQUEST_PARAM_IS_NULL, saveGoodsLimitInfoRequestVo.getGoodsList());
         for (SaveGoodsLimitInfoVo requestVo : saveGoodsLimitInfoRequestVo.getGoodsList()) {
             VerifyParamUtils.checkParam(LimitationErrorCode.PID_IS_NULL, requestVo.getPid());
-            VerifyParamUtils.checkParam(LimitationErrorCode.STORE_IS_NULL, requestVo.getStoreId());
             VerifyParamUtils.checkParam(LimitationErrorCode.BIZID_IS_NULL, requestVo.getBizId());
             VerifyParamUtils.checkParam(LimitationErrorCode.BIZTYPE_IS_NULL, requestVo.getBizType());
             VerifyParamUtils.checkParam(LimitationErrorCode.GOODSID_IS_NULL, requestVo.getBizType());

@@ -37,7 +37,6 @@
         <foreach item="item" index="index" collection="list"
                  separator="or">
             (pid = #{item.pid}
-            and store_id = #{item.storeId}
             and goods_id = #{item.goodsId}
             and limit_id = #{item.limitId}
             and is_deleted = 0)
@@ -92,7 +91,6 @@
           pid = #{pid}
           AND   limit_id=#{limitId}
           AND   goods_id=#{goodsId}
-          AND   store_id=#{storeId}
           AND   limit_level=#{limitLevel}
           AND   is_deleted = 0
       /*GoodsLimitInfoDao.updateGoodsLimitInfoEntity*/
@@ -151,7 +149,6 @@
                  separator="or">
             (
             goodslimitinfo.pid = #{item.pid}
-            and goodslimitinfo.store_id = #{item.storeId}
             and goodslimitinfo.goods_id = #{item.goodsId}
             and limitinfo.biz_id = #{item.bizId}
             and limitinfo.biz_type = #{item.bizType}
@@ -184,7 +181,6 @@
                  separator="or">
             (
             limitinfo.pid = #{item.pid}
-            and goodslimitinfo.store_id = #{item.storeId}
             and goodslimitinfo.goods_id = #{item.goodsId}
             and limitinfo.biz_id = #{item.bizId}
             and limitinfo.biz_type = #{item.bizType}
@@ -216,7 +212,6 @@
         goods_limit_info
         (
         pid,
-        store_id,
         limit_id,
         limit_type,
         goods_id,
@@ -233,7 +228,6 @@
                  separator=",">
             (
             #{item.pid},
-            #{item.storeId},
             #{item.limitId},
             #{item.limitType},
             #{item.goodsId},

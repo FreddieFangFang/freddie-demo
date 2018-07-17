@@ -19,12 +19,12 @@ public class MapKeyUtil {
         return pid + "_" + storeId + "_" + wid + "_" + limitId + "_" + goodsId;
     }
 
-    public static String buildPidStoreIdGoodsId(Long pid, Long storeId, Long goodsId) {
-        return pid + "_" + storeId + "_" + goodsId;
+    public static String buildPidStoreIdGoodsId(Long pid, Long goodsId) {
+        return pid + "_" + goodsId;
     }
 
-    public static String buildSkuLimitMapKey(Long pid, Long storeId, Long limitId, Long goodsId, Long skuId) {
-        return pid + "_" + storeId + "_" + limitId + "_" + goodsId + "_" + skuId;
+    public static String buildSkuLimitMapKey(Long pid, Long limitId, Long goodsId, Long skuId) {
+        return pid + "_" + limitId + "_" + goodsId + "_" + skuId;
     }
 
     public static String buildPidGoodsLimitNumMap(Long pid, Long limitId, Long goodsId) {

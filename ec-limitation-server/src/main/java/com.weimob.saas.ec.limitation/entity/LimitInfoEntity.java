@@ -52,6 +52,8 @@ public class LimitInfoEntity {
 
     private Date updateTime;
 
+    private Integer selectStoreType;
+
     public Long getLimitId() {
         return limitId;
     }
@@ -162,5 +164,13 @@ public class LimitInfoEntity {
 
     public void setLimitType(Integer limitType) {
         this.limitType = limitType;
+    }
+
+    public Integer getSelectStoreType() {
+        return selectStoreType;
+    }
+
+    public void setSelectStoreType(Integer selectStoreType) {
+        this.selectStoreType = selectStoreType;
     }
 }

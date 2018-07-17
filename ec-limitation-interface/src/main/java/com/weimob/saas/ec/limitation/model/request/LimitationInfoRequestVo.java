@@ -49,6 +49,10 @@ public class LimitationInfoRequestVo extends BaseRequest{
      * 限购数量
      */
     private Integer limitNum;
+    /**
+     * 选择门店类型(1:全部门店 2:部分门店;3:部分排除)
+     */
+    private Integer selectStoreType;
 
     public Long getLimitId() {
         return limitId;
@@ -120,5 +124,13 @@ public class LimitationInfoRequestVo extends BaseRequest{
 
     public void setLimitNum(Integer limitNum) {
         this.limitNum = limitNum;
+    }
+
+    public Integer getSelectStoreType() {
+        return selectStoreType;
+    }
+
+    public void setSelectStoreType(Integer selectStoreType) {
+        this.selectStoreType = selectStoreType;
     }
 }

@@ -26,7 +26,6 @@
         sku_limit_info
         (
         pid,
-        store_id,
         limit_id,
         limit_type,
         goods_id,
@@ -43,7 +42,6 @@
                  separator=",">
             (
             #{item.pid},
-            #{item.storeId},
             #{item.limitId},
             #{item.limitType},
             #{item.goodsId},
@@ -97,7 +95,6 @@
         update_time = NOW()
       WHERE
           pid = #{pid}
-      AND store_id = #{storeId}
       AND limit_id = #{limitId}
       AND goods_id = #{goodsId}
       AND sku_id = #{skuId}
@@ -126,7 +123,6 @@
                  separator="or">
             (
             skulimtinfo.pid = #{item.pid}
-            and skulimtinfo.store_id = #{item.storeId}
             and skulimtinfo.goods_id = #{item.goodsId}
             and skulimtinfo.sku_id =#{item.skuId}
             and skulimtinfo.is_deleted = 0
@@ -154,7 +150,6 @@
                  separator="or">
             (
             pid = #{item.pid}
-            and store_id = #{item.storeId}
             and goods_id = #{item.goodsId}
             and sku_id =#{item.skuId}
             and is_deleted = 0
@@ -172,7 +167,6 @@
         update_time = NOW()
         WHERE
         pid = #{pid}
-        AND store_id = #{storeId}
         AND limit_id = #{limitId}
         AND goods_id = #{goodsId}
         AND sku_id =#{skuId}
@@ -202,7 +196,6 @@
                  separator="or">
             (
             limitinfo.pid = #{item.pid}
-            and skulimitinfo.store_id = #{item.storeId}
             and skulimitinfo.goods_id = #{item.goodsId}
             and limitinfo.biz_id = #{item.bizId}
             and limitinfo.biz_type = #{item.bizType}

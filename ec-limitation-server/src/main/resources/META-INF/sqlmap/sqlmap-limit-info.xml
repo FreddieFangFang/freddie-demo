@@ -38,13 +38,13 @@
       source, limit_level, biz_id, 
       biz_type, limit_type, limit_num, 
       sold_num, is_deleted,
-      create_time, update_time)
+      create_time, update_time,select_store_type)
     values
     (#{limitId,jdbcType=BIGINT}, #{pid,jdbcType=BIGINT}, #{saleChannelType,jdbcType=VARCHAR},
       #{source,jdbcType=VARCHAR}, #{limitLevel,jdbcType=TINYINT}, #{bizId,jdbcType=BIGINT}, 
       #{bizType,jdbcType=TINYINT}, #{limitType,jdbcType=TINYINT}, #{limitNum,jdbcType=INTEGER}, 
       #{soldNum,jdbcType=INTEGER}, 0,
-      NOW(), NOW())
+      NOW(), NOW(),#{selectStoreType})
       /*LimitInfoDao.insert*/
   </insert>
 
@@ -95,6 +95,9 @@
             </if>
             <if test="soldNum != null">
                 sold_num = #{soldNum},
+            </if>
+            <if test="select_store_type != null">
+                select_store_type = #{selectStoreType},
             </if>
             version = version+1,
             update_time = NOW()
