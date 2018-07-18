@@ -96,7 +96,7 @@
             <if test="soldNum != null">
                 sold_num = #{soldNum},
             </if>
-            <if test="select_store_type != null">
+            <if test="selectStoreType != null">
                 select_store_type = #{selectStoreType},
             </if>
             version = version+1,
