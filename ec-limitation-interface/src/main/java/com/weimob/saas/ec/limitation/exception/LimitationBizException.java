@@ -26,8 +26,8 @@ public class LimitationBizException extends BaseException {
         this.bizInfo = bizInfo;
     }
 
-    public LimitationBizException(LimitationErrorCode errorCode, String bizInfo) {
-        super(errorCode.getErrorCode(), errorCode.getErrorMsg());
+    public LimitationBizException(LimitationErrorCode errorCode, String bizInfo,String returnMsg) {
+        super(errorCode.getErrorCode(), errorCode.getErrorMsg(),returnMsg);
         this.bizInfo = bizInfo;
     }
 

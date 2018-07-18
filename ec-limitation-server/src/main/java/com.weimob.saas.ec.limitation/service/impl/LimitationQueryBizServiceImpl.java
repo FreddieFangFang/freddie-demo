@@ -1,6 +1,7 @@
 package com.weimob.saas.ec.limitation.service.impl;
 
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
+import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
 import com.weimob.saas.ec.limitation.dao.*;
 import com.weimob.saas.ec.limitation.entity.*;
@@ -171,7 +172,9 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 Integer skuLimitNum = skuLimitMap.get(entry.getKey()).getLimitNum();
                 int alreadyBuyNumValue = alreadyBuyNum == null ? 0 : alreadyBuyNum;
                 if (alreadyBuyNumValue + entry.getValue() > skuLimitNum) {
-                    throw new LimitationBizException(LimitationErrorCode.BEYOND_SKU_LIMIT_NUM);
+                    String msg = "超出" + LimitBizTypeEnum.getLimitLevelEnumByLevel(requestVo.getGoodsDetailList().get(0).getBizType()).getName()
+                            + "可售sku" + (alreadyBuyNumValue + entry.getValue() - skuLimitNum) + "件";
+                    throw new LimitationBizException(LimitationErrorCode.BEYOND_SKU_LIMIT_NUM, msg, msg);
                 }
             }
         }
@@ -254,7 +257,9 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 Long limitId = limitIdMap.get(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId()));
                 Integer orderBuyNum = activityBuyNumMap.get(MapKeyUtil.buildGoodsLimitNumMap(vo.getPid(), vo.getStoreId(), limitId, vo.getGoodsId()));
                 if (canBuyNum < orderBuyNum) {
-                    throw new LimitationBizException(LimitationErrorCode.BEYOND_GOODS_LIMIT_NUM);
+                    String msg = "超出" + LimitBizTypeEnum.getLimitLevelEnumByLevel(requestVo.getGoodsDetailList().get(0).getBizType()).getName()
+                            + "商品限购" + (orderBuyNum - canBuyNum) + "件";
+                    throw new LimitationBizException(LimitationErrorCode.BEYOND_GOODS_LIMIT_NUM, msg, msg);
                 }
             }
         }
@@ -303,7 +308,9 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 Integer activityLimitNum = activityLimitNumMap.get(entry.getKey());
                 int alreadyBuyNumValue = alreadyBuyNum == null ? 0 : alreadyBuyNum;
                 if (alreadyBuyNumValue + entry.getValue() > activityLimitNum) {
-                    throw new LimitationBizException(LimitationErrorCode.BEYOND_ACTIVITY_LIMIT_NUM);
+                    String msg = "超出" + LimitBizTypeEnum.getLimitLevelEnumByLevel(requestVo.getGoodsDetailList().get(0).getBizType()).getName()
+                            + "活动限购" + (alreadyBuyNumValue + entry.getValue() - activityLimitNum) + "件";
+                    throw new LimitationBizException(LimitationErrorCode.BEYOND_ACTIVITY_LIMIT_NUM, msg, msg);
                 }
             }
         }
