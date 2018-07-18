@@ -70,6 +70,20 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
         threadExecutor.execute(new SaveLimitChangeLogThread(limitOrderChangeLogDao, logEntityList));
     }
 
+    protected Map<Integer, List<UpdateUserLimitVo>> buildActivityMap(List<UpdateUserLimitVo> vos) {
+        Map<Integer, List<UpdateUserLimitVo>> activityMap = new HashMap<>();
+        for (UpdateUserLimitVo limitVo : vos) {
+            if (CollectionUtils.isEmpty(activityMap.get(limitVo.getBizType()))) {
+                List<UpdateUserLimitVo> updateUserLimitVoList = new ArrayList<>();
+                updateUserLimitVoList.add(limitVo);
+                activityMap.put(limitVo.getBizType(), updateUserLimitVoList);
+            } else {
+                activityMap.get(limitVo.getBizType()).add(limitVo);
+            }
+        }
+        return activityMap;
+    }
+
     protected LimitOrderChangeLogEntity createOrderChangeLog(T vo) {
         return null;
     }

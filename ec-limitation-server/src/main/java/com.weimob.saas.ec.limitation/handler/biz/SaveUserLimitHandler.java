@@ -16,6 +16,7 @@ import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
 import com.weimob.saas.ec.limitation.service.LimitationServiceImpl;
 import com.weimob.saas.ec.limitation.utils.LimitContext;
 import com.weimob.saas.ec.limitation.utils.VerifyParamUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,22 +66,28 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
     }
 
     @Override
-    protected void doBatchBizLogic(List<UpdateUserLimitVo> vos) {
+    protected void doBatchBizLogic(List<UpdateUserLimitVo> updateUserLimitVoList) {
         //处理限购逻辑，分成三个handler，分别处理活动级别、商品级别、sku级别的限购校验
         //limitBizChain.execute();
-        //TODO 限购商品的类型分组
-        if (Objects.equals(vos.get(0).getBizType(), LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel())) {
-            goodsLimitBizHandler.doLimitHandler(vos);
+        //限购商品的类型分组
+        Map<Integer, List<UpdateUserLimitVo>> activityMap = buildActivityMap(updateUserLimitVoList);
+        Iterator<Map.Entry<Integer, List<UpdateUserLimitVo>>> iterator = activityMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, List<UpdateUserLimitVo>> entry = iterator.next();
+            List<UpdateUserLimitVo> vos = entry.getValue();
+            if (Objects.equals(vos.get(0).getBizType(), LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel())) {
+                goodsLimitBizHandler.doLimitHandler(vos);
 
-        } else if (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.PRIVILEGE_PRICE.getType())
-                || (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.DISCOUNT.getType())
-                && Objects.equals(vos.get(0).getActivityStockType(), LimitConstant.DISCOUNT_TYPE_SKU))) {
-            goodsLimitBizHandler.doLimitHandler(vos);
-            activityLimitBizHandler.doLimitHandler(vos);
-            skuLimitBizHandler.doLimitHandler(vos);
-        } else if (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.DISCOUNT.getType())) {
-            goodsLimitBizHandler.doLimitHandler(vos);
-            activityLimitBizHandler.doLimitHandler(vos);
+            } else if (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.PRIVILEGE_PRICE.getType())
+                    || (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.DISCOUNT.getType())
+                    && Objects.equals(vos.get(0).getActivityStockType(), LimitConstant.DISCOUNT_TYPE_SKU))) {
+                goodsLimitBizHandler.doLimitHandler(vos);
+                activityLimitBizHandler.doLimitHandler(vos);
+                skuLimitBizHandler.doLimitHandler(vos);
+            } else if (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.DISCOUNT.getType())) {
+                goodsLimitBizHandler.doLimitHandler(vos);
+                activityLimitBizHandler.doLimitHandler(vos);
+            }
         }
         limitationService.saveUserLimitRecord(LimitContext.getLimitBo().getGoodsLimitEntityList(),
                 LimitContext.getLimitBo().getActivityLimitEntityList(), LimitContext.getLimitBo().getActivityGoodsSoldEntityList());

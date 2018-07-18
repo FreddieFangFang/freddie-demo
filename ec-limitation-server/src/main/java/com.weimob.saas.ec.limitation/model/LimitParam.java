@@ -10,6 +10,7 @@ public class LimitParam {
     private Long bizId;
     private Integer bizType;
     private Long limitId;
+    private Long goodsId;
 
     public LimitParam() {
 
@@ -18,6 +19,12 @@ public class LimitParam {
     public LimitParam(Long pid, Long limitId) {
         this.pid = pid;
         this.limitId = limitId;
+    }
+
+    public LimitParam(Long pid, Long limitId, Long goodsId) {
+        this.pid = pid;
+        this.limitId = limitId;
+        this.goodsId = goodsId;
     }
 
     public LimitParam(Long pid, Long bizId, Integer bizType) {
@@ -56,5 +63,13 @@ public class LimitParam {
 
     public void setLimitId(Long limitId) {
         this.limitId = limitId;
+    }
+
+    public Long getGoodsId() {
+        return goodsId;
+    }
+
+    public void setGoodsId(Long goodsId) {
+        this.goodsId = goodsId;
     }
 }

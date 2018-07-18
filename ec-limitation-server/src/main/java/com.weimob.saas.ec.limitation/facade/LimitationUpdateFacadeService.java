@@ -139,9 +139,6 @@ public class LimitationUpdateFacadeService {
                 for (SkuLimitInfo info : requestVo.getSkuLimitInfoList()) {
                     VerifyParamUtils.checkParam(LimitationErrorCode.SKUINFO_IS_NULL, info.getSkuId());
                     VerifyParamUtils.checkParam(LimitationErrorCode.SKUINFO_IS_NULL, info.getSkuLimitNum());
-                    if (info.getSkuLimitNum() < 0) {
-                        throw new LimitationBizException(LimitationErrorCode.LIMIT_NUM_IS_INVALID);
-                    }
                     VerifyParamUtils.checkParam(LimitationErrorCode.SKUINFO_IS_NULL, info.getSkuLimitType());
                 }
             }

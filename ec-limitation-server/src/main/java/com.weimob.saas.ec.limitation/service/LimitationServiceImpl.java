@@ -15,6 +15,7 @@ import com.weimob.saas.ec.limitation.entity.UserLimitEntity;
 import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.model.DeleteGoodsParam;
+import com.weimob.saas.ec.limitation.model.DeleteSkuParam;
 import com.weimob.saas.ec.limitation.model.LimitParam;
 import com.weimob.saas.ec.limitation.model.request.DeleteDiscountUserLimitInfoRequestVo;
 import org.apache.commons.collections.CollectionUtils;
@@ -176,16 +177,43 @@ public class LimitationServiceImpl {
             goodsLimitInfoDao.updateGoodsLimitInfoEntity(oldGoodsLimitInfoEntity);
         }
 
-
-        DeleteGoodsParam param = new DeleteGoodsParam();
-        param.setPid(oldGoodsLimitInfoEntityList.get(0).getPid());
-        param.setLimitId(oldGoodsLimitInfoEntityList.get(0).getLimitId());
-        List<Long> goodsIdList = new ArrayList<>();
-        goodsIdList.add(oldGoodsLimitInfoEntityList.get(0).getGoodsId());
-        param.setGoodsIdList(goodsIdList);
-        skuLimitInfoDao.deleteSkuLimit(param);
-
-        skuLimitInfoDao.batchInsert(skuLimitInfoList);
+        /**
+         * 1.原来有，现在有，更新。
+         * 2.原来有，现在没有，删除。
+         * 3.原来没有，现在有，新增
+         */
+        Long pid = oldGoodsLimitInfoEntityList.get(0).getPid();
+        Long goodsId = oldGoodsLimitInfoEntityList.get(0).getGoodsId();
+        Long limitId = oldGoodsLimitInfoEntityList.get(0).getLimitId();
+        LimitParam limitParam = new LimitParam(pid, limitId, goodsId);
+        List<SkuLimitInfoEntity> oldSkuLimitList = skuLimitInfoDao.queryOldSkuLimitList(limitParam);
+        List<Long> skuIdList = new ArrayList<>();
+        List<SkuLimitInfoEntity> newSkuLimitList = new ArrayList<>();
+        for (SkuLimitInfoEntity skuLimitInfoEntity : oldSkuLimitList) {
+            skuIdList.add(skuLimitInfoEntity.getSkuId());
+        }
+        for (SkuLimitInfoEntity skuLimitInfoEntity : skuLimitInfoList) {
+            if (skuIdList.contains(skuLimitInfoEntity.getSkuId())) {
+                //有此记录，进行更新，把skuIdList的id删除
+                skuLimitInfoDao.updateSkuLimitNum(skuLimitInfoEntity);
+                skuIdList.remove(skuLimitInfoEntity.getSkuId());
+            } else {
+                //无此记录，进行插入
+                newSkuLimitList.add(skuLimitInfoEntity);
+            }
+        }
+        //skuIdList还存在的skuId要删除
+        if (CollectionUtils.isNotEmpty(skuIdList)) {
+            DeleteSkuParam param = new DeleteSkuParam();
+            param.setPid(pid);
+            param.setLimitId(limitId);
+            param.setSkuIdList(skuIdList);
+            param.setGoodsId(goodsId);
+            skuLimitInfoDao.deleteGoodsSkuLimit(param);
+        }
+        if (CollectionUtils.isNotEmpty(newSkuLimitList)) {
+            skuLimitInfoDao.batchInsert(newSkuLimitList);
+        }
     }
 
     public void saveUserLimitRecord(List<UserGoodsLimitEntity> goodsLimitEntityList, List<UserLimitEntity> activityLimitEntityList,

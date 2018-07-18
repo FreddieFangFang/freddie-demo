@@ -221,4 +221,59 @@
         </foreach>
         /*SkuLimitInfoDao.queryGoodsSkuLimitList*/
     </select>
+
+    <select id="queryOldSkuLimitList" resultMap="BaseResultMap"
+            parameterType="com.weimob.saas.ec.limitation.model.LimitParam">
+        select
+        pid,
+        store_id,
+        limit_id,
+        limit_type,
+        goods_id,
+        sku_id,
+        limit_num,
+        sold_num,
+        version
+        from
+        sku_limit_info
+        where
+             pid = #{pid}
+        and goods_id = #{goodsId}
+        and limit_id = #{limitId}
+        /*SkuLimitInfoDao.queryOldSkuLimitList*/
+    </select>
+
+    <update id="updateSkuLimitNum" parameterType="com.weimob.saas.ec.limitation.entity.SkuLimitInfoEntity">
+        update
+        sku_limit_info
+        SET
+        limit_num = limit_num + #{limitNum},
+        update_time = NOW()
+        WHERE
+        pid = #{pid}
+        AND limit_id = #{limitId}
+        AND goods_id = #{goodsId}
+        AND sku_id = #{skuId}
+        AND limit_num + #{limitNum} >0
+        /*SkuLimitInfoDao.updateSkuLimitNum*/
+    </update>
+
+    <update id="deleteGoodsSkuLimit" parameterType="com.weimob.saas.ec.limitation.model.DeleteSkuParam">
+        update
+        sku_limit_info
+        set
+        is_deleted = 1,
+        update_time = NOW()
+        where
+        pid = #{pid}
+        and limit_id=#{limitId}
+        and goods_id = #{goodsId}
+        and
+        sku_id IN
+        <foreach item="id" index="index" collection="skuIdList"
+                 open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        /*SkuLimitInfoDao.deleteGoodsSkuLimit*/
+    </update>
 </mapper>
