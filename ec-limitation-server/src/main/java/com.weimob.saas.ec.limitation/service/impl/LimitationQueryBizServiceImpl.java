@@ -145,7 +145,8 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             vo.setLimitStatus(true);
             Long limitId = limitIdMap.get(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId()));
             if (skuLimitMap.get(MapKeyUtil.buildSkuLimitMapKey(vo.getPid(), limitId, vo.getGoodsId(), vo.getSkuId())) == null) {
-                throw new LimitationBizException(LimitationErrorCode.LIMIT_SKU_IS_NULL);
+                //throw new LimitationBizException(LimitationErrorCode.LIMIT_SKU_IS_NULL);
+                continue;
             }
             Integer alreadyBuyNum = skuLimitMap.get(MapKeyUtil.buildSkuLimitMapKey(vo.getPid(), limitId, vo.getGoodsId(), vo.getSkuId())).getSoldNum();
             vo.setAlreadyBuyNum(alreadyBuyNum == null ? 0 : alreadyBuyNum);
@@ -280,7 +281,8 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             goodsLimitInfoListVo.setAlreadyBuyNum(alreadyBuyNum == null ? 0 : alreadyBuyNum);
             Integer activityLimitNum = activityLimitNumMap.get(limitIdKey);
             if (activityLimitNum == null) {
-                throw new LimitationBizException(LimitationErrorCode.LIMIT_ACTIVITY_IS_NULL);
+                //throw new LimitationBizException(LimitationErrorCode.LIMIT_ACTIVITY_IS_NULL);
+                continue;
             }
             if (activityLimitNum == LimitConstant.UNLIMITED_NUM) {
                 goodsLimitInfoListVo.setLimitStatus(false);
