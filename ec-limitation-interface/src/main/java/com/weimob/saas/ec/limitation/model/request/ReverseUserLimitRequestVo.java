@@ -14,6 +14,14 @@ public class ReverseUserLimitRequestVo implements Serializable {
      */
     private String ticket;
 
+    public ReverseUserLimitRequestVo() {
+
+    }
+
+    public ReverseUserLimitRequestVo(String ticket) {
+        this.ticket = ticket;
+    }
+
     public String getTicket() {
         return ticket;
     }
