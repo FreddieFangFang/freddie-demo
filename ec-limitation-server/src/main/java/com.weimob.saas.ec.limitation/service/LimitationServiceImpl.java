@@ -22,8 +22,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author lujialin
@@ -182,37 +181,52 @@ public class LimitationServiceImpl {
          * 2.原来有，现在没有，删除。
          * 3.原来没有，现在有，新增
          */
-        Long pid = oldGoodsLimitInfoEntityList.get(0).getPid();
-        Long goodsId = oldGoodsLimitInfoEntityList.get(0).getGoodsId();
-        Long limitId = oldGoodsLimitInfoEntityList.get(0).getLimitId();
-        LimitParam limitParam = new LimitParam(pid, limitId, goodsId);
-        List<SkuLimitInfoEntity> oldSkuLimitList = skuLimitInfoDao.queryOldSkuLimitList(limitParam);
-        List<Long> skuIdList = new ArrayList<>();
-        List<SkuLimitInfoEntity> newSkuLimitList = new ArrayList<>();
-        for (SkuLimitInfoEntity skuLimitInfoEntity : oldSkuLimitList) {
-            skuIdList.add(skuLimitInfoEntity.getSkuId());
-        }
+        Map<Long, List<SkuLimitInfoEntity>> goodsSkuMap = new HashMap<>();
         for (SkuLimitInfoEntity skuLimitInfoEntity : skuLimitInfoList) {
-            if (skuIdList.contains(skuLimitInfoEntity.getSkuId())) {
-                //有此记录，进行更新，把skuIdList的id删除
-                skuLimitInfoDao.updateSkuLimitNum(skuLimitInfoEntity);
-                skuIdList.remove(skuLimitInfoEntity.getSkuId());
+            if (CollectionUtils.isEmpty(goodsSkuMap.get(skuLimitInfoEntity.getGoodsId()))) {
+                List<SkuLimitInfoEntity> skuLimitInfoEntityList = new ArrayList<>();
+                skuLimitInfoEntityList.add(skuLimitInfoEntity);
+                goodsSkuMap.put(skuLimitInfoEntity.getGoodsId(), skuLimitInfoEntityList);
             } else {
-                //无此记录，进行插入
-                newSkuLimitList.add(skuLimitInfoEntity);
+                goodsSkuMap.get(skuLimitInfoEntity.getGoodsId()).add(skuLimitInfoEntity);
             }
         }
-        //skuIdList还存在的skuId要删除
-        if (CollectionUtils.isNotEmpty(skuIdList)) {
-            DeleteSkuParam param = new DeleteSkuParam();
-            param.setPid(pid);
-            param.setLimitId(limitId);
-            param.setSkuIdList(skuIdList);
-            param.setGoodsId(goodsId);
-            skuLimitInfoDao.deleteGoodsSkuLimit(param);
-        }
-        if (CollectionUtils.isNotEmpty(newSkuLimitList)) {
-            skuLimitInfoDao.batchInsert(newSkuLimitList);
+        Iterator<Map.Entry<Long, List<SkuLimitInfoEntity>>> iterator = goodsSkuMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Long, List<SkuLimitInfoEntity>> entry = iterator.next();
+            Long goodsId = entry.getKey();
+            List<SkuLimitInfoEntity> skuLimitInfoEntityList = entry.getValue();
+            Long pid = oldGoodsLimitInfoEntityList.get(0).getPid();
+            Long limitId = oldGoodsLimitInfoEntityList.get(0).getLimitId();
+            LimitParam limitParam = new LimitParam(pid, limitId, goodsId);
+            List<SkuLimitInfoEntity> oldSkuLimitList = skuLimitInfoDao.queryOldSkuLimitList(limitParam);
+            List<Long> skuIdList = new ArrayList<>();
+            List<SkuLimitInfoEntity> newSkuLimitList = new ArrayList<>();
+            for (SkuLimitInfoEntity skuLimitInfoEntity : oldSkuLimitList) {
+                skuIdList.add(skuLimitInfoEntity.getSkuId());
+            }
+            for (SkuLimitInfoEntity skuLimitInfoEntity : skuLimitInfoEntityList) {
+                if (skuIdList.contains(skuLimitInfoEntity.getSkuId())) {
+                    //有此记录，进行更新，把skuIdList的id删除
+                    skuLimitInfoDao.updateSkuLimitNum(skuLimitInfoEntity);
+                    skuIdList.remove(skuLimitInfoEntity.getSkuId());
+                } else {
+                    //无此记录，进行插入
+                    newSkuLimitList.add(skuLimitInfoEntity);
+                }
+            }
+            //skuIdList还存在的skuId要删除
+            if (CollectionUtils.isNotEmpty(skuIdList)) {
+                DeleteSkuParam param = new DeleteSkuParam();
+                param.setPid(pid);
+                param.setLimitId(limitId);
+                param.setSkuIdList(skuIdList);
+                param.setGoodsId(goodsId);
+                skuLimitInfoDao.deleteGoodsSkuLimit(param);
+            }
+            if (CollectionUtils.isNotEmpty(newSkuLimitList)) {
+                skuLimitInfoDao.batchInsert(newSkuLimitList);
+            }
         }
     }
 

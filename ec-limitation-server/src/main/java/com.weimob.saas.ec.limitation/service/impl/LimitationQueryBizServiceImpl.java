@@ -146,6 +146,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             Long limitId = limitIdMap.get(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId()));
             if (skuLimitMap.get(MapKeyUtil.buildSkuLimitMapKey(vo.getPid(), limitId, vo.getGoodsId(), vo.getSkuId())) == null) {
                 //throw new LimitationBizException(LimitationErrorCode.LIMIT_SKU_IS_NULL);
+                responseVo.getGoodsLimitInfoList().remove(vo);
                 continue;
             }
             Integer alreadyBuyNum = skuLimitMap.get(MapKeyUtil.buildSkuLimitMapKey(vo.getPid(), limitId, vo.getGoodsId(), vo.getSkuId())).getSoldNum();
@@ -171,6 +172,9 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 Map.Entry<String, Integer> entry = activityBuyNumIterator.next();
                 Integer alreadyBuyNum = skuLimitMap.get(entry.getKey()).getSoldNum();
                 Integer skuLimitNum = skuLimitMap.get(entry.getKey()).getLimitNum();
+                if (skuLimitNum == null) {
+                    throw new LimitationBizException(LimitationErrorCode.LIMIT_SKU_IS_NULL);
+                }
                 int alreadyBuyNumValue = alreadyBuyNum == null ? 0 : alreadyBuyNum;
                 if (alreadyBuyNumValue + entry.getValue() > skuLimitNum) {
                     String msg = "超出" + LimitBizTypeEnum.getLimitLevelEnumByLevel(requestVo.getGoodsDetailList().get(0).getBizType()).getName()
