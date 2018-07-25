@@ -4,9 +4,11 @@ import com.weimob.saas.ec.limitation.common.LimitationCommonErrorVo;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.model.request.GoodsLimitInfoListRequestVo;
 import com.weimob.saas.ec.limitation.model.request.QueryActivityLimitInfoRequestVo;
+import com.weimob.saas.ec.limitation.model.request.QueryGoodsLimitDetailListRequestVo;
 import com.weimob.saas.ec.limitation.model.request.QueryGoodsLimitNumRequestVo;
 import com.weimob.saas.ec.limitation.model.response.GoodsLimitInfoListResponseVo;
 import com.weimob.saas.ec.limitation.model.response.QueryActivityLimitInfoResponseVo;
+import com.weimob.saas.ec.limitation.model.response.QueryGoodsLimitDetailListResponseVo;
 import com.weimob.saas.ec.limitation.model.response.QueryGoodsLimitNumListResponseVo;
 import com.weimob.soa.common.response.SoaResponse;
 
@@ -52,4 +54,17 @@ public interface LimitationQueryService {
      * @returnExample {	"errT":null,	"globalTicket":null,	"logBizData":null,	"monitorTrackId":"7116bc05-54e7-4f92-ba6d-07386f4ccc78",	"processResult":true,	"responseVo":{		"activityLimitNum":3,		"appid":null,		"bizId":2212122,		"bizType":10,		"invokeByOpenApi":false,		"operationSource":null,		"originalRefer":null,		"pid":1000,		"refer":null,		"sceneType":null,		"siteId":null,		"storeId":200,		"wechatTemplateId":null,		"wid":null	},	"returnCode":"000000",	"returnMsg":"处理成功",	"successForMornitor":true,	"timestamp":"1528441104934"}
      */
     SoaResponse<QueryActivityLimitInfoResponseVo, LimitationErrorCode> queryActivityLimitInfo(QueryActivityLimitInfoRequestVo requestVo);
+
+    /**
+     *  
+     * @title 
+     * @author lujialin
+     * @date 2018/7/24 10:22
+     * @useScene 
+     * @parameterExample 
+     * @returnExample 
+     * @param 
+     * @return 
+     */
+    SoaResponse<QueryGoodsLimitDetailListResponseVo,LimitationCommonErrorVo> queryGoodsLimitDetailList(QueryGoodsLimitDetailListRequestVo requestVo);
 }

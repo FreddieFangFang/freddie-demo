@@ -461,6 +461,11 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         return responseVo;
     }
 
+    @Override
+    public QueryGoodsLimitDetailListResponseVo queryGoodsLimitDetailList(QueryGoodsLimitDetailListRequestVo requestVo) {
+        return null;
+    }
+
     private GoodsLimitInfoListResponseVo buildGoodsLimitInfoListResponseVo(GoodsLimitInfoListRequestVo requestVo, Map<String, Long> limitIdMap, Map<String, List<GoodsLimitInfoEntity>> goodsLimitNumMap, Map<String, Integer> userGoodsLimitNumMap) {
         GoodsLimitInfoListResponseVo responseVo = new GoodsLimitInfoListResponseVo();
         List<GoodsLimitInfoListVo> goodsLimitInfoList = new ArrayList<>();

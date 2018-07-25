@@ -6,6 +6,7 @@ import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.model.request.*;
 import com.weimob.saas.ec.limitation.model.response.GoodsLimitInfoListResponseVo;
 import com.weimob.saas.ec.limitation.model.response.QueryActivityLimitInfoResponseVo;
+import com.weimob.saas.ec.limitation.model.response.QueryGoodsLimitDetailListResponseVo;
 import com.weimob.saas.ec.limitation.model.response.QueryGoodsLimitNumListResponseVo;
 import com.weimob.saas.ec.limitation.service.LimitationQueryBizService;
 import com.weimob.saas.ec.limitation.utils.VerifyParamUtils;
@@ -42,6 +43,22 @@ public class LimitationQueryFacadeService {
 
         validateQueryActivityLimitInfoRequestVo(requestVo);
         return limitationQueryBizService.queryActivityLimitInfo(requestVo);
+    }
+
+    public QueryGoodsLimitDetailListResponseVo queryGoodsLimitDetailList(QueryGoodsLimitDetailListRequestVo requestVo) {
+        validateQueryGoodsLimitDetailListRequestVo(requestVo);
+        return limitationQueryBizService.queryGoodsLimitDetailList(requestVo);
+    }
+
+    private void validateQueryGoodsLimitDetailListRequestVo(QueryGoodsLimitDetailListRequestVo requestVo) {
+        VerifyParamUtils.checkParam(LimitationErrorCode.REQUEST_PARAM_IS_NULL, requestVo);
+        VerifyParamUtils.checkListParam(LimitationErrorCode.REQUEST_PARAM_IS_NULL, requestVo.getGoodsList());
+        for (QueryGoodsLimitDetailListVo vo : requestVo.getGoodsList()) {
+            VerifyParamUtils.checkParam(LimitationErrorCode.PID_IS_NULL, vo.getPid());
+            VerifyParamUtils.checkParam(LimitationErrorCode.BIZID_IS_NULL, vo.getBizId());
+            VerifyParamUtils.checkParam(LimitationErrorCode.BIZTYPE_IS_NULL, vo.getBizType());
+            VerifyParamUtils.checkParam(LimitationErrorCode.GOODSID_IS_NULL, vo.getGoodsId());
+        }
     }
 
     private void validateQueryActivityLimitInfoRequestVo(QueryActivityLimitInfoRequestVo requestVo) {
@@ -90,4 +107,6 @@ public class LimitationQueryFacadeService {
             }
         }
     }
+
+
 }
