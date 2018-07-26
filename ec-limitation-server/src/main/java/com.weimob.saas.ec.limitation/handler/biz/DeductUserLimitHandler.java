@@ -56,6 +56,7 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
             //3.更新限购记录
             //3.1 判断活动类型
             if (Objects.equals(vos.get(0).getBizType(), LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel())) {
+                groupingOrderSkuRequestVoList(LimitContext.getLimitBo().getOrderGoodsLimitMap(), orderGoodsQueryMap, vos, orderGoodsLimitMap);
                 super.updateUserLimitRecord(orderGoodsLimitMap);
 
             } else if (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.PRIVILEGE_PRICE.getType())
@@ -200,7 +201,7 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
                     || Objects.equals(bizType, ActivityTypeEnum.DISCOUNT.getType())) {
                 limitationService.saveUserLimitRecord(new ArrayList<UserGoodsLimitEntity>(goodsLimitMap.values()), new ArrayList<UserLimitEntity>(activityMap.values()), new ArrayList<SkuLimitInfoEntity>(skuLimitMap.values()));
             } else if (Objects.equals(bizType, LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel())) {
-                limitationService.saveUserLimitRecord(new ArrayList<UserGoodsLimitEntity>(goodsLimitMap.values()), null, null);
+                limitationService.saveUserLimitRecord(new ArrayList<UserGoodsLimitEntity>(goodsLimitMap.values()), null, new ArrayList<SkuLimitInfoEntity>(skuLimitMap.values()));
             }
         } catch (Exception e) {
             throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_GOODS_LIMIT_ERROR, e);

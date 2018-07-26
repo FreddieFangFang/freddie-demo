@@ -1,6 +1,9 @@
 package com.weimob.saas.ec.limitation.model.response;
 
+import com.weimob.saas.ec.limitation.model.request.SkuLimitInfo;
+
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author lujialin
@@ -12,7 +15,13 @@ public class QueryGoodsLimitDetailVo implements Serializable {
 
     private Long pid;
 
+    private Long storeId;
+
     private Long goodsId;
+
+    private Long bizId;
+
+    private Integer bizType;
 
     /**
      * 实际可售数量
@@ -28,6 +37,8 @@ public class QueryGoodsLimitDetailVo implements Serializable {
      * 商品是否限购
      */
     private Boolean goodsLimit;
+
+    private List<SkuLimitInfo> skuLimitInfoList;
 
     public Long getPid() {
         return pid;
@@ -67,5 +78,37 @@ public class QueryGoodsLimitDetailVo implements Serializable {
 
     public void setGoodsLimit(Boolean goodsLimit) {
         this.goodsLimit = goodsLimit;
+    }
+
+    public List<SkuLimitInfo> getSkuLimitInfoList() {
+        return skuLimitInfoList;
+    }
+
+    public void setSkuLimitInfoList(List<SkuLimitInfo> skuLimitInfoList) {
+        this.skuLimitInfoList = skuLimitInfoList;
+    }
+
+    public Long getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(Long storeId) {
+        this.storeId = storeId;
+    }
+
+    public Long getBizId() {
+        return bizId;
+    }
+
+    public void setBizId(Long bizId) {
+        this.bizId = bizId;
+    }
+
+    public Integer getBizType() {
+        return bizType;
+    }
+
+    public void setBizType(Integer bizType) {
+        this.bizType = bizType;
     }
 }

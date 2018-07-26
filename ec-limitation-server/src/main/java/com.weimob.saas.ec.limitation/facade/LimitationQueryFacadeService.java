@@ -55,6 +55,7 @@ public class LimitationQueryFacadeService {
         VerifyParamUtils.checkListParam(LimitationErrorCode.REQUEST_PARAM_IS_NULL, requestVo.getGoodsList());
         for (QueryGoodsLimitDetailListVo vo : requestVo.getGoodsList()) {
             VerifyParamUtils.checkParam(LimitationErrorCode.PID_IS_NULL, vo.getPid());
+            VerifyParamUtils.checkParam(LimitationErrorCode.WID_IS_NULL, vo.getWid());
             VerifyParamUtils.checkParam(LimitationErrorCode.BIZID_IS_NULL, vo.getBizId());
             VerifyParamUtils.checkParam(LimitationErrorCode.BIZTYPE_IS_NULL, vo.getBizType());
             VerifyParamUtils.checkParam(LimitationErrorCode.GOODSID_IS_NULL, vo.getGoodsId());

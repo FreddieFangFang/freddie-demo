@@ -103,9 +103,10 @@ public class LimitationServiceImpl {
         }
     }
 
-    public void saveGoodsLimitInfo(LimitInfoEntity limitInfoEntity, List<GoodsLimitInfoEntity> goodsLimitInfoEntity) {
+    public void saveGoodsLimitInfo(LimitInfoEntity limitInfoEntity, List<GoodsLimitInfoEntity> goodsLimitInfoEntity, List<SkuLimitInfoEntity> skuLimitInfoList) {
         limitInfoDao.insert(limitInfoEntity);
         goodsLimitInfoDao.batchInsert(goodsLimitInfoEntity);
+        skuLimitInfoDao.batchInsert(skuLimitInfoList);
     }
 
     public void addGoodsLimitInfoEntity(List<GoodsLimitInfoEntity> goodsLimitInfoEntity) {
@@ -167,7 +168,7 @@ public class LimitationServiceImpl {
     public void deletePointGoodsLimitInfo(LimitInfoEntity entity, List<Long> pointGoodsIdList) {
         limitInfoDao.delete(entity);
 
-        deleteGoodsLimitInfo(entity.getPid(), entity.getLimitId(), pointGoodsIdList);
+        deleteSkuLimitInfo(entity.getPid(), entity.getLimitId(), pointGoodsIdList);
     }
 
     public void updatePrivilegePriceGoodsLimitInfo(List<GoodsLimitInfoEntity> oldGoodsLimitInfoEntityList, List<SkuLimitInfoEntity> skuLimitInfoList) {

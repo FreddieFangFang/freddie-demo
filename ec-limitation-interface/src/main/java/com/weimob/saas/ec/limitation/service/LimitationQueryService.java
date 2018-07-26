@@ -57,12 +57,12 @@ public interface LimitationQueryService {
 
     /**
      *  
-     * @title 
+     * @title 商详页、活动专题页到goods级别
      * @author lujialin
      * @date 2018/7/24 10:22
-     * @useScene 
-     * @parameterExample 
-     * @returnExample 
+     * @useScene 商详页、活动专题页到goods级别
+     * @parameterExample {	"goodsList": [{		"pid": 1254,		"wid": 212123,		"bizId": 876787654,		"bizType": 30,		"goodsId": 876787654	}]}
+     * @returnExample {	"errT":null,	"globalTicket":null,	"logBizData":null,	"monitorTrackId":"df03b568-465f-48a3-a4fe-c63a54303f1f",	"processResult":true,	"responseVo":{		"queryGoodsLimitDetailVoList":[			{				"bizId":876787654,				"bizType":30,				"goodsCanBuyNum":3,				"goodsId":876787654,				"goodsLimit":true,				"pid":1254,				"realSoldNum":7,				"skuLimitInfoList":[					{						"alreadySoldNum":2,						"canBuySkuNum":3,						"skuId":8086778754,						"skuLimitNum":5,						"skuLimitType":null					},					{						"alreadySoldNum":3,						"canBuySkuNum":4,						"skuId":8886778754,						"skuLimitNum":7,						"skuLimitType":null					}				],				"storeId":null			}		]	},	"returnCode":"000000",	"returnMsg":"处理成功",	"successForMornitor":true,	"timestamp":"1532575428764"}
      * @param 
      * @return 
      */

@@ -151,7 +151,11 @@
             (
             pid = #{item.pid}
             and goods_id = #{item.goodsId}
-            and sku_id =#{item.skuId}
+            <choose>
+                <when test="item.skuId != null ">
+                    and sku_id =#{item.skuId}
+                </when>
+            </choose>
             and is_deleted = 0
             and limit_id = #{item.limitId}
             )

@@ -77,7 +77,7 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
             List<UpdateUserLimitVo> vos = entry.getValue();
             if (Objects.equals(vos.get(0).getBizType(), LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel())) {
                 goodsLimitBizHandler.doLimitHandler(vos);
-
+                skuLimitBizHandler.doLimitHandler(vos);
             } else if (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.PRIVILEGE_PRICE.getType())
                     || (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.DISCOUNT.getType())
                     && Objects.equals(vos.get(0).getActivityStockType(), LimitConstant.DISCOUNT_TYPE_SKU))) {
@@ -179,7 +179,7 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
             } else if (Objects.equals(bizType, ActivityTypeEnum.DISCOUNT.getType())) {
                 limitationService.updateUserLimitRecord(new ArrayList<UserGoodsLimitEntity>(goodsLimitMap.values()), new ArrayList<UserLimitEntity>(activityMap.values()), new ArrayList<SkuLimitInfoEntity>(skuLimitMap.values()));
             } else if (Objects.equals(bizType, LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel())) {
-                limitationService.updateUserLimitRecord(new ArrayList<UserGoodsLimitEntity>(goodsLimitMap.values()), null, null);
+                limitationService.updateUserLimitRecord(new ArrayList<UserGoodsLimitEntity>(goodsLimitMap.values()), null, new ArrayList<SkuLimitInfoEntity>(skuLimitMap.values()));
             }
         } catch (Exception e) {
             throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_GOODS_LIMIT_ERROR, e);

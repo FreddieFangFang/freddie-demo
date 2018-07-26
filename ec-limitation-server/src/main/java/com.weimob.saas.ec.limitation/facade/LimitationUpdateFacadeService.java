@@ -1,6 +1,7 @@
 package com.weimob.saas.ec.limitation.facade;
 
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
+import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
 import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
@@ -134,7 +135,8 @@ public class LimitationUpdateFacadeService {
             }
             if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), requestVo.getBizType())
                     || (Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), requestVo.getBizType())
-                    && Objects.equals(requestVo.getActivityStockType(), LimitConstant.DISCOUNT_TYPE_SKU))) {
+                    && Objects.equals(requestVo.getActivityStockType(), LimitConstant.DISCOUNT_TYPE_SKU))
+                    || Objects.equals(LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel(), requestVo.getBizType())) {
                 VerifyParamUtils.checkListParam(LimitationErrorCode.SKUINFO_IS_NULL, requestVo.getSkuLimitInfoList());
                 for (SkuLimitInfo info : requestVo.getSkuLimitInfoList()) {
                     VerifyParamUtils.checkParam(LimitationErrorCode.SKUINFO_IS_NULL, info.getSkuId());

@@ -203,7 +203,8 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
                 /** 2 构建限购主表信息*/
                 LimitInfoEntity limitInfoEntity = buildPointGoodsLimitInfoEntity(limitId, saveGoodsLimitInfoRequestVo.getGoodsList().get(0));
                 goodsLimitInfoEntityList = buildGoodsLimitInfoEntity(limitId, saveGoodsLimitInfoRequestVo);
-                limitationService.saveGoodsLimitInfo(limitInfoEntity, goodsLimitInfoEntityList);
+                List<SkuLimitInfoEntity> skuLimitInfoList = buildSkuLimitInfoEntity(limitId, saveGoodsLimitInfoRequestVo);
+                limitationService.saveGoodsLimitInfo(limitInfoEntity, goodsLimitInfoEntityList, skuLimitInfoList);
                 break;
             default:
                 break;
@@ -233,7 +234,8 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
 
         if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), bizType)
                 || (Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), bizType)
-                && Objects.equals(activityStockType, LimitConstant.DISCOUNT_TYPE_SKU))) {
+                && Objects.equals(activityStockType, LimitConstant.DISCOUNT_TYPE_SKU))
+                || Objects.equals(LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel(), bizType)) {
             /** 3 特权价需要更新商品限购值，删除sku商品记录，插入新的sku商品记录*/
             List<SkuLimitInfoEntity> skuLimitInfoList = buildSkuLimitInfoEntity(limitId, saveGoodsLimitInfoRequestVo);
             limitationService.updatePrivilegePriceGoodsLimitInfo(oldGoodsLimitInfoEntity, skuLimitInfoList);

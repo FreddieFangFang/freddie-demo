@@ -28,6 +28,11 @@ public class SkuLimitInfo implements Serializable{
      */
     private Integer alreadySoldNum;
 
+    /**
+     * sku还能买的数量
+     */
+    private Integer canBuySkuNum;
+
     public Long getSkuId() {
         return skuId;
     }
@@ -58,5 +63,13 @@ public class SkuLimitInfo implements Serializable{
 
     public void setAlreadySoldNum(Integer alreadySoldNum) {
         this.alreadySoldNum = alreadySoldNum;
+    }
+
+    public Integer getCanBuySkuNum() {
+        return canBuySkuNum;
+    }
+
+    public void setCanBuySkuNum(Integer canBuySkuNum) {
+        this.canBuySkuNum = canBuySkuNum;
     }
 }
