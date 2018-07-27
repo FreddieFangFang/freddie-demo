@@ -15,6 +15,8 @@ public class LimitationUpdateResponseVo implements Serializable {
 
     private Boolean status;
 
+    private String ticket;
+
     public LimitationUpdateResponseVo() {
 
     }
@@ -22,6 +24,11 @@ public class LimitationUpdateResponseVo implements Serializable {
     public LimitationUpdateResponseVo(Long limitId, Boolean status) {
         this.limitId = limitId;
         this.status = status;
+    }
+
+    public LimitationUpdateResponseVo(Long limitId, String ticket) {
+        this.limitId = limitId;
+        this.ticket = ticket;
     }
 
     public Long getLimitId() {
@@ -38,5 +45,13 @@ public class LimitationUpdateResponseVo implements Serializable {
 
     public void setStatus(Boolean status) {
         this.status = status;
+    }
+
+    public String getTicket() {
+        return ticket;
+    }
+
+    public void setTicket(String ticket) {
+        this.ticket = ticket;
     }
 }

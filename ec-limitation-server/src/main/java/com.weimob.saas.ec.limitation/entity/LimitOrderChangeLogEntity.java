@@ -39,6 +39,10 @@ public class LimitOrderChangeLogEntity {
 
     private Date updateTime;
 
+    private Integer limitLevel;
+
+    private Integer isOriginal;
+
     public Long getId() {
         return id;
     }
@@ -181,5 +185,21 @@ public class LimitOrderChangeLogEntity {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Integer getLimitLevel() {
+        return limitLevel;
+    }
+
+    public void setLimitLevel(Integer limitLevel) {
+        this.limitLevel = limitLevel;
+    }
+
+    public Integer getIsOriginal() {
+        return isOriginal;
+    }
+
+    public void setIsOriginal(Integer isOriginal) {
+        this.isOriginal = isOriginal;
     }
 }

@@ -23,9 +23,13 @@ public interface SkuLimitInfoDao extends BaseDao<SkuLimitInfoEntity>{
 
     List<SkuLimitInfoEntity> queryGoodsSkuLimitList(List<QueryGoodsLimitNumListVo> queryGoodslimitNumVoList);
 
-    List<SkuLimitInfoEntity> queryOldSkuLimitList(LimitParam limitParam);
+    List<SkuLimitInfoEntity> queryOldSkuLimitList(DeleteGoodsParam limitParam);
 
     void updateSkuLimitNum(SkuLimitInfoEntity skuLimitInfoEntity);
 
     void deleteGoodsSkuLimit(DeleteSkuParam param);
+
+    void deleteAllGoodsSku(List<SkuLimitInfoEntity> deleteSkuList);
+
+    void updateSkuStatus(List<SkuLimitInfoEntity> insertSkuList);
 }

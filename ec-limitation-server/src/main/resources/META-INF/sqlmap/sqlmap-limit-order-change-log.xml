@@ -20,13 +20,15 @@
     <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="limit_level" jdbcType="TINYINT" property="limitLevel"/>
+    <result column="is_original" jdbcType="TINYINT" property="isOriginal"/>
   </resultMap>
   <sql id="Base_Column_List">
     id, pid, store_id, wid, biz_id, biz_type, limit_id, goods_id, sku_id, buy_num, ticket, 
-    service_name, content, refer_id, status, is_deleted, create_time, update_time
+    service_name, content, refer_id, status, is_deleted, create_time, update_time,limit_level,is_original
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from limit_order_change_log
     where refer_id = #{id,jdbcType=BIGINT}
@@ -56,7 +58,9 @@
       status,
       is_deleted,
       create_time,
-      update_time
+      update_time,
+      limit_level,
+      is_original
       )
     values
     (
@@ -76,7 +80,9 @@
       #{status},
       0,
       NOW(),
-      NOW()
+      NOW(),
+      #{limitLevel},
+      #{isOriginal}
       )
       /*LimitOrderChangeLogDao.insert*/
   </insert>

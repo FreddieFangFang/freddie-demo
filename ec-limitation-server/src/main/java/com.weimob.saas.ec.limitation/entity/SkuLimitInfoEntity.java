@@ -23,7 +23,7 @@ public class SkuLimitInfoEntity {
 
     private Integer version;
 
-    private Boolean isDeleted;
+    private Integer isDeleted;
 
     private Date createTime;
 
@@ -109,11 +109,11 @@ public class SkuLimitInfoEntity {
         this.version = version;
     }
 
-    public Boolean getIsDeleted() {
+    public Integer getIsDeleted() {
         return isDeleted;
     }
 
-    public void setIsDeleted(Boolean isDeleted) {
+    public void setIsDeleted(Integer isDeleted) {
         this.isDeleted = isDeleted;
     }
 

@@ -2,12 +2,12 @@ package com.weimob.saas.ec.limitation.service.impl;
 
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
+import com.weimob.saas.ec.limitation.common.LimitServiceNameEnum;
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
+import com.weimob.saas.ec.limitation.dao.GoodsLimitInfoDao;
 import com.weimob.saas.ec.limitation.dao.LimitInfoDao;
-import com.weimob.saas.ec.limitation.entity.GoodsLimitInfoEntity;
-import com.weimob.saas.ec.limitation.entity.LimitInfoEntity;
-import com.weimob.saas.ec.limitation.entity.LimitStoreRelationshipEntity;
-import com.weimob.saas.ec.limitation.entity.SkuLimitInfoEntity;
+import com.weimob.saas.ec.limitation.dao.LimitOrderChangeLogDao;
+import com.weimob.saas.ec.limitation.entity.*;
 import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.model.LimitParam;
@@ -17,9 +17,12 @@ import com.weimob.saas.ec.limitation.model.response.LimitationUpdateResponseVo;
 import com.weimob.saas.ec.limitation.model.response.SaveGoodsLimitInfoResponseVo;
 import com.weimob.saas.ec.limitation.service.LimitationServiceImpl;
 import com.weimob.saas.ec.limitation.service.LimitationUpdateBizService;
+import com.weimob.saas.ec.limitation.thread.SaveLimitChangeLogThread;
 import com.weimob.saas.ec.limitation.utils.IdUtils;
+import com.weimob.saas.ec.limitation.utils.LimitContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -38,6 +41,12 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
     private LimitationServiceImpl limitationService;
     @Autowired
     private LimitInfoDao limitInfoDao;
+    @Autowired
+    protected LimitOrderChangeLogDao limitOrderChangeLogDao;
+    @Autowired
+    private ThreadPoolTaskExecutor threadExecutor;
+    @Autowired
+    private GoodsLimitInfoDao goodsLimitInfoDao;
 
 
     @Override
@@ -162,7 +171,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
                 break;
         }
 
-        return new LimitationUpdateResponseVo(bizId, true);
+        return new LimitationUpdateResponseVo(bizId, LimitContext.getTicket());
     }
 
     @Override
@@ -209,9 +218,31 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
             default:
                 break;
             //}
-
         }
-        return new SaveGoodsLimitInfoResponseVo(true, null);
+
+        saveGoodsLimitSaveChangeLog(limitId, LimitServiceNameEnum.SAVE_GOODS_LIMIT.name(), saveGoodsLimitInfoRequestVo);
+
+        return new SaveGoodsLimitInfoResponseVo(true, LimitContext.getTicket());
+    }
+
+    private void saveGoodsLimitSaveChangeLog(Long limitId, String name, SaveGoodsLimitInfoRequestVo saveGoodsLimitInfoRequestVo) {
+        //异步插入日志，以便于回滚
+        List<LimitOrderChangeLogEntity> logEntityList = new ArrayList<>();
+        for (SaveGoodsLimitInfoVo vo : saveGoodsLimitInfoRequestVo.getGoodsList()) {
+            LimitOrderChangeLogEntity orderChangeLogEntity = new LimitOrderChangeLogEntity();
+            orderChangeLogEntity.setPid(vo.getPid());
+            orderChangeLogEntity.setStoreId(vo.getStoreId());
+            orderChangeLogEntity.setBizId(vo.getBizId());
+            orderChangeLogEntity.setBizType(vo.getBizType());
+            orderChangeLogEntity.setGoodsId(vo.getGoodsId());
+            orderChangeLogEntity.setLimitId(limitId);
+            orderChangeLogEntity.setTicket(LimitContext.getTicket());
+            orderChangeLogEntity.setServiceName(name);
+            orderChangeLogEntity.setIsOriginal(LimitConstant.DATA_TYPE_OVER);
+            orderChangeLogEntity.setStatus(LimitConstant.ORDER_LOG_STATUS_INIT);
+            logEntityList.add(orderChangeLogEntity);
+        }
+        threadExecutor.execute(new SaveLimitChangeLogThread(limitOrderChangeLogDao, logEntityList));
     }
 
     @Override
@@ -230,22 +261,114 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         Long limitId = oldLimitInfoEntity.getLimitId();
 
         /** 2 更新商品限购表限购值*/
-        List<GoodsLimitInfoEntity> oldGoodsLimitInfoEntity = buildGoodsLimitInfoEntity(limitId, saveGoodsLimitInfoRequestVo);
-
+        List<GoodsLimitInfoEntity> newGoodsLimitInfoEntityList = buildGoodsLimitInfoEntity(limitId, saveGoodsLimitInfoRequestVo);
+        List<GoodsLimitInfoEntity> oldGoodsLimitInfoList = goodsLimitInfoDao.queryGoodsLimitInfoList(buildQueryGoodsLimitList(saveGoodsLimitInfoRequestVo, limitId));
+        List<SkuLimitInfoEntity> oldSkuLimitInfoList = new ArrayList<>();
+        List<SkuLimitInfoEntity> newSkuLimitInfoList = null;
         if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), bizType)
                 || (Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), bizType)
                 && Objects.equals(activityStockType, LimitConstant.DISCOUNT_TYPE_SKU))
                 || Objects.equals(LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel(), bizType)) {
             /** 3 特权价需要更新商品限购值，删除sku商品记录，插入新的sku商品记录*/
-            List<SkuLimitInfoEntity> skuLimitInfoList = buildSkuLimitInfoEntity(limitId, saveGoodsLimitInfoRequestVo);
-            limitationService.updatePrivilegePriceGoodsLimitInfo(oldGoodsLimitInfoEntity, skuLimitInfoList);
+            newSkuLimitInfoList = buildSkuLimitInfoEntity(limitId, saveGoodsLimitInfoRequestVo);
+            oldSkuLimitInfoList = limitationService.updatePrivilegePriceGoodsLimitInfo(newGoodsLimitInfoEntityList, newSkuLimitInfoList);
 
         } else {
-            limitationService.updateGoodsLimitInfoEntity(oldGoodsLimitInfoEntity);
+            limitationService.updateGoodsLimitInfoEntity(newGoodsLimitInfoEntityList);
         }
-        //}
 
-        return new SaveGoodsLimitInfoResponseVo(true, null);
+        //插入日志
+        saveGoodsLimitUpdateChangeLog(oldGoodsLimitInfoList, oldSkuLimitInfoList, LimitServiceNameEnum.UPDATE_GOODS_LIMIT.name(), oldLimitInfoEntity,
+                newGoodsLimitInfoEntityList, newSkuLimitInfoList);
+
+        return new SaveGoodsLimitInfoResponseVo(true, LimitContext.getTicket());
+    }
+
+    private void saveGoodsLimitUpdateChangeLog(List<GoodsLimitInfoEntity> oldGoodsLimitInfoList, List<SkuLimitInfoEntity> oldSkuLimitInfoList, String serviceName,
+                                               LimitInfoEntity oldLimitInfoEntity, List<GoodsLimitInfoEntity> newGoodsLimitInfoEntityList, List<SkuLimitInfoEntity> newSkuLimitInfoList) {
+        //异步插入日志，以便于回滚
+        List<LimitOrderChangeLogEntity> logEntityList = new ArrayList<>();
+        for (GoodsLimitInfoEntity vo : oldGoodsLimitInfoList) {
+            LimitOrderChangeLogEntity orderChangeLogEntity = new LimitOrderChangeLogEntity();
+            orderChangeLogEntity.setPid(vo.getPid());
+            orderChangeLogEntity.setStoreId(vo.getStoreId());
+            orderChangeLogEntity.setBizId(oldLimitInfoEntity.getBizId());
+            orderChangeLogEntity.setBizType(oldLimitInfoEntity.getBizType());
+            orderChangeLogEntity.setBuyNum(vo.getLimitNum());
+            orderChangeLogEntity.setLimitLevel(vo.getLimitLevel());
+            orderChangeLogEntity.setGoodsId(vo.getGoodsId());
+            orderChangeLogEntity.setLimitId(vo.getLimitId());
+            orderChangeLogEntity.setTicket(LimitContext.getTicket());
+            orderChangeLogEntity.setServiceName(serviceName);
+            orderChangeLogEntity.setIsOriginal(LimitConstant.DATA_TYPE_INIT);
+            orderChangeLogEntity.setStatus(LimitConstant.ORDER_LOG_STATUS_INIT);
+            logEntityList.add(orderChangeLogEntity);
+        }
+        if (CollectionUtils.isNotEmpty(oldSkuLimitInfoList)) {
+            for (SkuLimitInfoEntity vo : oldSkuLimitInfoList) {
+                LimitOrderChangeLogEntity orderChangeLogEntity = new LimitOrderChangeLogEntity();
+                orderChangeLogEntity.setPid(vo.getPid());
+                orderChangeLogEntity.setStoreId(vo.getStoreId());
+                orderChangeLogEntity.setBizId(oldLimitInfoEntity.getBizId());
+                orderChangeLogEntity.setBizType(oldLimitInfoEntity.getBizType());
+                orderChangeLogEntity.setBuyNum(vo.getLimitNum());
+                orderChangeLogEntity.setGoodsId(vo.getGoodsId());
+                orderChangeLogEntity.setSkuId(vo.getSkuId());
+                orderChangeLogEntity.setLimitId(vo.getLimitId());
+                orderChangeLogEntity.setTicket(LimitContext.getTicket());
+                orderChangeLogEntity.setServiceName(serviceName);
+                orderChangeLogEntity.setIsOriginal(LimitConstant.DATA_TYPE_INIT);
+                orderChangeLogEntity.setStatus(LimitConstant.ORDER_LOG_STATUS_INIT);
+                logEntityList.add(orderChangeLogEntity);
+            }
+        }
+        for (GoodsLimitInfoEntity vo : newGoodsLimitInfoEntityList) {
+            LimitOrderChangeLogEntity orderChangeLogEntity = new LimitOrderChangeLogEntity();
+            orderChangeLogEntity.setPid(vo.getPid());
+            orderChangeLogEntity.setStoreId(vo.getStoreId());
+            orderChangeLogEntity.setBizId(oldLimitInfoEntity.getBizId());
+            orderChangeLogEntity.setBizType(oldLimitInfoEntity.getBizType());
+            orderChangeLogEntity.setBuyNum(vo.getLimitNum());
+            orderChangeLogEntity.setLimitLevel(vo.getLimitLevel());
+            orderChangeLogEntity.setGoodsId(vo.getGoodsId());
+            orderChangeLogEntity.setLimitId(vo.getLimitId());
+            orderChangeLogEntity.setTicket(LimitContext.getTicket());
+            orderChangeLogEntity.setServiceName(serviceName);
+            orderChangeLogEntity.setIsOriginal(LimitConstant.DATA_TYPE_OVER);
+            orderChangeLogEntity.setStatus(LimitConstant.ORDER_LOG_STATUS_INIT);
+            logEntityList.add(orderChangeLogEntity);
+        }
+        if (CollectionUtils.isNotEmpty(newSkuLimitInfoList)) {
+            for (SkuLimitInfoEntity vo : newSkuLimitInfoList) {
+                LimitOrderChangeLogEntity orderChangeLogEntity = new LimitOrderChangeLogEntity();
+                orderChangeLogEntity.setPid(vo.getPid());
+                orderChangeLogEntity.setStoreId(vo.getStoreId());
+                orderChangeLogEntity.setBizId(oldLimitInfoEntity.getBizId());
+                orderChangeLogEntity.setBizType(oldLimitInfoEntity.getBizType());
+                orderChangeLogEntity.setBuyNum(vo.getLimitNum());
+                orderChangeLogEntity.setGoodsId(vo.getGoodsId());
+                orderChangeLogEntity.setSkuId(vo.getSkuId());
+                orderChangeLogEntity.setLimitId(vo.getLimitId());
+                orderChangeLogEntity.setTicket(LimitContext.getTicket());
+                orderChangeLogEntity.setServiceName(serviceName);
+                orderChangeLogEntity.setIsOriginal(LimitConstant.DATA_TYPE_OVER);
+                orderChangeLogEntity.setStatus(LimitConstant.ORDER_LOG_STATUS_INIT);
+                logEntityList.add(orderChangeLogEntity);
+            }
+        }
+        threadExecutor.execute(new SaveLimitChangeLogThread(limitOrderChangeLogDao, logEntityList));
+    }
+
+    private List<GoodsLimitInfoEntity> buildQueryGoodsLimitList(SaveGoodsLimitInfoRequestVo saveGoodsLimitInfoRequestVo, Long limitId) {
+        List<GoodsLimitInfoEntity> queryGoodsLimitList = new ArrayList<>();
+        for (SaveGoodsLimitInfoVo vo : saveGoodsLimitInfoRequestVo.getGoodsList()) {
+            GoodsLimitInfoEntity entity = new GoodsLimitInfoEntity();
+            entity.setPid(vo.getPid());
+            entity.setGoodsId(vo.getGoodsId());
+            entity.setLimitId(limitId);
+            queryGoodsLimitList.add(entity);
+        }
+        return queryGoodsLimitList;
     }
 
     @Override

@@ -15,15 +15,15 @@ public class SaveGoodsLimitInfoResponseVo implements Serializable {
 
     private Boolean status;
 
-    private Long limitId;
+    private String ticket;
 
     public SaveGoodsLimitInfoResponseVo() {
 
     }
 
-    public SaveGoodsLimitInfoResponseVo(Boolean status, Long limitId) {
+    public SaveGoodsLimitInfoResponseVo(Boolean status, String ticket) {
         this.status = status;
-        this.limitId = limitId;
+        this.ticket = ticket;
     }
 
     public Boolean getStatus() {
@@ -34,11 +34,11 @@ public class SaveGoodsLimitInfoResponseVo implements Serializable {
         this.status = status;
     }
 
-    public Long getLimitId() {
-        return limitId;
+    public String getTicket() {
+        return ticket;
     }
 
-    public void setLimitId(Long limitId) {
-        this.limitId = limitId;
+    public void setTicket(String ticket) {
+        this.ticket = ticket;
     }
 }

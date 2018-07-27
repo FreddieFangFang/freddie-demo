@@ -3,6 +3,8 @@ package com.weimob.saas.ec.limitation.handler;
 import com.weimob.saas.ec.limitation.common.LimitServiceNameEnum;
 import com.weimob.saas.ec.limitation.handler.biz.DeductUserLimitHandler;
 import com.weimob.saas.ec.limitation.handler.biz.SaveUserLimitHandler;
+import com.weimob.saas.ec.limitation.handler.reverse.ReverseSaveGoodsLimitHandler;
+import com.weimob.saas.ec.limitation.handler.reverse.ReverseUpdateGoodsLimitHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,10 @@ public class ReverseLimitHandlerFactory {
     private SaveUserLimitHandler saveUserLimitHandler;
     @Autowired
     private DeductUserLimitHandler deductUserLimitHandler;
+    @Autowired
+    private ReverseUpdateGoodsLimitHandler reverseUpdateGoodsLimitHandler;
+    @Autowired
+    private ReverseSaveGoodsLimitHandler reverseSaveGoodsLimitHandler;
 
     public Handler<?> getHandlerByServiceName(String serviceName) {
 
@@ -28,6 +34,10 @@ public class ReverseLimitHandlerFactory {
             handler = saveUserLimitHandler;
         } else if (LimitServiceNameEnum.SAVE_USER_LIMIT.name().equals(serviceName)) {
             handler = deductUserLimitHandler;
+        } else if (LimitServiceNameEnum.UPDATE_GOODS_LIMIT.name().equals(serviceName)) {
+            handler = reverseUpdateGoodsLimitHandler;
+        } else if (LimitServiceNameEnum.SAVE_GOODS_LIMIT.name().equals(serviceName)) {
+            handler = reverseSaveGoodsLimitHandler;
         }
 
         return handler;

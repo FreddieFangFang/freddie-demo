@@ -47,7 +47,14 @@
             #{item.goodsId},
             #{item.skuId},
             #{item.limitNum},
-            0,
+            <choose>
+                <when test="item.soldNum != null ">
+                    #{item.soldNum},
+                </when>
+                <when test="item.soldNum==null">
+                    0,
+                </when>
+            </choose>
             0,
             0,
             NOW(),
@@ -227,7 +234,7 @@
     </select>
 
     <select id="queryOldSkuLimitList" resultMap="BaseResultMap"
-            parameterType="com.weimob.saas.ec.limitation.model.LimitParam">
+            parameterType="com.weimob.saas.ec.limitation.model.DeleteGoodsParam">
         select
         pid,
         store_id,
@@ -241,9 +248,15 @@
         from
         sku_limit_info
         where
-             pid = #{pid}
-        and goods_id = #{goodsId}
+        pid = #{pid}
+        and goods_id
+        in
+        <foreach item="id" index="index" collection="goodsIdList"
+                 open="(" separator="," close=")">
+            #{id}
+        </foreach>
         and limit_id = #{limitId}
+        and is_deleted = 0
         /*SkuLimitInfoDao.queryOldSkuLimitList*/
     </select>
 
@@ -279,5 +292,39 @@
             #{id}
         </foreach>
         /*SkuLimitInfoDao.deleteGoodsSkuLimit*/
+    </update>
+
+    <update id="deleteAllGoodsSku" parameterType="java.util.List">
+        update
+        sku_limit_info
+        set
+        is_deleted = 1,
+        update_time = NOW()
+        where
+        <foreach item="item" index="index" collection="list"
+                 separator="or">
+            pid = #{item.pid}
+            and limit_id=#{item.limitId}
+            and goods_id = #{item.goodsId}
+            and sku_id = #{item.skuId}
+        </foreach>
+        /*SkuLimitInfoDao.deleteAllGoodsSku*/
+    </update>
+
+    <update id="updateSkuStatus" parameterType="java.util.List">
+        update
+        sku_limit_info
+        set
+        is_deleted = 0,
+        update_time = NOW()
+        where
+        <foreach item="item" index="index" collection="list"
+                 separator="or">
+            pid = #{item.pid}
+            and limit_id=#{item.limitId}
+            and goods_id = #{item.goodsId}
+            and sku_id = #{item.skuId}
+        </foreach>
+        /*SkuLimitInfoDao.updateSkuStatus*/
     </update>
 </mapper>

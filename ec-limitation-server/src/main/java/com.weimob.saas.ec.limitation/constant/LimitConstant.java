@@ -18,4 +18,8 @@ public class LimitConstant {
     public static final int DISCOUNT_TYPE_STOCK = 1;
     //限时折扣活动采用可用sku形式
     public static final int DISCOUNT_TYPE_SKU = 2;
+    //原始数据
+    public static final int DATA_TYPE_INIT = 0;
+    //更新数据
+    public static final int DATA_TYPE_OVER = 1;
 }
