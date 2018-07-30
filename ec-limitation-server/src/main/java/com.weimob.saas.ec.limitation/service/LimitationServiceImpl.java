@@ -386,4 +386,38 @@ public class LimitationServiceImpl {
 
         deleteSkuLimitInfo(entity.getPid(), entity.getLimitId(), goodsList);
     }
+
+    public void reverseDeleteGoodsLimit(Long pid, Integer bizType, Map<Long, List<Long>> limitIdGoodsIdMap) {
+        Iterator<Map.Entry<Long, List<Long>>> iterator = limitIdGoodsIdMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Long, List<Long>> entry = iterator.next();
+            Long limitId = entry.getKey();
+            List<Long> goodsIdList = entry.getValue();
+            if (Objects.equals(LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel(), bizType)) {
+                //积分商城需要回滚limit_info表
+                limitInfoDao.reverseLimitInfoStatus(limitId);
+            }
+            //回滚商品和sku记录
+            DeleteGoodsParam param = new DeleteGoodsParam();
+            param.setPid(pid);
+            param.setLimitId(limitId);
+            param.setGoodsIdList(goodsIdList);
+            goodsLimitInfoDao.reverseGoodsLimit(param);
+            skuLimitInfoDao.reverseSkuLimit(param);
+        }
+    }
+
+    public void reverseDeleteLimitation(Long pid, Long limitId, HashSet<Long> goodsIdSet, List<SkuLimitInfoEntity> skuLimitInfoEntityList) {
+        limitInfoDao.reverseLimitInfoStatus(limitId);
+
+        DeleteGoodsParam param = new DeleteGoodsParam();
+        param.setPid(pid);
+        param.setLimitId(limitId);
+        param.setGoodsIdList(new ArrayList<Long>(goodsIdSet));
+        goodsLimitInfoDao.reverseGoodsLimit(param);
+
+        if (CollectionUtils.isNotEmpty(skuLimitInfoEntityList)) {
+            skuLimitInfoDao.updateSkuStatus(skuLimitInfoEntityList);
+        }
+    }
 }

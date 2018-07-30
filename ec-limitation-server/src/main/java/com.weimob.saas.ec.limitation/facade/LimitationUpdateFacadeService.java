@@ -98,7 +98,6 @@ public class LimitationUpdateFacadeService {
         VerifyParamUtils.checkParam(LimitationErrorCode.REQUEST_PARAM_IS_NULL, requestVo);
         for (BatchDeleteGoodsLimitVo request : requestVo.getDeleteGoodsLimitVoList()) {
             VerifyParamUtils.checkParam(LimitationErrorCode.PID_IS_NULL, request.getPid());
-            VerifyParamUtils.checkParam(LimitationErrorCode.STORE_IS_NULL, request.getStoreId());
             VerifyParamUtils.checkParam(LimitationErrorCode.BIZID_IS_NULL, request.getBizId());
             VerifyParamUtils.checkParam(LimitationErrorCode.BIZTYPE_IS_NULL, request.getBizType());
             VerifyParamUtils.checkParam(LimitationErrorCode.GOODSID_IS_NULL, request.getGoodsId());

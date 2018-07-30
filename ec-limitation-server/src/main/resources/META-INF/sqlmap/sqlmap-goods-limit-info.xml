@@ -256,4 +256,35 @@
         </foreach>
         /*GoodsLimitInfoDao.batchInsert*/
     </insert>
+
+    <update id="reverseGoodsLimit" parameterType="com.weimob.saas.ec.limitation.model.DeleteGoodsParam">
+        update
+        goods_limit_info
+        set
+        is_deleted = 0,
+        update_time = NOW()
+        where
+        pid = #{pid}
+        and limit_id=#{limitId}
+        AND
+        goods_id IN
+        <foreach item="id" index="index" collection="goodsIdList"
+                 open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        /*GoodsLimitInfoDao.reverseGoodsLimit*/
+    </update>
+
+    <select id="queryAllGoodsLimitInfoList"
+            resultMap="BaseResultMap" parameterType="com.weimob.saas.ec.limitation.model.LimitParam">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        goods_limit_info
+        where
+        pid = #{pid}
+        and limit_id = #{limitId}
+        and is_deleted = 0
+        /*GoodsLimitInfoDao.queryAllGoodsLimitInfoList*/
+    </select>
 </mapper>

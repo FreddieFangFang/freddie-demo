@@ -3,6 +3,7 @@ package com.weimob.saas.ec.limitation.dao;
 import com.weimob.saas.ec.limitation.entity.LimitInfoEntity;
 import com.weimob.saas.ec.limitation.model.LimitParam;
 import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -16,4 +17,6 @@ public interface LimitInfoDao extends BaseDao<LimitInfoEntity> {
     List<LimitInfoEntity> queryLimitInfoList(List<LimitParam> limitParams);
 
     List<LimitInfoEntity> queryOrderLimitInfoList(List<UpdateUserLimitVo> updateUserLimitVoList);
+
+    void reverseLimitInfoStatus(@Param("limitId") Long limitId);
 }

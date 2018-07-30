@@ -327,4 +327,42 @@
         </foreach>
         /*SkuLimitInfoDao.updateSkuStatus*/
     </update>
+
+    <update id="reverseSkuLimit" parameterType="com.weimob.saas.ec.limitation.model.DeleteGoodsParam">
+        update
+        sku_limit_info
+        set
+        is_deleted = 0,
+        update_time = NOW()
+        where
+        pid = #{pid}
+        and limit_id=#{limitId}
+        and goods_id IN
+        <foreach item="id" index="index" collection="goodsIdList"
+                 open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        /*SkuLimitInfoDao.reverseSkuLimit*/
+    </update>
+
+    <select id="queryAllSkuLimitList" resultMap="BaseResultMap"
+            parameterType="com.weimob.saas.ec.limitation.model.LimitParam">
+        select
+        pid,
+        store_id,
+        limit_id,
+        limit_type,
+        goods_id,
+        sku_id,
+        limit_num,
+        sold_num,
+        version
+        from
+        sku_limit_info
+        where
+        pid = #{pid}
+        and limit_id = #{limitId}
+        and is_deleted = 0
+        /*SkuLimitInfoDao.queryAllSkuLimitList*/
+    </select>
 </mapper>

@@ -51,10 +51,26 @@ public class LimitationUpdateExportService extends BaseExportService implements 
 
     @Override
     public SoaResponse<LimitationUpdateResponseVo, LimitationCommonErrorVo> deleteLimitationInfo(DeleteLimitationRequestVo requestVo) {
-        SoaResponse<LimitationUpdateResponseVo, LimitationCommonErrorVo> soaResponse = process(limitationUpdateFacadeService, "deleteLimitationInfo", requestVo);
-        if (soaResponse.getResponseVo() != null) {
-            soaResponse.setLogBizData(String.valueOf(soaResponse.getResponseVo().getLimitId()));
+        SoaResponse<LimitationUpdateResponseVo, LimitationCommonErrorVo> soaResponse = new SoaResponse<>();
+        LimitationUpdateResponseVo responseVo = null;
+
+        try {
+            LimitContext.setTicket(soaResponse.getMonitorTrackId());
+            responseVo = limitationUpdateFacadeService.deleteLimitationInfo(requestVo);
+            LimitContext.clearAll();
+            soaResponse.setResponseVo(responseVo);
+        } catch (BaseException baseException) {
+            LOGGER.error(" throw biz exception!, monitorTrackId:" + soaResponse.getMonitorTrackId(), baseException);
+            soaResponse.setProcessResult(false);
+            soaResponse.setReturnCode(baseException.getErrorCode());
+            soaResponse.setReturnMsg(baseException.getErrorMsg());
+        } catch (Throwable t) {
+            LOGGER.error(" throw system exception!, monitorTrackId:" + soaResponse.getMonitorTrackId(), t);
+            soaResponse.setProcessResult(false);
+            soaResponse.setReturnCode(CommonErrorCode.FAIL.getErrorCode());
+            soaResponse.setReturnMsg(CommonErrorCode.FAIL.getErrorMsg());
         }
+
         return soaResponse;
     }
 

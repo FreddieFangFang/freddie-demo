@@ -10,7 +10,7 @@ import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
 
 import java.util.List;
 
-public interface SkuLimitInfoDao extends BaseDao<SkuLimitInfoEntity>{
+public interface SkuLimitInfoDao extends BaseDao<SkuLimitInfoEntity> {
     void deleteSkuLimit(DeleteGoodsParam entity);
 
     void deleteLimit(DeleteGoodsParam entity);
@@ -32,4 +32,8 @@ public interface SkuLimitInfoDao extends BaseDao<SkuLimitInfoEntity>{
     void deleteAllGoodsSku(List<SkuLimitInfoEntity> deleteSkuList);
 
     void updateSkuStatus(List<SkuLimitInfoEntity> insertSkuList);
+
+    void reverseSkuLimit(DeleteGoodsParam param);
+
+    List<SkuLimitInfoEntity> queryAllSkuLimitList(LimitParam limitParam);
 }

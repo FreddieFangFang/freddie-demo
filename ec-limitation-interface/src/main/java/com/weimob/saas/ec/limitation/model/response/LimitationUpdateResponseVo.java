@@ -26,8 +26,9 @@ public class LimitationUpdateResponseVo implements Serializable {
         this.status = status;
     }
 
-    public LimitationUpdateResponseVo(Long limitId, String ticket) {
+    public LimitationUpdateResponseVo(Long limitId, Boolean status, String ticket) {
         this.limitId = limitId;
+        this.status = status;
         this.ticket = ticket;
     }
 

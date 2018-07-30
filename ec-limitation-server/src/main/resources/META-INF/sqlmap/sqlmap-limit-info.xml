@@ -136,4 +136,16 @@
         </foreach>
         /*LimitInfoDao.queryOrderLimitInfoList*/
     </select>
+
+    <update id="reverseLimitInfoStatus" parameterType="java.lang.Long">
+        update
+        limit_info
+        set
+        is_deleted = 0,
+        update_time = NOW(),
+        version = version+1
+        where
+        limit_id=#{limitId}
+        /*LimitInfoDao.reverseLimitInfoStatus*/
+    </update>
 </mapper>
