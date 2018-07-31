@@ -132,6 +132,8 @@
             skulimtinfo.pid = #{item.pid}
             and skulimtinfo.goods_id = #{item.goodsId}
             and skulimtinfo.sku_id =#{item.skuId}
+            and limitinfo.biz_id = #{item.bizId}
+            and limitinfo.biz_type = #{item.bizType}
             and skulimtinfo.is_deleted = 0
             and limitinfo.is_deleted = 0
             )
