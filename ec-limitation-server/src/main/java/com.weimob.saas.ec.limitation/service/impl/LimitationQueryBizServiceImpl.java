@@ -160,6 +160,9 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             Integer skuLimitNum = skuLimitMap.get(MapKeyUtil.buildSkuLimitMapKey(vo.getPid(), limitId, vo.getGoodsId(), vo.getSkuId())).getLimitNum();
             vo.setSkuLimitNum(skuLimitNum);
             Integer canBuyNum = skuLimitNum - (alreadyBuyNum == null ? 0 : alreadyBuyNum);
+            if (canBuyNum < 0) {
+                canBuyNum = 0;
+            }
             vo.setCanBuyNum(vo.getCanBuyNum() > canBuyNum ? canBuyNum : vo.getCanBuyNum());
         }
         if (requestVo.getGoodsDetailList().get(0).getCheckLimit()) {
@@ -233,6 +236,9 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 } else {
                     vo.setLimitStatus(true);
                     Integer canBuyNum = pidGoodsLimitNum - (pidAlreadyBuyNum == null ? 0 : pidAlreadyBuyNum);
+                    if (canBuyNum < 0) {
+                        canBuyNum = 0;
+                    }
                     vo.setCanBuyNum(vo.getCanBuyNum() < canBuyNum ? vo.getCanBuyNum() : canBuyNum);
                     vo.setGoodsCanBuyNum(vo.getCanBuyNum());
                 }
@@ -240,6 +246,9 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 if (LimitConstant.UNLIMITED_NUM == pidGoodsLimitNum) {
                     vo.setLimitStatus(true);
                     Integer canBuyNum = goodsLimitNum - (alreadyBuyNum == null ? 0 : alreadyBuyNum);
+                    if (canBuyNum < 0) {
+                        canBuyNum = 0;
+                    }
                     vo.setCanBuyNum(vo.getCanBuyNum() < canBuyNum ? vo.getCanBuyNum() : canBuyNum);
                     vo.setGoodsCanBuyNum(vo.getCanBuyNum());
                 } else {
@@ -247,6 +256,9 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                     Integer storeCanBuyNum = goodsLimitNum - (alreadyBuyNum == null ? 0 : alreadyBuyNum);
                     Integer pidCanBuyNum = pidGoodsLimitNum - (pidAlreadyBuyNum == null ? 0 : pidAlreadyBuyNum);
                     Integer canBuyNum = storeCanBuyNum < pidCanBuyNum ? storeCanBuyNum : pidCanBuyNum;
+                    if (canBuyNum < 0) {
+                        canBuyNum = 0;
+                    }
                     vo.setCanBuyNum(vo.getCanBuyNum() < canBuyNum ? vo.getCanBuyNum() : canBuyNum);
                     vo.setGoodsCanBuyNum(vo.getCanBuyNum());
                 }
@@ -299,7 +311,11 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 goodsLimitInfoListVo.setCanBuyNum(Integer.MAX_VALUE);
             } else {
                 goodsLimitInfoListVo.setLimitStatus(true);
-                goodsLimitInfoListVo.setCanBuyNum(activityLimitNum - (alreadyBuyNum == null ? 0 : alreadyBuyNum));
+                Integer canBuyNum = activityLimitNum - (alreadyBuyNum == null ? 0 : alreadyBuyNum);
+                if (canBuyNum < 0) {
+                    canBuyNum = 0;
+                }
+                goodsLimitInfoListVo.setCanBuyNum(canBuyNum);
             }
             goodsLimitInfoList.add(goodsLimitInfoListVo);
         }
@@ -616,18 +632,27 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 } else {
                     vo.setGoodsLimit(true);
                     Integer canBuyNum = pidGoodsLimitNum - (pidAlreadyBuyNum == null ? 0 : pidAlreadyBuyNum);
+                    if (canBuyNum < 0) {
+                        canBuyNum = 0;
+                    }
                     vo.setGoodsCanBuyNum(vo.getGoodsCanBuyNum() < canBuyNum ? vo.getGoodsCanBuyNum() : canBuyNum);
                 }
             } else {
                 if (LimitConstant.UNLIMITED_NUM == pidGoodsLimitNum) {
                     vo.setGoodsLimit(true);
                     Integer canBuyNum = goodsLimitNum - (alreadyBuyNum == null ? 0 : alreadyBuyNum);
+                    if (canBuyNum < 0) {
+                        canBuyNum = 0;
+                    }
                     vo.setGoodsCanBuyNum(vo.getGoodsCanBuyNum() < canBuyNum ? vo.getGoodsCanBuyNum() : canBuyNum);
                 } else {
                     vo.setGoodsLimit(true);
                     Integer storeCanBuyNum = goodsLimitNum - (alreadyBuyNum == null ? 0 : alreadyBuyNum);
                     Integer pidCanBuyNum = pidGoodsLimitNum - (pidAlreadyBuyNum == null ? 0 : pidAlreadyBuyNum);
                     Integer canBuyNum = storeCanBuyNum < pidCanBuyNum ? storeCanBuyNum : pidCanBuyNum;
+                    if (canBuyNum < 0) {
+                        canBuyNum = 0;
+                    }
                     vo.setGoodsCanBuyNum(vo.getGoodsCanBuyNum() < canBuyNum ? vo.getGoodsCanBuyNum() : canBuyNum);
                 }
             }
@@ -654,7 +679,11 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 goodsLimitInfoListVo.setGoodsCanBuyNum(Integer.MAX_VALUE);
             } else {
                 goodsLimitInfoListVo.setGoodsLimit(true);
-                goodsLimitInfoListVo.setGoodsCanBuyNum(activityLimitNum - (alreadyBuyNum == null ? 0 : alreadyBuyNum));
+                Integer canBuyNum = activityLimitNum - (alreadyBuyNum == null ? 0 : alreadyBuyNum);
+                if (canBuyNum < 0) {
+                    canBuyNum = 0;
+                }
+                goodsLimitInfoListVo.setGoodsCanBuyNum(canBuyNum);
             }
             goodsLimitInfoList.add(goodsLimitInfoListVo);
         }
@@ -673,7 +702,11 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 skuLimitInfo.setSkuId(skuLimitInfoEntity.getSkuId());
                 skuLimitInfo.setSkuLimitNum(skuLimitInfoEntity.getLimitNum());
                 skuLimitInfo.setAlreadySoldNum(skuLimitInfoEntity.getSoldNum());
-                skuLimitInfo.setCanBuySkuNum(skuLimitInfoEntity.getLimitNum() - (skuLimitInfoEntity.getSoldNum() == null ? 0 : skuLimitInfoEntity.getSoldNum()));
+                Integer canBuyNum = skuLimitInfoEntity.getLimitNum() - (skuLimitInfoEntity.getSoldNum() == null ? 0 : skuLimitInfoEntity.getSoldNum());
+                if (canBuyNum < 0) {
+                    canBuyNum = 0;
+                }
+                skuLimitInfo.setCanBuySkuNum(canBuyNum);
                 realSoldNum = realSoldNum + skuLimitInfo.getCanBuySkuNum();
                 skuLimitInfoList.add(skuLimitInfo);
             }
