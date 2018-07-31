@@ -15,7 +15,7 @@
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, pid, store_id, wid, limit_id, buy_num, is_deleted, create_time, update_time
+    id, pid, store_id, wid,biz_id,biz_type, limit_id, buy_num, is_deleted, create_time, update_time
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
@@ -217,7 +217,7 @@
     </select>
 
     <select id="queryUserLimitEntityList" parameterType="java.util.List"
-            resultType="com.weimob.saas.ec.limitation.entity.UserLimitEntity">
+            resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from
