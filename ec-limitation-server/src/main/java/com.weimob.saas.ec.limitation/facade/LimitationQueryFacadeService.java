@@ -2,6 +2,7 @@ package com.weimob.saas.ec.limitation.facade;
 
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
+import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.model.request.*;
 import com.weimob.saas.ec.limitation.model.response.GoodsLimitInfoListResponseVo;
@@ -10,6 +11,7 @@ import com.weimob.saas.ec.limitation.model.response.QueryGoodsLimitDetailListRes
 import com.weimob.saas.ec.limitation.model.response.QueryGoodsLimitNumListResponseVo;
 import com.weimob.saas.ec.limitation.service.LimitationQueryBizService;
 import com.weimob.saas.ec.limitation.utils.VerifyParamUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -84,6 +86,9 @@ public class LimitationQueryFacadeService {
 
     private void validateRequestParam(GoodsLimitInfoListRequestVo requestVo) {
         VerifyParamUtils.checkParam(LimitationErrorCode.REQUEST_PARAM_IS_NULL, requestVo);
+        if (CollectionUtils.isEmpty(requestVo.getGoodsDetailList())) {
+            throw new LimitationBizException(LimitationErrorCode.REQUEST_PARAM_IS_NULL);
+        }
         for (QueryGoodsLimitInfoListVo request : requestVo.getGoodsDetailList()) {
             VerifyParamUtils.checkParam(LimitationErrorCode.PID_IS_NULL, request.getPid());
             VerifyParamUtils.checkParam(LimitationErrorCode.STORE_IS_NULL, request.getStoreId());
