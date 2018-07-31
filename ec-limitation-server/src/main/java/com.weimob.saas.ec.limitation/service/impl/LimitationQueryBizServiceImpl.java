@@ -319,6 +319,9 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 Map.Entry<String, Integer> entry = activityBuyNumIterator.next();
                 Integer alreadyBuyNum = activityUserLimitNumMap.get(entry.getKey());
                 Integer activityLimitNum = activityLimitNumMap.get(entry.getKey());
+                if (Objects.equals(LimitConstant.UNLIMITED_NUM, activityLimitNum)) {
+                    continue;
+                }
                 int alreadyBuyNumValue = alreadyBuyNum == null ? 0 : alreadyBuyNum;
                 if (alreadyBuyNumValue + entry.getValue() > activityLimitNum) {
                     String msg = "超出" + LimitBizTypeEnum.getLimitLevelEnumByLevel(requestVo.getGoodsDetailList().get(0).getBizType()).getName()
