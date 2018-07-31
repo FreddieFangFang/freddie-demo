@@ -129,13 +129,13 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             }
             GoodsLimitInfoListResponseVo responseVo = buildResponseVo(requestVo, limitIdMap, activityLimitNumMap, activityUserLimitNumMap, goodsLimitNumMap, userGoodsLimitNumMap, userPidGoodsLimitNumMap);
             //处理sku的限购
-            volidSkuLimit(requestVo, limitIdMap, skuLimitList, responseVo);
+            validGoodsSkuLimit(requestVo, limitIdMap, skuLimitList, responseVo);
             return responseVo;
         } else if (Objects.equals(requestVo.getGoodsDetailList().get(0).getBizType(), LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel())) {
             List<SkuLimitInfoEntity> skuLimitList = skuLimitInfoDao.querySkuLimitList(querySkuLimitList);
             GoodsLimitInfoListResponseVo responseVo = buildGoodsLimitInfoListResponseVo(requestVo, limitIdMap, goodsLimitNumMap, userGoodsLimitNumMap);
             //处理sku的限购
-            volidSkuLimit(requestVo, limitIdMap, skuLimitList, responseVo);
+            validGoodsSkuLimit(requestVo, limitIdMap, skuLimitList, responseVo);
             return responseVo;
         } else {
             return new GoodsLimitInfoListResponseVo();
@@ -143,7 +143,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
     }
 
 
-    private void volidSkuLimit(GoodsLimitInfoListRequestVo requestVo, Map<String, Long> limitIdMap, List<SkuLimitInfoEntity> skuLimitList, GoodsLimitInfoListResponseVo responseVo) {
+    private void validGoodsSkuLimit(GoodsLimitInfoListRequestVo requestVo, Map<String, Long> limitIdMap, List<SkuLimitInfoEntity> skuLimitList, GoodsLimitInfoListResponseVo responseVo) {
         Map<String, SkuLimitInfoEntity> skuLimitMap = new HashMap<>();
         for (SkuLimitInfoEntity entity : skuLimitList) {
             skuLimitMap.put(MapKeyUtil.buildSkuLimitMapKey(entity.getPid(), entity.getLimitId(), entity.getGoodsId(), entity.getSkuId()), entity);
@@ -296,6 +296,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             }
             if (activityLimitNum == LimitConstant.UNLIMITED_NUM) {
                 goodsLimitInfoListVo.setLimitStatus(false);
+                goodsLimitInfoListVo.setCanBuyNum(Integer.MAX_VALUE);
             } else {
                 goodsLimitInfoListVo.setLimitStatus(true);
                 goodsLimitInfoListVo.setCanBuyNum(activityLimitNum - (alreadyBuyNum == null ? 0 : alreadyBuyNum));
@@ -558,7 +559,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
 
             QueryGoodsLimitDetailListResponseVo responseVo = buildPointQueryGoodsLimitDetailListResponseVo(requestVo, limitIdMap, goodsLimitNumMap, userGoodsLimitNumMap);
             if (MapUtils.isNotEmpty(goodsSkuMap)) {
-                volitSkuLimit(responseVo, goodsSkuMap);
+                validSkuLimit(responseVo, goodsSkuMap);
             }
             return responseVo;
         } else {
@@ -569,7 +570,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             }
             QueryGoodsLimitDetailListResponseVo responseVo = buildQueryGoodsLimitDetailListResponseVo(requestVo, limitIdMap, activityLimitNumMap, activityUserLimitNumMap, goodsLimitNumMap, userGoodsLimitNumMap, userPidGoodsLimitNumMap);
             if (MapUtils.isNotEmpty(goodsSkuMap)) {
-                volitSkuLimit(responseVo, goodsSkuMap);
+                validSkuLimit(responseVo, goodsSkuMap);
             }
             return responseVo;
         }
@@ -647,6 +648,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             }
             if (activityLimitNum == LimitConstant.UNLIMITED_NUM) {
                 goodsLimitInfoListVo.setGoodsLimit(false);
+                goodsLimitInfoListVo.setGoodsCanBuyNum(Integer.MAX_VALUE);
             } else {
                 goodsLimitInfoListVo.setGoodsLimit(true);
                 goodsLimitInfoListVo.setGoodsCanBuyNum(activityLimitNum - (alreadyBuyNum == null ? 0 : alreadyBuyNum));
@@ -655,7 +657,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         }
     }
 
-    private void volitSkuLimit(QueryGoodsLimitDetailListResponseVo responseVo, Map<Long, List<SkuLimitInfoEntity>> goodsSkuMap) {
+    private void validSkuLimit(QueryGoodsLimitDetailListResponseVo responseVo, Map<Long, List<SkuLimitInfoEntity>> goodsSkuMap) {
         for (QueryGoodsLimitDetailVo vo : responseVo.getQueryGoodsLimitDetailVoList()) {
             List<SkuLimitInfoEntity> skuLimitInfoEntityList = goodsSkuMap.get(vo.getGoodsId());
             if (CollectionUtils.isEmpty(skuLimitInfoEntityList)) {
