@@ -59,7 +59,8 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
             }
             if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), limitVo.getBizType())
                     || (Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), limitVo.getBizType())
-                    && Objects.equals(limitVo.getActivityStockType(), LimitConstant.DISCOUNT_TYPE_SKU))) {
+                    && Objects.equals(limitVo.getActivityStockType(), LimitConstant.DISCOUNT_TYPE_SKU))
+                    || Objects.equals(LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel(), limitVo.getBizType())) {
                 VerifyParamUtils.checkParam(LimitationErrorCode.SKUINFO_IS_NULL, limitVo.getSkuId());
             }
         }
