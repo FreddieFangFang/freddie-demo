@@ -13,6 +13,7 @@ import com.weimob.saas.ec.limitation.model.convertor.LimitConvertor;
 import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
 import com.weimob.saas.ec.limitation.thread.SaveLimitChangeLogThread;
 import com.weimob.saas.ec.limitation.utils.LimitContext;
+import com.weimob.saas.ec.limitation.utils.MapKeyUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -306,20 +307,30 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                     }
                     boolean included = false;
                     if (CollectionUtils.isNotEmpty(activityLimitList)) {
-                        for (UserLimitEntity activityLimitEntity : activityLimitList) {
-                            if (activityLimitEntity.getBizId() == activityId) {
-                                included = true;
-                                int finalGoodsNum = entry.getValue() + activityLimitEntity.getBuyNum();
-                                //判断是否超出活动设置的限购数量
-                                LimitInfoEntity activityEntity = activityMap.get(activityId);
-                                //等于0表示不限购
-                                if (activityEntity.getLimitNum() != LimitConstant.UNLIMITED_NUM) {
-                                    if (finalGoodsNum > activityMap.get(activityId).getLimitNum()) {
-                                        throw new LimitationBizException(LimitationErrorCode.BEYOND_ACTIVITY_LIMIT_NUM);
-                                    }
+                        //用户活动购买记录map
+                        Map<Long, Integer> activityUserLimitNumMap = new HashMap<>();
+                        for (UserLimitEntity vo : activityLimitList) {
+                            //多门店下单，进行合并
+                            if (activityUserLimitNumMap.get(vo.getBizId()) == null) {
+                                activityUserLimitNumMap.put(vo.getBizId(), vo.getBuyNum());
+                            } else {
+                                Integer buyNum = activityUserLimitNumMap.get(vo.getBizId());
+                                activityUserLimitNumMap.put(vo.getBizId(), vo.getBuyNum() + buyNum);
+                            }
+                        }
+                        if (activityUserLimitNumMap.get(activityId) != null) {
+                            included = true;
+                            int finalGoodsNum = entry.getValue() + activityUserLimitNumMap.get(activityId);
+                            //判断是否超出活动设置的限购数量
+                            LimitInfoEntity activityEntity = activityMap.get(activityId);
+                            //等于0表示不限购
+                            if (activityEntity.getLimitNum() != LimitConstant.UNLIMITED_NUM) {
+                                if (finalGoodsNum > activityMap.get(activityId).getLimitNum()) {
+                                    throw new LimitationBizException(LimitationErrorCode.BEYOND_ACTIVITY_LIMIT_NUM);
                                 }
                             }
                         }
+
                     }
 
                     if (!included) {

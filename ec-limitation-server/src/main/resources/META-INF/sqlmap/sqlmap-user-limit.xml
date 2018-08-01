@@ -227,7 +227,6 @@
         <foreach item="item" index="index" collection="list"
                  separator="or">
             pid = #{item.pid}
-            and store_id = #{item.storeId}
             and wid = #{item.wid}
             and limit_id = #{item.limitId}
             and is_deleted = 0
