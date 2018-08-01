@@ -252,6 +252,9 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                             pidGoodsLimitNum = goodsLimitInfoEntity.getLimitNum();
                         }
                     }
+                    if (pidGoodsLimitNum == null) {
+                        pidGoodsLimitNum = 0;
+                    }
                     if (LimitConstant.UNLIMITED_NUM == goodsLimitNum && LimitConstant.UNLIMITED_NUM == pidGoodsLimitNum) {
                         break;
                     }

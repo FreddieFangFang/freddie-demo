@@ -144,7 +144,7 @@
         limit_info as limitinfo
         where
         limitinfo.limit_id=goodslimitinfo.limit_id
-        AND
+        AND (
         <foreach item="item" index="index" collection="list"
                  separator="or">
             (
@@ -156,6 +156,7 @@
             and limitinfo.is_deleted = 0
             )
         </foreach>
+        )
         /*GoodsLimitInfoDao.queryOrderGoodsLimitInfoList*/
     </select>
 
@@ -176,7 +177,7 @@
         limit_info as limitinfo
         where
         limitinfo.limit_id=goodslimitinfo.limit_id
-        AND
+        AND (
         <foreach item="item" index="index" collection="list"
                  separator="or">
             (
@@ -204,6 +205,7 @@
             </choose>
             )
         </foreach>
+        )
         /*GoodsLimitInfoDao.queryGoodsLimitNumList*/
     </select>
 

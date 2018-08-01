@@ -102,7 +102,7 @@
         limit_info as limitinfo
         where
         limitinfo.limit_id=usergoodslimit.limit_id
-        AND
+        AND (
         <foreach item="item" index="index" collection="list"
                  separator="or">
             (
@@ -114,6 +114,7 @@
             and limitinfo.is_deleted = 0
             )
         </foreach>
+        )
         /*UserGoodsLimitDao.queryUserOrderGoodsLimitList*/
     </select>
 

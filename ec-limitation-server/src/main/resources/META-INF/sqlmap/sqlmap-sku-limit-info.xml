@@ -125,7 +125,7 @@
         limit_info as limitinfo
         where
         limitinfo.limit_id=skulimtinfo.limit_id
-        AND
+        AND (
         <foreach item="item" index="index" collection="list"
                  separator="or">
             (
@@ -138,6 +138,7 @@
             and limitinfo.is_deleted = 0
             )
         </foreach>
+        )
         /*SkuLimitInfoDao.queryOrderSkuLimitInfoList*/
     </select>
 
@@ -204,7 +205,7 @@
         limit_info as limitinfo
         where
         limitinfo.limit_id=skulimitinfo.limit_id
-        AND
+        AND (
         <foreach item="item" index="index" collection="list"
                  separator="or">
             (
@@ -232,6 +233,7 @@
             </choose>
             )
         </foreach>
+        )
         /*SkuLimitInfoDao.queryGoodsSkuLimitList*/
     </select>
 

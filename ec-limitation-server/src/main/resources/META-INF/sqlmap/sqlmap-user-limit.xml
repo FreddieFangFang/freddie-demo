@@ -202,7 +202,7 @@
         limit_info as limitinfo
         where
         limitinfo.limit_id=userlimit.limit_id
-        AND
+        AND (
         <foreach item="item" index="index" collection="list"
                  separator="or">
             userlimit.pid = #{item.pid}
@@ -213,6 +213,7 @@
             and userlimit.is_deleted = 0
             and limitinfo.is_deleted = 0
         </foreach>
+        )
         /*UserLimitDao.queryUserLimitInfoList*/
     </select>
 

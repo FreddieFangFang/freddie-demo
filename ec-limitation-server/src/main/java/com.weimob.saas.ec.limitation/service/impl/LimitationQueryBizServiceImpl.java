@@ -224,6 +224,9 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                     pidGoodsLimitNum = goodsLimitInfoEntity.getLimitNum();
                 }
             }
+            if (pidGoodsLimitNum == null) {
+                pidGoodsLimitNum = 0;
+            }
             vo.setAlreadyBuyNum(alreadyBuyNum == null ? 0 : alreadyBuyNum);
             vo.setGoodsLimitNum(goodsLimitNum);
             if (LimitConstant.UNLIMITED_NUM == goodsLimitNum) {
@@ -621,6 +624,9 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 } else {
                     pidGoodsLimitNum = goodsLimitInfoEntity.getLimitNum();
                 }
+            }
+            if (pidGoodsLimitNum == null) {
+                pidGoodsLimitNum = 0;
             }
             if (LimitConstant.UNLIMITED_NUM == goodsLimitNum) {
                 if (LimitConstant.UNLIMITED_NUM == pidGoodsLimitNum) {
