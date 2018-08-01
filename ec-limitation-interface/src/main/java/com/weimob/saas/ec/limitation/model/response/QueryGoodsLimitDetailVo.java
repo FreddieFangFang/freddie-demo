@@ -38,6 +38,11 @@ public class QueryGoodsLimitDetailVo implements Serializable {
      */
     private Boolean goodsLimit;
 
+    /**
+     * 用户已买的商品数量-wid
+     */
+    private Integer alreadyBuyGoodsNum;
+
     private List<SkuLimitInfo> skuLimitInfoList;
 
     public Long getPid() {
@@ -110,5 +115,13 @@ public class QueryGoodsLimitDetailVo implements Serializable {
 
     public void setBizType(Integer bizType) {
         this.bizType = bizType;
+    }
+
+    public Integer getAlreadyBuyGoodsNum() {
+        return alreadyBuyGoodsNum;
+    }
+
+    public void setAlreadyBuyGoodsNum(Integer alreadyBuyGoodsNum) {
+        this.alreadyBuyGoodsNum = alreadyBuyGoodsNum;
     }
 }
