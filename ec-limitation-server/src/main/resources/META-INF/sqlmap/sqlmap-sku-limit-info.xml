@@ -275,7 +275,7 @@
         AND limit_id = #{limitId}
         AND goods_id = #{goodsId}
         AND sku_id = #{skuId}
-        AND limit_num + #{limitNum} >0
+        AND limit_num + #{limitNum} >=0
         /*SkuLimitInfoDao.updateSkuLimitNum*/
     </update>
 
