@@ -266,7 +266,7 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                         Map<Long, Integer> goodsAlreadayBuyNumMap = new HashMap<>();
                         //用户有购买记录
                         for (UserGoodsLimitEntity goodsLimitEntity : userGoodsLimitList) {
-                            if (goodsLimitEntity.getGoodsId() == goodsId && storeId == goodsLimitEntity.getStoreId()) {
+                            if (goodsLimitEntity.getGoodsId() == goodsId && Objects.equals(storeId, goodsLimitEntity.getStoreId())) {
                                 includeCurrentGoods = true;
                                 int finalGoodsNum = entry.getValue() + goodsLimitEntity.getBuyNum();
                                 //等于0表示不限购
