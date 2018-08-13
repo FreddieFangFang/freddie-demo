@@ -646,6 +646,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             if (pidGoodsLimitNum == null) {
                 pidGoodsLimitNum = 0;
             }
+            vo.setGoodsLimitNum(goodsLimitNum);
             if (LimitConstant.UNLIMITED_NUM == goodsLimitNum) {
                 if (LimitConstant.UNLIMITED_NUM == pidGoodsLimitNum) {
                     if (vo.getGoodsLimit()) {
@@ -773,6 +774,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             Integer userBuyNum = userGoodsLimitNumMap.get(MapKeyUtil.buildGoodsLimitNumMap(vo.getPid(), vo.getStoreId(), limitId, vo.getGoodsId()));
             Integer canBuyNum = goodsLimitNum - (userBuyNum == null ? 0 : userBuyNum);
 
+            goodsLimitInfoListVo.setGoodsLimitNum(goodsLimitNum);
             goodsLimitInfoListVo.setAlreadyBuyGoodsNum(userBuyNum == null ? 0 : userBuyNum);
             goodsLimitInfoListVo.setGoodsCanBuyNum(canBuyNum < 0 ? 0 : canBuyNum);
             goodsLimitInfoList.add(goodsLimitInfoListVo);

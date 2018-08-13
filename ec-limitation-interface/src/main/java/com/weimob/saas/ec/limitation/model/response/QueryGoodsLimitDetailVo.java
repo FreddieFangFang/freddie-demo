@@ -39,6 +39,11 @@ public class QueryGoodsLimitDetailVo implements Serializable {
     private Boolean goodsLimit;
 
     /**
+     * 商品限购设定值
+     */
+    private Integer goodsLimitNum;
+
+    /**
      * 用户已买的商品数量-wid
      */
     private Integer alreadyBuyGoodsNum;
@@ -123,5 +128,13 @@ public class QueryGoodsLimitDetailVo implements Serializable {
 
     public void setAlreadyBuyGoodsNum(Integer alreadyBuyGoodsNum) {
         this.alreadyBuyGoodsNum = alreadyBuyGoodsNum;
+    }
+
+    public Integer getGoodsLimitNum() {
+        return goodsLimitNum;
+    }
+
+    public void setGoodsLimitNum(Integer goodsLimitNum) {
+        this.goodsLimitNum = goodsLimitNum;
     }
 }
