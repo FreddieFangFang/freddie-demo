@@ -48,8 +48,14 @@ public class UpdateUserLimitVo extends BaseRequest implements Comparable<UpdateU
      */
     private Long orderNo;
 
+    /**
+     * 维权单号
+     */
     private Long rightId;
 
+    /**
+     * 调用方服务名 维权用LimitServiceNameEnum.RIGHTS_DEDUCT_LIMIT
+     */
     private String limitServiceName;
 
     public Long getBizId() {
