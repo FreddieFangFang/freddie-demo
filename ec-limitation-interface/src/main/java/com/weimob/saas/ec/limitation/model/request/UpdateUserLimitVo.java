@@ -2,6 +2,7 @@ package com.weimob.saas.ec.limitation.model.request;
 
 import com.weimob.saas.ec.common.request.BaseRequest;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
+import com.weimob.saas.ec.limitation.common.LimitServiceNameEnum;
 
 /**
  * @author lujialin
@@ -17,6 +18,7 @@ public class UpdateUserLimitVo extends BaseRequest implements Comparable<UpdateU
 
     /**
      * 活动类型、商品限购类型，积分商城使用枚举LimitBizTypeEnum.BIZ_TYPE_POINT
+     *
      * @see LimitBizTypeEnum
      */
     private Integer bizType;
@@ -45,6 +47,10 @@ public class UpdateUserLimitVo extends BaseRequest implements Comparable<UpdateU
      * 订单号
      */
     private Long orderNo;
+
+    private Long rightId;
+
+    private String limitServiceName;
 
     public Long getBizId() {
         return bizId;
@@ -100,6 +106,22 @@ public class UpdateUserLimitVo extends BaseRequest implements Comparable<UpdateU
 
     public void setActivityStockType(Integer activityStockType) {
         this.activityStockType = activityStockType;
+    }
+
+    public Long getRightId() {
+        return rightId;
+    }
+
+    public void setRightId(Long rightId) {
+        this.rightId = rightId;
+    }
+
+    public String getLimitServiceName() {
+        return limitServiceName;
+    }
+
+    public void setLimitServiceName(String limitServiceName) {
+        this.limitServiceName = limitServiceName;
     }
 
     @Override

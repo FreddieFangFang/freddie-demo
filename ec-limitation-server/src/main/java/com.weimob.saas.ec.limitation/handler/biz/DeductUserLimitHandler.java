@@ -39,7 +39,9 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
     @Override
     protected void doBatchBizLogic(List<UpdateUserLimitVo> updateUserLimitVoList) {
         //1.幂等校验
-        validRepeatDeductLimitNum(updateUserLimitVoList);
+        if (!Objects.equals(LimitServiceNameEnum.RIGHTS_DEDUCT_LIMIT.name(), updateUserLimitVoList.get(0).getLimitServiceName())) {
+            validRepeatDeductLimitNum(updateUserLimitVoList);
+        }
 
         //2.分组
         //限购商品的类型分组
@@ -143,6 +145,9 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         orderChangeLogEntity.setTicket(LimitContext.getTicket());
         orderChangeLogEntity.setServiceName(getServiceName().name());
         orderChangeLogEntity.setReferId(vo.getOrderNo().toString());
+        if (vo.getRightId() != null) {
+            orderChangeLogEntity.setContent(vo.getRightId().toString());
+        }
         orderChangeLogEntity.setStatus(LimitConstant.ORDER_LOG_STATUS_OVER);
         return orderChangeLogEntity;
     }
