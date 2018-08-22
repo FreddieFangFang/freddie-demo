@@ -286,7 +286,8 @@
     UPDATE
       limit_order_change_log
     SET
-      status = 1
+      status = 1,
+      update_time = NOW()
     WHERE
       ticket = #{ticket}
       AND
