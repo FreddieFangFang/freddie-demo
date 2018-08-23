@@ -254,7 +254,7 @@
         UPDATE
         user_limit
         SET
-        pid =pid * -1,
+        wid =-1 * wid,
         update_time = NOW()
         WHERE
         pid = #{pid}
