@@ -19,7 +19,7 @@ public interface GoodsLimitInfoDao extends BaseDao<GoodsLimitInfoEntity> {
 
     List<GoodsLimitInfoEntity> queryGoodsLimitInfoList(List<GoodsLimitInfoEntity> queryGoodsLimitList);
 
-    void updateGoodsLimitInfoEntity(GoodsLimitInfoEntity goodsLimitInfoEntity);
+    int updateGoodsLimitInfoEntity(GoodsLimitInfoEntity goodsLimitInfoEntity);
 
     List<GoodsLimitInfoEntity> queryOrderGoodsLimitInfoList(List<UpdateUserLimitVo> updateUserLimitVoList);
 
