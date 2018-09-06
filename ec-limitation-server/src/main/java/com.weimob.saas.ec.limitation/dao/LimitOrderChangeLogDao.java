@@ -10,7 +10,7 @@ public interface LimitOrderChangeLogDao extends BaseDao<LimitOrderChangeLogEntit
 
     int insertSelective(LimitOrderChangeLogEntity record);
 
-    LimitOrderChangeLogEntity selectByPrimaryKey(Long id);
+    LimitOrderChangeLogEntity selectByPrimaryKey(LimitOrderChangeLogEntity queryLogParameter);
 
     int updateByPrimaryKeySelective(LimitOrderChangeLogEntity record);
 

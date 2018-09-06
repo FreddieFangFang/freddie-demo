@@ -27,11 +27,12 @@
     id, pid, store_id, wid, biz_id, biz_type, limit_id, goods_id, sku_id, buy_num, ticket, 
     service_name, content, refer_id, status, is_deleted, create_time, update_time,limit_level,is_original
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="com.weimob.saas.ec.limitation.entity.LimitOrderChangeLogEntity" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from limit_order_change_log
-    where refer_id = #{id,jdbcType=BIGINT}
+    where refer_id = #{referId}
+    and biz_type = #{bizType}
     and service_name = "DEDUCT_USER_LIMIT"
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
