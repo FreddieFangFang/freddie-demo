@@ -97,7 +97,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         LimitInfoEntity oldLimitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
 
         if (oldLimitInfoEntity == null) {
-            throw new LimitationBizException(LimitationErrorCode.LIMITATION_IS_NULL);
+            return new LimitationUpdateResponseVo();
         }
         /** 2 查询商品表或者sku表，保存未删除的记录到日志表，以便进行回滚*/
 
