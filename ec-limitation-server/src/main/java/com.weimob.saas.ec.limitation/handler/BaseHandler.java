@@ -374,6 +374,9 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                     long goodsId = Long.parseLong(entry.getKey().substring(lastIndex));
                     baseBo = LimitContext.getLimitBo().getGoodsIdLimitMap().get(goodsId);
                     limitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(baseBo.getPid(), baseBo.getBizId(), baseBo.getBizType()));
+                    if (limitInfoEntity == null) {
+                        break;
+                    }
                     goodsLimitEntityList.add(LimitConvertor.convertGoodsLimit(baseBo, goodsId, entry.getValue(), limitInfoEntity));
                     break;
                 //保存活动限购记录,多门店的时候是否会出现问题？
@@ -381,6 +384,9 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                     long activityId = Long.parseLong(entry.getKey().substring(lastIndex));
                     baseBo = LimitContext.getLimitBo().getActivityIdLimitMap().get(activityId);
                     limitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(baseBo.getPid(), baseBo.getBizId(), baseBo.getBizType()));
+                    if (limitInfoEntity == null) {
+                        break;
+                    }
                     activityLimitEntityList.add(LimitConvertor.convertActivityLimit(baseBo, activityId, entry.getValue(), limitInfoEntity));
                     break;
                 //更新sku的售卖数量
@@ -388,6 +394,9 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                     long skuId = Long.parseLong(entry.getKey().substring(lastIndex));
                     baseBo = LimitContext.getLimitBo().getSkuIdLimitMap().get(skuId);
                     limitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(baseBo.getPid(), baseBo.getBizId(), baseBo.getBizType()));
+                    if (limitInfoEntity == null) {
+                        break;
+                    }
                     activityGoodsSoldEntityList.add(LimitConvertor.convertActivitySoldEntity(baseBo, skuId, entry.getValue(), limitInfoEntity));
                     break;
                 default:
