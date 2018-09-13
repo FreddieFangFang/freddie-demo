@@ -15,12 +15,26 @@ import java.util.Map;
  * @date 2018/6/6 14:52
  */
 public class LimitBo {
+    /**
+     * 活动对应的购买的商品件数
+     * 商品对应的购买件数
+     * sku对应的购买件数
+     */
     Map<String, Integer> orderGoodsLimitMap = new HashMap();
 
+    /**
+     * 活动id对应的要插入到活动限购表需要的信息
+     */
     private Map<Long, UserLimitBaseBo> activityIdLimitMap = new HashMap<>();
 
+    /**
+     * 商品id对应的要插入到商品限购表需要的信息
+     */
     private Map<Long, UserLimitBaseBo> goodsIdLimitMap = new HashMap<>();
 
+    /**
+     * skuid对应的要插入到sku限购表需要的信息
+     */
     private Map<Long, UserLimitBaseBo> skuIdLimitMap = new HashMap<>();
 
 
