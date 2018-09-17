@@ -65,6 +65,7 @@ public enum LimitationErrorCode {
     LIMIT_ACTIVITY_IS_NULL("1080000200005", "活动限购记录为空"),
     LIMIT_SKU_IS_NULL("1080000200006", "SKU限购记录为空"),
     INVALID_REVERSE_TICKET("1080000200006", "非法的回滚ticket"),
+    INVALID_LIMITATION_ACTIVITY("1080000200007", "限购活动已过期"),
 
 
     /*****************************业务异常04**********************************/

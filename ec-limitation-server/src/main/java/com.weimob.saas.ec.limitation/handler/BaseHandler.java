@@ -374,8 +374,9 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                     long goodsId = Long.parseLong(entry.getKey().substring(lastIndex));
                     baseBo = LimitContext.getLimitBo().getGoodsIdLimitMap().get(goodsId);
                     limitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(baseBo.getPid(), baseBo.getBizId(), baseBo.getBizType()));
+                    //活动过期
                     if (limitInfoEntity == null) {
-                        break;
+                        throw new LimitationBizException(LimitationErrorCode.INVALID_LIMITATION_ACTIVITY);
                     }
                     goodsLimitEntityList.add(LimitConvertor.convertGoodsLimit(baseBo, goodsId, entry.getValue(), limitInfoEntity));
                     break;
@@ -385,7 +386,7 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                     baseBo = LimitContext.getLimitBo().getActivityIdLimitMap().get(activityId);
                     limitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(baseBo.getPid(), baseBo.getBizId(), baseBo.getBizType()));
                     if (limitInfoEntity == null) {
-                        break;
+                        throw new LimitationBizException(LimitationErrorCode.INVALID_LIMITATION_ACTIVITY);
                     }
                     activityLimitEntityList.add(LimitConvertor.convertActivityLimit(baseBo, activityId, entry.getValue(), limitInfoEntity));
                     break;
@@ -395,7 +396,7 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                     baseBo = LimitContext.getLimitBo().getSkuIdLimitMap().get(skuId);
                     limitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(baseBo.getPid(), baseBo.getBizId(), baseBo.getBizType()));
                     if (limitInfoEntity == null) {
-                        break;
+                        throw new LimitationBizException(LimitationErrorCode.INVALID_LIMITATION_ACTIVITY);
                     }
                     activityGoodsSoldEntityList.add(LimitConvertor.convertActivitySoldEntity(baseBo, skuId, entry.getValue(), limitInfoEntity));
                     break;
