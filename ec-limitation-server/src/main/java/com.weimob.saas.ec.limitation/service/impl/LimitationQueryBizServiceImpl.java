@@ -731,7 +731,11 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 if (canBuyNum < 0) {
                     canBuyNum = 0;
                 }
-                skuLimitInfo.setCanBuySkuNum(canBuyNum > vo.getGoodsCanBuyNum() ? vo.getGoodsCanBuyNum() : canBuyNum);
+                if (vo.getGoodsCanBuyNum() == 0) {
+                    skuLimitInfo.setCanBuySkuNum(canBuyNum);
+                } else {
+                    skuLimitInfo.setCanBuySkuNum(canBuyNum > vo.getGoodsCanBuyNum() ? vo.getGoodsCanBuyNum() : canBuyNum);
+                }
                 realSoldNum = realSoldNum + skuLimitInfo.getCanBuySkuNum();
                 skuLimitInfoList.add(skuLimitInfo);
             }
