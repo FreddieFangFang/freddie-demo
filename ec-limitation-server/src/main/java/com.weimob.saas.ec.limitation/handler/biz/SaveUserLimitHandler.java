@@ -16,7 +16,6 @@ import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
 import com.weimob.saas.ec.limitation.service.LimitationServiceImpl;
 import com.weimob.saas.ec.limitation.utils.LimitContext;
 import com.weimob.saas.ec.limitation.utils.VerifyParamUtils;
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -97,7 +96,7 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
 
     @Override
     protected LimitOrderChangeLogEntity createOrderChangeLog(UpdateUserLimitVo vo) {
-        LimitInfoEntity limitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(vo.getPid(), vo.getBizId(), vo.getBizType()));
+        LimitInfoEntity limitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(vo.getPid(), vo.getBizId(), vo.getBizType()));
         LimitOrderChangeLogEntity orderChangeLogEntity = new LimitOrderChangeLogEntity();
         orderChangeLogEntity.setPid(vo.getPid());
         orderChangeLogEntity.setStoreId(vo.getStoreId());

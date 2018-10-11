@@ -17,136 +17,140 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
     </resultMap>
+
     <sql id="Base_Column_List">
-    limit_id, pid, sale_channeltype, source, limit_level, biz_id, biz_type, limit_type, limit_num,
-    sold_num, version, is_deleted, create_time, update_time
+      limit_id,
+      pid, sale_channeltype,
+      source,
+      limit_level,
+      biz_id,
+      biz_type,
+      limit_type,
+      limit_num,
+      sold_num,
+      version,
+      is_deleted,
+      create_time,
+      update_time
   </sql>
-    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from limit_info
-        where limit_id = #{limitId,jdbcType=BIGINT}
-    </select>
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from limit_info
-    where limit_id = #{limitId,jdbcType=BIGINT}
-  </delete>
-    <insert id="insert" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
-    insert into
-    limit_info
-    (limit_id, pid, sale_channeltype,
-      source, limit_level, biz_id, 
-      biz_type, limit_type, limit_num, 
-      sold_num, is_deleted,
-      create_time, update_time,select_store_type)
-    values
-    (#{limitId,jdbcType=BIGINT}, #{pid,jdbcType=BIGINT}, #{saleChannelType,jdbcType=VARCHAR},
-      #{source,jdbcType=VARCHAR}, #{limitLevel,jdbcType=TINYINT}, #{bizId,jdbcType=BIGINT}, 
-      #{bizType,jdbcType=TINYINT}, #{limitType,jdbcType=TINYINT}, #{limitNum,jdbcType=INTEGER}, 
-      #{soldNum,jdbcType=INTEGER}, 0,
-      NOW(), NOW(),#{selectStoreType})
-      /*LimitInfoDao.insert*/
-  </insert>
 
-    <select id="selectByLimitParam" parameterType="com.weimob.saas.ec.limitation.model.LimitParam"
-            resultMap="BaseResultMap">
-        select
+    <insert id="insertLimitInfo" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
+      INSERT INTO limit_info
+        (
+        limit_id,
+        pid,
+        sale_channeltype,
+        source,
+        limit_level,
+        biz_id,
+        biz_type,
+        limit_type,
+        limit_num,
+        sold_num,
+        is_deleted,
+        create_time,
+        update_time,
+        select_store_type
+        )
+      VALUES
+        (
+        #{limitId,jdbcType=BIGINT},
+        #{pid,jdbcType=BIGINT},
+        #{saleChannelType,jdbcType=VARCHAR},
+        #{source,jdbcType=VARCHAR},
+        #{limitLevel,jdbcType=TINYINT},
+        #{bizId,jdbcType=BIGINT},
+        #{bizType,jdbcType=TINYINT},
+        #{limitType,jdbcType=TINYINT},
+        #{limitNum,jdbcType=INTEGER},
+        #{soldNum,jdbcType=INTEGER},
+        0,
+        NOW(),
+        NOW(),
+        #{selectStoreType})
+      /*LimitInfoDao.insertLimitInfo*/
+    </insert>
+
+    <select id="getLimitInfo" parameterType="com.weimob.saas.ec.limitation.model.LimitParam" resultMap="BaseResultMap">
+      SELECT
         <include refid="Base_Column_List"/>
-        from
+      FROM
         limit_info
-        where
+      WHERE
         pid = #{pid}
-        and biz_id = #{bizId}
-        and biz_type = #{bizType}
-        and is_deleted = 0
-        /*LimitInfoDao.selectByLimitParam*/
+      AND biz_id = #{bizId}
+      AND biz_type = #{bizType}
+      AND is_deleted = 0
+    /*LimitInfoDao.getLimitInfo*/
     </select>
 
-    <select id="queryLimitInfoList" resultMap="BaseResultMap" parameterType="java.util.List">
-        select
+    <select id="listLimitInfo" resultMap="BaseResultMap" parameterType="java.util.List">
+      SELECT
         <include refid="Base_Column_List"/>
-        from
+      FROM
         limit_info
-        where
-        <foreach item="item" index="index" collection="list"
-                 separator="or">
-            (pid = #{item.pid}
-            and biz_id = #{item.bizId}
-            and biz_type = #{item.bizType}
-            and is_deleted = 0)
+      WHERE
+        <foreach item="item" index="index" collection="list" separator="or">
+          (pid = #{item.pid}
+          AND biz_id = #{item.bizId}
+          AND biz_type = #{item.bizType}
+          AND is_deleted = 0)
         </foreach>
-        /*LimitInfoDao.queryLimitInfoList*/
+    /*LimitInfoDao.listLimitInfo*/
     </select>
 
-    <update id="update" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
-        update
-        limit_info
+    <update id="updateLimitInfo" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
+      UPDATE limit_info
         <set>
-            <if test="saleChannelType != null">
-                sale_channeltype = #{saleChannelType},
-            </if>
-            <if test="source != null">
-                source = #{source},
-            </if>
-            <if test="limitType != null">
-                limit_type = #{limitType},
-            </if>
-            <if test="limitNum != null">
-                limit_num = #{limitNum},
-            </if>
-            <if test="soldNum != null">
-                sold_num = #{soldNum},
-            </if>
-            <if test="selectStoreType != null">
-                select_store_type = #{selectStoreType},
-            </if>
-            version = version+1,
-            update_time = NOW()
+          <if test="saleChannelType != null">
+            sale_channeltype = #{saleChannelType},
+          </if>
+          <if test="source != null">
+            source = #{source},
+          </if>
+          <if test="limitType != null">
+            limit_type = #{limitType},
+          </if>
+          <if test="limitNum != null">
+            limit_num = #{limitNum},
+          </if>
+          <if test="soldNum != null">
+            sold_num = #{soldNum},
+          </if>
+          <if test="selectStoreType != null">
+            select_store_type = #{selectStoreType},
+          </if>
+          version = version+1,
+          update_time = NOW()
         </set>
-        where
+      WHERE
         limit_id = #{limitId}
-        and version=#{version}
-        /*LimitInfoDao.update*/
+      AND version=#{version}
+    /*LimitInfoDao.updateLimitInfo*/
     </update>
 
-    <update id="delete" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
-    update
+    <update id="deleteLimitInfo" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
+      UPDATE
         limit_info
-    set
+      SET
         is_deleted = 1,
         update_time = NOW(),
         version = version+1
-    where
+      WHERE
         limit_id=#{limitId}
-        and version=#{version}
-    /*LimitInfoDao.delete*/
+      AND version=#{version}
+    /*LimitInfoDao.deleteLimitInfo*/
   </update>
 
-    <select id="queryOrderLimitInfoList" resultMap="BaseResultMap" parameterType="java.util.List">
-        select
-        <include refid="Base_Column_List"/>
-        from
-        limit_info
-        where
-        <foreach item="item" index="index" collection="list"
-                 separator="or">
-            (pid = #{item.pid}
-            and biz_id = #{item.bizId}
-            and biz_type = #{item.bizType}
-            and is_deleted = 0)
-        </foreach>
-        /*LimitInfoDao.queryOrderLimitInfoList*/
-    </select>
-
     <update id="reverseLimitInfoStatus" parameterType="java.lang.Long">
-        update
+      UPDATE
         limit_info
-        set
+      SET
         is_deleted = 0,
         update_time = NOW(),
         version = version+1
-        where
+      WHERE
         limit_id=#{limitId}
-        /*LimitInfoDao.reverseLimitInfoStatus*/
+    /*LimitInfoDao.reverseLimitInfoStatus*/
     </update>
 </mapper>

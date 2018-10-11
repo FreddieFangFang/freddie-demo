@@ -47,7 +47,7 @@ public class LimitationServiceImpl {
     private UserLimitDao userLimitDao;
 
     public void saveLimitationInfo(LimitInfoEntity limitInfoEntity, List<LimitStoreRelationshipEntity> storeInfoList) {
-        limitInfoDao.insert(limitInfoEntity);
+        limitInfoDao.insertLimitInfo(limitInfoEntity);
         if (CollectionUtils.isNotEmpty(storeInfoList)) {
             limitStoreRelationshipDao.batchInsert(storeInfoList);
         }
@@ -55,7 +55,7 @@ public class LimitationServiceImpl {
 
     public void updateLimitationInfo(LimitInfoEntity limitInfoEntity, List<LimitStoreRelationshipEntity> storeInfoList) {
 
-        limitInfoDao.update(limitInfoEntity);
+        limitInfoDao.updateLimitInfo(limitInfoEntity);
 
         LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
         deleteEntity.setPid(limitInfoEntity.getPid());
@@ -68,7 +68,7 @@ public class LimitationServiceImpl {
     }
 
     public void deleteLimitInfo(LimitInfoEntity limitInfoEntity) {
-        limitInfoDao.delete(limitInfoEntity);
+        limitInfoDao.deleteLimitInfo(limitInfoEntity);
     }
 
     public void deleteStoreInfoList(Long pid, Long limitId) {
@@ -105,7 +105,7 @@ public class LimitationServiceImpl {
     }
 
     public void saveGoodsLimitInfo(LimitInfoEntity limitInfoEntity, List<GoodsLimitInfoEntity> goodsLimitInfoEntity, List<SkuLimitInfoEntity> skuLimitInfoList) {
-        limitInfoDao.insert(limitInfoEntity);
+        limitInfoDao.insertLimitInfo(limitInfoEntity);
         goodsLimitInfoDao.batchInsert(goodsLimitInfoEntity);
         skuLimitInfoDao.batchInsert(skuLimitInfoList);
     }
@@ -132,7 +132,7 @@ public class LimitationServiceImpl {
     }
 
     public void deleteDiscountLimitInfo(LimitInfoEntity oldLimitInfoEntity) {
-        limitInfoDao.delete(oldLimitInfoEntity);
+        limitInfoDao.deleteLimitInfo(oldLimitInfoEntity);
 
         LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
         deleteEntity.setPid(oldLimitInfoEntity.getPid());
@@ -144,7 +144,7 @@ public class LimitationServiceImpl {
     }
 
     public void deletePrivilegePriceLimitInfo(LimitInfoEntity oldLimitInfoEntity) {
-        limitInfoDao.delete(oldLimitInfoEntity);
+        limitInfoDao.deleteLimitInfo(oldLimitInfoEntity);
 
         LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
         deleteEntity.setPid(oldLimitInfoEntity.getPid());
@@ -155,7 +155,7 @@ public class LimitationServiceImpl {
     }
 
     public void deleteNynjLimitInfo(LimitInfoEntity oldLimitInfoEntity) {
-        limitInfoDao.delete(oldLimitInfoEntity);
+        limitInfoDao.deleteLimitInfo(oldLimitInfoEntity);
 
         LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
         deleteEntity.setPid(oldLimitInfoEntity.getPid());
@@ -164,7 +164,7 @@ public class LimitationServiceImpl {
     }
 
     public void deleteCombinationLimitInfo(LimitInfoEntity oldLimitInfoEntity) {
-        limitInfoDao.delete(oldLimitInfoEntity);
+        limitInfoDao.deleteLimitInfo(oldLimitInfoEntity);
 
         LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
         deleteEntity.setPid(oldLimitInfoEntity.getPid());
@@ -173,7 +173,7 @@ public class LimitationServiceImpl {
     }
 
     public void deletePointGoodsLimitInfo(LimitInfoEntity entity, List<Long> pointGoodsIdList) {
-        limitInfoDao.delete(entity);
+        limitInfoDao.deleteLimitInfo(entity);
 
         deleteSkuLimitInfo(entity.getPid(), entity.getLimitId(), pointGoodsIdList);
     }
@@ -361,7 +361,7 @@ public class LimitationServiceImpl {
     }
 
     public void deleteDiscountUserLimitInfo(DeleteDiscountUserLimitInfoRequestVo requestVo) {
-        LimitInfoEntity limitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
+        LimitInfoEntity limitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
         if (limitInfoEntity != null) {
             userLimitDao.deleteDiscountUserLimitInfo(requestVo);
             userGoodsLimitDao.deleteDiscountUserLimitInfo(new LimitParam(requestVo.getPid(), limitInfoEntity.getLimitId()));
@@ -393,7 +393,7 @@ public class LimitationServiceImpl {
     public void reverseSaveGoodsLimit(LimitInfoEntity entity, List<Long> goodsList) {
         //积分商城回滚limit_info表
         if (Objects.equals(LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel(), entity.getBizType())) {
-            limitInfoDao.delete(entity);
+            limitInfoDao.deleteLimitInfo(entity);
         }
 
         deleteSkuLimitInfo(entity.getPid(), entity.getLimitId(), goodsList);

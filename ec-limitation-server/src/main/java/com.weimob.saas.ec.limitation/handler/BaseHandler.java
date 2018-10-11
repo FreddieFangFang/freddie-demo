@@ -13,7 +13,6 @@ import com.weimob.saas.ec.limitation.model.convertor.LimitConvertor;
 import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
 import com.weimob.saas.ec.limitation.thread.SaveLimitChangeLogThread;
 import com.weimob.saas.ec.limitation.utils.LimitContext;
-import com.weimob.saas.ec.limitation.utils.MapKeyUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -373,7 +372,7 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                 case LIMIT_PREFIX_GOODS:
                     long goodsId = Long.parseLong(entry.getKey().substring(lastIndex));
                     baseBo = LimitContext.getLimitBo().getGoodsIdLimitMap().get(goodsId);
-                    limitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(baseBo.getPid(), baseBo.getBizId(), baseBo.getBizType()));
+                    limitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(baseBo.getPid(), baseBo.getBizId(), baseBo.getBizType()));
                     //活动过期
                     if (limitInfoEntity == null) {
                         throw new LimitationBizException(LimitationErrorCode.INVALID_LIMITATION_ACTIVITY);
@@ -384,7 +383,7 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                 case LIMIT_PREFIX_ACTIVITY:
                     long activityId = Long.parseLong(entry.getKey().substring(lastIndex));
                     baseBo = LimitContext.getLimitBo().getActivityIdLimitMap().get(activityId);
-                    limitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(baseBo.getPid(), baseBo.getBizId(), baseBo.getBizType()));
+                    limitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(baseBo.getPid(), baseBo.getBizId(), baseBo.getBizType()));
                     if (limitInfoEntity == null) {
                         throw new LimitationBizException(LimitationErrorCode.INVALID_LIMITATION_ACTIVITY);
                     }
@@ -394,7 +393,7 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                 case LIMIT_PREFIX_SKU:
                     long skuId = Long.parseLong(entry.getKey().substring(lastIndex));
                     baseBo = LimitContext.getLimitBo().getSkuIdLimitMap().get(skuId);
-                    limitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(baseBo.getPid(), baseBo.getBizId(), baseBo.getBizType()));
+                    limitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(baseBo.getPid(), baseBo.getBizId(), baseBo.getBizType()));
                     if (limitInfoEntity == null) {
                         throw new LimitationBizException(LimitationErrorCode.INVALID_LIMITATION_ACTIVITY);
                     }

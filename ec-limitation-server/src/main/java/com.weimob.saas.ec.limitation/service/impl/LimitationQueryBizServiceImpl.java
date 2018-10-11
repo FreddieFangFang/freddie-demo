@@ -71,7 +71,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             queryLimitInfoList.add(limitParam);
         }
         //查询限购主表
-        List<LimitInfoEntity> limitInfoEntityList = limitInfoDao.queryLimitInfoList(queryLimitInfoList);
+        List<LimitInfoEntity> limitInfoEntityList = limitInfoDao.listLimitInfo(queryLimitInfoList);
         if (CollectionUtils.isEmpty(limitInfoEntityList)) {
             throw new LimitationBizException(LimitationErrorCode.LIMIT_GOODS_IS_NULL);
         }
@@ -491,7 +491,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
     @Override
     public QueryActivityLimitInfoResponseVo queryActivityLimitInfo(QueryActivityLimitInfoRequestVo requestVo) {
         QueryActivityLimitInfoResponseVo responseVo = new QueryActivityLimitInfoResponseVo();
-        LimitInfoEntity infoEntity = limitInfoDao.selectByLimitParam(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
+        LimitInfoEntity infoEntity = limitInfoDao.getLimitInfo(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
         if (infoEntity == null) {
             return responseVo;
         }
@@ -535,7 +535,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             queryLimitInfoList.add(limitParam);
         }
         //查询限购主表
-        List<LimitInfoEntity> limitInfoEntityList = limitInfoDao.queryLimitInfoList(queryLimitInfoList);
+        List<LimitInfoEntity> limitInfoEntityList = limitInfoDao.listLimitInfo(queryLimitInfoList);
         if (CollectionUtils.isEmpty(limitInfoEntityList)) {
             throw new LimitationBizException(LimitationErrorCode.LIMIT_GOODS_IS_NULL);
         }

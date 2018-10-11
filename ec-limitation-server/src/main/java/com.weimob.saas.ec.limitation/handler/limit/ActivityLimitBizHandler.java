@@ -9,12 +9,14 @@ import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.handler.BaseHandler;
 import com.weimob.saas.ec.limitation.handler.LimitBizHandler;
 import com.weimob.saas.ec.limitation.model.LimitBo;
+import com.weimob.saas.ec.limitation.model.LimitParam;
 import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
 import com.weimob.saas.ec.limitation.utils.LimitContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,8 +40,13 @@ public class ActivityLimitBizHandler extends BaseHandler implements LimitBizHand
         Map<String, Integer> orderActivityValidMap = new HashMap();
         /** 1 处理入参数据 **/
         groupingOrderActivityRequestVoList(LimitContext.getLimitBo().getOrderGoodsLimitMap(), orderGoodsQueryMap, vos, orderActivityValidMap);
+        List<LimitParam> limitParams = new ArrayList<>();
+        for (UpdateUserLimitVo requestVo : orderGoodsQueryMap.get(LIMIT_PREFIX_ACTIVITY)) {
+            LimitParam limitInputVo = new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType());
+            limitParams.add(limitInputVo);
+        }
         /** 2 查询活动限购信息 **/
-        List<LimitInfoEntity> limitInfoEntityList = limitInfoDao.queryOrderLimitInfoList(orderGoodsQueryMap.get(LIMIT_PREFIX_ACTIVITY));
+        List<LimitInfoEntity> limitInfoEntityList = limitInfoDao.listLimitInfo(limitParams);
         if (CollectionUtils.isEmpty(limitInfoEntityList)) {
             throw new LimitationBizException(LimitationErrorCode.LIMIT_ACTIVITY_IS_NULL);
         }

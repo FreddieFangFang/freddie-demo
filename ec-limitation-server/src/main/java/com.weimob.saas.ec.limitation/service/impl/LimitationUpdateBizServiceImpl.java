@@ -71,7 +71,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
     @Override
     public LimitationUpdateResponseVo updateLimitationInfo(LimitationInfoRequestVo requestVo) {
         /** 1 查询限购主表信息*/
-        LimitInfoEntity oldLimitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
+        LimitInfoEntity oldLimitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
 
         if (oldLimitInfoEntity == null) {
             throw new LimitationBizException(LimitationErrorCode.LIMITATION_IS_NULL);
@@ -94,7 +94,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
     @Override
     public LimitationUpdateResponseVo deleteLimitationInfo(DeleteLimitationRequestVo requestVo) {
         /** 1 查询限购主表信息*/
-        LimitInfoEntity oldLimitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
+        LimitInfoEntity oldLimitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
 
         if (oldLimitInfoEntity == null) {
             return new LimitationUpdateResponseVo(null, true);
@@ -184,7 +184,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         switch (LimitBizTypeEnum.getLimitLevelEnumByLevel(bizType)) {
             case BIZ_TYPE_DISCOUNT:
             case BIZ_TYPE_PRIVILEGE_PRICE:
-                LimitInfoEntity oldLimitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(pid, bizId, bizType));
+                LimitInfoEntity oldLimitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(pid, bizId, bizType));
                 if (oldLimitInfoEntity == null) {
                     throw new LimitationBizException(LimitationErrorCode.LIMITATION_IS_NULL);
                 }
@@ -210,7 +210,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
                     LimitInfoEntity entity = new LimitInfoEntity();
                     entity.setPid(limitVo.getPid());
                     pointGoodsIdList.add(limitVo.getGoodsId());
-                    LimitInfoEntity oldPointLimitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(limitVo.getPid(), limitVo.getBizId(), limitVo.getBizType()));
+                    LimitInfoEntity oldPointLimitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(limitVo.getPid(), limitVo.getBizId(), limitVo.getBizType()));
                     if (oldPointLimitInfoEntity == null) {
                         throw new LimitationBizException(LimitationErrorCode.LIMITATION_IS_NULL);
                     }
@@ -259,7 +259,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
             case BIZ_TYPE_PRIVILEGE_PRICE:
                 //限时折扣,特权价，先查询limitId，再插入限购商品表
                 /** 1 查询限购主表信息*/
-                LimitInfoEntity oldLimitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(pid, bizId, bizType));
+                LimitInfoEntity oldLimitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(pid, bizId, bizType));
                 if (oldLimitInfoEntity == null) {
                     throw new LimitationBizException(LimitationErrorCode.LIMITATION_IS_NULL);
                 }
@@ -325,7 +325,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         Long pid = saveGoodsLimitInfoRequestVo.getGoodsList().get(0).getPid();
         Integer activityStockType = saveGoodsLimitInfoRequestVo.getGoodsList().get(0).getActivityStockType();
         /** 1 查询限购主表信息*/
-        LimitInfoEntity oldLimitInfoEntity = limitInfoDao.selectByLimitParam(new LimitParam(pid, bizId, bizType));
+        LimitInfoEntity oldLimitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(pid, bizId, bizType));
         if (oldLimitInfoEntity == null) {
             throw new LimitationBizException(LimitationErrorCode.LIMITATION_IS_NULL);
         }
