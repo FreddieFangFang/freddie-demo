@@ -34,6 +34,7 @@
     where refer_id = #{referId}
     and biz_type = #{bizType}
     and service_name = "DEDUCT_USER_LIMIT"
+    /*LimitOrderChangeLogDao.selectByPrimaryKey*/
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from limit_order_change_log
@@ -293,6 +294,7 @@
       ticket = #{ticket}
       AND
       is_deleted = 0
+      /*LimitOrderChangeLogDao.updateOrderChangeLogListToReversed*/
   </update>
   <select id="queryOrderChangeLogListByTicket" parameterType="java.lang.String" resultMap="BaseResultMap">
     SELECT
@@ -302,6 +304,6 @@
     WHERE
         ticket = #{ticket}
         and status = 0
-    /*orderChangeLog.queryOrderChangeLogListByTicket*/
+    /*LimitOrderChangeLogDao.queryOrderChangeLogListByTicket*/
   </select>
 </mapper>
