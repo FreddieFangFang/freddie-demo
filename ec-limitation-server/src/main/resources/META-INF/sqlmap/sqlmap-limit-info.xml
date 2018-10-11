@@ -32,7 +32,7 @@
       is_deleted,
       create_time,
       update_time
-  </sql>
+    </sql>
 
     <insert id="insertLimitInfo" parameterType="LimitInfoEntity">
       INSERT INTO limit_info
@@ -71,6 +71,49 @@
       /*LimitInfoDao.insertLimitInfo*/
     </insert>
 
+    <update id="deleteLimitInfo" parameterType="LimitInfoEntity">
+      UPDATE
+        limit_info
+      SET
+        is_deleted = 1,
+        update_time = NOW(),
+        version = version+1
+      WHERE
+        limit_id=#{limitId}
+      AND version=#{version}
+    /*LimitInfoDao.deleteLimitInfo*/
+    </update>
+
+    <update id="updateLimitInfo" parameterType="LimitInfoEntity">
+      UPDATE limit_info
+      <set>
+        <if test="saleChannelType != null">
+          sale_channeltype = #{saleChannelType},
+        </if>
+        <if test="source != null">
+          source = #{source},
+        </if>
+        <if test="limitType != null">
+          limit_type = #{limitType},
+        </if>
+        <if test="limitNum != null">
+          limit_num = #{limitNum},
+        </if>
+        <if test="soldNum != null">
+          sold_num = #{soldNum},
+        </if>
+        <if test="selectStoreType != null">
+          select_store_type = #{selectStoreType},
+        </if>
+        version = version+1,
+        update_time = NOW()
+      </set>
+      WHERE
+      limit_id = #{limitId}
+      AND version=#{version}
+      /*LimitInfoDao.updateLimitInfo*/
+    </update>
+
     <select id="getLimitInfo" parameterType="LimitParam" resultMap="BaseResultMap">
       SELECT
         <include refid="Base_Column_List"/>
@@ -84,7 +127,7 @@
     /*LimitInfoDao.getLimitInfo*/
     </select>
 
-    <select id="listLimitInfo" resultMap="BaseResultMap" parameterType="java.util.List">
+    <select id="listLimitInfoByLimitId" resultMap="BaseResultMap" parameterType="java.util.List">
       SELECT
         <include refid="Base_Column_List"/>
       FROM
@@ -96,51 +139,9 @@
           AND biz_type = #{item.bizType}
           AND is_deleted = 0)
         </foreach>
-    /*LimitInfoDao.listLimitInfo*/
+    /*LimitInfoDao.listLimitInfoByLimitId*/
     </select>
 
-    <update id="updateLimitInfo" parameterType="LimitInfoEntity">
-      UPDATE limit_info
-        <set>
-          <if test="saleChannelType != null">
-            sale_channeltype = #{saleChannelType},
-          </if>
-          <if test="source != null">
-            source = #{source},
-          </if>
-          <if test="limitType != null">
-            limit_type = #{limitType},
-          </if>
-          <if test="limitNum != null">
-            limit_num = #{limitNum},
-          </if>
-          <if test="soldNum != null">
-            sold_num = #{soldNum},
-          </if>
-          <if test="selectStoreType != null">
-            select_store_type = #{selectStoreType},
-          </if>
-          version = version+1,
-          update_time = NOW()
-        </set>
-      WHERE
-        limit_id = #{limitId}
-      AND version=#{version}
-    /*LimitInfoDao.updateLimitInfo*/
-    </update>
-
-    <update id="deleteLimitInfo" parameterType="LimitInfoEntity">
-      UPDATE
-        limit_info
-      SET
-        is_deleted = 1,
-        update_time = NOW(),
-        version = version+1
-      WHERE
-        limit_id=#{limitId}
-      AND version=#{version}
-    /*LimitInfoDao.deleteLimitInfo*/
-  </update>
 
     <update id="reverseLimitInfoStatus" parameterType="java.lang.Long">
       UPDATE

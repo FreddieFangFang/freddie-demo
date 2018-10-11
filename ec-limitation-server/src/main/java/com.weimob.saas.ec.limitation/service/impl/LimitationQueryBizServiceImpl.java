@@ -71,7 +71,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             queryLimitInfoList.add(limitParam);
         }
         //查询限购主表
-        List<LimitInfoEntity> limitInfoEntityList = limitInfoDao.listLimitInfo(queryLimitInfoList);
+        List<LimitInfoEntity> limitInfoEntityList = limitInfoDao.listLimitInfoByLimitId(queryLimitInfoList);
         if (CollectionUtils.isEmpty(limitInfoEntityList)) {
             throw new LimitationBizException(LimitationErrorCode.LIMIT_GOODS_IS_NULL);
         }
@@ -84,7 +84,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         buildQueryEntity(requestVo, limitIdMap, queryGoodsLimitList, queryUserGoodsLimitList, queryUserLimitList, querySkuLimitList);
 
         //查询商品限购信息
-        List<GoodsLimitInfoEntity> goodsLimitInfoList = goodsLimitInfoDao.queryGoodsLimitInfoList(queryGoodsLimitList);
+        List<GoodsLimitInfoEntity> goodsLimitInfoList = goodsLimitInfoDao.listGoodsLimitByGoodsId(queryGoodsLimitList);
         for (GoodsLimitInfoEntity entity : goodsLimitInfoList) {
             String goodsLimitNumKey = MapKeyUtil.buildPidGoodsLimitNumMap(entity.getPid(), entity.getLimitId(), entity.getGoodsId());
             if (CollectionUtils.isEmpty(goodsLimitNumMap.get(goodsLimitNumKey))) {
@@ -413,7 +413,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
     public QueryGoodsLimitNumListResponseVo queryGoodsLimitNumList(QueryGoodsLimitNumRequestVo requestVo) {
         QueryGoodsLimitNumListResponseVo responseVo = new QueryGoodsLimitNumListResponseVo();
         List<QueryGoodsLimitNumVo> queryGoodsLimitNumList = new ArrayList<>();
-        List<GoodsLimitInfoEntity> goodsLimitInfoEntityList = goodsLimitInfoDao.queryGoodsLimitNumList(requestVo.getQueryGoodslimitNumVoList());
+        List<GoodsLimitInfoEntity> goodsLimitInfoEntityList = goodsLimitInfoDao.listGoodsLimitNum(requestVo.getQueryGoodslimitNumVoList());
         if (CollectionUtils.isEmpty(goodsLimitInfoEntityList)) {
             return responseVo;
         }
@@ -541,7 +541,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             queryLimitInfoList.add(limitParam);
         }
         //查询限购主表
-        List<LimitInfoEntity> limitInfoEntityList = limitInfoDao.listLimitInfo(queryLimitInfoList);
+        List<LimitInfoEntity> limitInfoEntityList = limitInfoDao.listLimitInfoByLimitId(queryLimitInfoList);
         if (CollectionUtils.isEmpty(limitInfoEntityList)) {
             throw new LimitationBizException(LimitationErrorCode.LIMIT_GOODS_IS_NULL);
         }
@@ -554,7 +554,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         buildGoodsQueryEntity(requestVo, limitIdMap, queryGoodsLimitList, queryUserGoodsLimitList, queryUserLimitList, querySkuLimitList);
 
         //查询商品限购信息
-        List<GoodsLimitInfoEntity> goodsLimitInfoList = goodsLimitInfoDao.queryGoodsLimitInfoList(queryGoodsLimitList);
+        List<GoodsLimitInfoEntity> goodsLimitInfoList = goodsLimitInfoDao.listGoodsLimitByGoodsId(queryGoodsLimitList);
         for (GoodsLimitInfoEntity entity : goodsLimitInfoList) {
             String goodsLimitNumKey = MapKeyUtil.buildPidGoodsLimitNumMap(entity.getPid(), entity.getLimitId(), entity.getGoodsId());
             if (CollectionUtils.isEmpty(goodsLimitNumMap.get(goodsLimitNumKey))) {

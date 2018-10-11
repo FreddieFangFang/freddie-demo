@@ -84,9 +84,9 @@ public class LimitationServiceImpl {
         param.setLimitId(limitId);
         param.setGoodsIdList(goodsIdList);
         if (CollectionUtils.isEmpty(goodsIdList)) {
-            goodsLimitInfoDao.deleteLimit(param);
+            goodsLimitInfoDao.deleteGoodsLimitByLimitId(param);
         } else {
-            goodsLimitInfoDao.deleteGoodsLimit(param);
+            goodsLimitInfoDao.deleteGoodsLimitByGoodsId(param);
         }
 
     }
@@ -106,27 +106,27 @@ public class LimitationServiceImpl {
 
     public void saveGoodsLimitInfo(LimitInfoEntity limitInfoEntity, List<GoodsLimitInfoEntity> goodsLimitInfoEntity, List<SkuLimitInfoEntity> skuLimitInfoList) {
         limitInfoDao.insertLimitInfo(limitInfoEntity);
-        goodsLimitInfoDao.batchInsert(goodsLimitInfoEntity);
+        goodsLimitInfoDao.batchInsertGoodsLimit(goodsLimitInfoEntity);
         skuLimitInfoDao.batchInsert(skuLimitInfoList);
     }
 
     public void addGoodsLimitInfoEntity(List<GoodsLimitInfoEntity> goodsLimitInfoEntity) {
-        goodsLimitInfoDao.batchInsert(goodsLimitInfoEntity);
+        goodsLimitInfoDao.batchInsertGoodsLimit(goodsLimitInfoEntity);
     }
 
     public void addSkuLimitInfoList(List<SkuLimitInfoEntity> skuLimitInfoList, List<GoodsLimitInfoEntity> goodsLimitInfoEntity) {
-        goodsLimitInfoDao.batchInsert(goodsLimitInfoEntity);
+        goodsLimitInfoDao.batchInsertGoodsLimit(goodsLimitInfoEntity);
         skuLimitInfoDao.batchInsert(skuLimitInfoList);
     }
 
     public void updateGoodsLimitInfoEntity(List<GoodsLimitInfoEntity> goodsLimitInfoEntityList) {
         for (GoodsLimitInfoEntity goodsLimitInfoEntity : goodsLimitInfoEntityList) {
             //迁移过来的数据只有一条，更新为0则插入
-            int update = goodsLimitInfoDao.updateGoodsLimitInfoEntity(goodsLimitInfoEntity);
+            int update = goodsLimitInfoDao.updateGoodsLimit(goodsLimitInfoEntity);
             if (update == 0) {
                 List<GoodsLimitInfoEntity> goodsList = new ArrayList<>();
                 goodsList.add(goodsLimitInfoEntity);
-                goodsLimitInfoDao.batchInsert(goodsList);
+                goodsLimitInfoDao.batchInsertGoodsLimit(goodsList);
             }
         }
     }
@@ -182,11 +182,11 @@ public class LimitationServiceImpl {
 
         for (GoodsLimitInfoEntity oldGoodsLimitInfoEntity : oldGoodsLimitInfoEntityList) {
             //迁移过来的数据只有一条，更新为0则插入
-            int update = goodsLimitInfoDao.updateGoodsLimitInfoEntity(oldGoodsLimitInfoEntity);
+            int update = goodsLimitInfoDao.updateGoodsLimit(oldGoodsLimitInfoEntity);
             if (update == 0) {
                 List<GoodsLimitInfoEntity> goodsList = new ArrayList<>();
                 goodsList.add(oldGoodsLimitInfoEntity);
-                goodsLimitInfoDao.batchInsert(goodsList);
+                goodsLimitInfoDao.batchInsertGoodsLimit(goodsList);
             }
         }
 
@@ -372,7 +372,7 @@ public class LimitationServiceImpl {
 
     public void reverseUpdateGoodsLimit(List<GoodsLimitInfoEntity> goodsLimitInfoEntityList, List<SkuLimitInfoEntity> updateSkuList, List<SkuLimitInfoEntity> insertSkuList, List<SkuLimitInfoEntity> deleteSkuList) {
         for (GoodsLimitInfoEntity oldGoodsLimitInfoEntity : goodsLimitInfoEntityList) {
-            goodsLimitInfoDao.updateGoodsLimitInfoEntity(oldGoodsLimitInfoEntity);
+            goodsLimitInfoDao.updateGoodsLimit(oldGoodsLimitInfoEntity);
         }
 
         if (CollectionUtils.isNotEmpty(updateSkuList)) {

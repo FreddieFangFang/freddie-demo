@@ -24,8 +24,8 @@
         <typeAlias type="com.weimob.saas.ec.limitation.entity.SkuLimitInfoEntity" alias="SkuLimitInfoEntity"/>
         <typeAlias type="com.weimob.saas.ec.limitation.entity.UserGoodsLimitEntity" alias="UserGoodsLimitEntity"/>
         <typeAlias type="com.weimob.saas.ec.limitation.entity.UserLimitEntity" alias="UserLimitEntity"/>
-        <!-- 通用查询入参别名-->
         <typeAlias type="com.weimob.saas.ec.limitation.model.LimitParam" alias="LimitParam"/>
+        <typeAlias type="com.weimob.saas.ec.limitation.model.DeleteGoodsParam" alias="DeleteGoodsParam"/>
     </typeAliases>
 
     <mappers>

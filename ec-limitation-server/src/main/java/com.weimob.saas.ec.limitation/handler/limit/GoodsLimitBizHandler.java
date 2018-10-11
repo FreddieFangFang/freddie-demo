@@ -41,7 +41,7 @@ public class GoodsLimitBizHandler extends BaseHandler implements LimitBizHandler
         /** 1 处理入参数据 **/
         groupingOrderGoodsRequestVoList(LimitContext.getLimitBo().getOrderGoodsLimitMap(), orderGoodsQueryMap, vos, orderGoodsValidMap);
         /** 2 查询商品限购信息 **/
-        List<GoodsLimitInfoEntity> goodsLimitInfoEntityList = goodsLimitInfoDao.queryOrderGoodsLimitInfoList(orderGoodsQueryMap.get(LIMIT_PREFIX_GOODS));
+        List<GoodsLimitInfoEntity> goodsLimitInfoEntityList = goodsLimitInfoDao.listOrderGoodsLimit(orderGoodsQueryMap.get(LIMIT_PREFIX_GOODS));
         if (CollectionUtils.isEmpty(goodsLimitInfoEntityList)) {
             throw new LimitationBizException(LimitationErrorCode.LIMIT_GOODS_IS_NULL);
         }

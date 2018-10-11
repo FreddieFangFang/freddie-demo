@@ -8,7 +8,6 @@ import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.handler.BaseHandler;
 import com.weimob.saas.ec.limitation.handler.LimitBizHandler;
-import com.weimob.saas.ec.limitation.model.LimitBo;
 import com.weimob.saas.ec.limitation.model.LimitParam;
 import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
 import com.weimob.saas.ec.limitation.utils.LimitContext;
@@ -46,7 +45,7 @@ public class ActivityLimitBizHandler extends BaseHandler implements LimitBizHand
             limitParams.add(limitInputVo);
         }
         /** 2 查询活动限购信息 **/
-        List<LimitInfoEntity> limitInfoEntityList = limitInfoDao.listLimitInfo(limitParams);
+        List<LimitInfoEntity> limitInfoEntityList = limitInfoDao.listLimitInfoByLimitId(limitParams);
         if (CollectionUtils.isEmpty(limitInfoEntityList)) {
             throw new LimitationBizException(LimitationErrorCode.LIMIT_ACTIVITY_IS_NULL);
         }

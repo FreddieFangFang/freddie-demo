@@ -104,7 +104,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         List<SkuLimitInfoEntity> skuLimitInfoEntityList = skuLimitInfoDao.queryAllSkuLimitList(new LimitParam(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId()));
         if (CollectionUtils.isEmpty(skuLimitInfoEntityList)) {
             //没有sku记录，查询goods表
-            List<GoodsLimitInfoEntity> goodsLimitInfoEntityList = goodsLimitInfoDao.queryAllGoodsLimitInfoList(new LimitParam(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId()));
+            List<GoodsLimitInfoEntity> goodsLimitInfoEntityList = goodsLimitInfoDao.listGoodsLimitByLimitId(new LimitParam(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId()));
             buildDeleteLimitationGoodsChangeLog(goodsLimitInfoEntityList, LimitServiceNameEnum.DELETE_ACTIVITY_LIMIT.name(), requestVo);
         } else {
             buildDeleteLimitationSkuChangeLog(skuLimitInfoEntityList, LimitServiceNameEnum.DELETE_ACTIVITY_LIMIT.name(), requestVo);
@@ -333,7 +333,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
 
         /** 2 更新商品限购表限购值*/
         List<GoodsLimitInfoEntity> newGoodsLimitInfoEntityList = buildGoodsLimitInfoEntity(limitId, saveGoodsLimitInfoRequestVo);
-        List<GoodsLimitInfoEntity> oldGoodsLimitInfoList = goodsLimitInfoDao.queryGoodsLimitInfoList(buildQueryGoodsLimitList(saveGoodsLimitInfoRequestVo, limitId));
+        List<GoodsLimitInfoEntity> oldGoodsLimitInfoList = goodsLimitInfoDao.listGoodsLimitByGoodsId(buildQueryGoodsLimitList(saveGoodsLimitInfoRequestVo, limitId));
         List<SkuLimitInfoEntity> oldSkuLimitInfoList = new ArrayList<>();
         List<SkuLimitInfoEntity> newSkuLimitInfoList = null;
         if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), bizType)
