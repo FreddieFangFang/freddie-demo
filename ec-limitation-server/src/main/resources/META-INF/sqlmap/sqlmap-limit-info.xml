@@ -34,7 +34,7 @@
       update_time
   </sql>
 
-    <insert id="insertLimitInfo" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
+    <insert id="insertLimitInfo" parameterType="LimitInfoEntity">
       INSERT INTO limit_info
         (
         limit_id,
@@ -71,7 +71,7 @@
       /*LimitInfoDao.insertLimitInfo*/
     </insert>
 
-    <select id="getLimitInfo" parameterType="com.weimob.saas.ec.limitation.model.LimitParam" resultMap="BaseResultMap">
+    <select id="getLimitInfo" parameterType="LimitParam" resultMap="BaseResultMap">
       SELECT
         <include refid="Base_Column_List"/>
       FROM
@@ -99,7 +99,7 @@
     /*LimitInfoDao.listLimitInfo*/
     </select>
 
-    <update id="updateLimitInfo" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
+    <update id="updateLimitInfo" parameterType="LimitInfoEntity">
       UPDATE limit_info
         <set>
           <if test="saleChannelType != null">
@@ -129,7 +129,7 @@
     /*LimitInfoDao.updateLimitInfo*/
     </update>
 
-    <update id="deleteLimitInfo" parameterType="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
+    <update id="deleteLimitInfo" parameterType="LimitInfoEntity">
       UPDATE
         limit_info
       SET
