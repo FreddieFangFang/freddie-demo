@@ -49,7 +49,7 @@ public class LimitationServiceImpl {
     public void saveLimitationInfo(LimitInfoEntity limitInfoEntity, List<LimitStoreRelationshipEntity> storeInfoList) {
         limitInfoDao.insertLimitInfo(limitInfoEntity);
         if (CollectionUtils.isNotEmpty(storeInfoList)) {
-            limitStoreRelationshipDao.batchInsert(storeInfoList);
+            limitStoreRelationshipDao.batchInsertStoreRelationship(storeInfoList);
         }
     }
 
@@ -60,10 +60,10 @@ public class LimitationServiceImpl {
         LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
         deleteEntity.setPid(limitInfoEntity.getPid());
         deleteEntity.setLimitId(limitInfoEntity.getLimitId());
-        limitStoreRelationshipDao.delete(deleteEntity);
+        limitStoreRelationshipDao.deleteStoreRelationship(deleteEntity);
 
         if (CollectionUtils.isNotEmpty(storeInfoList)) {
-            limitStoreRelationshipDao.batchInsert(storeInfoList);
+            limitStoreRelationshipDao.batchInsertStoreRelationship(storeInfoList);
         }
     }
 
@@ -75,7 +75,7 @@ public class LimitationServiceImpl {
         LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
         deleteEntity.setPid(pid);
         deleteEntity.setLimitId(limitId);
-        limitStoreRelationshipDao.delete(deleteEntity);
+        limitStoreRelationshipDao.deleteStoreRelationship(deleteEntity);
     }
 
     public void deleteGoodsLimitInfo(Long pid, Long limitId, List<Long> goodsIdList) {
@@ -138,7 +138,7 @@ public class LimitationServiceImpl {
         deleteEntity.setPid(oldLimitInfoEntity.getPid());
         deleteEntity.setLimitId(oldLimitInfoEntity.getLimitId());
 
-        limitStoreRelationshipDao.delete(deleteEntity);
+        limitStoreRelationshipDao.deleteStoreRelationship(deleteEntity);
 
         deleteSkuLimitInfo(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId(), null);
     }
@@ -149,7 +149,7 @@ public class LimitationServiceImpl {
         LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
         deleteEntity.setPid(oldLimitInfoEntity.getPid());
         deleteEntity.setLimitId(oldLimitInfoEntity.getLimitId());
-        limitStoreRelationshipDao.delete(deleteEntity);
+        limitStoreRelationshipDao.deleteStoreRelationship(deleteEntity);
 
         deleteSkuLimitInfo(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId(), null);
     }
@@ -160,7 +160,7 @@ public class LimitationServiceImpl {
         LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
         deleteEntity.setPid(oldLimitInfoEntity.getPid());
         deleteEntity.setLimitId(oldLimitInfoEntity.getLimitId());
-        limitStoreRelationshipDao.delete(deleteEntity);
+        limitStoreRelationshipDao.deleteStoreRelationship(deleteEntity);
     }
 
     public void deleteCombinationLimitInfo(LimitInfoEntity oldLimitInfoEntity) {
@@ -169,7 +169,7 @@ public class LimitationServiceImpl {
         LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
         deleteEntity.setPid(oldLimitInfoEntity.getPid());
         deleteEntity.setLimitId(oldLimitInfoEntity.getLimitId());
-        limitStoreRelationshipDao.delete(deleteEntity);
+        limitStoreRelationshipDao.deleteStoreRelationship(deleteEntity);
     }
 
     public void deletePointGoodsLimitInfo(LimitInfoEntity entity, List<Long> pointGoodsIdList) {
