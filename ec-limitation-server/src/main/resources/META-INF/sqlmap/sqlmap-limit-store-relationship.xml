@@ -44,7 +44,7 @@
     /*LimitStoreRelationshipDao.batchInsertStoreRelationship*/
     </insert>
 
-    <update id="deleteStoreRelationship" parameterType="com.weimob.saas.ec.limitation.entity.LimitStoreRelationshipEntity">
+    <update id="deleteStoreRelationship" parameterType="LimitStoreRelationshipEntity">
       UPDATE
         limit_store_relationship
       SET

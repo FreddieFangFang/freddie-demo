@@ -14,253 +14,148 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
     </resultMap>
+
     <sql id="Base_Column_List">
-    id, pid, store_id, wid,biz_id,biz_type, limit_id, buy_num, is_deleted, create_time, update_time
-  </sql>
-    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from user_limit
-        where id = #{id,jdbcType=BIGINT}
-    </select>
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from user_limit
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
-    <insert id="insert" parameterType="com.weimob.saas.ec.limitation.entity.UserLimitEntity">
-    insert into user_limit
-    (
-    pid,
-    store_id,
-    wid,
-    limit_id,
-    biz_id,
-    biz_type,
-    buy_num,
-    is_deleted,
-    create_time,
-    update_time
-      )
-    values
-    (
-    #{pid},
-    #{storeId},
-    #{wid},
-    #{limitId},
-    #{bizId},
-    #{bizType},
-    #{buyNum},
-    0,
-    NOW(),
-    NOW()
-      )
-      /*UserLimitDao.insert*/
-  </insert>
-    <update id="update" parameterType="com.weimob.saas.ec.limitation.entity.UserLimitEntity">
-        UPDATE
-            user_limit
-        SET
-            buy_num = buy_num + #{buyNum},
-            update_time = NOW()
-        where
-            pid = #{pid}
-            AND store_id = #{storeId}
-            AND wid = #{wid}
-            AND limit_id = #{limitId}
-        /*UserLimitDao.update*/
-    </update>
+      id,
+      pid,
+      store_id,
+      wid,
+      biz_id,
+      biz_type,
+      limit_id,
+      buy_num,
+      is_deleted,
+      create_time,
+      update_time
+    </sql>
 
-    <insert id="insertSelective" parameterType="com.weimob.saas.ec.limitation.entity.UserLimitEntity">
-        insert into user_limit
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                id,
-            </if>
-            <if test="pid != null">
-                pid,
-            </if>
-            <if test="storeId != null">
-                store_id,
-            </if>
-            <if test="wid != null">
-                wid,
-            </if>
-            <if test="limitId != null">
-                limit_id,
-            </if>
-            <if test="buyNum != null">
-                buy_num,
-            </if>
-            <if test="isDeleted != null">
-                is_deleted,
-            </if>
-            <if test="createTime != null">
-                create_time,
-            </if>
-            <if test="updateTime != null">
-                update_time,
-            </if>
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                #{id,jdbcType=BIGINT},
-            </if>
-            <if test="pid != null">
-                #{pid,jdbcType=BIGINT},
-            </if>
-            <if test="storeId != null">
-                #{storeId,jdbcType=BIGINT},
-            </if>
-            <if test="wid != null">
-                #{wid,jdbcType=BIGINT},
-            </if>
-            <if test="limitId != null">
-                #{limitId,jdbcType=BIGINT},
-            </if>
-            <if test="buyNum != null">
-                #{buyNum,jdbcType=INTEGER},
-            </if>
-            <if test="isDeleted != null">
-                #{isDeleted,jdbcType=BIT},
-            </if>
-            <if test="createTime != null">
-                #{createTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="updateTime != null">
-                #{updateTime,jdbcType=TIMESTAMP},
-            </if>
-        </trim>
+    <insert id="insertUserLimit" parameterType="UserLimitEntity">
+      INSERT INTO user_limit (
+        pid,
+        store_id,
+        wid,
+        limit_id,
+        biz_id,
+        biz_type,
+        buy_num,
+        is_deleted,
+        create_time,
+        update_time
+        )
+      VALUES
+        (
+          #{pid},
+          #{storeId},
+          #{wid},
+          #{limitId},
+          #{bizId},
+          #{bizType},
+          #{buyNum},
+          0,
+          NOW(),
+          NOW()
+        )
+    /*UserLimitDao.insertUserLimit*/
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.weimob.saas.ec.limitation.entity.UserLimitEntity">
-        update user_limit
-        <set>
-            <if test="pid != null">
-                pid = #{pid,jdbcType=BIGINT},
-            </if>
-            <if test="storeId != null">
-                store_id = #{storeId,jdbcType=BIGINT},
-            </if>
-            <if test="wid != null">
-                wid = #{wid,jdbcType=BIGINT},
-            </if>
-            <if test="limitId != null">
-                limit_id = #{limitId,jdbcType=BIGINT},
-            </if>
-            <if test="buyNum != null">
-                buy_num = #{buyNum,jdbcType=INTEGER},
-            </if>
-            <if test="isDeleted != null">
-                is_deleted = #{isDeleted,jdbcType=BIT},
-            </if>
-            <if test="createTime != null">
-                create_time = #{createTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="updateTime != null">
-                update_time = #{updateTime,jdbcType=TIMESTAMP},
-            </if>
-        </set>
-        where id = #{id,jdbcType=BIGINT}
-    </update>
-    <update id="updateByPrimaryKey" parameterType="com.weimob.saas.ec.limitation.entity.UserLimitEntity">
-    update user_limit
-    set pid = #{pid,jdbcType=BIGINT},
-      store_id = #{storeId,jdbcType=BIGINT},
-      wid = #{wid,jdbcType=BIGINT},
-      limit_id = #{limitId,jdbcType=BIGINT},
-      buy_num = #{buyNum,jdbcType=INTEGER},
-      is_deleted = #{isDeleted,jdbcType=BIT},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
 
-    <select id="getUserLimitEntity" parameterType="com.weimob.saas.ec.limitation.entity.UserLimitEntity"
-            resultType="com.weimob.saas.ec.limitation.entity.UserLimitEntity">
-        select
-        <include refid="Base_Column_List"/>
-        from
+    <update id="deleteDiscountUserLimit"
+            parameterType="com.weimob.saas.ec.limitation.model.request.DeleteDiscountUserLimitInfoRequestVo">
+      UPDATE
         user_limit
-        where
+      SET
+        wid =-1 * wid,
+        update_time = NOW()
+      WHERE
         pid = #{pid}
-        and store_id = #{storeId}
-        and wid = #{wid}
-        and limit_id = #{limitId}
-        and is_deleted = 0
-        /*UserLimitDao.getUserLimitEntity*/
+      AND biz_id = #{bizId}
+      AND biz_type = #{bizType}
+      AND is_deleted = 0
+      /*UserLimitDao.deleteDiscountUserLimit*/
+    </update>
+
+    <update id="updateUserLimit" parameterType="UserLimitEntity">
+      UPDATE
+        user_limit
+      SET
+        buy_num = buy_num + #{buyNum},
+        update_time = NOW()
+      WHERE
+        pid = #{pid}
+      AND store_id = #{storeId}
+      AND wid = #{wid}
+      AND limit_id = #{limitId}
+    /*UserLimitDao.updateUserLimit*/
+    </update>
+
+    <update id="deductUserLimit" parameterType="UserLimitEntity">
+      UPDATE
+        user_limit
+      SET
+        buy_num = buy_num - #{buyNum},
+        update_time = NOW()
+      WHERE
+        pid = #{pid}
+      AND store_id = #{storeId}
+      AND wid = #{wid}
+      AND limit_id = #{limitId}
+      AND buy_num >= #{buyNum}
+    /*UserLimitDao.deductUserLimit*/
+    </update>
+
+    <select id="getUserLimit" parameterType="UserLimitEntity" resultType="UserLimitEntity">
+      SELECT
+        <include refid="Base_Column_List"/>
+      FROM
+        user_limit
+      WHERE
+        pid = #{pid}
+      AND store_id = #{storeId}
+      AND wid = #{wid}
+      AND limit_id = #{limitId}
+      AND is_deleted = 0
+    /*UserLimitDao.getUserLimit*/
     </select>
 
-    <select id="queryUserLimitInfoList" resultMap="BaseResultMap" parameterType="java.util.List">
-        select
+    <select id="listUserLimitByBizId" resultMap="BaseResultMap" parameterType="java.util.List">
+      SELECT
         userlimit.pid pid,
         userlimit.store_id store_id,
         userlimit.limit_id limit_id,
         userlimit.biz_id biz_id,
         userlimit.biz_type biz_type,
         userlimit.buy_num buy_num
-        from
+      FROM
         user_limit as userlimit,
         limit_info as limitinfo
-        where
+      WHERE
         limitinfo.limit_id=userlimit.limit_id
-        AND (
-        <foreach item="item" index="index" collection="list"
-                 separator="or">
-            userlimit.pid = #{item.pid}
-            and userlimit.store_id = #{item.storeId}
-            and userlimit.wid =#{item.wid}
-            and userlimit.biz_id =#{item.bizId}
-            and userlimit.biz_type=#{item.bizType}
-            and userlimit.is_deleted = 0
-            and limitinfo.is_deleted = 0
+      AND (
+        <foreach item="item" index="index" collection="list" separator="or">
+          userlimit.pid = #{item.pid}
+          AND userlimit.store_id = #{item.storeId}
+          AND userlimit.wid =#{item.wid}
+          AND userlimit.biz_id =#{item.bizId}
+          AND userlimit.biz_type=#{item.bizType}
+          AND userlimit.is_deleted = 0
+          AND limitinfo.is_deleted = 0
         </foreach>
         )
-        /*UserLimitDao.queryUserLimitInfoList*/
+    /*UserLimitDao.listUserLimitByBizId*/
     </select>
 
-    <select id="queryUserLimitEntityList" parameterType="java.util.List"
-            resultMap="BaseResultMap">
-        select
+    <select id="listUserLimitByLimitId" parameterType="java.util.List" resultMap="BaseResultMap">
+      SELECT
         <include refid="Base_Column_List"/>
-        from
+      FROM
         user_limit
-        where
-        <foreach item="item" index="index" collection="list"
-                 separator="or">
-            pid = #{item.pid}
-            and wid = #{item.wid}
-            and limit_id = #{item.limitId}
-            and is_deleted = 0
+      WHERE
+        <foreach item="item" index="index" collection="list" separator="or">
+          pid = #{item.pid}
+          AND wid = #{item.wid}
+          AND limit_id = #{item.limitId}
+          AND is_deleted = 0
         </foreach>
-        /*UserLimitDao.queryUserLimitEntityList*/
+    /*UserLimitDao.listUserLimitByLimitId*/
     </select>
-
-    <update id="deductUserLimit" parameterType="com.weimob.saas.ec.limitation.entity.UserLimitEntity">
-        UPDATE
-        user_limit
-        SET
-        buy_num = buy_num - #{buyNum},
-        update_time = NOW()
-        WHERE
-        pid = #{pid}
-        AND store_id = #{storeId}
-        AND wid = #{wid}
-        AND limit_id = #{limitId}
-        AND buy_num >= #{buyNum}
-        /*UserLimitDao.deductUserLimit*/
-    </update>
-
-    <update id="deleteDiscountUserLimitInfo"
-            parameterType="com.weimob.saas.ec.limitation.model.request.DeleteDiscountUserLimitInfoRequestVo">
-        UPDATE
-        user_limit
-        SET
-        wid =-1 * wid,
-        update_time = NOW()
-        WHERE
-        pid = #{pid}
-        AND biz_id = #{bizId}
-        AND biz_type = #{bizType}
-        AND is_deleted = 0
-        /*UserLimitDao.deleteDiscountUserLimitInfo*/
-    </update>
 </mapper>
+

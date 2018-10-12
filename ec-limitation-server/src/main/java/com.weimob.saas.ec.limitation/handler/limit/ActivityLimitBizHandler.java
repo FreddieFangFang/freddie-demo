@@ -50,7 +50,7 @@ public class ActivityLimitBizHandler extends BaseHandler implements LimitBizHand
             throw new LimitationBizException(LimitationErrorCode.LIMIT_ACTIVITY_IS_NULL);
         }
         /** 3 查询用户购买记录 **/
-        List<UserLimitEntity> userLimitEntityList = userLimitDao.queryUserLimitInfoList(vos);
+        List<UserLimitEntity> userLimitEntityList = userLimitDao.listUserLimitByBizId(vos);
         /** 4 校验商品是否超出活动限购 **/
         validLimitation(limitInfoEntityList, null, userLimitEntityList,
                 null, null, orderActivityValidMap);

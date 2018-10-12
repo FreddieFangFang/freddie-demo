@@ -113,7 +113,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         if (Objects.equals(requestVo.getGoodsDetailList().get(0).getBizType(), ActivityTypeEnum.DISCOUNT.getType())
                 && Objects.equals(requestVo.getGoodsDetailList().get(0).getActivityStockType(), LimitConstant.DISCOUNT_TYPE_STOCK)) {
             //限时折扣要校验活动限购
-            List<UserLimitEntity> userLimitEntityList = userLimitDao.queryUserLimitEntityList(queryUserLimitList);
+            List<UserLimitEntity> userLimitEntityList = userLimitDao.listUserLimitByLimitId(queryUserLimitList);
             if (CollectionUtils.isNotEmpty(userLimitEntityList)) {
                 for (UserLimitEntity vo : userLimitEntityList) {
                     //多门店下单，进行合并
@@ -133,7 +133,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 && Objects.equals(requestVo.getGoodsDetailList().get(0).getActivityStockType(), LimitConstant.DISCOUNT_TYPE_SKU))) {
             //特权价要校验活动限购和sku可售数量
             List<SkuLimitInfoEntity> skuLimitList = skuLimitInfoDao.listSkuLimit(querySkuLimitList);
-            List<UserLimitEntity> userLimitEntityList = userLimitDao.queryUserLimitEntityList(queryUserLimitList);
+            List<UserLimitEntity> userLimitEntityList = userLimitDao.listUserLimitByLimitId(queryUserLimitList);
             if (CollectionUtils.isNotEmpty(userLimitEntityList)) {
                 for (UserLimitEntity vo : userLimitEntityList) {
                     //多门店下单，进行合并
@@ -604,7 +604,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             return responseVo;
         } else {
             //要校验活动限购
-            List<UserLimitEntity> userLimitEntityList = userLimitDao.queryUserLimitEntityList(queryUserLimitList);
+            List<UserLimitEntity> userLimitEntityList = userLimitDao.listUserLimitByLimitId(queryUserLimitList);
             for (UserLimitEntity vo : userLimitEntityList) {
                 //多门店下单，进行合并
                 if (activityUserLimitNumMap.get(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId())) == null) {

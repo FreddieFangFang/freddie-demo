@@ -276,11 +276,11 @@ public class LimitationServiceImpl {
         if (CollectionUtils.isNotEmpty(activityLimitEntityList)) {
             for (UserLimitEntity activityLimitEntity : activityLimitEntityList) {
                 try {
-                    UserLimitEntity oldUserLimitEntity = userLimitDao.getUserLimitEntity(activityLimitEntity);
+                    UserLimitEntity oldUserLimitEntity = userLimitDao.getUserLimit(activityLimitEntity);
                     if (oldUserLimitEntity == null) {
-                        updateResult = userLimitDao.insert(activityLimitEntity);
+                        updateResult = userLimitDao.insertUserLimit(activityLimitEntity);
                     } else {
-                        updateResult = userLimitDao.update(activityLimitEntity);
+                        updateResult = userLimitDao.updateUserLimit(activityLimitEntity);
                     }
                 } catch (Exception e) {
                     throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_LIMIT_ERROR, e);
@@ -363,7 +363,7 @@ public class LimitationServiceImpl {
     public void deleteDiscountUserLimitInfo(DeleteDiscountUserLimitInfoRequestVo requestVo) {
         LimitInfoEntity limitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
         if (limitInfoEntity != null) {
-            userLimitDao.deleteDiscountUserLimitInfo(requestVo);
+            userLimitDao.deleteDiscountUserLimit(requestVo);
             userGoodsLimitDao.deleteDiscountUserLimitInfo(new LimitParam(requestVo.getPid(), limitInfoEntity.getLimitId()));
         } else {
             throw new LimitationBizException(LimitationErrorCode.LIMIT_ACTIVITY_IS_NULL);
