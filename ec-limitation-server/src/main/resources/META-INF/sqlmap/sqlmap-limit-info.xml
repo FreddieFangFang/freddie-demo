@@ -35,8 +35,7 @@
     </sql>
 
     <insert id="insertLimitInfo" parameterType="LimitInfoEntity">
-      INSERT INTO limit_info
-        (
+      INSERT INTO limit_info (
         limit_id,
         pid,
         sale_channeltype,

@@ -132,7 +132,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 || (Objects.equals(requestVo.getGoodsDetailList().get(0).getBizType(), ActivityTypeEnum.DISCOUNT.getType())
                 && Objects.equals(requestVo.getGoodsDetailList().get(0).getActivityStockType(), LimitConstant.DISCOUNT_TYPE_SKU))) {
             //特权价要校验活动限购和sku可售数量
-            List<SkuLimitInfoEntity> skuLimitList = skuLimitInfoDao.querySkuLimitList(querySkuLimitList);
+            List<SkuLimitInfoEntity> skuLimitList = skuLimitInfoDao.listSkuLimit(querySkuLimitList);
             List<UserLimitEntity> userLimitEntityList = userLimitDao.queryUserLimitEntityList(queryUserLimitList);
             if (CollectionUtils.isNotEmpty(userLimitEntityList)) {
                 for (UserLimitEntity vo : userLimitEntityList) {
@@ -150,7 +150,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             validGoodsSkuLimit(requestVo, limitIdMap, skuLimitList, responseVo);
             return responseVo;
         } else if (Objects.equals(requestVo.getGoodsDetailList().get(0).getBizType(), LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel())) {
-            List<SkuLimitInfoEntity> skuLimitList = skuLimitInfoDao.querySkuLimitList(querySkuLimitList);
+            List<SkuLimitInfoEntity> skuLimitList = skuLimitInfoDao.listSkuLimit(querySkuLimitList);
             GoodsLimitInfoListResponseVo responseVo = buildGoodsLimitInfoListResponseVo(requestVo, limitIdMap, goodsLimitNumMap, userGoodsLimitNumMap);
             //处理sku的限购
             validGoodsSkuLimit(requestVo, limitIdMap, skuLimitList, responseVo);
@@ -423,7 +423,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 || (Objects.equals(requestVo.getQueryGoodslimitNumVoList().get(0).getBizType(), ActivityTypeEnum.DISCOUNT.getType())
                 && Objects.equals(requestVo.getQueryGoodslimitNumVoList().get(0).getActivityStockType(), LimitConstant.DISCOUNT_TYPE_SKU))
                 || Objects.equals(requestVo.getQueryGoodslimitNumVoList().get(0).getBizType(), LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel())) {
-            List<SkuLimitInfoEntity> skuLimitInfoEntityList = skuLimitInfoDao.queryGoodsSkuLimitList(requestVo.getQueryGoodslimitNumVoList());
+            List<SkuLimitInfoEntity> skuLimitInfoEntityList = skuLimitInfoDao.listSkuLimitNum(requestVo.getQueryGoodslimitNumVoList());
             skuLimitNumMap = buildSkuLimitMap(skuLimitInfoEntityList);
         }
         Map<String, List<GoodsLimitInfoEntity>> goodsLimitNumMap = buildGoodsLimitMap(goodsLimitInfoEntityList);
@@ -578,7 +578,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             }
         }
         //查询sku的限购和限购记录
-        List<SkuLimitInfoEntity> skuLimitList = skuLimitInfoDao.querySkuLimitList(querySkuLimitList);
+        List<SkuLimitInfoEntity> skuLimitList = skuLimitInfoDao.listSkuLimit(querySkuLimitList);
 
 
         //根据限购类型进行限购校验

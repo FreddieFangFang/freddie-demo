@@ -35,7 +35,7 @@ public class SkuLimitBizHandler extends BaseHandler implements LimitBizHandler {
         /** 1 处理入参数据 **/
         groupingOrderSkuRequestVoList(LimitContext.getLimitBo().getOrderGoodsLimitMap(), orderGoodsQueryMap, vos, orderSkuValidMap);
         /** 2 查询商品限购信息 **/
-        List<SkuLimitInfoEntity> skuLimitInfoList = skuLimitInfoDao.queryOrderSkuLimitInfoList(vos);
+        List<SkuLimitInfoEntity> skuLimitInfoList = skuLimitInfoDao.listOrderSkuLimit(vos);
         if (CollectionUtils.isEmpty(skuLimitInfoList)) {
             throw new LimitationBizException(LimitationErrorCode.LIMIT_SKU_IS_NULL);
         }

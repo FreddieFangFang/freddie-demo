@@ -33,8 +33,7 @@
     </sql>
 
     <insert id="batchInsertGoodsLimit" parameterType="java.util.List">
-      INSERT INTO goods_limit_info
-      (
+      INSERT INTO goods_limit_info (
         pid,
         limit_id,
         limit_type,

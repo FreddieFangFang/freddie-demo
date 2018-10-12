@@ -101,7 +101,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         }
         /** 2 查询商品表或者sku表，保存未删除的记录到日志表，以便进行回滚*/
 
-        List<SkuLimitInfoEntity> skuLimitInfoEntityList = skuLimitInfoDao.queryAllSkuLimitList(new LimitParam(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId()));
+        List<SkuLimitInfoEntity> skuLimitInfoEntityList = skuLimitInfoDao.listSkuLimitByLimitId(new LimitParam(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId()));
         if (CollectionUtils.isEmpty(skuLimitInfoEntityList)) {
             //没有sku记录，查询goods表
             List<GoodsLimitInfoEntity> goodsLimitInfoEntityList = goodsLimitInfoDao.listGoodsLimitByLimitId(new LimitParam(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId()));

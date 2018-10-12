@@ -98,16 +98,16 @@ public class LimitationServiceImpl {
         param.setLimitId(limitId);
         param.setGoodsIdList(goodsIdList);
         if (CollectionUtils.isEmpty(goodsIdList)) {
-            skuLimitInfoDao.deleteLimit(param);
+            skuLimitInfoDao.deleteSkuLimitByLimitId(param);
         } else {
-            skuLimitInfoDao.deleteSkuLimit(param);
+            skuLimitInfoDao.deleteSkuLimitByGoodsId(param);
         }
     }
 
     public void saveGoodsLimitInfo(LimitInfoEntity limitInfoEntity, List<GoodsLimitInfoEntity> goodsLimitInfoEntity, List<SkuLimitInfoEntity> skuLimitInfoList) {
         limitInfoDao.insertLimitInfo(limitInfoEntity);
         goodsLimitInfoDao.batchInsertGoodsLimit(goodsLimitInfoEntity);
-        skuLimitInfoDao.batchInsert(skuLimitInfoList);
+        skuLimitInfoDao.batchInsertSkuLimit(skuLimitInfoList);
     }
 
     public void addGoodsLimitInfoEntity(List<GoodsLimitInfoEntity> goodsLimitInfoEntity) {
@@ -116,7 +116,7 @@ public class LimitationServiceImpl {
 
     public void addSkuLimitInfoList(List<SkuLimitInfoEntity> skuLimitInfoList, List<GoodsLimitInfoEntity> goodsLimitInfoEntity) {
         goodsLimitInfoDao.batchInsertGoodsLimit(goodsLimitInfoEntity);
-        skuLimitInfoDao.batchInsert(skuLimitInfoList);
+        skuLimitInfoDao.batchInsertSkuLimit(skuLimitInfoList);
     }
 
     public void updateGoodsLimitInfoEntity(List<GoodsLimitInfoEntity> goodsLimitInfoEntityList) {
@@ -215,7 +215,7 @@ public class LimitationServiceImpl {
         limitParam.setPid(pid);
         limitParam.setLimitId(limitId);
         limitParam.setGoodsIdList(new ArrayList<>(goodsSkuMap.keySet()));
-        List<SkuLimitInfoEntity> oldSkuLimitInfoList = skuLimitInfoDao.queryOldSkuLimitList(limitParam);
+        List<SkuLimitInfoEntity> oldSkuLimitInfoList = skuLimitInfoDao.listSkuLimitByGoodsId(limitParam);
         while (iterator.hasNext()) {
             Map.Entry<Long, List<SkuLimitInfoEntity>> entry = iterator.next();
             Long goodsId = entry.getKey();
@@ -240,12 +240,12 @@ public class LimitationServiceImpl {
                 DeleteSkuParam param = new DeleteSkuParam();
                 param.setPid(pid);
                 param.setLimitId(limitId);
-                param.setSkuIdList(skuIdList);
                 param.setGoodsId(goodsId);
-                skuLimitInfoDao.deleteGoodsSkuLimit(param);
+                param.setSkuIdList(skuIdList);
+                skuLimitInfoDao.deleteSkuLimitOnUpdateGoodsSuccess(param);
             }
             if (CollectionUtils.isNotEmpty(newSkuLimitList)) {
-                skuLimitInfoDao.batchInsert(newSkuLimitList);
+                skuLimitInfoDao.batchInsertSkuLimit(newSkuLimitList);
             }
         }
         return oldSkuLimitInfoList;
@@ -294,7 +294,7 @@ public class LimitationServiceImpl {
         if (CollectionUtils.isNotEmpty(activityGoodsSoldEntityList)) {
             for (SkuLimitInfoEntity activitySoldEntity : activityGoodsSoldEntityList) {
                 try {
-                    updateResult = skuLimitInfoDao.update(activitySoldEntity);
+                    updateResult = skuLimitInfoDao.increaseSkuSoldNum(activitySoldEntity);
                 } catch (Exception e) {
                     throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_SKU_LIMIT_ERROR, e);
                 }
@@ -349,7 +349,7 @@ public class LimitationServiceImpl {
         if (!CollectionUtils.isEmpty(activityGoodsSoldEntityList)) {
             for (SkuLimitInfoEntity activitySoldEntity : activityGoodsSoldEntityList) {
                 try {
-                    updateResult = skuLimitInfoDao.deductSkuLimit(activitySoldEntity);
+                    updateResult = skuLimitInfoDao.deductSkuSoldNum(activitySoldEntity);
                 } catch (Exception e) {
                     throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_SKU_LIMIT_ERROR, e);
                 }
@@ -382,11 +382,11 @@ public class LimitationServiceImpl {
         }
 
         if (CollectionUtils.isNotEmpty(deleteSkuList)) {
-            skuLimitInfoDao.deleteAllGoodsSku(deleteSkuList);
+            skuLimitInfoDao.deleteSkuLimitOnUpdateGoodsFail(deleteSkuList);
         }
 
         if (CollectionUtils.isNotEmpty(insertSkuList)) {
-            skuLimitInfoDao.updateSkuStatus(insertSkuList);
+            skuLimitInfoDao.reverseSkuLimitStatusBySkuId(insertSkuList);
         }
     }
 
@@ -415,7 +415,7 @@ public class LimitationServiceImpl {
             param.setLimitId(limitId);
             param.setGoodsIdList(goodsIdList);
             goodsLimitInfoDao.reverseGoodsLimit(param);
-            skuLimitInfoDao.reverseSkuLimit(param);
+            skuLimitInfoDao.reverseSkuLimitStatusByGoodsId(param);
         }
     }
 
@@ -429,7 +429,7 @@ public class LimitationServiceImpl {
         goodsLimitInfoDao.reverseGoodsLimit(param);
 
         if (CollectionUtils.isNotEmpty(skuLimitInfoEntityList)) {
-            skuLimitInfoDao.updateSkuStatus(skuLimitInfoEntityList);
+            skuLimitInfoDao.reverseSkuLimitStatusBySkuId(skuLimitInfoEntityList);
         }
     }
 }
