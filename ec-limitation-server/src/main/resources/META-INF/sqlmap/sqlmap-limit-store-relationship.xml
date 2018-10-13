@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.weimob.saas.ec.limitation.dao.LimitStoreRelationshipDao">
+
     <resultMap id="BaseResultMap" type="com.weimob.saas.ec.limitation.entity.LimitStoreRelationshipEntity">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="pid" jdbcType="BIGINT" property="pid"/>
@@ -55,4 +56,5 @@
       AND limit_id=#{limitId}
     /*LimitStoreRelationshipDao.deleteStoreRelationship*/
   </update>
+
 </mapper>

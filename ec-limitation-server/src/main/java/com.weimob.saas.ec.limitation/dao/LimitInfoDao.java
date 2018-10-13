@@ -52,7 +52,7 @@ public interface LimitInfoDao extends BaseDao<LimitInfoEntity> {
      * @param [limitParams]
      * @return java.util.List<com.weimob.saas.ec.limitation.entity.LimitInfoEntity>
      */
-    List<LimitInfoEntity> listLimitInfoByLimitId(List<LimitParam> limitParams);
+    List<LimitInfoEntity> listLimitInfoByBizId(List<LimitParam> limitParams);
 
     /**
      * @title 回滚限购信息

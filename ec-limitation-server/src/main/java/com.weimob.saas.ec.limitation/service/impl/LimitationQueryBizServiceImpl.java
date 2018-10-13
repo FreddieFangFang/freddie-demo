@@ -71,7 +71,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             queryLimitInfoList.add(limitParam);
         }
         //查询限购主表
-        List<LimitInfoEntity> limitInfoEntityList = limitInfoDao.listLimitInfoByLimitId(queryLimitInfoList);
+        List<LimitInfoEntity> limitInfoEntityList = limitInfoDao.listLimitInfoByBizId(queryLimitInfoList);
         if (CollectionUtils.isEmpty(limitInfoEntityList)) {
             throw new LimitationBizException(LimitationErrorCode.LIMIT_GOODS_IS_NULL);
         }
@@ -96,7 +96,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             }
         }
         //查询用户商品下单记录
-        List<UserGoodsLimitEntity> userGoodsLimitList = userGoodsLimitDao.queryUserGoodsLimitList(queryUserGoodsLimitList);
+        List<UserGoodsLimitEntity> userGoodsLimitList = userGoodsLimitDao.listUserGoodsLimit(queryUserGoodsLimitList);
         if (CollectionUtils.isNotEmpty(userGoodsLimitList)) {
             for (UserGoodsLimitEntity entity : userGoodsLimitList) {
                 String userPidGoodsLimitKey = MapKeyUtil.buildPidGoodsLimitNumMap(entity.getPid(), entity.getLimitId(), entity.getGoodsId());
@@ -541,7 +541,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             queryLimitInfoList.add(limitParam);
         }
         //查询限购主表
-        List<LimitInfoEntity> limitInfoEntityList = limitInfoDao.listLimitInfoByLimitId(queryLimitInfoList);
+        List<LimitInfoEntity> limitInfoEntityList = limitInfoDao.listLimitInfoByBizId(queryLimitInfoList);
         if (CollectionUtils.isEmpty(limitInfoEntityList)) {
             throw new LimitationBizException(LimitationErrorCode.LIMIT_GOODS_IS_NULL);
         }
@@ -566,7 +566,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             }
         }
         //查询用户商品下单记录
-        List<UserGoodsLimitEntity> userGoodsLimitList = userGoodsLimitDao.queryUserGoodsLimitList(queryUserGoodsLimitList);
+        List<UserGoodsLimitEntity> userGoodsLimitList = userGoodsLimitDao.listUserGoodsLimit(queryUserGoodsLimitList);
         for (UserGoodsLimitEntity entity : userGoodsLimitList) {
             String userPidGoodsLimitKey = MapKeyUtil.buildPidGoodsLimitNumMap(entity.getPid(), entity.getLimitId(), entity.getGoodsId());
             userGoodsLimitNumMap.put(MapKeyUtil.buildGoodsLimitNumMap(entity.getPid(), entity.getStoreId(), entity.getLimitId(), entity.getGoodsId()), entity.getBuyNum());

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.weimob.saas.ec.limitation.dao.LimitInfoDao">
+
     <resultMap id="BaseResultMap" type="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
         <id column="limit_id" jdbcType="BIGINT" property="limitId"/>
         <result column="pid" jdbcType="BIGINT" property="pid"/>
@@ -126,7 +127,7 @@
     /*LimitInfoDao.getLimitInfo*/
     </select>
 
-    <select id="listLimitInfoByLimitId" resultMap="BaseResultMap" parameterType="java.util.List">
+    <select id="listLimitInfoByBizId" resultMap="BaseResultMap" parameterType="java.util.List">
       SELECT
         <include refid="Base_Column_List"/>
       FROM
@@ -138,7 +139,7 @@
           AND biz_type = #{item.bizType}
           AND is_deleted = 0)
         </foreach>
-    /*LimitInfoDao.listLimitInfoByLimitId*/
+    /*LimitInfoDao.listLimitInfoByBizId*/
     </select>
 
 
@@ -153,4 +154,5 @@
         limit_id=#{limitId}
     /*LimitInfoDao.reverseLimitInfoStatus*/
     </update>
+
 </mapper>

@@ -46,7 +46,7 @@ public class GoodsLimitBizHandler extends BaseHandler implements LimitBizHandler
             throw new LimitationBizException(LimitationErrorCode.LIMIT_GOODS_IS_NULL);
         }
         /** 3 查询用户购买记录 **/
-        List<UserGoodsLimitEntity> userGoodsLimitRecodeList = userGoodsLimitDao.queryUserOrderGoodsLimitList(vos);
+        List<UserGoodsLimitEntity> userGoodsLimitRecodeList = userGoodsLimitDao.listOrderUserGoodsLimit(vos);
         /** 4 校验商品是否超出限购 **/
         validLimitation(null, goodsLimitInfoEntityList, null,
                 userGoodsLimitRecodeList, null, orderGoodsValidMap);

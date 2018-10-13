@@ -17,7 +17,7 @@ public interface UserLimitDao extends BaseDao<UserLimitEntity> {
     Long insertUserLimit(UserLimitEntity entity);
 
     /**
-     * @title 删除周期性限时折扣活动用户购买记录
+     * @title 删除周期性限时折扣用户活动购买记录
      * @author qi.he
      * @date 2018/10/12 0012 17:56
      * @param [requestVo]
@@ -66,7 +66,7 @@ public interface UserLimitDao extends BaseDao<UserLimitEntity> {
      * @title 批量查询用户活动购买记录
      * @author qi.he
      * @date 2018/10/12 0012 17:46
-     * @scene C端查询
+     * @scene 商祥、专题页、购物车、结算
      * @param [vos]
      * @return java.util.List<com.weimob.saas.ec.limitation.entity.UserLimitEntity>
      */

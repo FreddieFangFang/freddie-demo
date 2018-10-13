@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.weimob.saas.ec.limitation.dao.UserGoodsLimitDao">
+
     <resultMap id="BaseResultMap" type="com.weimob.saas.ec.limitation.entity.UserGoodsLimitEntity">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="pid" jdbcType="BIGINT" property="pid"/>
@@ -13,155 +14,147 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
     </resultMap>
+
     <sql id="Base_Column_List">
-    id, pid, store_id, wid, limit_id, goods_id, buy_num, is_deleted, create_time, update_time
-  </sql>
-    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from user_goods_limit
-        where id = #{id,jdbcType=BIGINT}
-    </select>
+      id,
+      pid,
+      store_id,
+      wid,
+      limit_id,
+      goods_id,
+      buy_num,
+      is_deleted,
+      create_time,
+      update_time
+    </sql>
 
-    <select id="queryUserGoodsLimitList"
-            resultMap="BaseResultMap" parameterType="java.util.List">
-        select
-        <include refid="Base_Column_List"/>
-        from
+    <insert id="insertUserGoodsLimit" parameterType="UserGoodsLimitEntity">
+      INSERT INTO user_goods_limit (
+        pid,
+        store_id,
+        wid,
+        limit_id,
+        goods_id,
+        buy_num,
+        is_deleted,
+        create_time,
+        update_time
+        )
+      VALUES
+        (
+         #{pid},
+         #{storeId},
+         #{wid},
+         #{limitId},
+         #{goodsId},
+         #{buyNum},
+         0,
+         NOW(),
+         NOW()
+         )
+     /*UserGoodsLimitDao.insertUserGoodsLimit*/
+    </insert>
+
+    <update id="deleteDiscountUserGoodsLimit" parameterType="LimitParam">
+      UPDATE
         user_goods_limit
-        where
-        <foreach item="item" index="index" collection="list"
-                 separator="or">
-            (pid = #{item.pid}
-            and goods_id = #{item.goodsId}
-            and limit_id = #{item.limitId}
-            and wid = #{item.wid}
-            and is_deleted = 0)
-        </foreach>
-        /*UserGoodsLimitDao.queryUserGoodsLimitList*/
-    </select>
-
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from user_goods_limit
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
-    <insert id="insert" parameterType="com.weimob.saas.ec.limitation.entity.UserGoodsLimitEntity">
-    insert into
-    user_goods_limit
-    (
-    pid,
-    store_id,
-    wid,
-    limit_id,
-    goods_id,
-    buy_num,
-    is_deleted,
-    create_time,
-    update_time
-    )
-    values
-    (
-     #{pid},
-     #{storeId},
-     #{wid},
-     #{limitId},
-     #{goodsId},
-     #{buyNum},
-     0,
-     NOW(),
-     NOW()
-     )
-     /*UserGoodsLimitDao.insert*/
-  </insert>
-
-    <update id="update" parameterType="com.weimob.saas.ec.limitation.entity.UserGoodsLimitEntity">
-        UPDATE
-            user_goods_limit
-        SET
-            buy_num = buy_num+#{buyNum},
-            update_time = NOW()
-        WHERE
-             pid = #{pid}
-        AND store_id = #{storeId}
-        AND wid = #{wid}
-        AND limit_id = #{limitId}
-        AND goods_id = #{goodsId}
-        /*UserGoodsLimitDao.update*/
+      SET
+        wid =-1 * wid,
+        update_time = NOW()
+      WHERE
+        pid = #{pid}
+      AND limit_id = #{limitId}
+      AND is_deleted = 0
+    /*UserGoodsLimitDao.deleteDiscountUserGoodsLimit*/
     </update>
 
-    <select id="queryUserOrderGoodsLimitList"
-            resultMap="BaseResultMap" parameterType="java.util.List">
-        select
+    <update id="updateUserGoodsLimit" parameterType="UserGoodsLimitEntity">
+      UPDATE
+        user_goods_limit
+      SET
+        buy_num = buy_num+#{buyNum},
+        update_time = NOW()
+      WHERE
+         pid = #{pid}
+      AND store_id = #{storeId}
+      AND wid = #{wid}
+      AND limit_id = #{limitId}
+      AND goods_id = #{goodsId}
+    /*UserGoodsLimitDao.updateUserGoodsLimit*/
+    </update>
+
+    <update id="deductUserGoodsLimit" parameterType="UserGoodsLimitEntity">
+      UPDATE
+        user_goods_limit
+      SET
+        buy_num = buy_num - #{buyNum},
+        update_time = NOW()
+      WHERE
+        pid = #{pid}
+      AND store_id = #{storeId}
+      AND wid = #{wid}
+      AND limit_id = #{limitId}
+      AND goods_id = #{goodsId}
+      AND buy_num >= #{buyNum}
+    /*UserGoodsLimitDao.deductUserGoodsLimit*/
+    </update>
+
+    <select id="getUserGoodsLimit" resultType="UserGoodsLimitEntity" parameterType="UserGoodsLimitEntity">
+      SELECT
+        <include refid="Base_Column_List"/>
+      FROM
+        user_goods_limit
+      WHERE
+        pid = #{pid}
+      AND store_id = #{storeId}
+      AND wid = #{wid}
+      AND limit_id = #{limitId}
+      AND goods_id = #{goodsId}
+      AND is_deleted = 0
+    /*UserGoodsLimitDao.getUserGoodsLimit*/
+    </select>
+
+    <select id="listUserGoodsLimit" resultMap="BaseResultMap" parameterType="java.util.List">
+      SELECT
+        <include refid="Base_Column_List"/>
+      FROM
+        user_goods_limit
+      WHERE
+        <foreach item="item" index="index" collection="list" separator="or">
+          (pid = #{item.pid}
+          AND goods_id = #{item.goodsId}
+          AND limit_id = #{item.limitId}
+          AND wid = #{item.wid}
+          AND is_deleted = 0)
+        </foreach>
+    /*UserGoodsLimitDao.listUserGoodsLimit*/
+    </select>
+
+    <select id="listOrderUserGoodsLimit" resultMap="BaseResultMap" parameterType="java.util.List">
+      SELECT
         usergoodslimit.pid,
         usergoodslimit.store_id,
         usergoodslimit.limit_id,
         usergoodslimit.goods_id,
         usergoodslimit.buy_num
-        from
+      FROM
         user_goods_limit as usergoodslimit,
         limit_info as limitinfo
-        where
+      WHERE
         limitinfo.limit_id=usergoodslimit.limit_id
-        AND (
-        <foreach item="item" index="index" collection="list"
-                 separator="or">
-            (
+      AND (
+        <foreach item="item" index="index" collection="list" separator="or">
+          (
             limitinfo.pid = #{item.pid}
-            and limitinfo.biz_id = #{item.bizId}
-            and limitinfo.biz_type = #{item.bizType}
-            and wid = #{item.wid}
-            and usergoodslimit.is_deleted = 0
-            and limitinfo.is_deleted = 0
-            )
+            AND limitinfo.biz_id = #{item.bizId}
+            AND limitinfo.biz_type = #{item.bizType}
+            AND wid = #{item.wid}
+            AND usergoodslimit.is_deleted = 0
+            AND limitinfo.is_deleted = 0
+          )
         </foreach>
         )
-        /*UserGoodsLimitDao.queryUserOrderGoodsLimitList*/
+    /*UserGoodsLimitDao.listOrderUserGoodsLimit*/
     </select>
 
-    <select id="getUserGoodsLimitEntity"
-            resultType="com.weimob.saas.ec.limitation.entity.UserGoodsLimitEntity"
-            parameterType="com.weimob.saas.ec.limitation.entity.UserGoodsLimitEntity">
-        select
-        <include refid="Base_Column_List"/>
-        from
-        user_goods_limit
-        where
-        pid = #{pid}
-        and store_id = #{storeId}
-        and wid = #{wid}
-        and limit_id = #{limitId}
-        and goods_id = #{goodsId}
-        and is_deleted = 0
-        /*UserGoodsLimitDao.getUserGoodsLimitEntity*/
-    </select>
-
-    <update id="deductUserGoodsLimit" parameterType="com.weimob.saas.ec.limitation.entity.UserGoodsLimitEntity">
-        UPDATE
-            user_goods_limit
-        SET
-            buy_num = buy_num - #{buyNum},
-            update_time = NOW()
-        WHERE
-            pid = #{pid}
-            AND store_id = #{storeId}
-            AND wid = #{wid}
-            AND limit_id = #{limitId}
-            AND goods_id = #{goodsId}
-            AND buy_num >= #{buyNum}
-        /*UserGoodsLimitDao.deductUserGoodsLimit*/
-    </update>
-
-    <update id="deleteDiscountUserLimitInfo"
-            parameterType="com.weimob.saas.ec.limitation.model.LimitParam">
-        UPDATE
-        user_goods_limit
-        SET
-        wid =-1 * wid,
-        update_time = NOW()
-        WHERE
-        pid = #{pid}
-        AND limit_id = #{limitId}
-        AND is_deleted = 0
-        /*UserGoodsLimitDao.deleteDiscountUserLimitInfo*/
-    </update>
 </mapper>

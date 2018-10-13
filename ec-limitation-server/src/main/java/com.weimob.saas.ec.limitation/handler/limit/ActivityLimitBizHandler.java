@@ -45,7 +45,7 @@ public class ActivityLimitBizHandler extends BaseHandler implements LimitBizHand
             limitParams.add(limitInputVo);
         }
         /** 2 查询活动限购信息 **/
-        List<LimitInfoEntity> limitInfoEntityList = limitInfoDao.listLimitInfoByLimitId(limitParams);
+        List<LimitInfoEntity> limitInfoEntityList = limitInfoDao.listLimitInfoByBizId(limitParams);
         if (CollectionUtils.isEmpty(limitInfoEntityList)) {
             throw new LimitationBizException(LimitationErrorCode.LIMIT_ACTIVITY_IS_NULL);
         }
