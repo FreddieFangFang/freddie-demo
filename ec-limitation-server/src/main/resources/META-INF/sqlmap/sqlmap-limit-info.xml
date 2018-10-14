@@ -2,26 +2,45 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.weimob.saas.ec.limitation.dao.LimitInfoDao">
 
-    <resultMap id="BaseResultMap" type="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
-        <id column="limit_id" jdbcType="BIGINT" property="limitId"/>
-        <result column="pid" jdbcType="BIGINT" property="pid"/>
-        <result column="sale_channeltype" jdbcType="VARCHAR" property="saleChannelType"/>
-        <result column="source" jdbcType="VARCHAR" property="source"/>
-        <result column="limit_level" jdbcType="TINYINT" property="limitLevel"/>
-        <result column="biz_id" jdbcType="BIGINT" property="bizId"/>
-        <result column="biz_type" jdbcType="TINYINT" property="bizType"/>
-        <result column="limit_type" jdbcType="TINYINT" property="limitType"/>
-        <result column="limit_num" jdbcType="INTEGER" property="limitNum"/>
-        <result column="sold_num" jdbcType="INTEGER" property="soldNum"/>
-        <result column="version" jdbcType="INTEGER" property="version"/>
-        <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
-    </resultMap>
+  <resultMap id="BaseResultMap" type="com.weimob.saas.ec.limitation.entity.LimitInfoEntity">
+    <id column="limit_id" jdbcType="BIGINT" property="limitId"/>
+    <result column="pid" jdbcType="BIGINT" property="pid"/>
+    <result column="sale_channeltype" jdbcType="VARCHAR" property="saleChannelType"/>
+    <result column="source" jdbcType="VARCHAR" property="source"/>
+    <result column="limit_level" jdbcType="TINYINT" property="limitLevel"/>
+    <result column="biz_id" jdbcType="BIGINT" property="bizId"/>
+    <result column="biz_type" jdbcType="TINYINT" property="bizType"/>
+    <result column="limit_type" jdbcType="TINYINT" property="limitType"/>
+    <result column="limit_num" jdbcType="INTEGER" property="limitNum"/>
+    <result column="sold_num" jdbcType="INTEGER" property="soldNum"/>
+    <result column="version" jdbcType="INTEGER" property="version"/>
+    <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+  </resultMap>
 
-    <sql id="Base_Column_List">
+  <sql id="Base_Column_List">
+    limit_id,
+    pid,
+    sale_channeltype,
+    source,
+    limit_level,
+    biz_id,
+    biz_type,
+    limit_type,
+    limit_num,
+    sold_num,
+    version,
+    is_deleted,
+    create_time,
+    update_time
+  </sql>
+
+  <insert id="insertLimitInfo" parameterType="LimitInfoEntity">
+    INSERT INTO limit_info (
       limit_id,
-      pid, sale_channeltype,
+      pid,
+      sale_channeltype,
       source,
       limit_level,
       biz_id,
@@ -29,31 +48,13 @@
       limit_type,
       limit_num,
       sold_num,
-      version,
       is_deleted,
       create_time,
-      update_time
-    </sql>
-
-    <insert id="insertLimitInfo" parameterType="LimitInfoEntity">
-      INSERT INTO limit_info (
-        limit_id,
-        pid,
-        sale_channeltype,
-        source,
-        limit_level,
-        biz_id,
-        biz_type,
-        limit_type,
-        limit_num,
-        sold_num,
-        is_deleted,
-        create_time,
-        update_time,
-        select_store_type
-        )
-      VALUES
-        (
+      update_time,
+      select_store_type
+      )
+    VALUES
+      (
         #{limitId,jdbcType=BIGINT},
         #{pid,jdbcType=BIGINT},
         #{saleChannelType,jdbcType=VARCHAR},
@@ -68,91 +69,90 @@
         NOW(),
         NOW(),
         #{selectStoreType})
-      /*LimitInfoDao.insertLimitInfo*/
-    </insert>
+  /*LimitInfoDao.insertLimitInfo*/
+  </insert>
 
-    <update id="deleteLimitInfo" parameterType="LimitInfoEntity">
-      UPDATE
-        limit_info
-      SET
-        is_deleted = 1,
-        update_time = NOW(),
-        version = version+1
-      WHERE
-        limit_id=#{limitId}
-      AND version=#{version}
-    /*LimitInfoDao.deleteLimitInfo*/
-    </update>
+  <update id="deleteLimitInfo" parameterType="LimitInfoEntity">
+    UPDATE
+      limit_info
+    SET
+      is_deleted = 1,
+      update_time = NOW(),
+      version = version+1
+    WHERE
+      limit_id=#{limitId}
+    AND version=#{version}
+  /*LimitInfoDao.deleteLimitInfo*/
+  </update>
 
-    <update id="updateLimitInfo" parameterType="LimitInfoEntity">
-      UPDATE limit_info
-      <set>
-        <if test="saleChannelType != null">
-          sale_channeltype = #{saleChannelType},
-        </if>
-        <if test="source != null">
-          source = #{source},
-        </if>
-        <if test="limitType != null">
-          limit_type = #{limitType},
-        </if>
-        <if test="limitNum != null">
-          limit_num = #{limitNum},
-        </if>
-        <if test="soldNum != null">
-          sold_num = #{soldNum},
-        </if>
-        <if test="selectStoreType != null">
-          select_store_type = #{selectStoreType},
-        </if>
-        version = version+1,
-        update_time = NOW()
-      </set>
-      WHERE
+  <update id="updateLimitInfo" parameterType="LimitInfoEntity">
+    UPDATE limit_info
+    <set>
+      <if test="saleChannelType != null">
+        sale_channeltype = #{saleChannelType},
+      </if>
+      <if test="source != null">
+        source = #{source},
+      </if>
+      <if test="limitType != null">
+        limit_type = #{limitType},
+      </if>
+      <if test="limitNum != null">
+        limit_num = #{limitNum},
+      </if>
+      <if test="soldNum != null">
+        sold_num = #{soldNum},
+      </if>
+      <if test="selectStoreType != null">
+        select_store_type = #{selectStoreType},
+      </if>
+      version = version+1,
+      update_time = NOW()
+    </set>
+    WHERE
       limit_id = #{limitId}
-      AND version=#{version}
-      /*LimitInfoDao.updateLimitInfo*/
-    </update>
+    AND version=#{version}
+  /*LimitInfoDao.updateLimitInfo*/
+  </update>
 
-    <select id="getLimitInfo" parameterType="LimitParam" resultMap="BaseResultMap">
-      SELECT
-        <include refid="Base_Column_List"/>
-      FROM
-        limit_info
-      WHERE
-        pid = #{pid}
-      AND biz_id = #{bizId}
-      AND biz_type = #{bizType}
-      AND is_deleted = 0
-    /*LimitInfoDao.getLimitInfo*/
-    </select>
+  <update id="reverseLimitInfoStatus" parameterType="java.lang.Long">
+    UPDATE
+      limit_info
+    SET
+      is_deleted = 0,
+      update_time = NOW(),
+      version = version+1
+    WHERE
+      limit_id=#{limitId}
+  /*LimitInfoDao.reverseLimitInfoStatus*/
+  </update>
 
-    <select id="listLimitInfoByBizId" resultMap="BaseResultMap" parameterType="java.util.List">
-      SELECT
-        <include refid="Base_Column_List"/>
-      FROM
-        limit_info
-      WHERE
-        <foreach item="item" index="index" collection="list" separator="or">
-          (pid = #{item.pid}
-          AND biz_id = #{item.bizId}
-          AND biz_type = #{item.bizType}
-          AND is_deleted = 0)
-        </foreach>
-    /*LimitInfoDao.listLimitInfoByBizId*/
-    </select>
+  <select id="getLimitInfo" parameterType="LimitParam" resultMap="BaseResultMap">
+    SELECT
+      <include refid="Base_Column_List"/>
+    FROM
+      limit_info
+    WHERE
+      pid = #{pid}
+    AND biz_id = #{bizId}
+    AND biz_type = #{bizType}
+    AND is_deleted = 0
+  /*LimitInfoDao.getLimitInfo*/
+  </select>
 
-
-    <update id="reverseLimitInfoStatus" parameterType="java.lang.Long">
-      UPDATE
-        limit_info
-      SET
-        is_deleted = 0,
-        update_time = NOW(),
-        version = version+1
-      WHERE
-        limit_id=#{limitId}
-    /*LimitInfoDao.reverseLimitInfoStatus*/
-    </update>
+  <select id="listLimitInfoByBizId" resultMap="BaseResultMap" parameterType="java.util.List">
+    SELECT
+      <include refid="Base_Column_List"/>
+    FROM
+      limit_info
+    WHERE
+      <foreach item="item" index="index" collection="list" separator="or">
+        (pid = #{item.pid}
+        AND biz_id = #{item.bizId}
+        AND biz_type = #{item.bizType}
+        AND is_deleted = 0)
+      </foreach>
+  /*LimitInfoDao.listLimitInfoByBizId*/
+  </select>
 
 </mapper>

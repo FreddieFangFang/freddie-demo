@@ -33,7 +33,7 @@ public class ReverseUserLimitHandler {
         //1.查询回滚订单日志表
         List<LimitOrderChangeLogEntity> orderChangeLogEntityList = null;
         try {
-            orderChangeLogEntityList = limitOrderChangeLogDao.queryOrderChangeLogListByTicket(ticket);
+            orderChangeLogEntityList = limitOrderChangeLogDao.listLogByTicket(ticket);
         } catch (Exception e) {
             LOGGER.error("fail to query order entity list", e);
             throw new LimitationBizException(LimitationErrorCode.SQL_QUERY_ORDER_CHANGE_LOG_ERROR, e);
@@ -49,10 +49,10 @@ public class ReverseUserLimitHandler {
         handler.doReverse(orderChangeLogEntityList);
 
         //3.修改订单日志表
-        int updateResult = 0;
+        Integer updateResult = 0;
 
         try {
-            updateResult = limitOrderChangeLogDao.updateOrderChangeLogListToReversed(ticket);
+            updateResult = limitOrderChangeLogDao.updateLogStatusByTicket(ticket);
         } catch (Exception e) {
             throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_ORDER_CHANGE_LOG_ERROR, e);
         }

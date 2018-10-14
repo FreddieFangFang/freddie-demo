@@ -121,8 +121,9 @@ public class LimitationServiceImpl {
 
     public void updateGoodsLimitInfoEntity(List<GoodsLimitInfoEntity> goodsLimitInfoEntityList) {
         for (GoodsLimitInfoEntity goodsLimitInfoEntity : goodsLimitInfoEntityList) {
+            Integer update = 0;
             //迁移过来的数据只有一条，更新为0则插入
-            int update = goodsLimitInfoDao.updateGoodsLimit(goodsLimitInfoEntity);
+            update = goodsLimitInfoDao.updateGoodsLimit(goodsLimitInfoEntity);
             if (update == 0) {
                 List<GoodsLimitInfoEntity> goodsList = new ArrayList<>();
                 goodsList.add(goodsLimitInfoEntity);
@@ -181,8 +182,9 @@ public class LimitationServiceImpl {
     public List<SkuLimitInfoEntity> updatePrivilegePriceGoodsLimitInfo(List<GoodsLimitInfoEntity> oldGoodsLimitInfoEntityList, List<SkuLimitInfoEntity> skuLimitInfoList) {
 
         for (GoodsLimitInfoEntity oldGoodsLimitInfoEntity : oldGoodsLimitInfoEntityList) {
+            Integer update = 0;
             //迁移过来的数据只有一条，更新为0则插入
-            int update = goodsLimitInfoDao.updateGoodsLimit(oldGoodsLimitInfoEntity);
+            update = goodsLimitInfoDao.updateGoodsLimit(oldGoodsLimitInfoEntity);
             if (update == 0) {
                 List<GoodsLimitInfoEntity> goodsList = new ArrayList<>();
                 goodsList.add(oldGoodsLimitInfoEntity);
@@ -254,7 +256,7 @@ public class LimitationServiceImpl {
     public void saveUserLimitRecord(List<UserGoodsLimitEntity> goodsLimitEntityList, List<UserLimitEntity> activityLimitEntityList,
                                     List<SkuLimitInfoEntity> activityGoodsSoldEntityList) {
 
-        Long updateResult = 0l;
+        Integer updateResult = 0;
         if (CollectionUtils.isNotEmpty(goodsLimitEntityList)) {
             for (UserGoodsLimitEntity goodsLimitEntity : goodsLimitEntityList) {
                 try {

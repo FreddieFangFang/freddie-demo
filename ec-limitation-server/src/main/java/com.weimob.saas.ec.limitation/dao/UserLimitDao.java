@@ -6,33 +6,33 @@ import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
 
 import java.util.List;
 
-public interface UserLimitDao extends BaseDao<UserLimitEntity> {
+public interface UserLimitDao {
     /**
      * @title 新增用户活动购买记录
      * @author qi.he
      * @date 2018/10/12 0012 17:27
      * @param [activityLimitEntity]
-     * @return java.lang.Long
+     * @return java.lang.Integer
      */
-    Long insertUserLimit(UserLimitEntity entity);
+    Integer insertUserLimit(UserLimitEntity entity);
 
     /**
      * @title 删除周期性限时折扣用户活动购买记录
      * @author qi.he
      * @date 2018/10/12 0012 17:56
      * @param [requestVo]
-     * @return void
+     * @return java.lang.Integer
      */
-    void deleteDiscountUserLimit(DeleteDiscountUserLimitInfoRequestVo requestVo);
+    Integer deleteDiscountUserLimit(DeleteDiscountUserLimitInfoRequestVo requestVo);
 
     /**
      * @title 更新用户活动购买记录
      * @author qi.he
      * @date 2018/10/12 0012 17:31
      * @param [entity]
-     * @return java.lang.Long
+     * @return java.lang.Integer
      */
-    Long updateUserLimit(UserLimitEntity entity);
+    Integer updateUserLimit(UserLimitEntity entity);
 
     /**
      * @title 减少用户活动购买记录

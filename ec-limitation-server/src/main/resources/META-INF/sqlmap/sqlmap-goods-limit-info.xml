@@ -2,162 +2,177 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.weimob.saas.ec.limitation.dao.GoodsLimitInfoDao">
 
-    <resultMap id="BaseResultMap" type="com.weimob.saas.ec.limitation.entity.GoodsLimitInfoEntity">
-        <id column="id" jdbcType="BIGINT" property="id"/>
-        <result column="pid" jdbcType="BIGINT" property="pid"/>
-        <result column="store_id" jdbcType="BIGINT" property="storeId"/>
-        <result column="limit_id" jdbcType="BIGINT" property="limitId"/>
-        <result column="limit_type" jdbcType="TINYINT" property="limitType"/>
-        <result column="limit_level" jdbcType="TINYINT" property="limitLevel"/>
-        <result column="goods_id" jdbcType="BIGINT" property="goodsId"/>
-        <result column="limit_num" jdbcType="INTEGER" property="limitNum"/>
-        <result column="sold_num" jdbcType="INTEGER" property="soldNum"/>
-        <result column="version" jdbcType="INTEGER" property="version"/>
-        <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
-    </resultMap>
+  <resultMap id="BaseResultMap" type="com.weimob.saas.ec.limitation.entity.GoodsLimitInfoEntity">
+    <id column="id" jdbcType="BIGINT" property="id"/>
+    <result column="pid" jdbcType="BIGINT" property="pid"/>
+    <result column="store_id" jdbcType="BIGINT" property="storeId"/>
+    <result column="limit_id" jdbcType="BIGINT" property="limitId"/>
+    <result column="limit_type" jdbcType="TINYINT" property="limitType"/>
+    <result column="limit_level" jdbcType="TINYINT" property="limitLevel"/>
+    <result column="goods_id" jdbcType="BIGINT" property="goodsId"/>
+    <result column="limit_num" jdbcType="INTEGER" property="limitNum"/>
+    <result column="sold_num" jdbcType="INTEGER" property="soldNum"/>
+    <result column="version" jdbcType="INTEGER" property="version"/>
+    <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+  </resultMap>
 
-    <sql id="Base_Column_List">
-      id,
+  <sql id="Base_Column_List">
+    id,
+    pid,
+    store_id,
+    limit_id,
+    limit_type,
+    goods_id,
+    limit_level,
+    limit_num,
+    sold_num,
+    version,
+    is_deleted,
+    create_time,
+    update_time
+  </sql>
+
+  <insert id="batchInsertGoodsLimit" parameterType="java.util.List">
+    INSERT INTO goods_limit_info (
       pid,
-      store_id,
       limit_id,
       limit_type,
       goods_id,
-      limit_level,
       limit_num,
       sold_num,
       version,
       is_deleted,
+      limit_level,
       create_time,
       update_time
-    </sql>
-
-    <insert id="batchInsertGoodsLimit" parameterType="java.util.List">
-      INSERT INTO goods_limit_info (
-        pid,
-        limit_id,
-        limit_type,
-        goods_id,
-        limit_num,
-        sold_num,
-        version,
-        is_deleted,
-        limit_level,
-        create_time,
-        update_time
       )
-      VALUES
-        <foreach collection="list" item="item" index="index" separator=",">
-          (
-            #{item.pid},
-            #{item.limitId},
-            #{item.limitType},
-            #{item.goodsId},
-            #{item.limitNum},
-            #{item.soldNum},
+    VALUES
+      <foreach collection="list" item="item" index="index" separator=",">
+        (
+        #{item.pid},
+        #{item.limitId},
+        #{item.limitType},
+        #{item.goodsId},
+        #{item.limitNum},
+        #{item.soldNum},
+        0,
+        <choose>
+          <when test="item.isDeleted != null ">
+            #{item.isDeleted},
+          </when>
+          <when test="item.isDeleted == null">
             0,
-            <choose>
-                <when test="item.isDeleted != null ">
-                    #{item.isDeleted},
-                </when>
-                <when test="item.isDeleted == null">
-                    0,
-                </when>
-            </choose>
-            #{item.limitLevel},
-            <choose>
-                <when test="item.createTime != null ">
-                    #{item.createTime},
-                </when>
-                <when test="item.createTime==null">
-                    NOW(),
-                </when>
-            </choose>
-            NOW()
-            )
-        </foreach>
-        /*GoodsLimitInfoDao.batchInsertGoodsLimitInfo*/
-    </insert>
+          </when>
+        </choose>
+        #{item.limitLevel},
+        <choose>
+          <when test="item.createTime != null ">
+            #{item.createTime},
+          </when>
+          <when test="item.createTime==null">
+            NOW(),
+          </when>
+        </choose>
+        NOW()
+        )
+      </foreach>
+  /*GoodsLimitInfoDao.batchInsertGoodsLimitInfo*/
+  </insert>
 
-    <update id="deleteGoodsLimitByLimitId" parameterType="DeleteGoodsParam">
-      UPDATE
-        goods_limit_info
-      SET
-        is_deleted = 1,
-        update_time = NOW()
-      WHERE
-        pid = #{pid}
-      AND limit_id=#{limitId}
-    /*GoodsLimitInfoDao.deleteGoodsLimitByLimitId*/
-    </update>
+  <update id="deleteGoodsLimitByLimitId" parameterType="DeleteGoodsParam">
+    UPDATE
+      goods_limit_info
+    SET
+      is_deleted = 1,
+      update_time = NOW()
+    WHERE
+      pid = #{pid}
+    AND limit_id=#{limitId}
+  /*GoodsLimitInfoDao.deleteGoodsLimitByLimitId*/
+  </update>
 
-    <update id="deleteGoodsLimitByGoodsId" parameterType="DeleteGoodsParam">
-      UPDATE
-        goods_limit_info
-      SET
-        is_deleted = 1,
-        update_time = NOW()
-      WHERE
-        pid = #{pid}
-      AND limit_id=#{limitId}
-      AND goods_id IN
-        <foreach item="id" index="index" collection="goodsIdList"
-                 open="(" separator="," close=")">
-            #{id}
-        </foreach>
-    /*GoodsLimitInfoDao.deleteGoodsLimitByGoodsId*/
-    </update>
+  <update id="deleteGoodsLimitByGoodsId" parameterType="DeleteGoodsParam">
+    UPDATE
+      goods_limit_info
+    SET
+      is_deleted = 1,
+      update_time = NOW()
+    WHERE
+      pid = #{pid}
+    AND limit_id=#{limitId}
+    AND goods_id IN
+      <foreach item="id" index="index" collection="goodsIdList" open="(" separator="," close=")">
+        #{id}
+      </foreach>
+  /*GoodsLimitInfoDao.deleteGoodsLimitByGoodsId*/
+  </update>
 
-    <update id="updateGoodsLimit" parameterType="GoodsLimitInfoEntity">
-      UPDATE
-        goods_limit_info
-      SET
-        limit_num=#{limitNum},
-        limit_type=#{limitType},
-        update_time=NOW()
-      WHERE
-        pid = #{pid}
-      AND limit_id=#{limitId}
-      AND goods_id=#{goodsId}
-      AND limit_level=#{limitLevel}
-      AND is_deleted = 0
-    /*GoodsLimitInfoDao.updateGoodsLimit*/
-    </update>
+  <update id="updateGoodsLimit" parameterType="GoodsLimitInfoEntity">
+    UPDATE
+      goods_limit_info
+    SET
+      limit_num=#{limitNum},
+      limit_type=#{limitType},
+      update_time=NOW()
+    WHERE
+      pid = #{pid}
+    AND limit_id=#{limitId}
+    AND goods_id=#{goodsId}
+    AND limit_level=#{limitLevel}
+    AND is_deleted = 0
+  /*GoodsLimitInfoDao.updateGoodsLimit*/
+  </update>
 
-    <select id="listGoodsLimitByGoodsId" resultMap="BaseResultMap" parameterType="java.util.List">
-      SELECT
-        <include refid="Base_Column_List"/>
-      FROM
-        goods_limit_info
-      WHERE
-        <foreach item="item" index="index" collection="list" separator="or">
-          (pid = #{item.pid}
-          and goods_id = #{item.goodsId}
-          and limit_id = #{item.limitId}
-          and is_deleted = 0)
-        </foreach>
-    /*GoodsLimitInfoDao.listGoodsLimitByGoodsId*/
-    </select>
+  <update id="reverseGoodsLimit" parameterType="DeleteGoodsParam">
+    UPDATE
+      goods_limit_info
+    SET
+      is_deleted = 0,
+      update_time = NOW()
+    WHERE
+      pid = #{pid}
+    AND limit_id=#{limitId}
+    AND goods_id IN
+      <foreach item="id" index="index" collection="goodsIdList" open="(" separator="," close=")">
+        #{id}
+      </foreach>
+  /*GoodsLimitInfoDao.reverseGoodsLimit*/
+  </update>
 
-    <select id="listOrderGoodsLimit" resultMap="BaseResultMap" parameterType="java.util.List">
-      SELECT
-        goodslimitinfo.pid pid,
-        goodslimitinfo.store_id store_id,
-        goodslimitinfo.limit_id limit_id,
-        goodslimitinfo.limit_type limit_type,
-        goodslimitinfo.goods_id goods_id,
-        goodslimitinfo.limit_num limit_num,
-        goodslimitinfo.limit_level limitLevel,
-        goodslimitinfo.sold_num sold_num,
-        goodslimitinfo.version version
-      FROM
-        goods_limit_info as goodslimitinfo,
-        limit_info as limitinfo
-      WHERE
-        limitinfo.limit_id=goodslimitinfo.limit_id
-      AND
+  <select id="listGoodsLimitByGoodsId" resultMap="BaseResultMap" parameterType="java.util.List">
+    SELECT
+      <include refid="Base_Column_List"/>
+    FROM
+      goods_limit_info
+    WHERE
+      <foreach item="item" index="index" collection="list" separator="or">
+        (pid = #{item.pid}
+        AND goods_id = #{item.goodsId}
+        AND limit_id = #{item.limitId}
+        AND is_deleted = 0)
+      </foreach>
+  /*GoodsLimitInfoDao.listGoodsLimitByGoodsId*/
+  </select>
+
+  <select id="listOrderGoodsLimit" resultMap="BaseResultMap" parameterType="java.util.List">
+    SELECT
+      goodslimitinfo.pid pid,
+      goodslimitinfo.store_id store_id,
+      goodslimitinfo.limit_id limit_id,
+      goodslimitinfo.limit_type limit_type,
+      goodslimitinfo.goods_id goods_id,
+      goodslimitinfo.limit_num limit_num,
+      goodslimitinfo.limit_level limitLevel,
+      goodslimitinfo.sold_num sold_num,
+      goodslimitinfo.version version
+    FROM
+      goods_limit_info AS goodslimitinfo,
+      limit_info AS limitinfo
+    WHERE
+      limitinfo.limit_id=goodslimitinfo.limit_id
+    AND
       (
         <foreach item="item" index="index" collection="list" separator="or">
           (
@@ -170,27 +185,27 @@
           )
         </foreach>
       )
-    /*GoodsLimitInfoDao.listOrderGoodsLimit*/
-    </select>
+  /*GoodsLimitInfoDao.listOrderGoodsLimit*/
+  </select>
 
-    <select id="listGoodsLimitNum" resultMap="BaseResultMap" parameterType="java.util.List">
-      SELECT
-        goodslimitinfo.pid pid,
-        goodslimitinfo.store_id store_id,
-        goodslimitinfo.limit_id limit_id,
-        goodslimitinfo.limit_type limit_type,
-        goodslimitinfo.goods_id goods_id,
-        goodslimitinfo.limit_num limit_num,
-        goodslimitinfo.limit_level limitLevel,
-        goodslimitinfo.sold_num sold_num,
-        goodslimitinfo.version version
-      FROM
-        goods_limit_info as goodslimitinfo,
-        limit_info as limitinfo
-      WHERE
-        limitinfo.limit_id=goodslimitinfo.limit_id
-      AND
-        (
+  <select id="listGoodsLimitNum" resultMap="BaseResultMap" parameterType="java.util.List">
+    SELECT
+      goodslimitinfo.pid pid,
+      goodslimitinfo.store_id store_id,
+      goodslimitinfo.limit_id limit_id,
+      goodslimitinfo.limit_type limit_type,
+      goodslimitinfo.goods_id goods_id,
+      goodslimitinfo.limit_num limit_num,
+      goodslimitinfo.limit_level limitLevel,
+      goodslimitinfo.sold_num sold_num,
+      goodslimitinfo.version version
+    FROM
+      goods_limit_info AS goodslimitinfo,
+      limit_info AS limitinfo
+    WHERE
+      limitinfo.limit_id=goodslimitinfo.limit_id
+    AND
+      (
         <foreach item="item" index="index" collection="list" separator="or">
           (
           limitinfo.pid = #{item.pid}
@@ -200,10 +215,10 @@
           AND
           <choose>
             <when test="item.checkDeleteActivityGoods != null ">
-                goodslimitinfo.is_deleted = #{item.checkDeleteActivityGoods}
+              goodslimitinfo.is_deleted = #{item.checkDeleteActivityGoods}
             </when>
             <when test="item.checkDeleteActivityGoods==null">
-                goodslimitinfo.is_deleted = 0
+              goodslimitinfo.is_deleted = 0
             </when>
           </choose>
           AND
@@ -217,36 +232,20 @@
           </choose>
           )
         </foreach>
-        )
+      )
     /*GoodsLimitInfoDao.listGoodsLimitNum*/
-    </select>
+  </select>
 
-    <select id="listGoodsLimitByLimitId" resultMap="BaseResultMap" parameterType="LimitParam">
-      SELECT
-        <include refid="Base_Column_List"/>
-      FROM
-        goods_limit_info
-      WHERE
-        pid = #{pid}
-      AND limit_id = #{limitId}
-      AND is_deleted = 0
-    /*GoodsLimitInfoDao.listGoodsLimitByLimitId*/
-    </select>
-
-    <update id="reverseGoodsLimit" parameterType="DeleteGoodsParam">
-      UPDATE
-        goods_limit_info
-      SET
-        is_deleted = 0,
-        update_time = NOW()
-      WHERE
-        pid = #{pid}
-      AND limit_id=#{limitId}
-      AND goods_id IN
-        <foreach item="id" index="index" collection="goodsIdList" open="(" separator="," close=")">
-          #{id}
-        </foreach>
-    /*GoodsLimitInfoDao.reverseGoodsLimit*/
-    </update>
+  <select id="listGoodsLimitByLimitId" resultMap="BaseResultMap" parameterType="LimitParam">
+    SELECT
+      <include refid="Base_Column_List"/>
+    FROM
+      goods_limit_info
+    WHERE
+      pid = #{pid}
+    AND limit_id = #{limitId}
+    AND is_deleted = 0
+  /*GoodsLimitInfoDao.listGoodsLimitByLimitId*/
+  </select>
 
 </mapper>

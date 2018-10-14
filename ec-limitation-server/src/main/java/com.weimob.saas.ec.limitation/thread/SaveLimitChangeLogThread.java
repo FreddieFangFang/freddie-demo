@@ -46,7 +46,7 @@ public class SaveLimitChangeLogThread implements Runnable {
     public void run() {
         for (LimitOrderChangeLogEntity orderChangeLogEntity : logEntityList) {
             try {
-                limitOrderChangeLogDao.insert(orderChangeLogEntity);
+                limitOrderChangeLogDao.insertLog(orderChangeLogEntity);
             } catch (Exception e) {
                 throw new LimitationBizException(LimitationErrorCode.SQL_INSERT_ORDER_LOG_ERROR);
             }

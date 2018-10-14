@@ -118,7 +118,7 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         LimitOrderChangeLogEntity limitOrderChangeLogEntity = null;
         try {
             // SQL 默认查询 service_name = "DEDUCT_USER_LIMIT"
-            limitOrderChangeLogEntity = limitOrderChangeLogDao.selectByPrimaryKey(queryLogParameter);
+            limitOrderChangeLogEntity = limitOrderChangeLogDao.getLogByReferId(queryLogParameter);
         } catch (Exception e) {
             throw new LimitationBizException(LimitationErrorCode.SQL_QUERY_ORDER_CHANGE_LOG_ERROR, e);
         }

@@ -7,34 +7,42 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-public interface LimitInfoDao extends BaseDao<LimitInfoEntity> {
-
+public interface LimitInfoDao {
     /**
-     * @title 新增限购信息
+     * @title 保存限购信息
      * @author qi.he
      * @date 2018/10/11 0011 15:06
      * @param [entity]
-     * @return java.lang.Long
+     * @return java.lang.Integer
      */
-    Long insertLimitInfo(LimitInfoEntity entity);
+    Integer insertLimitInfo(LimitInfoEntity entity);
 
     /**
      * @title 删除限购信息
      * @author qi.he
      * @date 2018/10/11 0011 15:06
      * @param [entity]
-     * @return void
+     * @return java.lang.Integer
      */
-    void deleteLimitInfo(LimitInfoEntity entity);
+    Integer deleteLimitInfo(LimitInfoEntity entity);
 
     /**
      * @title 更新限购信息
      * @author qi.he
      * @date 2018/10/11 0011 15:06
      * @param [entity]
-     * @return java.lang.Long
+     * @return java.lang.Integer
      */
-    Long updateLimitInfo(LimitInfoEntity entity);
+    Integer updateLimitInfo(LimitInfoEntity entity);
+
+    /**
+     * @title 回滚限购信息
+     * @author qi.he
+     * @date 2018/10/11 0011 15:05
+     * @param [limitId]
+     * @return java.lang.Integer
+     */
+    Integer reverseLimitInfoStatus(@Param("limitId") Long limitId);
 
     /**
      * @title 获取指定限购信息
@@ -53,13 +61,4 @@ public interface LimitInfoDao extends BaseDao<LimitInfoEntity> {
      * @return java.util.List<com.weimob.saas.ec.limitation.entity.LimitInfoEntity>
      */
     List<LimitInfoEntity> listLimitInfoByBizId(List<LimitParam> limitParams);
-
-    /**
-     * @title 回滚限购信息
-     * @author qi.he
-     * @date 2018/10/11 0011 15:05
-     * @param [limitId]
-     * @return void
-     */
-    void reverseLimitInfoStatus(@Param("limitId") Long limitId);
 }

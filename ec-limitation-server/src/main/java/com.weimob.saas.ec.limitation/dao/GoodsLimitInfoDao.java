@@ -8,42 +8,51 @@ import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
 
 import java.util.List;
 
-public interface GoodsLimitInfoDao extends BaseDao<GoodsLimitInfoEntity> {
+public interface GoodsLimitInfoDao {
     /**
-     * @title 批量新增商品限购信息
+     * @title 批量保存商品限购信息
      * @author qi.he
      * @date 2018/10/11 0011 16:14
      * @param [goodsLimitInfoEntity]
-     * @return void
+     * @return java.lang.Integer
      */
-    void batchInsertGoodsLimit(List<GoodsLimitInfoEntity> goodsLimitInfoEntity);
+    Integer batchInsertGoodsLimit(List<GoodsLimitInfoEntity> goodsLimitInfoEntity);
 
     /**
      * @title 删除商品限购（活动层面删除）
      * @author qi.he
      * @date 2018/10/11 0011 16:22
      * @param [entity]
-     * @return void
+     * @return java.lang.Integer
      */
-    void deleteGoodsLimitByLimitId(DeleteGoodsParam entity);
+    Integer deleteGoodsLimitByLimitId(DeleteGoodsParam entity);
 
     /**
      * @title 批量删除商品限购（商品层面删除）
      * @author qi.he
      * @date 2018/10/11 0011 16:23
      * @param [entity]
-     * @return void
+     * @return java.lang.Integer
      */
-    void deleteGoodsLimitByGoodsId(DeleteGoodsParam entity);
+    Integer deleteGoodsLimitByGoodsId(DeleteGoodsParam entity);
 
     /**
      * @title 更新商品限购信息
      * @author qi.he
      * @date 2018/10/11 0011 16:38
      * @param [goodsLimitInfoEntity]
-     * @return int
+     * @return java.lang.Integer
      */
-    int updateGoodsLimit(GoodsLimitInfoEntity goodsLimitInfoEntity);
+    Integer updateGoodsLimit(GoodsLimitInfoEntity goodsLimitInfoEntity);
+
+    /**
+     * @title 回滚商品限购信息
+     * @author qi.he
+     * @date 2018/10/11 0011 21:47
+     * @param [param]
+     * @return java.lang.Integer
+     */
+    Integer reverseGoodsLimit(DeleteGoodsParam param);
 
     /**
      * @title 通过pid,limitId,goodsId批量查询商品限购信息
@@ -83,13 +92,4 @@ public interface GoodsLimitInfoDao extends BaseDao<GoodsLimitInfoEntity> {
      * @return java.util.List<com.weimob.saas.ec.limitation.entity.GoodsLimitInfoEntity>
      */
     List<GoodsLimitInfoEntity> listGoodsLimitByLimitId(LimitParam limitParam);
-
-    /**
-     * @title 回滚商品限购信息
-     * @author qi.he
-     * @date 2018/10/11 0011 21:47
-     * @param [param]
-     * @return void
-     */
-    void reverseGoodsLimit(DeleteGoodsParam param);
 }

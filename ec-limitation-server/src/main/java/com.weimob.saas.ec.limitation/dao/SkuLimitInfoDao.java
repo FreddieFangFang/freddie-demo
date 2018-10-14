@@ -10,15 +10,15 @@ import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
 
 import java.util.List;
 
-public interface SkuLimitInfoDao extends BaseDao<SkuLimitInfoEntity> {
+public interface SkuLimitInfoDao {
     /**
      * @title 批量新增SKU限购信息
      * @author qi.he
      * @date 2018/10/12 0012 10:30
      * @param [skuLimitInfoList]
-     * @return void
+     * @return java.lang.Integer
      */
-    void batchInsertSkuLimit(List<SkuLimitInfoEntity> skuLimitInfoList);
+    Integer batchInsertSkuLimit(List<SkuLimitInfoEntity> skuLimitInfoList);
 
     /**
      * @title 删除活动下所有SKU限购信息
@@ -26,9 +26,9 @@ public interface SkuLimitInfoDao extends BaseDao<SkuLimitInfoEntity> {
      * @date 2018/10/12 0012 10:34
      * @scene 删除活动
      * @param [entity]
-     * @return void
+     * @return java.lang.Integer
      */
-    void deleteSkuLimitByLimitId(DeleteGoodsParam entity);
+    Integer deleteSkuLimitByLimitId(DeleteGoodsParam entity);
 
     /**
      * @title 删除商品下所有SKU限购信息
@@ -36,9 +36,9 @@ public interface SkuLimitInfoDao extends BaseDao<SkuLimitInfoEntity> {
      * @date 2018/10/12 0012 10:43
      * @scene 删除商品
      * @param [entity]
-     * @return void
+     * @return java.lang.Integer
      */
-    void deleteSkuLimitByGoodsId(DeleteGoodsParam entity);
+    Integer deleteSkuLimitByGoodsId(DeleteGoodsParam entity);
 
     /**
      * @title 删除某一商品下的某些SKU限购信息
@@ -46,9 +46,9 @@ public interface SkuLimitInfoDao extends BaseDao<SkuLimitInfoEntity> {
      * @date 2018/10/12 0012 11:14
      * @scene 更新商品成功
      * @param [param]
-     * @return void
+     * @return java.lang.Integer
      */
-    void deleteSkuLimitOnUpdateGoodsSuccess(DeleteSkuParam param);
+    Integer deleteSkuLimitOnUpdateGoodsSuccess(DeleteSkuParam param);
 
     /**
      * @title 删除某一商品下的某些SKU限购信息
@@ -56,9 +56,9 @@ public interface SkuLimitInfoDao extends BaseDao<SkuLimitInfoEntity> {
      * @date 2018/10/12 0012 13:55
      * @scene 更新商品失败
      * @param [deleteSkuList]
-     * @return void
+     * @return java.lang.Integer
      */
-    void deleteSkuLimitOnUpdateGoodsFail(List<SkuLimitInfoEntity> deleteSkuList);
+    Integer deleteSkuLimitOnUpdateGoodsFail(List<SkuLimitInfoEntity> deleteSkuList);
 
     /**
      * @title 更新SKU已售数量
@@ -66,9 +66,9 @@ public interface SkuLimitInfoDao extends BaseDao<SkuLimitInfoEntity> {
      * @date 2018/10/12 0012 15:05
      * @scene 下单
      * @param [activitySoldEntity]
-     * @return java.lang.Long
+     * @return java.lang.Integer
      */
-    Long increaseSkuSoldNum(SkuLimitInfoEntity activitySoldEntity);
+    Integer increaseSkuSoldNum(SkuLimitInfoEntity activitySoldEntity);
 
     /**
      * @title 更新SKU已售数量
@@ -85,9 +85,9 @@ public interface SkuLimitInfoDao extends BaseDao<SkuLimitInfoEntity> {
      * @author qi.he
      * @date 2018/10/12 0012 15:11
      * @param [skuLimitInfoEntity]
-     * @return void
+     * @return java.lang.Integer
      */
-    void updateSkuLimitNum(SkuLimitInfoEntity skuLimitInfoEntity);
+    Integer updateSkuLimitNum(SkuLimitInfoEntity skuLimitInfoEntity);
 
     /**
      * @title 翻滚SKU状态至有效-skuId级别
@@ -95,9 +95,9 @@ public interface SkuLimitInfoDao extends BaseDao<SkuLimitInfoEntity> {
      * @date 2018/10/12 0012 15:17
      * @scene 更新商品失败、删除活动失败
      * @param [insertSkuList]
-     * @return void
+     * @return java.lang.Integer
      */
-    void reverseSkuLimitStatusBySkuId(List<SkuLimitInfoEntity> insertSkuList);
+    Integer reverseSkuLimitStatusBySkuId(List<SkuLimitInfoEntity> insertSkuList);
 
     /**
      * @title 翻滚SKU状态至有效-goodsId级别
@@ -105,9 +105,9 @@ public interface SkuLimitInfoDao extends BaseDao<SkuLimitInfoEntity> {
      * @date 2018/10/12 0012 15:25
      * @scene 删除商品失败
      * @param [param]
-     * @return void
+     * @return java.lang.Integer
      */
-    void reverseSkuLimitStatusByGoodsId(DeleteGoodsParam param);
+    Integer reverseSkuLimitStatusByGoodsId(DeleteGoodsParam param);
 
     /**
      * @title 批量查询SKU限购信息

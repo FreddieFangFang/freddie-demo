@@ -4,22 +4,22 @@ import com.weimob.saas.ec.limitation.entity.LimitStoreRelationshipEntity;
 
 import java.util.List;
 
-public interface LimitStoreRelationshipDao extends BaseDao<LimitStoreRelationshipEntity> {
+public interface LimitStoreRelationshipDao {
     /**
      * @title 批量插入门店关系
      * @author qi.he
      * @date 2018/10/12 0012 17:14
      * @param [storeInfoList]
-     * @return void
+     * @return java.lang.Integer
      */
-    void batchInsertStoreRelationship(List<LimitStoreRelationshipEntity> storeInfoList);
+    Integer batchInsertStoreRelationship(List<LimitStoreRelationshipEntity> storeInfoList);
 
     /**
      * @title 删除门店关联关系
      * @author qi.he
      * @date 2018/10/12 0012 17:19
      * @param [deleteEntity]
-     * @return void
+     * @return java.lang.Integer
      */
-    void deleteStoreRelationship(LimitStoreRelationshipEntity deleteEntity);
+    Integer deleteStoreRelationship(LimitStoreRelationshipEntity deleteEntity);
 }

@@ -27,6 +27,8 @@
         <typeAlias type="com.weimob.saas.ec.limitation.model.LimitParam" alias="LimitParam"/>
         <typeAlias type="com.weimob.saas.ec.limitation.model.DeleteGoodsParam" alias="DeleteGoodsParam"/>
         <typeAlias type="com.weimob.saas.ec.limitation.model.DeleteSkuParam" alias="DeleteSkuParam"/>
+        <typeAlias type="com.weimob.saas.ec.limitation.model.request.DeleteDiscountUserLimitInfoRequestVo"
+                   alias="DeleteDiscountUserLimitInfoRequestVo"/>
     </typeAliases>
 
     <mappers>

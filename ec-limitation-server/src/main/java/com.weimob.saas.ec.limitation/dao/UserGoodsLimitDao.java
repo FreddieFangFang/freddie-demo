@@ -7,42 +7,42 @@ import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
 
 import java.util.List;
 
-public interface UserGoodsLimitDao extends BaseDao<UserGoodsLimitEntity>{
+public interface UserGoodsLimitDao {
     /**
      * @title 新增用户商品购买记录
      * @author qi.he
      * @date 2018/10/13 0013 20:10
      * @param [goodsLimitEntity]
-     * @return java.lang.Long
+     * @return java.lang.Integer
      */
-    Long insertUserGoodsLimit(UserGoodsLimitEntity goodsLimitEntity);
+    Integer insertUserGoodsLimit(UserGoodsLimitEntity goodsLimitEntity);
 
     /**
      * @title 删除周期性限时折扣用户商品购买记录
      * @author qi.he
      * @date 2018/10/13 0013 20:14
      * @param [requestVo]
-     * @return void
+     * @return java.lang.Integer
      */
-    void deleteDiscountUserGoodsLimit(LimitParam requestVo);
+    Integer deleteDiscountUserGoodsLimit(LimitParam requestVo);
 
     /**
      * @title 更新用户商品购买记录
      * @author qi.he
      * @date 2018/10/13 0013 20:18
      * @param [goodsLimitEntity]
-     * @return java.lang.Long
+     * @return java.lang.Integer
      */
-    Long updateUserGoodsLimit(UserGoodsLimitEntity goodsLimitEntity);
+    Integer updateUserGoodsLimit(UserGoodsLimitEntity goodsLimitEntity);
 
     /**
      * @title 减少用户商品购买记录
      * @author qi.he
      * @date 2018/10/13 0013 20:21
      * @param [goodsLimitEntity]
-     * @return int
+     * @return java.lang.Integer
      */
-    int deductUserGoodsLimit(UserGoodsLimitEntity goodsLimitEntity);
+    Integer deductUserGoodsLimit(UserGoodsLimitEntity goodsLimitEntity);
 
     /**
      * @title 查询用户活动购买记录
