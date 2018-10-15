@@ -298,10 +298,10 @@ public class LimitationServiceImpl {
                 try {
                     updateResult = skuLimitInfoDao.increaseSkuSoldNum(activitySoldEntity);
                 } catch (Exception e) {
-                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_SKU_LIMIT_ERROR, e);
+                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_SKU_SOLD_NUM_ERROR, e);
                 }
                 if (updateResult == 0) {
-                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_SKU_LIMIT_ERROR);
+                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_SKU_SOLD_NUM_ERROR);
                 }
             }
         }
@@ -353,10 +353,10 @@ public class LimitationServiceImpl {
                 try {
                     updateResult = skuLimitInfoDao.deductSkuSoldNum(activitySoldEntity);
                 } catch (Exception e) {
-                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_SKU_LIMIT_ERROR, e);
+                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_SKU_SOLD_NUM_ERROR, e);
                 }
                 if (updateResult == 0) {
-                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_SKU_LIMIT_ERROR);
+                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_SKU_SOLD_NUM_ERROR);
                 }
             }
         }

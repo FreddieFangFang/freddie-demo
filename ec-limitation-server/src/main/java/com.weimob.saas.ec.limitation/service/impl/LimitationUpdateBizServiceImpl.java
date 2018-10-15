@@ -51,68 +51,34 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
 
     @Override
     public LimitationUpdateResponseVo saveLimitationInfo(LimitationInfoRequestVo requestVo) {
-        // 生成全局id
+        // 1.生成全局id
         requestVo.setLimitId(IdUtils.getLimitId(requestVo.getPid()));
 
-        // 构建并保存限购主表信息
-        LimitInfoEntity limitInfoEntity = buildLimitInfoEntity(requestVo);
-        Integer updateResult = 0;
-        try {
-            updateResult = limitInfoDao.insertLimitInfo(limitInfoEntity);
-        } catch (Exception e) {
-            throw new LimitationBizException(LimitationErrorCode.SQL_SAVE_LIMITATION_INFO_ERROR, e);
-        }
-        if (updateResult == 0) {
-            throw new LimitationBizException(LimitationErrorCode.SQL_SAVE_LIMITATION_INFO_ERROR);
-        }
+        // 2.构建并保存限购主表信息
+        buildAndSaveLimitationInfo(requestVo);
 
-        // 构建并保存限购门店表信息
-        if (CollectionUtils.isNotEmpty(requestVo.getStoreIdList())) {
-            List<LimitStoreRelationshipEntity> storeInfoList = buildStoreInfoList(requestVo);
-            try {
-                limitStoreRelationshipDao.batchInsertStoreRelationship(storeInfoList);
-            } catch (Exception e) {
-                throw new LimitationBizException(LimitationErrorCode.SQL_SAVE_STORE_RELATIONSHIP_ERROR, e);
-            }
-            if (updateResult == 0) {
-                throw new LimitationBizException(LimitationErrorCode.SQL_SAVE_STORE_RELATIONSHIP_ERROR);
-            }
-        }
+        // 3.构建并保存限购门店表信息
+        buildAndSaveStoreRelationship(requestVo);
 
-        // 构建并保存SKU表信息
-        if (Objects.equals(requestVo.getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
-            SkuLimitInfoEntity skuLimitInfo = buildSkuInfo(requestVo, requestVo.getLimitId());
-            try {
-                skuLimitInfoDao.batchInsertSkuLimit(Arrays.asList(skuLimitInfo));
-            } catch (Exception e) {
-                throw new LimitationBizException(LimitationErrorCode.SQL_SAVE_SKU_INFO_ERROR, e);
-            }
-            if (updateResult == 0) {
-                throw new LimitationBizException(LimitationErrorCode.SQL_SAVE_SKU_INFO_ERROR);
-            }
-        }
+        // 4.构建并保存SKU表信息
+        buildAndSaveSkuInfo(requestVo);
+
         return new LimitationUpdateResponseVo(requestVo.getLimitId(), true);
     }
 
     @Override
     public LimitationUpdateResponseVo updateLimitationInfo(LimitationInfoRequestVo requestVo) {
-        /** 1 查询限购主表信息*/
-        LimitInfoEntity oldLimitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
+        // 1.查询限购主表信息
+        LimitInfoEntity oldLimitInfoEntity = getLimitationInfo(requestVo);
 
-        if (oldLimitInfoEntity == null) {
-            throw new LimitationBizException(LimitationErrorCode.LIMITATION_IS_NULL);
-        }
-        requestVo.setLimitId(oldLimitInfoEntity.getLimitId());
-        /** 2 构建限购主表更新信息*/
-        LimitInfoEntity limitInfoEntity = buildLimitInfoEntity(requestVo);
-        limitInfoEntity.setVersion(oldLimitInfoEntity.getVersion());
-        /** 3 构建限购门店表信息*/
-        List<LimitStoreRelationshipEntity> storeInfoList = null;
-        if (CollectionUtils.isNotEmpty(requestVo.getStoreIdList())) {
-            storeInfoList = buildStoreInfoList(requestVo);
-        }
-        /** 4 更新数据库*/
-        limitationService.updateLimitationInfo(limitInfoEntity, storeInfoList);
+        // 2.构建并更新限购主表信息
+        LimitInfoEntity limitInfoEntity = buildAndUpdateLimitationInfo(requestVo, oldLimitInfoEntity);
+
+        // 3.构建并更新限购门店表信息
+        buildAndUpdateStoreRelationship(requestVo, limitInfoEntity);
+
+        // 4.构建并更新SKU限购信息
+        buildAndUpdateSkuInfo(requestVo, oldLimitInfoEntity);
 
         return new LimitationUpdateResponseVo(oldLimitInfoEntity.getLimitId(), true);
     }
@@ -566,5 +532,104 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         skuLimitInfo.setSkuId(skuLimitInfo.getGoodsId());
         skuLimitInfo.setLimitNum(requestVo.getThresholdInfo().getThreshold());
         return skuLimitInfo;
+    }
+
+    private void buildAndSaveLimitationInfo(LimitationInfoRequestVo requestVo) {
+        LimitInfoEntity limitInfoEntity = buildLimitInfoEntity(requestVo);
+        Integer updateResult = 0;
+        try {
+            updateResult = limitInfoDao.insertLimitInfo(limitInfoEntity);
+        } catch (Exception e) {
+            throw new LimitationBizException(LimitationErrorCode.SQL_SAVE_LIMIT_INFO_ERROR, e);
+        }
+        if (updateResult == 0) {
+            throw new LimitationBizException(LimitationErrorCode.SQL_SAVE_LIMIT_INFO_ERROR);
+        }
+    }
+
+    private void buildAndSaveStoreRelationship(LimitationInfoRequestVo requestVo) {
+        if (CollectionUtils.isNotEmpty(requestVo.getStoreIdList())) {
+            List<LimitStoreRelationshipEntity> storeInfoList = buildStoreInfoList(requestVo);
+            Integer updateResult = 0;
+            try {
+                updateResult = limitStoreRelationshipDao.batchInsertStoreRelationship(storeInfoList);
+            } catch (Exception e) {
+                throw new LimitationBizException(LimitationErrorCode.SQL_SAVE_STORE_RELATIONSHIP_ERROR, e);
+            }
+            if (updateResult == 0) {
+                throw new LimitationBizException(LimitationErrorCode.SQL_SAVE_STORE_RELATIONSHIP_ERROR);
+            }
+        }
+    }
+
+    private void buildAndSaveSkuInfo(LimitationInfoRequestVo requestVo) {
+        if (Objects.equals(requestVo.getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
+            SkuLimitInfoEntity skuLimitInfo = buildSkuInfo(requestVo, requestVo.getLimitId());
+            Integer updateResult = 0;
+            try {
+                updateResult = skuLimitInfoDao.batchInsertSkuLimit(Arrays.asList(skuLimitInfo));
+            } catch (Exception e) {
+                throw new LimitationBizException(LimitationErrorCode.SQL_SAVE_SKU_INFO_ERROR, e);
+            }
+            if (updateResult == 0) {
+                throw new LimitationBizException(LimitationErrorCode.SQL_SAVE_SKU_INFO_ERROR);
+            }
+        }
+    }
+
+    private void buildAndUpdateSkuInfo(LimitationInfoRequestVo requestVo, LimitInfoEntity oldLimitInfoEntity) {
+        if (Objects.equals(requestVo.getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
+            SkuLimitInfoEntity skuLimitInfo = buildSkuInfo(requestVo, oldLimitInfoEntity.getLimitId());
+            Integer updateResult = 0;
+            try {
+                updateResult = skuLimitInfoDao.updateSkuLimitNum(skuLimitInfo);
+            } catch (Exception e) {
+                throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_SKU_LIMIT_NUM_ERROR, e);
+            }
+            if (updateResult == 0) {
+                throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_SKU_LIMIT_NUM_ERROR);
+            }
+        }
+    }
+
+    private void buildAndUpdateStoreRelationship(LimitationInfoRequestVo requestVo, LimitInfoEntity limitInfoEntity) {
+        LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
+        deleteEntity.setPid(limitInfoEntity.getPid());
+        deleteEntity.setLimitId(limitInfoEntity.getLimitId());
+        try {
+            limitStoreRelationshipDao.deleteStoreRelationship(deleteEntity);
+        } catch (Exception e) {
+            throw new LimitationBizException(LimitationErrorCode.SQL_DELETE_STORE_RELATIONSHIP_ERROR, e);
+        }
+        buildAndSaveStoreRelationship(requestVo);
+    }
+
+    private LimitInfoEntity buildAndUpdateLimitationInfo(LimitationInfoRequestVo requestVo, LimitInfoEntity oldLimitInfoEntity) {
+        LimitInfoEntity limitInfoEntity = buildLimitInfoEntity(requestVo);
+        limitInfoEntity.setVersion(oldLimitInfoEntity.getVersion());
+        Integer updateResult = 0;
+        try {
+            updateResult = limitInfoDao.updateLimitInfo(limitInfoEntity);
+        } catch (Exception e) {
+            throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_LIMIT_INFO_ERROR, e);
+        }
+        if (updateResult == 0) {
+            throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_LIMIT_INFO_ERROR);
+        }
+        return limitInfoEntity;
+    }
+
+    private LimitInfoEntity getLimitationInfo(LimitationInfoRequestVo requestVo) {
+        LimitInfoEntity oldLimitInfoEntity = null;
+        try {
+            oldLimitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
+        } catch (Exception e) {
+            throw new LimitationBizException(LimitationErrorCode.SQL_QUERY_LIMIT_INFO_ERROR, e);
+        }
+        if (oldLimitInfoEntity == null) {
+            throw new LimitationBizException(LimitationErrorCode.LIMITATION_IS_NULL);
+        }
+        requestVo.setLimitId(oldLimitInfoEntity.getLimitId());
+        return oldLimitInfoEntity;
     }
 }
