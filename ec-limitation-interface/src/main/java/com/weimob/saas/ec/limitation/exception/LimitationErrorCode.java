@@ -55,6 +55,9 @@ public enum LimitationErrorCode {
     ACTIVITY_STOCK_TYPE_IS_NULL("1080000100023", "限时折扣活动库存设置类型为空"),
     CHECK_DELETE_GOODS_IS_NULL("1080000100024", "checkDeleteActivityGoods字段为空"),
     LIMIT_NUM_IS_INVALID("1080000100025", "限购值不能小于0"),
+    ACTIVITY_THRESHOLD_INFO_IS_NULL("1080000100026", "活动可售数量相关信息为空"),
+    ACTIVITY_THRESHOLD_IS_NULL("1080000100027", "活动可售数量为空"),
+    PARTICULAE_GROUP_TYPE_IS_NULL("1080000100028", "特定人群类型为空"),
 
 
     /*****************************交互异常02**********************************/

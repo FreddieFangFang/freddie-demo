@@ -1,6 +1,9 @@
 package com.weimob.saas.ec.limitation.model.request;
 
 import com.weimob.saas.ec.common.request.BaseRequest;
+import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
+import com.weimob.saas.ec.limitation.common.LimitLevelEnum;
+import com.weimob.saas.ec.limitation.common.LimitTypeEnum;
 
 import java.util.List;
 
@@ -30,7 +33,7 @@ public class LimitationInfoRequestVo extends BaseRequest{
      */
     private String source;
     /**
-     * 限购级别
+     * 限购级别，取值范围，参见：{@link com.weimob.saas.ec.limitation.common.LimitLevelEnum}
      */
     private Integer limitLevel;
     /**
@@ -38,11 +41,11 @@ public class LimitationInfoRequestVo extends BaseRequest{
      */
     private Long bizId;
     /**
-     * 活动类型或者商品限购类型
+     * 活动类型或者商品限购类型，取值范围，参见：{@link com.weimob.saas.ec.limitation.common.LimitBizTypeEnum}
      */
     private Integer bizType;
     /**
-     * 限购对每个人还是所有人
+     * 限购对每个人还是所有人，取值范围，参见：{@link com.weimob.saas.ec.limitation.common.LimitTypeEnum}
      */
     private Integer limitType;
     /**
@@ -53,6 +56,9 @@ public class LimitationInfoRequestVo extends BaseRequest{
      * 选择门店类型(1:全部门店 2:部分门店;3:部分排除)
      */
     private Integer selectStoreType;
+
+    /** 可售数量相关信息-目前只有优惠套装才会传 */
+    private ThresholdInfo thresholdInfo;
 
     public Long getLimitId() {
         return limitId;
@@ -132,5 +138,13 @@ public class LimitationInfoRequestVo extends BaseRequest{
 
     public void setSelectStoreType(Integer selectStoreType) {
         this.selectStoreType = selectStoreType;
+    }
+
+    public ThresholdInfo getThresholdInfo() {
+        return thresholdInfo;
+    }
+
+    public void setThresholdInfo(ThresholdInfo thresholdInfo) {
+        this.thresholdInfo = thresholdInfo;
     }
 }

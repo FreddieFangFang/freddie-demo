@@ -22,4 +22,6 @@ public class LimitConstant {
     public static final int DATA_TYPE_INIT = 0;
     //更新数据
     public static final int DATA_TYPE_OVER = 1;
+    //适用部分门店类型
+    public static final int SELECT_PART_STORE = 2;
 }

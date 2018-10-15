@@ -4,10 +4,7 @@ import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitServiceNameEnum;
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
-import com.weimob.saas.ec.limitation.dao.GoodsLimitInfoDao;
-import com.weimob.saas.ec.limitation.dao.LimitInfoDao;
-import com.weimob.saas.ec.limitation.dao.LimitOrderChangeLogDao;
-import com.weimob.saas.ec.limitation.dao.SkuLimitInfoDao;
+import com.weimob.saas.ec.limitation.dao.*;
 import com.weimob.saas.ec.limitation.entity.*;
 import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
@@ -39,33 +36,37 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
     @Autowired
     private LimitationServiceImpl limitationService;
     @Autowired
-    private LimitInfoDao limitInfoDao;
-    @Autowired
-    protected LimitOrderChangeLogDao limitOrderChangeLogDao;
-    @Autowired
     private ThreadPoolTaskExecutor threadExecutor;
+    @Autowired
+    private LimitInfoDao limitInfoDao;
     @Autowired
     private GoodsLimitInfoDao goodsLimitInfoDao;
     @Autowired
     private SkuLimitInfoDao skuLimitInfoDao;
+    @Autowired
+    private LimitStoreRelationshipDao limitStoreRelationshipDao;
+    @Autowired
+    protected LimitOrderChangeLogDao limitOrderChangeLogDao;
 
 
     @Override
     public LimitationUpdateResponseVo saveLimitationInfo(LimitationInfoRequestVo requestVo) {
-        /** 1 生成全局id */
-        Long limitId = IdUtils.getLimitId(requestVo.getPid());
-        requestVo.setLimitId(limitId);
-        /** 2 构建限购主表信息*/
+        // 生成全局id
+        requestVo.setLimitId(IdUtils.getLimitId(requestVo.getPid()));
+        // 构建并保存限购主表信息
         LimitInfoEntity limitInfoEntity = buildLimitInfoEntity(requestVo);
-        /** 3 构建限购门店表信息*/
-        List<LimitStoreRelationshipEntity> storeInfoList = null;
+        limitInfoDao.insertLimitInfo(limitInfoEntity);
+        // 构建并保存限购门店表信息
         if (CollectionUtils.isNotEmpty(requestVo.getStoreIdList())) {
-            storeInfoList = buildStoreInfoList(requestVo);
+            List<LimitStoreRelationshipEntity> storeInfoList = buildStoreInfoList(requestVo);
+            limitStoreRelationshipDao.batchInsertStoreRelationship(storeInfoList);
         }
-        /** 4 保存数据库*/
-        limitationService.saveLimitationInfo(limitInfoEntity, storeInfoList);
-
-        return new LimitationUpdateResponseVo(limitId, true);
+        // 构建并保存SKU表信息
+        if (Objects.equals(requestVo.getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
+            SkuLimitInfoEntity skuLimitInfo = buildSkuInfo(requestVo, requestVo.getLimitId());
+            skuLimitInfoDao.batchInsertSkuLimit(Arrays.asList(skuLimitInfo));
+        }
+        return new LimitationUpdateResponseVo(requestVo.getLimitId(), true);
     }
 
     @Override
@@ -529,5 +530,16 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         limitInfoEntity.setSource(requestVo.getSource());
         limitInfoEntity.setSelectStoreType(requestVo.getSelectStoreType());
         return limitInfoEntity;
+    }
+
+    private SkuLimitInfoEntity buildSkuInfo(LimitationInfoRequestVo requestVo, Long limitId) {
+        SkuLimitInfoEntity skuLimitInfo = new SkuLimitInfoEntity();
+        skuLimitInfo.setPid(requestVo.getPid());
+        skuLimitInfo.setLimitId(limitId);
+        skuLimitInfo.setLimitType(requestVo.getThresholdInfo().getParticularGroupType());
+        skuLimitInfo.setGoodsId(new Long(ActivityTypeEnum.COMBINATION_BUY.getType()));
+        skuLimitInfo.setSkuId(skuLimitInfo.getGoodsId());
+        skuLimitInfo.setLimitNum(requestVo.getThresholdInfo().getThreshold());
+        return skuLimitInfo;
     }
 }

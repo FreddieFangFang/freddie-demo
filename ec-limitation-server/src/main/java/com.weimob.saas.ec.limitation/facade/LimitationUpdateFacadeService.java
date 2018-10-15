@@ -1,6 +1,7 @@
 package com.weimob.saas.ec.limitation.facade;
 
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
+import com.weimob.saas.ec.common.constant.BizTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
 import com.weimob.saas.ec.limitation.exception.LimitationBizException;
@@ -54,8 +55,16 @@ public class LimitationUpdateFacadeService {
         }
         VerifyParamUtils.checkParam(LimitationErrorCode.LIMITTYPE_IS_NULL, requestVo.getLimitType());
         VerifyParamUtils.checkParam(LimitationErrorCode.REQUEST_PARAM_IS_NULL, requestVo.getSelectStoreType());
-        if (!Objects.equals(requestVo.getSelectStoreType(), 1)) {
+        if (Objects.equals(requestVo.getSelectStoreType(), LimitConstant.SELECT_PART_STORE)) {
             VerifyParamUtils.checkListParam(LimitationErrorCode.STORE_IS_NULL, requestVo.getStoreIdList());
+        }
+        if (Objects.equals(requestVo.getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
+            VerifyParamUtils.checkParam(LimitationErrorCode.ACTIVITY_THRESHOLD_INFO_IS_NULL,
+                    requestVo.getThresholdInfo());
+            VerifyParamUtils.checkParam(LimitationErrorCode.ACTIVITY_THRESHOLD_IS_NULL,
+                    requestVo.getThresholdInfo().getThreshold());
+            VerifyParamUtils.checkParam(LimitationErrorCode.PARTICULAE_GROUP_TYPE_IS_NULL,
+                    requestVo.getThresholdInfo().getParticularGroupType());
         }
     }
 
