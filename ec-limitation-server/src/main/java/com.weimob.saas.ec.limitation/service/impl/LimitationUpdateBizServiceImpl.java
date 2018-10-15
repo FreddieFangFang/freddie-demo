@@ -85,22 +85,25 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
 
     @Override
     public LimitationUpdateResponseVo deleteLimitationInfo(DeleteLimitationRequestVo requestVo) {
-        /** 1 查询限购主表信息*/
+        // 1.查询限购主表信息
         LimitInfoEntity oldLimitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
-
         if (oldLimitInfoEntity == null) {
             return new LimitationUpdateResponseVo(null, true);
         }
-        /** 2 查询商品表或者sku表，保存未删除的记录到日志表，以便进行回滚*/
 
-        List<SkuLimitInfoEntity> skuLimitInfoEntityList = skuLimitInfoDao.listSkuLimitByLimitId(new LimitParam(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId()));
-        if (CollectionUtils.isEmpty(skuLimitInfoEntityList)) {
-            //没有sku记录，查询goods表
-            List<GoodsLimitInfoEntity> goodsLimitInfoEntityList = goodsLimitInfoDao.listGoodsLimitByLimitId(new LimitParam(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId()));
-            buildDeleteLimitationGoodsChangeLog(goodsLimitInfoEntityList, LimitServiceNameEnum.DELETE_ACTIVITY_LIMIT.name(), requestVo);
-        } else {
-            buildDeleteLimitationSkuChangeLog(skuLimitInfoEntityList, LimitServiceNameEnum.DELETE_ACTIVITY_LIMIT.name(), requestVo);
+        // 2.查询商品表或者sku表，保存未删除的记录到日志表，以便进行回滚
+        if (!Objects.equals(requestVo.getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
+            List<SkuLimitInfoEntity> skuLimitInfoEntityList = skuLimitInfoDao.listSkuLimitByLimitId(new LimitParam(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId()));
+            if (CollectionUtils.isEmpty(skuLimitInfoEntityList)) {
+                //没有sku记录，查询goods表
+                List<GoodsLimitInfoEntity> goodsLimitInfoEntityList = goodsLimitInfoDao.listGoodsLimitByLimitId(new LimitParam(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId()));
+                buildDeleteLimitationGoodsChangeLog(goodsLimitInfoEntityList, LimitServiceNameEnum.DELETE_ACTIVITY_LIMIT.name(), requestVo);
+            } else {
+                buildDeleteLimitationSkuChangeLog(skuLimitInfoEntityList, LimitServiceNameEnum.DELETE_ACTIVITY_LIMIT.name(), requestVo);
+            }
         }
+
+        // 3.按活动类型进行不同处理
         switch (LimitBizTypeEnum.getLimitLevelEnumByLevel(requestVo.getBizType())) {
             case BIZ_TYPE_DISCOUNT:
                 limitationService.deleteDiscountLimitInfo(oldLimitInfoEntity);
@@ -119,7 +122,6 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
             default:
                 break;
         }
-
         return new LimitationUpdateResponseVo(oldLimitInfoEntity.getLimitId(), true, LimitContext.getTicket());
     }
 
