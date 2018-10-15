@@ -53,18 +53,43 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
     public LimitationUpdateResponseVo saveLimitationInfo(LimitationInfoRequestVo requestVo) {
         // 生成全局id
         requestVo.setLimitId(IdUtils.getLimitId(requestVo.getPid()));
+
         // 构建并保存限购主表信息
         LimitInfoEntity limitInfoEntity = buildLimitInfoEntity(requestVo);
-        limitInfoDao.insertLimitInfo(limitInfoEntity);
+        Integer updateResult = 0;
+        try {
+            updateResult = limitInfoDao.insertLimitInfo(limitInfoEntity);
+        } catch (Exception e) {
+            throw new LimitationBizException(LimitationErrorCode.SQL_SAVE_LIMITATION_INFO_ERROR, e);
+        }
+        if (updateResult == 0) {
+            throw new LimitationBizException(LimitationErrorCode.SQL_SAVE_LIMITATION_INFO_ERROR);
+        }
+
         // 构建并保存限购门店表信息
         if (CollectionUtils.isNotEmpty(requestVo.getStoreIdList())) {
             List<LimitStoreRelationshipEntity> storeInfoList = buildStoreInfoList(requestVo);
-            limitStoreRelationshipDao.batchInsertStoreRelationship(storeInfoList);
+            try {
+                limitStoreRelationshipDao.batchInsertStoreRelationship(storeInfoList);
+            } catch (Exception e) {
+                throw new LimitationBizException(LimitationErrorCode.SQL_SAVE_STORE_RELATIONSHIP_ERROR, e);
+            }
+            if (updateResult == 0) {
+                throw new LimitationBizException(LimitationErrorCode.SQL_SAVE_STORE_RELATIONSHIP_ERROR);
+            }
         }
+
         // 构建并保存SKU表信息
         if (Objects.equals(requestVo.getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
             SkuLimitInfoEntity skuLimitInfo = buildSkuInfo(requestVo, requestVo.getLimitId());
-            skuLimitInfoDao.batchInsertSkuLimit(Arrays.asList(skuLimitInfo));
+            try {
+                skuLimitInfoDao.batchInsertSkuLimit(Arrays.asList(skuLimitInfo));
+            } catch (Exception e) {
+                throw new LimitationBizException(LimitationErrorCode.SQL_SAVE_SKU_INFO_ERROR, e);
+            }
+            if (updateResult == 0) {
+                throw new LimitationBizException(LimitationErrorCode.SQL_SAVE_SKU_INFO_ERROR);
+            }
         }
         return new LimitationUpdateResponseVo(requestVo.getLimitId(), true);
     }
