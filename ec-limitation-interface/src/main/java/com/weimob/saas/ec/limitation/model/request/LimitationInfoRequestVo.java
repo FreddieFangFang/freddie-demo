@@ -25,11 +25,11 @@ public class LimitationInfoRequestVo extends BaseRequest{
      */
     private List<Long> storeIdList;
     /**
-     * 限购渠道类型
+     * 限购渠道类型（0：线上，1：线下；目前统一传0）
      */
     private String saleChannelType;
     /**
-     * 限购来源
+     * 限购来源（0：公众号，1：小程序；目前传0,1）
      */
     private String source;
     /**
