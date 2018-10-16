@@ -518,7 +518,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 throw new LimitationBizException(LimitationErrorCode.SQL_QUERY_SKU_INFO_ERROR, e);
             }
             if (CollectionUtils.isNotEmpty(skuLimitInfoEntities)) {
-                threshold = skuLimitInfoEntities.get(0).getLimitNum();
+                threshold = skuLimitInfoEntities.get(0).getLimitNum() - skuLimitInfoEntities.get(0).getSoldNum();
             }
         }
         responseVo.setPid(requestVo.getPid());
@@ -526,7 +526,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         responseVo.setBizId(requestVo.getBizId());
         responseVo.setBizType(requestVo.getBizType());
         responseVo.setActivityLimitNum(infoEntity.getLimitNum());
-        responseVo.setThreshold(threshold);
+        responseVo.setThreshold(threshold >= 0 ? threshold : 0);
         return responseVo;
     }
 
@@ -681,7 +681,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         Map<Long, Integer> limitIdMappingThreshold = new HashMap<>();
         if (CollectionUtils.isNotEmpty(skuInfoList)) {
             for (SkuLimitInfoEntity skuInfo : skuInfoList) {
-                limitIdMappingThreshold.put(skuInfo.getLimitId(), skuInfo.getLimitNum());
+                limitIdMappingThreshold.put(skuInfo.getLimitId(), skuInfo.getLimitNum() - skuInfo.getSoldNum());
             }
         }
 
@@ -704,7 +704,8 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             limitInfoResponseVo.setBizId(limitInfo.getBizId());
             limitInfoResponseVo.setBizType(limitInfo.getBizType());
             limitInfoResponseVo.setActivityLimitNum(limitInfo.getLimitNum());
-            limitInfoResponseVo.setThreshold(limitIdMappingThreshold.get(limitInfo.getLimitId()));
+            Integer threshold = limitIdMappingThreshold.get(limitInfo.getLimitId()) >= 0 ? limitIdMappingThreshold.get(limitInfo.getLimitId()) : 0;
+            limitInfoResponseVo.setThreshold(threshold);
             returnList.add(limitInfoResponseVo);
         }
         responseVo.setLimitInfoVos(returnList);
