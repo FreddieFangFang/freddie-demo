@@ -2,6 +2,7 @@ package com.weimob.saas.ec.limitation.service.impl;
 
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
+import com.weimob.saas.ec.limitation.common.LimitLevelEnum;
 import com.weimob.saas.ec.limitation.common.LimitServiceNameEnum;
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
 import com.weimob.saas.ec.limitation.dao.*;
@@ -530,8 +531,8 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         skuLimitInfo.setPid(requestVo.getPid());
         skuLimitInfo.setLimitId(limitId);
         skuLimitInfo.setLimitType(requestVo.getThresholdInfo().getParticularGroupType());
-        skuLimitInfo.setGoodsId(new Long(ActivityTypeEnum.COMBINATION_BUY.getType()));
-        skuLimitInfo.setSkuId(skuLimitInfo.getGoodsId());
+        skuLimitInfo.setGoodsId(LimitLevelEnum.LIMIT_LEVEL_ACTIVITY.getLevel().longValue());
+        skuLimitInfo.setSkuId(LimitLevelEnum.LIMIT_LEVEL_ACTIVITY.getLevel().longValue());
         skuLimitInfo.setLimitNum(requestVo.getThresholdInfo().getThreshold());
         return skuLimitInfo;
     }

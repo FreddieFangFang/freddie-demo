@@ -501,11 +501,20 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         if (infoEntity == null) {
             return responseVo;
         }
+        Integer threshold = null;
+        if (Objects.equals(requestVo.getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
+            List<SkuLimitInfoEntity> skuLimitInfoEntities = skuLimitInfoDao.listSkuLimitByLimitId(
+                    new LimitParam(infoEntity.getPid(), infoEntity.getLimitId()));
+            if (CollectionUtils.isNotEmpty(skuLimitInfoEntities)) {
+                threshold = skuLimitInfoEntities.get(0).getLimitNum();
+            }
+        }
         responseVo.setPid(requestVo.getPid());
         responseVo.setStoreId(requestVo.getStoreId());
         responseVo.setBizId(requestVo.getBizId());
         responseVo.setBizType(requestVo.getBizType());
         responseVo.setActivityLimitNum(infoEntity.getLimitNum());
+        responseVo.setThreshold(threshold);
         return responseVo;
     }
 
