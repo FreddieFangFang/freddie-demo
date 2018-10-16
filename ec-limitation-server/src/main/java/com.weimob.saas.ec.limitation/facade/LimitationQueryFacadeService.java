@@ -52,7 +52,7 @@ public class LimitationQueryFacadeService {
     public QueryActivityLimitInfoListResponseVo queryActivityLimitInfoList(QueryActivityLimitInfoListRequestVo requestVo) {
         validateQueryActivityLimitInfoListRequestVo(requestVo);
 
-        return null;
+        return limitationQueryBizService.queryActivityLimitInfoList(requestVo);
     }
 
     private void validateQueryGoodsLimitDetailListRequestVo(QueryGoodsLimitDetailListRequestVo requestVo) {

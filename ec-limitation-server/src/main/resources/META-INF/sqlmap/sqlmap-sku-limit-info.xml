@@ -365,7 +365,7 @@
   /*SkuLimitInfoDao.listSkuLimitByGoodsId*/
   </select>
 
-  <select id="listSkuLimitByLimitIdList" resultMap="BaseResultMap" parameterType="LimitParam">
+  <select id="listSkuLimitByLimitIdList" resultMap="BaseResultMap" parameterType="java.util.List">
     SELECT
       pid,
       store_id,
@@ -379,12 +379,11 @@
     FROM
       sku_limit_info
     WHERE
-      pid = #{pid}
-    AND limit_id IN
-      <foreach item="id" index="index" collection="list" open="(" separator="," close=")">
-        #{id}
+      <foreach item="item" index="index" collection="list" separator="or">
+        pid = #{item.pid}
+        AND limit_id = #{item.limitId}
+        AND is_deleted = 0
       </foreach>
-    AND is_deleted = 0
     /*SkuLimitInfoDao.listSkuLimitByLimitIdList*/
   </select>
 
