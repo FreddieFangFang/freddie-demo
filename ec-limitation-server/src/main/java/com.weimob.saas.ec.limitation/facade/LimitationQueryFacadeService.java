@@ -5,10 +5,7 @@ import com.weimob.saas.ec.limitation.constant.LimitConstant;
 import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.model.request.*;
-import com.weimob.saas.ec.limitation.model.response.GoodsLimitInfoListResponseVo;
-import com.weimob.saas.ec.limitation.model.response.QueryActivityLimitInfoResponseVo;
-import com.weimob.saas.ec.limitation.model.response.QueryGoodsLimitDetailListResponseVo;
-import com.weimob.saas.ec.limitation.model.response.QueryGoodsLimitNumListResponseVo;
+import com.weimob.saas.ec.limitation.model.response.*;
 import com.weimob.saas.ec.limitation.service.LimitationQueryBizService;
 import com.weimob.saas.ec.limitation.utils.VerifyParamUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -29,27 +26,33 @@ public class LimitationQueryFacadeService {
     private LimitationQueryBizService limitationQueryBizService;
 
     public GoodsLimitInfoListResponseVo queryGoodsLimitInfoList(GoodsLimitInfoListRequestVo requestVo) {
-
         validateRequestParam(requestVo);
 
         return limitationQueryBizService.queryGoodsLimitInfoList(requestVo);
     }
 
     public QueryGoodsLimitNumListResponseVo queryGoodsLimitNumList(QueryGoodsLimitNumRequestVo requestVo) {
-
         validateQueryGoodsLimitInfoRequestVo(requestVo);
+
         return limitationQueryBizService.queryGoodsLimitNumList(requestVo);
     }
 
     public QueryActivityLimitInfoResponseVo queryActivityLimitInfo(QueryActivityLimitInfoRequestVo requestVo) {
-
         validateQueryActivityLimitInfoRequestVo(requestVo);
+
         return limitationQueryBizService.queryActivityLimitInfo(requestVo);
     }
 
     public QueryGoodsLimitDetailListResponseVo queryGoodsLimitDetailList(QueryGoodsLimitDetailListRequestVo requestVo) {
         validateQueryGoodsLimitDetailListRequestVo(requestVo);
+
         return limitationQueryBizService.queryGoodsLimitDetailList(requestVo);
+    }
+
+    public QueryActivityLimitInfoListResponseVo queryActivityLimitInfoList(QueryActivityLimitInfoListRequestVo requestVo) {
+        validateQueryActivityLimitInfoListRequestVo(requestVo);
+
+        return null;
     }
 
     private void validateQueryGoodsLimitDetailListRequestVo(QueryGoodsLimitDetailListRequestVo requestVo) {
@@ -114,5 +117,9 @@ public class LimitationQueryFacadeService {
         }
     }
 
-
+    private void validateQueryActivityLimitInfoListRequestVo(QueryActivityLimitInfoListRequestVo requestVo) {
+        VerifyParamUtils.checkParam(LimitationErrorCode.PID_IS_NULL, requestVo.getPid());
+        VerifyParamUtils.checkListParam(LimitationErrorCode.BIZID_IS_NULL, requestVo.getBizIds());
+        VerifyParamUtils.checkParam(LimitationErrorCode.BIZTYPE_IS_NULL, requestVo.getBizType());
+    }
 }

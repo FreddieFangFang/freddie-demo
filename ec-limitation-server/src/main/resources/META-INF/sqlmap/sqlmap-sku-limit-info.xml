@@ -365,4 +365,27 @@
   /*SkuLimitInfoDao.listSkuLimitByGoodsId*/
   </select>
 
+  <select id="listSkuLimitByLimitIdList" resultMap="BaseResultMap" parameterType="LimitParam">
+    SELECT
+      pid,
+      store_id,
+      limit_id,
+      limit_type,
+      goods_id,
+      sku_id,
+      limit_num,
+      sold_num,
+      version
+    FROM
+      sku_limit_info
+    WHERE
+      pid = #{pid}
+    AND limit_id IN
+      <foreach item="id" index="index" collection="list" open="(" separator="," close=")">
+        #{id}
+      </foreach>
+    AND is_deleted = 0
+    /*SkuLimitInfoDao.listSkuLimitByLimitIdList*/
+  </select>
+
 </mapper>

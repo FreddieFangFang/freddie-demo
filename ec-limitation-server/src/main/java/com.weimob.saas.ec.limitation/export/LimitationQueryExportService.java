@@ -4,14 +4,8 @@ import com.weimob.saas.ec.common.export.BaseExportService;
 import com.weimob.saas.ec.limitation.common.LimitationCommonErrorVo;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.facade.LimitationQueryFacadeService;
-import com.weimob.saas.ec.limitation.model.request.GoodsLimitInfoListRequestVo;
-import com.weimob.saas.ec.limitation.model.request.QueryActivityLimitInfoRequestVo;
-import com.weimob.saas.ec.limitation.model.request.QueryGoodsLimitDetailListRequestVo;
-import com.weimob.saas.ec.limitation.model.request.QueryGoodsLimitNumRequestVo;
-import com.weimob.saas.ec.limitation.model.response.GoodsLimitInfoListResponseVo;
-import com.weimob.saas.ec.limitation.model.response.QueryActivityLimitInfoResponseVo;
-import com.weimob.saas.ec.limitation.model.response.QueryGoodsLimitDetailListResponseVo;
-import com.weimob.saas.ec.limitation.model.response.QueryGoodsLimitNumListResponseVo;
+import com.weimob.saas.ec.limitation.model.request.*;
+import com.weimob.saas.ec.limitation.model.response.*;
 import com.weimob.saas.ec.limitation.service.LimitationQueryService;
 import com.weimob.soa.common.response.SoaResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,5 +40,10 @@ public class LimitationQueryExportService extends BaseExportService implements L
     @Override
     public SoaResponse<QueryGoodsLimitDetailListResponseVo, LimitationCommonErrorVo> queryGoodsLimitDetailList(QueryGoodsLimitDetailListRequestVo requestVo) {
         return process(limitationQueryFacadeService, "queryGoodsLimitDetailList", requestVo);
+    }
+
+    @Override
+    public SoaResponse<QueryActivityLimitInfoListResponseVo, LimitationErrorCode> queryActivityLimitInfoList(QueryActivityLimitInfoListRequestVo requestVo) {
+        return process(limitationQueryFacadeService, "queryActivityLimitInfoList", requestVo);
     }
 }

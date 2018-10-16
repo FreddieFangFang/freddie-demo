@@ -165,17 +165,36 @@ public class LimitationServiceImpl {
     }
 
     public void deleteCombinationLimitInfo(LimitInfoEntity oldLimitInfoEntity) {
-        limitInfoDao.deleteLimitInfo(oldLimitInfoEntity);
+        Integer updateResult = 0;
+        try {
+            updateResult = limitInfoDao.deleteLimitInfo(oldLimitInfoEntity);
+        } catch (Exception e) {
+            throw new LimitationBizException(LimitationErrorCode.SQL_DELETE_LIMIT_INFO_ERROR, e);
+        }
+        if (updateResult == 0) {
+            throw new LimitationBizException(LimitationErrorCode.SQL_DELETE_LIMIT_INFO_ERROR);
+        }
 
         LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
         deleteEntity.setPid(oldLimitInfoEntity.getPid());
         deleteEntity.setLimitId(oldLimitInfoEntity.getLimitId());
-        limitStoreRelationshipDao.deleteStoreRelationship(deleteEntity);
+        try {
+            limitStoreRelationshipDao.deleteStoreRelationship(deleteEntity);
+        } catch (Exception e) {
+            throw new LimitationBizException(LimitationErrorCode.SQL_DELETE_STORE_RELATIONSHIP_ERROR, e);
+        }
 
         DeleteGoodsParam param = new DeleteGoodsParam();
         param.setPid(oldLimitInfoEntity.getPid());
         param.setLimitId(oldLimitInfoEntity.getLimitId());
-        skuLimitInfoDao.deleteSkuLimitByLimitId(param);
+        try {
+            updateResult = skuLimitInfoDao.deleteSkuLimitByLimitId(param);
+        } catch (Exception e) {
+            throw new LimitationBizException(LimitationErrorCode.SQL_DELETE_SKU_LIMIT_NUM_ERROR, e);
+        }
+        if (updateResult == 0) {
+            throw new LimitationBizException(LimitationErrorCode.SQL_DELETE_SKU_LIMIT_NUM_ERROR);
+        }
     }
 
     public void deletePointGoodsLimitInfo(LimitInfoEntity entity, List<Long> pointGoodsIdList) {

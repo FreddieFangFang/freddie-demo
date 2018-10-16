@@ -1,5 +1,6 @@
 package com.weimob.saas.ec.limitation.service.impl;
 
+import com.sun.org.apache.xalan.internal.utils.XMLSecurityManager;
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitLevelEnum;
@@ -87,7 +88,12 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
     @Override
     public LimitationUpdateResponseVo deleteLimitationInfo(DeleteLimitationRequestVo requestVo) {
         // 1.查询限购主表信息
-        LimitInfoEntity oldLimitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
+        LimitInfoEntity oldLimitInfoEntity = null;
+        try {
+            oldLimitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
+        } catch (Exception e) {
+            throw new LimitationBizException(LimitationErrorCode.SQL_QUERY_LIMIT_INFO_ERROR, e);
+        }
         if (oldLimitInfoEntity == null) {
             return new LimitationUpdateResponseVo(null, true);
         }

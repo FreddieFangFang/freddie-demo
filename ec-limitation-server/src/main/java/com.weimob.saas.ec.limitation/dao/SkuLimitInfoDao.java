@@ -157,4 +157,13 @@ public interface SkuLimitInfoDao {
      * @return java.util.List<com.weimob.saas.ec.limitation.entity.SkuLimitInfoEntity>
      */
     List<SkuLimitInfoEntity> listSkuLimitByGoodsId(DeleteGoodsParam limitParam);
+
+    /**
+     * @title 批量查询活动下SKU限购信息
+     * @author qi.he
+     * @date 2018/10/16 0016 15:44
+     * @param [limitParams]
+     * @return java.util.List<com.weimob.saas.ec.limitation.entity.SkuLimitInfoEntity>
+     */
+    List<SkuLimitInfoEntity> listSkuLimitByLimitIdList(List<LimitParam> limitParams);
 }

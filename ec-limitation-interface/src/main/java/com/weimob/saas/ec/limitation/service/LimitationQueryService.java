@@ -2,14 +2,12 @@ package com.weimob.saas.ec.limitation.service;
 
 import com.weimob.saas.ec.limitation.common.LimitationCommonErrorVo;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
+import com.weimob.saas.ec.limitation.model.request.QueryActivityLimitInfoListRequestVo;
 import com.weimob.saas.ec.limitation.model.request.GoodsLimitInfoListRequestVo;
 import com.weimob.saas.ec.limitation.model.request.QueryActivityLimitInfoRequestVo;
 import com.weimob.saas.ec.limitation.model.request.QueryGoodsLimitDetailListRequestVo;
 import com.weimob.saas.ec.limitation.model.request.QueryGoodsLimitNumRequestVo;
-import com.weimob.saas.ec.limitation.model.response.GoodsLimitInfoListResponseVo;
-import com.weimob.saas.ec.limitation.model.response.QueryActivityLimitInfoResponseVo;
-import com.weimob.saas.ec.limitation.model.response.QueryGoodsLimitDetailListResponseVo;
-import com.weimob.saas.ec.limitation.model.response.QueryGoodsLimitNumListResponseVo;
+import com.weimob.saas.ec.limitation.model.response.*;
 import com.weimob.soa.common.response.SoaResponse;
 
 /**
@@ -46,7 +44,7 @@ public interface LimitationQueryService {
     /**
      * @param
      * @return
-     * @title B端查询活动限购数量
+     * @title B端查询活动限购数量及可售数量
      * @author lujialin
      * @date 2018/6/8 14:50
      * @useScene
@@ -67,4 +65,16 @@ public interface LimitationQueryService {
      * @return 
      */
     SoaResponse<QueryGoodsLimitDetailListResponseVo,LimitationCommonErrorVo> queryGoodsLimitDetailList(QueryGoodsLimitDetailListRequestVo requestVo);
+
+    /***
+     * @title 批量查询活动限购信息
+     * @author qi.he
+     * @date 2018/10/16 0016 14:54
+     * @useScene
+     * @parameterExample
+     * @returnExample
+     * @param [requestVo]
+     * @return com.weimob.soa.common.response.SoaResponse<com.weimob.saas.ec.limitation.model.response.QueryActivityLimitInfoListResponseVo,com.weimob.saas.ec.limitation.exception.LimitationErrorCode>
+     */
+    SoaResponse<QueryActivityLimitInfoListResponseVo, LimitationErrorCode> queryActivityLimitInfoList(QueryActivityLimitInfoListRequestVo requestVo);
 }

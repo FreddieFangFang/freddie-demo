@@ -1,13 +1,7 @@
 package com.weimob.saas.ec.limitation.service;
 
-import com.weimob.saas.ec.limitation.model.request.GoodsLimitInfoListRequestVo;
-import com.weimob.saas.ec.limitation.model.request.QueryActivityLimitInfoRequestVo;
-import com.weimob.saas.ec.limitation.model.request.QueryGoodsLimitDetailListRequestVo;
-import com.weimob.saas.ec.limitation.model.request.QueryGoodsLimitNumRequestVo;
-import com.weimob.saas.ec.limitation.model.response.GoodsLimitInfoListResponseVo;
-import com.weimob.saas.ec.limitation.model.response.QueryActivityLimitInfoResponseVo;
-import com.weimob.saas.ec.limitation.model.response.QueryGoodsLimitDetailListResponseVo;
-import com.weimob.saas.ec.limitation.model.response.QueryGoodsLimitNumListResponseVo;
+import com.weimob.saas.ec.limitation.model.request.*;
+import com.weimob.saas.ec.limitation.model.response.*;
 
 /**
  * @author lujialin
@@ -23,4 +17,7 @@ public interface LimitationQueryBizService {
     QueryActivityLimitInfoResponseVo queryActivityLimitInfo(QueryActivityLimitInfoRequestVo requestVo);
 
     QueryGoodsLimitDetailListResponseVo queryGoodsLimitDetailList(QueryGoodsLimitDetailListRequestVo requestVo);
+
+    QueryActivityLimitInfoListResponseVo queryActivityLimitInfoList(QueryActivityLimitInfoListRequestVo requestVo);
+
 }
