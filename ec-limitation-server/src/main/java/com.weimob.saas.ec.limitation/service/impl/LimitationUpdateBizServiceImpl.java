@@ -1,6 +1,5 @@
 package com.weimob.saas.ec.limitation.service.impl;
 
-import com.sun.org.apache.xalan.internal.utils.XMLSecurityManager;
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitLevelEnum;
