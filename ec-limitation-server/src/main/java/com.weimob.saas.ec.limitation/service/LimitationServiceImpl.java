@@ -171,6 +171,11 @@ public class LimitationServiceImpl {
         deleteEntity.setPid(oldLimitInfoEntity.getPid());
         deleteEntity.setLimitId(oldLimitInfoEntity.getLimitId());
         limitStoreRelationshipDao.deleteStoreRelationship(deleteEntity);
+
+        DeleteGoodsParam param = new DeleteGoodsParam();
+        param.setPid(oldLimitInfoEntity.getPid());
+        param.setLimitId(oldLimitInfoEntity.getLimitId());
+        skuLimitInfoDao.deleteSkuLimitByLimitId(param);
     }
 
     public void deletePointGoodsLimitInfo(LimitInfoEntity entity, List<Long> pointGoodsIdList) {
