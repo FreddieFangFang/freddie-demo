@@ -351,7 +351,6 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 //throw new LimitationBizException(LimitationErrorCode.LIMIT_ACTIVITY_IS_NULL);
                 continue;
             }
-            goodsLimitInfoListVo.setActivityLimitNum(activityLimitNum);
             if (activityLimitNum == LimitConstant.UNLIMITED_NUM) {
                 goodsLimitInfoListVo.setLimitStatus(false);
                 goodsLimitInfoListVo.setCanBuyNum(Integer.MAX_VALUE);
