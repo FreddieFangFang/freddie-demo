@@ -273,7 +273,11 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             }
             vo.setAlreadyBuyNum(alreadyBuyNum == null ? 0 : alreadyBuyNum);
             vo.setGoodsLimitNum(goodsLimitNum);
+            if (pidGoodsLimitNum != LimitConstant.UNLIMITED_NUM) {
+                vo.setGoodsLimitNum(pidGoodsLimitNum);
+            }
             if (LimitConstant.UNLIMITED_NUM == goodsLimitNum) {
+                // 不限购
                 if (LimitConstant.UNLIMITED_NUM == pidGoodsLimitNum) {
                     if (vo.getLimitStatus()) {
                         vo.setGoodsCanBuyNum(vo.getCanBuyNum());
@@ -281,6 +285,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                         vo.setGoodsCanBuyNum(Integer.MAX_VALUE);
                     }
                 } else {
+                    // 新零售-店铺限购
                     vo.setLimitStatus(true);
                     Integer canBuyNum = pidGoodsLimitNum - (pidAlreadyBuyNum == null ? 0 : pidAlreadyBuyNum);
                     if (canBuyNum < 0) {
@@ -290,6 +295,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                     vo.setGoodsCanBuyNum(vo.getCanBuyNum());
                 }
             } else {
+                // 微商城-门店限购
                 if (LimitConstant.UNLIMITED_NUM == pidGoodsLimitNum) {
                     vo.setLimitStatus(true);
                     Integer canBuyNum = goodsLimitNum - (alreadyBuyNum == null ? 0 : alreadyBuyNum);
@@ -299,6 +305,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                     vo.setCanBuyNum(vo.getCanBuyNum() < canBuyNum ? vo.getCanBuyNum() : canBuyNum);
                     vo.setGoodsCanBuyNum(vo.getCanBuyNum());
                 } else {
+                    // 店铺、门店均限购
                     vo.setLimitStatus(true);
                     Integer storeCanBuyNum = goodsLimitNum - (alreadyBuyNum == null ? 0 : alreadyBuyNum);
                     Integer pidCanBuyNum = pidGoodsLimitNum - (pidAlreadyBuyNum == null ? 0 : pidAlreadyBuyNum);
