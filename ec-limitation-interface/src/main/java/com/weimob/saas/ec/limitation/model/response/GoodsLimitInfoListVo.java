@@ -24,23 +24,26 @@ public class GoodsLimitInfoListVo extends BaseRequest {
     /** 是否限购 */
     private Boolean limitStatus;
 
-    /** 还能购买的数量，业务限购级别不同意义不同 */
-    private Integer canBuyNum;
+    /** 活动限购 */
+    private Integer activityLimitNum;
 
-    /** 已购买数量/已售数量（业务限购级别不同意义不同，活动/商品级别表示用户已购买数量（优惠套装表示已售数量）、SKU级别表示已售数量）*/
-    private Integer alreadyBuyNum;
+    /** 商品限购 */
+    private Integer goodsLimitNum;
 
-    /** 可售数量阈值，业务限购级别不同意义不同 */
+    /** 可售数量阈值，业务限购级别不同意义不同（活动可售/商品可售/SKU可售） */
     private Integer skuLimitNum;
 
-    /** 商品限购（门店级别） */
-    private Integer goodsLimitNum;
+    /** 已购买数量/已售数量（校验到活动/商品级别限购表示用户已购买数量、SKU级别表示已售数量）*/
+    private Integer alreadyBuyNum;
+
+    /** 还能购买的数量，业务限购级别不同意义不同 */
+    private Integer canBuyNum;
 
     /** 商品级别还能购买的数量，0代表不可买，不限购返回Integer.MAX_VALUE */
     private Integer goodsCanBuyNum;
 
-    /** 当前用户已购买数量（活动级别/商品级别） */
-    private Integer userAlreadyBuyNum;
+    /** 已售数量（声明背景：业务方同时需要用户已购数量、活动已售数量的情况） */
+    private Integer soldNum;
 
     public Long getGoodsId() {
         return goodsId;
@@ -122,11 +125,19 @@ public class GoodsLimitInfoListVo extends BaseRequest {
         this.goodsCanBuyNum = goodsCanBuyNum;
     }
 
-    public Integer getUserAlreadyBuyNum() {
-        return userAlreadyBuyNum;
+    public Integer getActivityLimitNum() {
+        return activityLimitNum;
     }
 
-    public void setUserAlreadyBuyNum(Integer userAlreadyBuyNum) {
-        this.userAlreadyBuyNum = userAlreadyBuyNum;
+    public void setActivityLimitNum(Integer activityLimitNum) {
+        this.activityLimitNum = activityLimitNum;
+    }
+
+    public Integer getSoldNum() {
+        return soldNum;
+    }
+
+    public void setSoldNum(Integer soldNum) {
+        this.soldNum = soldNum;
     }
 }

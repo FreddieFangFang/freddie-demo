@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
+import com.weimob.saas.ec.limitation.common.LimitLevelEnum;
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
 import com.weimob.saas.ec.limitation.dao.*;
 import com.weimob.saas.ec.limitation.entity.*;
@@ -196,7 +197,10 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 continue;
             }
             Integer alreadyBuyNum = skuLimitMap.get(MapKeyUtil.buildSkuLimitMapKey(vo.getPid(), limitId, vo.getGoodsId(), vo.getSkuId())).getSoldNum();
-            vo.setAlreadyBuyNum(alreadyBuyNum == null ? 0 : alreadyBuyNum);
+            if (!Objects.equals(requestVo.getGoodsDetailList().get(0).getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
+                vo.setAlreadyBuyNum(alreadyBuyNum == null ? 0 : alreadyBuyNum);
+            }
+            vo.setSoldNum(alreadyBuyNum == null ? 0 : alreadyBuyNum);
             Integer skuLimitNum = skuLimitMap.get(MapKeyUtil.buildSkuLimitMapKey(vo.getPid(), limitId, vo.getGoodsId(), vo.getSkuId())).getLimitNum();
             vo.setSkuLimitNum(skuLimitNum);
             Integer canBuyNum = skuLimitNum - (alreadyBuyNum == null ? 0 : alreadyBuyNum);
@@ -268,7 +272,6 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 pidGoodsLimitNum = 0;
             }
             vo.setAlreadyBuyNum(alreadyBuyNum == null ? 0 : alreadyBuyNum);
-            vo.setUserAlreadyBuyNum(vo.getAlreadyBuyNum());
             vo.setGoodsLimitNum(goodsLimitNum);
             if (LimitConstant.UNLIMITED_NUM == goodsLimitNum) {
                 if (LimitConstant.UNLIMITED_NUM == pidGoodsLimitNum) {
@@ -345,12 +348,12 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             String limitIdKey = MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId());
             Integer alreadyBuyNum = activityUserLimitNumMap.get(limitIdKey);
             goodsLimitInfoListVo.setAlreadyBuyNum(alreadyBuyNum == null ? 0 : alreadyBuyNum);
-            goodsLimitInfoListVo.setUserAlreadyBuyNum(goodsLimitInfoListVo.getAlreadyBuyNum());
             Integer activityLimitNum = activityLimitNumMap.get(limitIdKey);
             if (activityLimitNum == null) {
                 //throw new LimitationBizException(LimitationErrorCode.LIMIT_ACTIVITY_IS_NULL);
                 continue;
             }
+            goodsLimitInfoListVo.setActivityLimitNum(activityLimitNum);
             if (activityLimitNum == LimitConstant.UNLIMITED_NUM) {
                 goodsLimitInfoListVo.setLimitStatus(false);
                 goodsLimitInfoListVo.setCanBuyNum(Integer.MAX_VALUE);
@@ -398,12 +401,30 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                                   List<UserGoodsLimitEntity> queryUserGoodsLimitList,
                                   List<UserLimitEntity> queryUserLimitList, List<SkuLimitInfoEntity> querySkuLimitList) {
         for (QueryGoodsLimitInfoListVo vo : requestVo.getGoodsDetailList()) {
+            Long limitId = limitIdMap.get(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId()));
             if (Objects.equals(vo.getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
                 // 保存优惠套装限购时，存入SKU表的goodsId以及skuId都是0，所以需要特殊处理一下
                 vo.setGoodsId(0L);
                 vo.setSkuId(0L);
+
+                UserLimitEntity userLimitEntity = new UserLimitEntity();
+                userLimitEntity.setLimitId(limitId);
+                userLimitEntity.setPid(vo.getPid());
+                userLimitEntity.setStoreId(vo.getStoreId());
+                userLimitEntity.setBizType(vo.getBizType());
+                userLimitEntity.setBizId(vo.getBizId());
+                userLimitEntity.setWid(vo.getWid());
+                queryUserLimitList.add(userLimitEntity);
+
+                SkuLimitInfoEntity skuLimitInfoEntity = new SkuLimitInfoEntity();
+                skuLimitInfoEntity.setLimitId(limitId);
+                skuLimitInfoEntity.setPid(vo.getPid());
+                skuLimitInfoEntity.setStoreId(vo.getStoreId());
+                skuLimitInfoEntity.setGoodsId(vo.getGoodsId());
+                skuLimitInfoEntity.setSkuId(vo.getSkuId());
+                querySkuLimitList.add(skuLimitInfoEntity);
+                continue;
             }
-            Long limitId = limitIdMap.get(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId()));
             GoodsLimitInfoEntity goodsLimitInfoEntity = new GoodsLimitInfoEntity();
             goodsLimitInfoEntity.setPid(vo.getPid());
             goodsLimitInfoEntity.setStoreId(vo.getStoreId());
@@ -418,23 +439,6 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             userGoodsLimitEntity.setGoodsId(vo.getGoodsId());
             userGoodsLimitEntity.setLimitId(limitId);
             queryUserGoodsLimitList.add(userGoodsLimitEntity);
-
-            UserLimitEntity userLimitEntity = new UserLimitEntity();
-            userLimitEntity.setLimitId(limitId);
-            userLimitEntity.setPid(vo.getPid());
-            userLimitEntity.setStoreId(vo.getStoreId());
-            userLimitEntity.setBizType(vo.getBizType());
-            userLimitEntity.setBizId(vo.getBizId());
-            userLimitEntity.setWid(vo.getWid());
-            queryUserLimitList.add(userLimitEntity);
-
-            SkuLimitInfoEntity skuLimitInfoEntity = new SkuLimitInfoEntity();
-            skuLimitInfoEntity.setLimitId(limitId);
-            skuLimitInfoEntity.setPid(vo.getPid());
-            skuLimitInfoEntity.setStoreId(vo.getStoreId());
-            skuLimitInfoEntity.setGoodsId(vo.getGoodsId());
-            skuLimitInfoEntity.setSkuId(vo.getSkuId());
-            querySkuLimitList.add(skuLimitInfoEntity);
         }
     }
 

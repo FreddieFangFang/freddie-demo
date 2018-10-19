@@ -11,47 +11,31 @@ import com.weimob.saas.ec.limitation.common.LimitTypeEnum;
  */
 public class QueryGoodsLimitInfoListVo extends BaseRequest {
 
-    /**
-     * 活动限购的活动id，商品限购的goodsId
-     */
+    /** 活动限购的活动id，商品限购的goodsId */
     private Long bizId;
 
-    /**
-     * 活动类型的活动类型，商品限购类型暂定30
-     */
+    /** 活动类型的活动类型，商品限购类型暂定30 */
     private Integer bizType;
 
-    /**
-     * 限时折扣1.冻结库存；2.可用sku
-     */
+    /** 限时折扣1.冻结库存；2.可用sku */
     private Integer activityStockType;
 
-    /**
-     * 商品id
-     */
+    /** 商品id */
     private Long goodsId;
 
-    /**
-     * skuId
-     */
+    /** skuId */
     private Long skuId;
 
-    /**
-     * 商品购买数
-     */
+    /** 商品购买数 */
     private Integer goodsBuyNum;
-    /**
-     * 结算传true，其他传false
-     */
+
+    /** 结算传true，其他传false */
     private Boolean checkLimit;
 
-    /**
-     * 限购级别
-     */
+    /** 限购级别，取值范围，参见：{@link com.weimob.saas.ec.limitation.common.LimitLevelEnum} */
     private Integer limitLevel;
-    /**
-     * 限购维度
-     */
+
+    /** 限购维度，取值范围，参见：{@link com.weimob.saas.ec.limitation.common.LimitTypeEnum} */
     private Integer limitType;
 
     public Long getBizId() {
