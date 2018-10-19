@@ -178,8 +178,8 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         List<GoodsLimitInfoListVo> goodsLimitInfoList = new ArrayList<>();
         validActivityLimit(requestVo, limitIdMap, activityLimitNumMap, activityUserLimitNumMap, goodsLimitInfoList);
         List<SkuLimitInfoEntity> skuLimitList = skuLimitInfoDao.listSkuLimit(querySkuLimitList);
-        validGoodsSkuLimit(requestVo, limitIdMap, skuLimitList, responseVo);
         responseVo.setGoodsLimitInfoList(goodsLimitInfoList);
+        validGoodsSkuLimit(requestVo, limitIdMap, skuLimitList, responseVo);
         return responseVo;
     }
 
