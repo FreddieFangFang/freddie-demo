@@ -36,9 +36,9 @@ public class ActivityLimitBizHandler extends BaseHandler implements LimitBizHand
     @Override
     public void doLimitHandler(List<UpdateUserLimitVo> vos) {
         Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap = new HashMap<>();
-        Map<String, Integer> orderActivityValidMap = new HashMap();
+        Map<String, Integer> localOrderBuyNumMap = new HashMap();
         /** 1 处理入参数据 **/
-        groupingOrderActivityRequestVoList(LimitContext.getLimitBo().getOrderGoodsLimitMap(), orderGoodsQueryMap, vos, orderActivityValidMap);
+        groupingOrderActivityRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
         List<LimitParam> limitParams = new ArrayList<>();
         for (UpdateUserLimitVo requestVo : orderGoodsQueryMap.get(LIMIT_PREFIX_ACTIVITY)) {
             LimitParam limitInputVo = new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType());
@@ -53,9 +53,9 @@ public class ActivityLimitBizHandler extends BaseHandler implements LimitBizHand
         List<UserLimitEntity> userLimitEntityList = userLimitDao.listUserLimitByBizId(vos);
         /** 4 校验商品是否超出活动限购 **/
         validLimitation(limitInfoEntityList, null, userLimitEntityList,
-                null, null, orderActivityValidMap);
+                null, null, localOrderBuyNumMap);
         /** 5 封装更新数据库入参 **/
-        updateUserLimitRecord(LimitContext.getLimitBo().getOrderGoodsLimitMap());
+        updateUserLimitRecord(LimitContext.getLimitBo().getGlobalOrderBuyNumMap());
 
     }
 }

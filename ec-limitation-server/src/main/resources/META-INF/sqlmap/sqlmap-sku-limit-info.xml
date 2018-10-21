@@ -262,8 +262,10 @@
       <foreach item="item" index="index" collection="list" separator="or">
         (
           skulimtinfo.pid = #{item.pid}
-          AND skulimtinfo.goods_id = #{item.goodsId}
-          AND skulimtinfo.sku_id =#{item.skuId}
+          <if test="item.bizType != 13 ">
+            AND skulimtinfo.goods_id = #{item.goodsId}
+            AND skulimtinfo.sku_id =#{item.skuId}
+          </if>
           AND limitinfo.biz_id = #{item.bizId}
           AND limitinfo.biz_type = #{item.bizType}
           AND skulimtinfo.is_deleted = 0

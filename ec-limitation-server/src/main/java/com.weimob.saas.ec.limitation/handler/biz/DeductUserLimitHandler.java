@@ -53,26 +53,26 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
 
             Map<String, Integer> orderGoodsLimitMap = new HashMap<>();
             Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap = new HashMap<>();
-            super.groupingOrderGoodsRequestVoList(LimitContext.getLimitBo().getOrderGoodsLimitMap(), orderGoodsQueryMap, vos, orderGoodsLimitMap);
+            super.groupingOrderGoodsRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, orderGoodsLimitMap);
 
             //3.更新限购记录
             //3.1 判断活动类型
             if (Objects.equals(vos.get(0).getBizType(), LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel())) {
-                groupingOrderSkuRequestVoList(LimitContext.getLimitBo().getOrderGoodsLimitMap(), orderGoodsQueryMap, vos, orderGoodsLimitMap);
+                groupingOrderSkuRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, orderGoodsLimitMap);
                 super.updateUserLimitRecord(orderGoodsLimitMap);
 
             } else if (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.PRIVILEGE_PRICE.getType())
                     || (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.DISCOUNT.getType())
                     && Objects.equals(vos.get(0).getActivityStockType(), LimitConstant.DISCOUNT_TYPE_SKU))) {
 
-                groupingOrderActivityRequestVoList(LimitContext.getLimitBo().getOrderGoodsLimitMap(), orderGoodsQueryMap, vos, orderGoodsLimitMap);
-                groupingOrderSkuRequestVoList(LimitContext.getLimitBo().getOrderGoodsLimitMap(), orderGoodsQueryMap, vos, orderGoodsLimitMap);
-                super.updateUserLimitRecord(LimitContext.getLimitBo().getOrderGoodsLimitMap());
+                groupingOrderActivityRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, orderGoodsLimitMap);
+                groupingOrderSkuRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, orderGoodsLimitMap);
+                super.updateUserLimitRecord(LimitContext.getLimitBo().getGlobalOrderBuyNumMap());
 
             } else if (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.DISCOUNT.getType())) {
 
-                groupingOrderActivityRequestVoList(LimitContext.getLimitBo().getOrderGoodsLimitMap(), orderGoodsQueryMap, vos, orderGoodsLimitMap);
-                super.updateUserLimitRecord(LimitContext.getLimitBo().getOrderGoodsLimitMap());
+                groupingOrderActivityRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, orderGoodsLimitMap);
+                super.updateUserLimitRecord(LimitContext.getLimitBo().getGlobalOrderBuyNumMap());
 
             }
         }

@@ -2,6 +2,7 @@ package com.weimob.saas.ec.limitation.handler.biz;
 
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
+import com.weimob.saas.ec.limitation.common.LimitLevelEnum;
 import com.weimob.saas.ec.limitation.common.LimitServiceNameEnum;
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
 import com.weimob.saas.ec.limitation.entity.*;
@@ -87,6 +88,9 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
             } else if (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.DISCOUNT.getType())) {
                 goodsLimitBizHandler.doLimitHandler(vos);
                 activityLimitBizHandler.doLimitHandler(vos);
+            } else if (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
+                activityLimitBizHandler.doLimitHandler(vos);
+                skuLimitBizHandler.doLimitHandler(vos);
             }
         }
         limitationService.saveUserLimitRecord(LimitContext.getLimitBo().getGoodsLimitEntityList(),

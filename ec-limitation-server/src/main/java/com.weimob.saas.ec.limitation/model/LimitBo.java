@@ -20,7 +20,7 @@ public class LimitBo {
      * 商品对应的购买件数
      * sku对应的购买件数
      */
-    Map<String, Integer> orderGoodsLimitMap = new HashMap();
+    Map<String, Integer> globalOrderBuyNumMap = new HashMap();
 
     /**
      * 活动id对应的要插入到活动限购表需要的信息
@@ -37,18 +37,17 @@ public class LimitBo {
      */
     private Map<Long, UserLimitBaseBo> skuIdLimitMap = new HashMap<>();
 
-
     List<UserGoodsLimitEntity> goodsLimitEntityList = new ArrayList<>();
     List<UserLimitEntity> activityLimitEntityList = new ArrayList<>();
     List<SkuLimitInfoEntity> activityGoodsSoldEntityList = new ArrayList<>();
 
 
-    public Map<String, Integer> getOrderGoodsLimitMap() {
-        return orderGoodsLimitMap;
+    public Map<String, Integer> getGlobalOrderBuyNumMap() {
+        return globalOrderBuyNumMap;
     }
 
-    public void setOrderGoodsLimitMap(Map<String, Integer> orderGoodsLimitMap) {
-        this.orderGoodsLimitMap = orderGoodsLimitMap;
+    public void setGlobalOrderBuyNumMap(Map<String, Integer> globalOrderBuyNumMap) {
+        this.globalOrderBuyNumMap = globalOrderBuyNumMap;
     }
 
     public Map<Long, UserLimitBaseBo> getActivityIdLimitMap() {

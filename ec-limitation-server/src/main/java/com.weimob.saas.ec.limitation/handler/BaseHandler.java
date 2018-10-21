@@ -1,5 +1,7 @@
 package com.weimob.saas.ec.limitation.handler;
 
+import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
+import com.weimob.saas.ec.limitation.common.LimitLevelEnum;
 import com.weimob.saas.ec.limitation.common.LimitServiceNameEnum;
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
 import com.weimob.saas.ec.limitation.dao.LimitInfoDao;
@@ -102,45 +104,48 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
     }
 
 
-    protected void groupingOrderGoodsRequestVoList(Map<String, Integer> orderGoodsLimitMap, Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap, List<UpdateUserLimitVo> vos, Map<String, Integer> orderGoodsValidMap) {
+    protected void groupingOrderGoodsRequestVoList(Map<String, Integer> globalOrderBuyNumMap,
+                                                   Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap,
+                                                   List<UpdateUserLimitVo> vos,
+                                                   Map<String, Integer> localOrderBuyNumMap) {
         for (UpdateUserLimitVo requestVo : vos) {
-
             String goodsKey = generateGoodsKey(requestVo);
-            updateOrderGoodsMap(orderGoodsLimitMap, orderGoodsQueryMap, requestVo, goodsKey);
-            updateOrderGoodsMap(orderGoodsValidMap, orderGoodsQueryMap, requestVo, goodsKey);
+            updateOrderGoodsMap(globalOrderBuyNumMap, localOrderBuyNumMap, orderGoodsQueryMap, requestVo, goodsKey);
         }
-
     }
 
-    protected void groupingOrderActivityRequestVoList(Map<String, Integer> orderGoodsLimitMap, Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap, List<UpdateUserLimitVo> vos, Map<String, Integer> orderActivityValidMap) {
+    protected void groupingOrderActivityRequestVoList(Map<String, Integer> globalOrderBuyNumMap,
+                                                      Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap,
+                                                      List<UpdateUserLimitVo> vos,
+                                                      Map<String, Integer> localOrderBuyNumMap) {
         for (UpdateUserLimitVo requestVo : vos) {
-
-            String goodsKey = generateActivityKey(requestVo);
-            updateOrderGoodsMap(orderGoodsLimitMap, orderGoodsQueryMap, requestVo, goodsKey);
-            updateOrderGoodsMap(orderActivityValidMap, orderGoodsQueryMap, requestVo, goodsKey);
+            String activityKey = generateActivityKey(requestVo);
+            updateOrderGoodsMap(globalOrderBuyNumMap, localOrderBuyNumMap, orderGoodsQueryMap, requestVo, activityKey);
         }
-
     }
 
-    protected void groupingOrderSkuRequestVoList(Map<String, Integer> orderGoodsLimitMap, Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap, List<UpdateUserLimitVo> vos, Map<String, Integer> orderSkuValidMap) {
+    protected void groupingOrderSkuRequestVoList(Map<String, Integer> globalOrderBuyNumMap,
+                                                 Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap,
+                                                 List<UpdateUserLimitVo> vos,
+                                                 Map<String, Integer> localOrderBuyNumMap) {
         for (UpdateUserLimitVo requestVo : vos) {
-
-            String goodsKey = generateSKUKey(requestVo);
-            updateOrderGoodsMap(orderGoodsLimitMap, orderGoodsQueryMap, requestVo, goodsKey);
-            updateOrderGoodsMap(orderSkuValidMap, orderGoodsQueryMap, requestVo, goodsKey);
+            String skuKey = generateSKUKey(requestVo);
+            updateOrderGoodsMap(globalOrderBuyNumMap, localOrderBuyNumMap, orderGoodsQueryMap, requestVo, skuKey);
         }
-
     }
 
-    private void updateOrderGoodsMap(Map<String, Integer> orderGoodsLimitMap,
+    private void updateOrderGoodsMap(Map<String, Integer> globalOrderBuyNumMap,
+                                     Map<String, Integer> localOrderBuyNumMap,
                                      Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap,
                                      UpdateUserLimitVo requestVo,
                                      String mapKey) {
         //限购map的封装
-        if (orderGoodsLimitMap.containsKey(mapKey)) {
-            orderGoodsLimitMap.put(mapKey, orderGoodsLimitMap.get(mapKey) + requestVo.getGoodsNum());
+        if (globalOrderBuyNumMap.containsKey(mapKey)) {
+            globalOrderBuyNumMap.put(mapKey, globalOrderBuyNumMap.get(mapKey) + requestVo.getGoodsNum());
+            localOrderBuyNumMap.put(mapKey, localOrderBuyNumMap.get(mapKey) + requestVo.getGoodsNum());
         } else {
-            orderGoodsLimitMap.put(mapKey, requestVo.getGoodsNum());
+            globalOrderBuyNumMap.put(mapKey, requestVo.getGoodsNum());
+            localOrderBuyNumMap.put(mapKey, requestVo.getGoodsNum());
             //将活动id、goodsId、skuId对应的关系存入本地线程变量
             UserLimitBaseBo limitBaseBo = new UserLimitBaseBo();
             limitBaseBo.setPid(requestVo.getPid());
@@ -149,7 +154,6 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
             limitBaseBo.setBizId(requestVo.getBizId());
             limitBaseBo.setBizType(requestVo.getBizType());
             limitBaseBo.setGoodsId(requestVo.getGoodsId());
-
 
             //判断原先的map里是否有响应的值
             String swithCondition = mapKey.substring(0, mapKey.indexOf("_", mapKey.indexOf("_") + 1) + 1);
@@ -164,7 +168,11 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                     break;
                 case LIMIT_PREFIX_SKU:
                     buildOrderQueryMap(orderGoodsQueryMap, requestVo, LIMIT_PREFIX_SKU);
-                    LimitContext.getLimitBo().getSkuIdLimitMap().put(requestVo.getSkuId(), limitBaseBo);
+                    if (Objects.equals(requestVo.getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
+                        LimitContext.getLimitBo().getSkuIdLimitMap().put(requestVo.getBizId(), limitBaseBo);
+                    } else {
+                        LimitContext.getLimitBo().getSkuIdLimitMap().put(requestVo.getSkuId(), limitBaseBo);
+                    }
                     break;
                 default:
                     break;
@@ -204,7 +212,11 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
         StringBuilder key = new StringBuilder(LIMIT_PREFIX_SKU);
         key.append(requestVo.getPid()).append("_");
         key.append(requestVo.getStoreId()).append("_");
-        key.append(requestVo.getSkuId());
+        if (Objects.equals(requestVo.getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
+            key.append(requestVo.getBizId());
+        } else {
+            key.append(requestVo.getSkuId());
+        }
         return key.toString();
     }
 
@@ -213,7 +225,7 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                                    List<UserLimitEntity> activityLimitList,
                                    List<UserGoodsLimitEntity> userGoodsLimitList,
                                    List<SkuLimitInfoEntity> skuLimitInfoEntityList,
-                                   Map<String, Integer> orderGoodsLimitMap) {
+                                   Map<String, Integer> orderBuyNumMap) {
 
 
         //2. 将活动以及商品的后台设置限购信息分组，活动Id对应的限购数，goodsId对应的限购数
@@ -228,7 +240,7 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
 
         //3. 校验某个活动的限购、活动商品的限购 (如果超过限购，文案提示需要显示较大的限购数量)
 
-        for (Map.Entry<String, Integer> entry : orderGoodsLimitMap.entrySet()) {
+        for (Map.Entry<String, Integer> entry : orderBuyNumMap.entrySet()) {
             String entryKey = entry.getKey();
             int lastIndex = entryKey.lastIndexOf("_") + 1;
             //3.1 校验商品限购, 将用户该商品的购买记录与购买的数量相加 > 商品的限购
@@ -356,13 +368,13 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
 
     }
 
-    protected void updateUserLimitRecord(Map<String, Integer> orderGoodsLimitMap) {
+    protected void updateUserLimitRecord(Map<String, Integer> orderBuyNumMap) {
         List<UserGoodsLimitEntity> goodsLimitEntityList = new ArrayList<>();
         List<UserLimitEntity> activityLimitEntityList = new ArrayList<>();
         List<SkuLimitInfoEntity> activityGoodsSoldEntityList = new ArrayList<>();
         UserLimitBaseBo baseBo = null;
         LimitInfoEntity limitInfoEntity = null;
-        for (Map.Entry<String, Integer> entry : orderGoodsLimitMap.entrySet()) {
+        for (Map.Entry<String, Integer> entry : orderBuyNumMap.entrySet()) {
             int lastIndex = entry.getKey().lastIndexOf("_") + 1;
             String entryKey = entry.getKey();
             String entryKeyPrefix = entryKey.substring(0, entryKey.indexOf("_", entryKey.indexOf("_") + 1) + 1);

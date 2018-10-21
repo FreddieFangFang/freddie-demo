@@ -1,10 +1,13 @@
 package com.weimob.saas.ec.limitation.model.convertor;
 
+import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.limitation.entity.LimitInfoEntity;
 import com.weimob.saas.ec.limitation.entity.SkuLimitInfoEntity;
 import com.weimob.saas.ec.limitation.entity.UserGoodsLimitEntity;
 import com.weimob.saas.ec.limitation.entity.UserLimitEntity;
 import com.weimob.saas.ec.limitation.model.UserLimitBaseBo;
+
+import java.util.Objects;
 
 /**
  * @author lujialin
@@ -40,9 +43,13 @@ public class LimitConvertor {
         entity.setPid(baseBo.getPid());
         entity.setStoreId(baseBo.getStoreId());
         entity.setLimitId(limitInfoEntity.getLimitId());
+        // 优惠套装活动、skuId=bizId
         entity.setSkuId(skuId);
         entity.setGoodsId(baseBo.getGoodsId());
         entity.setSoldNum(goodsNum);
+        if (Objects.equals(limitInfoEntity.getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
+            entity.setGoodsId(0L);
+        }
         return entity;
     }
 }
