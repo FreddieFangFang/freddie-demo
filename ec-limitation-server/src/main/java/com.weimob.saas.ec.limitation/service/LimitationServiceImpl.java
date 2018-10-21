@@ -1,5 +1,6 @@
 package com.weimob.saas.ec.limitation.service;
 
+import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
 import com.weimob.saas.ec.limitation.dao.GoodsLimitInfoDao;
 import com.weimob.saas.ec.limitation.dao.LimitInfoDao;
@@ -7,12 +8,7 @@ import com.weimob.saas.ec.limitation.dao.LimitStoreRelationshipDao;
 import com.weimob.saas.ec.limitation.dao.SkuLimitInfoDao;
 import com.weimob.saas.ec.limitation.dao.UserGoodsLimitDao;
 import com.weimob.saas.ec.limitation.dao.UserLimitDao;
-import com.weimob.saas.ec.limitation.entity.GoodsLimitInfoEntity;
-import com.weimob.saas.ec.limitation.entity.LimitInfoEntity;
-import com.weimob.saas.ec.limitation.entity.LimitStoreRelationshipEntity;
-import com.weimob.saas.ec.limitation.entity.SkuLimitInfoEntity;
-import com.weimob.saas.ec.limitation.entity.UserGoodsLimitEntity;
-import com.weimob.saas.ec.limitation.entity.UserLimitEntity;
+import com.weimob.saas.ec.limitation.entity.*;
 import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.model.DeleteGoodsParam;
@@ -445,14 +441,18 @@ public class LimitationServiceImpl {
         }
     }
 
-    public void reverseDeleteLimitation(Long pid, Long limitId, HashSet<Long> goodsIdSet, List<SkuLimitInfoEntity> skuLimitInfoEntityList) {
+    public void reverseDeleteLimitation(Long pid, Long limitId, HashSet<Long> goodsIdSet,
+                                        List<SkuLimitInfoEntity> skuLimitInfoEntityList,
+                                        List<LimitOrderChangeLogEntity> logList) {
         limitInfoDao.reverseLimitInfoStatus(limitId);
 
-        DeleteGoodsParam param = new DeleteGoodsParam();
-        param.setPid(pid);
-        param.setLimitId(limitId);
-        param.setGoodsIdList(new ArrayList<Long>(goodsIdSet));
-        goodsLimitInfoDao.reverseGoodsLimit(param);
+        if (!Objects.equals(logList.get(0).getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
+            DeleteGoodsParam param = new DeleteGoodsParam();
+            param.setPid(pid);
+            param.setLimitId(limitId);
+            param.setGoodsIdList(new ArrayList<Long>(goodsIdSet));
+            goodsLimitInfoDao.reverseGoodsLimit(param);
+        }
 
         if (CollectionUtils.isNotEmpty(skuLimitInfoEntityList)) {
             skuLimitInfoDao.reverseSkuLimitStatusBySkuId(skuLimitInfoEntityList);

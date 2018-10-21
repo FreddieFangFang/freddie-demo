@@ -45,6 +45,6 @@ public class ReverseDeleteLimitationHandler extends BaseHandler<UpdateUserLimitV
             }
             goodsIdSet.add(limitOrderChangeLogEntity.getGoodsId());
         }
-        limitationService.reverseDeleteLimitation(pid, limitId, goodsIdSet, skuLimitInfoEntityList);
+        limitationService.reverseDeleteLimitation(pid, limitId, goodsIdSet, skuLimitInfoEntityList, logList);
     }
 }

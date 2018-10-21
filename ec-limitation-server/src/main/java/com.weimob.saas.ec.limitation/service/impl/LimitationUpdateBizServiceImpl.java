@@ -98,15 +98,13 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         }
 
         // 2.查询商品表或者sku表，保存未删除的记录到日志表，以便进行回滚
-        if (!Objects.equals(requestVo.getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
-            List<SkuLimitInfoEntity> skuLimitInfoEntityList = skuLimitInfoDao.listSkuLimitByLimitId(new LimitParam(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId()));
-            if (CollectionUtils.isEmpty(skuLimitInfoEntityList)) {
-                //没有sku记录，查询goods表
-                List<GoodsLimitInfoEntity> goodsLimitInfoEntityList = goodsLimitInfoDao.listGoodsLimitByLimitId(new LimitParam(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId()));
-                buildDeleteLimitationGoodsChangeLog(goodsLimitInfoEntityList, LimitServiceNameEnum.DELETE_ACTIVITY_LIMIT.name(), requestVo);
-            } else {
-                buildDeleteLimitationSkuChangeLog(skuLimitInfoEntityList, LimitServiceNameEnum.DELETE_ACTIVITY_LIMIT.name(), requestVo);
-            }
+        List<SkuLimitInfoEntity> skuLimitInfoEntityList = skuLimitInfoDao.listSkuLimitByLimitId(new LimitParam(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId()));
+        if (CollectionUtils.isEmpty(skuLimitInfoEntityList)) {
+            //没有sku记录，查询goods表
+            List<GoodsLimitInfoEntity> goodsLimitInfoEntityList = goodsLimitInfoDao.listGoodsLimitByLimitId(new LimitParam(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId()));
+            buildDeleteLimitationGoodsChangeLog(goodsLimitInfoEntityList, LimitServiceNameEnum.DELETE_ACTIVITY_LIMIT.name(), requestVo);
+        } else {
+            buildDeleteLimitationSkuChangeLog(skuLimitInfoEntityList, LimitServiceNameEnum.DELETE_ACTIVITY_LIMIT.name(), requestVo);
         }
 
         // 3.按活动类型进行不同处理
@@ -153,22 +151,24 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
     }
 
     private void buildDeleteLimitationGoodsChangeLog(List<GoodsLimitInfoEntity> goodsLimitInfoEntityList, String name, DeleteLimitationRequestVo requestVo) {
-        List<LimitOrderChangeLogEntity> logEntityList = new ArrayList<>();
-        for (GoodsLimitInfoEntity vo : goodsLimitInfoEntityList) {
-            LimitOrderChangeLogEntity orderChangeLogEntity = new LimitOrderChangeLogEntity();
-            orderChangeLogEntity.setPid(vo.getPid());
-            orderChangeLogEntity.setStoreId(vo.getStoreId());
-            orderChangeLogEntity.setBizId(requestVo.getBizId());
-            orderChangeLogEntity.setBizType(requestVo.getBizType());
-            orderChangeLogEntity.setGoodsId(vo.getGoodsId());
-            orderChangeLogEntity.setLimitId(vo.getLimitId());
-            orderChangeLogEntity.setTicket(LimitContext.getTicket());
-            orderChangeLogEntity.setServiceName(name);
-            orderChangeLogEntity.setIsOriginal(LimitConstant.DATA_TYPE_INIT);
-            orderChangeLogEntity.setStatus(LimitConstant.ORDER_LOG_STATUS_INIT);
-            logEntityList.add(orderChangeLogEntity);
+        if (CollectionUtils.isNotEmpty(goodsLimitInfoEntityList)) {
+            List<LimitOrderChangeLogEntity> logEntityList = new ArrayList<>();
+            for (GoodsLimitInfoEntity vo : goodsLimitInfoEntityList) {
+                LimitOrderChangeLogEntity orderChangeLogEntity = new LimitOrderChangeLogEntity();
+                orderChangeLogEntity.setPid(vo.getPid());
+                orderChangeLogEntity.setStoreId(vo.getStoreId());
+                orderChangeLogEntity.setBizId(requestVo.getBizId());
+                orderChangeLogEntity.setBizType(requestVo.getBizType());
+                orderChangeLogEntity.setGoodsId(vo.getGoodsId());
+                orderChangeLogEntity.setLimitId(vo.getLimitId());
+                orderChangeLogEntity.setTicket(LimitContext.getTicket());
+                orderChangeLogEntity.setServiceName(name);
+                orderChangeLogEntity.setIsOriginal(LimitConstant.DATA_TYPE_INIT);
+                orderChangeLogEntity.setStatus(LimitConstant.ORDER_LOG_STATUS_INIT);
+                logEntityList.add(orderChangeLogEntity);
+            }
+            threadExecutor.execute(new SaveLimitChangeLogThread(limitOrderChangeLogDao, logEntityList));
         }
-        threadExecutor.execute(new SaveLimitChangeLogThread(limitOrderChangeLogDao, logEntityList));
     }
 
 
