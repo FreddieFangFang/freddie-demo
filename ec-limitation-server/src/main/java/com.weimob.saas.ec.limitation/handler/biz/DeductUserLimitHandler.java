@@ -51,29 +51,27 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
             Map.Entry<Integer, List<UpdateUserLimitVo>> entry = iterator.next();
             List<UpdateUserLimitVo> vos = entry.getValue();
 
-            Map<String, Integer> orderGoodsLimitMap = new HashMap<>();
+            Map<String, Integer> localOrderBuyNumMap = new HashMap<>();
             Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap = new HashMap<>();
-            super.groupingOrderGoodsRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, orderGoodsLimitMap);
+            if (!Objects.equals(vos.get(0).getBizType(), LimitBizTypeEnum.BIZ_TYPE_COMBINATION_BUY.getLevel())) {
+                super.groupingOrderGoodsRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
+            }
 
             //3.更新限购记录
             //3.1 判断活动类型
             if (Objects.equals(vos.get(0).getBizType(), LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel())) {
-                groupingOrderSkuRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, orderGoodsLimitMap);
-                super.updateUserLimitRecord(orderGoodsLimitMap);
-
+                groupingOrderSkuRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
+                super.updateUserLimitRecord(localOrderBuyNumMap);
             } else if (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.PRIVILEGE_PRICE.getType())
                     || (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.DISCOUNT.getType())
-                    && Objects.equals(vos.get(0).getActivityStockType(), LimitConstant.DISCOUNT_TYPE_SKU))) {
-
-                groupingOrderActivityRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, orderGoodsLimitMap);
-                groupingOrderSkuRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, orderGoodsLimitMap);
+                    && Objects.equals(vos.get(0).getActivityStockType(), LimitConstant.DISCOUNT_TYPE_SKU))
+                    || Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
+                groupingOrderActivityRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
+                groupingOrderSkuRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
                 super.updateUserLimitRecord(LimitContext.getLimitBo().getGlobalOrderBuyNumMap());
-
             } else if (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.DISCOUNT.getType())) {
-
-                groupingOrderActivityRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, orderGoodsLimitMap);
+                groupingOrderActivityRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
                 super.updateUserLimitRecord(LimitContext.getLimitBo().getGlobalOrderBuyNumMap());
-
             }
         }
         // 3.2 操作数据库
@@ -83,29 +81,7 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
     @Override
     protected void checkParams(List<UpdateUserLimitVo> vos) {
         super.checkParams(vos);
-        // TODO 重复代码，抽象出来
-        for (UpdateUserLimitVo limitVo : vos) {
-            VerifyParamUtils.checkParam(LimitationErrorCode.PID_IS_NULL, limitVo.getPid());
-            VerifyParamUtils.checkParam(LimitationErrorCode.STORE_IS_NULL, limitVo.getStoreId());
-            VerifyParamUtils.checkParam(LimitationErrorCode.GOODSID_IS_NULL, limitVo.getGoodsId());
-            VerifyParamUtils.checkParam(LimitationErrorCode.BIZTYPE_IS_NULL, limitVo.getBizType());
-            VerifyParamUtils.checkParam(LimitationErrorCode.BIZID_IS_NULL, limitVo.getBizId());
-            VerifyParamUtils.checkParam(LimitationErrorCode.GOODSNUM_IS_NULL, limitVo.getGoodsNum());
-            if (limitVo.getGoodsNum() < 1) {
-                throw new LimitationBizException(LimitationErrorCode.GOODSNUM_IS_ILLEGAL);
-            }
-            VerifyParamUtils.checkParam(LimitationErrorCode.ORDERNO_IS_NULL, limitVo.getOrderNo());
-            VerifyParamUtils.checkParam(LimitationErrorCode.WID_IS_NULL, limitVo.getWid());
-            if (Objects.equals(limitVo.getBizType(), ActivityTypeEnum.DISCOUNT.getType())) {
-                VerifyParamUtils.checkParam(LimitationErrorCode.ACTIVITY_STOCK_TYPE_IS_NULL, limitVo.getActivityStockType());
-            }
-            if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), limitVo.getBizType())
-                    || (Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), limitVo.getBizType())
-                    && Objects.equals(limitVo.getActivityStockType(), LimitConstant.DISCOUNT_TYPE_SKU))
-                    || Objects.equals(LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel(), limitVo.getBizType())) {
-                VerifyParamUtils.checkParam(LimitationErrorCode.SKUINFO_IS_NULL, limitVo.getSkuId());
-            }
-        }
+        checkCreateOrDeductOrderParams(vos);
     }
 
     private void validRepeatDeductLimitNum(List<UpdateUserLimitVo> vos) {

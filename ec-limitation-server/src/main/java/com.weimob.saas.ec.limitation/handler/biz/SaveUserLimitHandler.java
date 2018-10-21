@@ -42,35 +42,13 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
     @Override
     protected void checkParams(List<UpdateUserLimitVo> vos) {
         super.checkParams(vos);
-        for (UpdateUserLimitVo limitVo : vos) {
-            VerifyParamUtils.checkParam(LimitationErrorCode.PID_IS_NULL, limitVo.getPid());
-            VerifyParamUtils.checkParam(LimitationErrorCode.STORE_IS_NULL, limitVo.getStoreId());
-            VerifyParamUtils.checkParam(LimitationErrorCode.GOODSID_IS_NULL, limitVo.getGoodsId());
-            VerifyParamUtils.checkParam(LimitationErrorCode.BIZTYPE_IS_NULL, limitVo.getBizType());
-            VerifyParamUtils.checkParam(LimitationErrorCode.BIZID_IS_NULL, limitVo.getBizId());
-            VerifyParamUtils.checkParam(LimitationErrorCode.GOODSNUM_IS_NULL, limitVo.getGoodsNum());
-            if (limitVo.getGoodsNum() < 1) {
-                throw new LimitationBizException(LimitationErrorCode.GOODSNUM_IS_ILLEGAL);
-            }
-            VerifyParamUtils.checkParam(LimitationErrorCode.ORDERNO_IS_NULL, limitVo.getOrderNo());
-            VerifyParamUtils.checkParam(LimitationErrorCode.WID_IS_NULL, limitVo.getWid());
-            if (Objects.equals(limitVo.getBizType(), ActivityTypeEnum.DISCOUNT.getType())) {
-                VerifyParamUtils.checkParam(LimitationErrorCode.ACTIVITY_STOCK_TYPE_IS_NULL, limitVo.getActivityStockType());
-            }
-            if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), limitVo.getBizType())
-                    || (Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), limitVo.getBizType())
-                    && Objects.equals(limitVo.getActivityStockType(), LimitConstant.DISCOUNT_TYPE_SKU))
-                    || Objects.equals(LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel(), limitVo.getBizType())) {
-                VerifyParamUtils.checkParam(LimitationErrorCode.SKUINFO_IS_NULL, limitVo.getSkuId());
-            }
-        }
+        checkCreateOrDeductOrderParams(vos);
     }
 
     @Override
     protected void doBatchBizLogic(List<UpdateUserLimitVo> updateUserLimitVoList) {
         //处理限购逻辑，分成三个handler，分别处理活动级别、商品级别、sku级别的限购校验
-        //limitBizChain.execute();
-        //限购商品的类型分组
+        //按活动类型进行分组
         Map<Integer, List<UpdateUserLimitVo>> activityMap = buildActivityMap(updateUserLimitVoList);
         Iterator<Map.Entry<Integer, List<UpdateUserLimitVo>>> iterator = activityMap.entrySet().iterator();
         while (iterator.hasNext()) {

@@ -160,7 +160,7 @@
       pid = #{pid}
     AND limit_id = #{limitId}
     AND goods_id = #{goodsId}
-    AND sku_id =#{skuId}
+    AND sku_id = #{skuId}
     AND sold_num >= #{soldNum}
   /*SkuLimitInfoDao.deductSkuSoldNum*/
   </update>
