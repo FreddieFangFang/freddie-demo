@@ -410,9 +410,9 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         for (QueryGoodsLimitInfoListVo vo : requestVo.getGoodsDetailList()) {
             Long limitId = limitIdMap.get(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId()));
             if (Objects.equals(vo.getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
-                // 保存优惠套装限购时，存入SKU表的goodsId以及skuId都是0，所以需要特殊处理一下
-                vo.setGoodsId(0L);
-                vo.setSkuId(0L);
+                // 保存优惠套装限购时，存入SKU表的goodsId以及skuId都是bizId，所以需要特殊处理一下
+                vo.setGoodsId(vo.getBizId());
+                vo.setSkuId(vo.getBizId());
 
                 UserLimitEntity userLimitEntity = new UserLimitEntity();
                 userLimitEntity.setLimitId(limitId);
