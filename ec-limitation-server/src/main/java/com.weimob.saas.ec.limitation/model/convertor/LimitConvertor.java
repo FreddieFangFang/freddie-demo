@@ -43,12 +43,12 @@ public class LimitConvertor {
         entity.setPid(baseBo.getPid());
         entity.setStoreId(baseBo.getStoreId());
         entity.setLimitId(limitInfoEntity.getLimitId());
-        // 优惠套装活动、skuId=bizId
+        // 优惠套装活动、skuId=bizId=goodsId
         entity.setSkuId(skuId);
         entity.setGoodsId(baseBo.getGoodsId());
         entity.setSoldNum(goodsNum);
         if (Objects.equals(limitInfoEntity.getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
-            entity.setGoodsId(0L);
+            entity.setGoodsId(skuId);
         }
         return entity;
     }

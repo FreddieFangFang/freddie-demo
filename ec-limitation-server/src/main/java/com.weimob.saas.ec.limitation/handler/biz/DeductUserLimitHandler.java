@@ -190,9 +190,9 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         try {
             if (Objects.equals(bizType, ActivityTypeEnum.PRIVILEGE_PRICE.getType())
                     || Objects.equals(bizType, ActivityTypeEnum.DISCOUNT.getType())) {
-                limitationService.saveUserLimitRecord(new ArrayList<UserGoodsLimitEntity>(goodsLimitMap.values()), new ArrayList<UserLimitEntity>(activityMap.values()), new ArrayList<SkuLimitInfoEntity>(skuLimitMap.values()));
+                limitationService.saveUserLimitRecord(new ArrayList<>(goodsLimitMap.values()), new ArrayList<>(activityMap.values()), new ArrayList<>(skuLimitMap.values()));
             } else if (Objects.equals(bizType, LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel())) {
-                limitationService.saveUserLimitRecord(new ArrayList<UserGoodsLimitEntity>(goodsLimitMap.values()), null, new ArrayList<SkuLimitInfoEntity>(skuLimitMap.values()));
+                limitationService.saveUserLimitRecord(new ArrayList<>(goodsLimitMap.values()), null, new ArrayList<>(skuLimitMap.values()));
             }
         } catch (Exception e) {
             throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_GOODS_LIMIT_ERROR, e);
