@@ -19,6 +19,9 @@ public class QueryActivityLimitInfoResponseVo extends BaseRequest {
     /** 可售数量 */
     private Integer threshold;
 
+    /** 已售数量 */
+    private Integer soldNum;
+
     public Long getBizId() {
         return bizId;
     }
@@ -49,5 +52,13 @@ public class QueryActivityLimitInfoResponseVo extends BaseRequest {
 
     public void setThreshold(Integer threshold) {
         this.threshold = threshold;
+    }
+
+    public Integer getSoldNum() {
+        return soldNum;
+    }
+
+    public void setSoldNum(Integer soldNum) {
+        this.soldNum = soldNum;
     }
 }

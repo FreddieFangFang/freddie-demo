@@ -547,6 +547,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             return responseVo;
         }
         Integer threshold = null;
+        Integer soldNum = null;
         if (Objects.equals(requestVo.getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
             List<SkuLimitInfoEntity> skuLimitInfoEntities = null;
             try {
@@ -555,7 +556,8 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 throw new LimitationBizException(LimitationErrorCode.SQL_QUERY_SKU_INFO_ERROR, e);
             }
             if (CollectionUtils.isNotEmpty(skuLimitInfoEntities)) {
-                threshold = skuLimitInfoEntities.get(0).getLimitNum() - skuLimitInfoEntities.get(0).getSoldNum();
+                threshold = skuLimitInfoEntities.get(0).getLimitNum();
+                soldNum = skuLimitInfoEntities.get(0).getSoldNum();
             }
         }
         responseVo.setPid(requestVo.getPid());
@@ -563,7 +565,8 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         responseVo.setBizId(requestVo.getBizId());
         responseVo.setBizType(requestVo.getBizType());
         responseVo.setActivityLimitNum(infoEntity.getLimitNum());
-        responseVo.setThreshold(threshold >= 0 ? threshold : 0);
+        responseVo.setThreshold(threshold);
+        responseVo.setSoldNum(soldNum);
         return responseVo;
     }
 
@@ -716,20 +719,27 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
 
         // 构建limit对应可售数量的映射Map
         Map<Long, Integer> limitIdMappingThreshold = new HashMap<>();
+        // 构建limit对应已售数量的映射Map
+        Map<Long, Integer> limitIdMappingSoldNum = new HashMap<>();
         if (CollectionUtils.isNotEmpty(skuInfoList)) {
             for (SkuLimitInfoEntity skuInfo : skuInfoList) {
-                limitIdMappingThreshold.put(skuInfo.getLimitId(), skuInfo.getLimitNum() - skuInfo.getSoldNum());
+                limitIdMappingThreshold.put(skuInfo.getLimitId(), skuInfo.getLimitNum());
+                limitIdMappingSoldNum.put(skuInfo.getLimitId(), skuInfo.getSoldNum());
             }
         }
 
         // 构建出参
-        QueryActivityLimitInfoListResponseVo responseVo = buildQueryActivityLimitInfoListResponseVo(requestVo, limitInfoList, limitIdMappingThreshold);
+        QueryActivityLimitInfoListResponseVo responseVo = buildQueryActivityLimitInfoListResponseVo(requestVo,
+                limitInfoList, limitIdMappingThreshold, limitIdMappingSoldNum);
 
         // 返回出参
         return responseVo;
     }
 
-    private QueryActivityLimitInfoListResponseVo buildQueryActivityLimitInfoListResponseVo(QueryActivityLimitInfoListRequestVo requestVo, List<LimitInfoEntity> limitInfoList, Map<Long, Integer> limitIdMappingThreshold) {
+    private QueryActivityLimitInfoListResponseVo buildQueryActivityLimitInfoListResponseVo(QueryActivityLimitInfoListRequestVo requestVo,
+                                                                                           List<LimitInfoEntity> limitInfoList,
+                                                                                           Map<Long, Integer> limitIdMappingThreshold,
+                                                                                           Map<Long, Integer> limitIdMappingSoldNum) {
         QueryActivityLimitInfoListResponseVo responseVo = new QueryActivityLimitInfoListResponseVo();
         responseVo.setPid(requestVo.getPid());
         responseVo.setStoreId(requestVo.getStoreId());
@@ -741,8 +751,8 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             limitInfoResponseVo.setBizId(limitInfo.getBizId());
             limitInfoResponseVo.setBizType(limitInfo.getBizType());
             limitInfoResponseVo.setActivityLimitNum(limitInfo.getLimitNum());
-            Integer threshold = limitIdMappingThreshold.get(limitInfo.getLimitId()) >= 0 ? limitIdMappingThreshold.get(limitInfo.getLimitId()) : 0;
-            limitInfoResponseVo.setThreshold(threshold);
+            limitInfoResponseVo.setThreshold(limitIdMappingThreshold.get(limitInfo.getLimitId()));
+            limitInfoResponseVo.setSoldNum(limitIdMappingSoldNum.get(limitInfo.getLimitId()));
             returnList.add(limitInfoResponseVo);
         }
         responseVo.setLimitInfoVos(returnList);
