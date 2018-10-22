@@ -536,8 +536,8 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         skuLimitInfo.setPid(requestVo.getPid());
         skuLimitInfo.setLimitId(limitId);
         skuLimitInfo.setLimitType(requestVo.getThresholdInfo().getParticularGroupType());
-        skuLimitInfo.setGoodsId(LimitLevelEnum.LIMIT_LEVEL_ACTIVITY.getLevel().longValue());
-        skuLimitInfo.setSkuId(LimitLevelEnum.LIMIT_LEVEL_ACTIVITY.getLevel().longValue());
+        skuLimitInfo.setGoodsId(requestVo.getBizId());
+        skuLimitInfo.setSkuId(requestVo.getBizId());
         skuLimitInfo.setLimitNum(requestVo.getThresholdInfo().getThreshold());
         return skuLimitInfo;
     }
