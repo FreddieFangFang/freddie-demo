@@ -14,11 +14,13 @@ import com.weimob.saas.ec.limitation.model.LimitParam;
 import com.weimob.saas.ec.limitation.model.UserLimitBaseBo;
 import com.weimob.saas.ec.limitation.model.convertor.LimitConvertor;
 import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
+import com.weimob.saas.ec.limitation.service.LimitationServiceImpl;
 import com.weimob.saas.ec.limitation.thread.SaveLimitChangeLogThread;
 import com.weimob.saas.ec.limitation.utils.LimitContext;
 import com.weimob.saas.ec.limitation.utils.VerifyParamUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.aspectj.lang.annotation.After;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -37,6 +39,8 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
     protected LimitOrderChangeLogDao limitOrderChangeLogDao;
     @Autowired
     private ThreadPoolTaskExecutor threadExecutor;
+    @Autowired
+    private LimitationServiceImpl limitationService;
 
     protected final String LIMIT_PREFIX_ACTIVITY = "LIMIT_ACTIVITY_";
     protected final String LIMIT_PREFIX_GOODS = "LIMIT_GOODS_";
@@ -112,7 +116,8 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                                                    Map<String, Integer> localOrderBuyNumMap) {
         for (UpdateUserLimitVo requestVo : vos) {
             String goodsKey = generateGoodsKey(requestVo);
-            updateOrderGoodsMap(globalOrderBuyNumMap, localOrderBuyNumMap, orderGoodsQueryMap, requestVo, goodsKey);
+            updateOrderGoodsMap(globalOrderBuyNumMap, orderGoodsQueryMap, requestVo, goodsKey);
+            updateOrderGoodsMap(localOrderBuyNumMap, orderGoodsQueryMap, requestVo, goodsKey);
         }
     }
 
@@ -122,7 +127,8 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                                                       Map<String, Integer> localOrderBuyNumMap) {
         for (UpdateUserLimitVo requestVo : vos) {
             String activityKey = generateActivityKey(requestVo);
-            updateOrderGoodsMap(globalOrderBuyNumMap, localOrderBuyNumMap, orderGoodsQueryMap, requestVo, activityKey);
+            updateOrderGoodsMap(globalOrderBuyNumMap, orderGoodsQueryMap, requestVo, activityKey);
+            updateOrderGoodsMap(localOrderBuyNumMap, orderGoodsQueryMap, requestVo, activityKey);
         }
     }
 
@@ -132,22 +138,20 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                                                  Map<String, Integer> localOrderBuyNumMap) {
         for (UpdateUserLimitVo requestVo : vos) {
             String skuKey = generateSKUKey(requestVo);
-            updateOrderGoodsMap(globalOrderBuyNumMap, localOrderBuyNumMap, orderGoodsQueryMap, requestVo, skuKey);
+            updateOrderGoodsMap(globalOrderBuyNumMap, orderGoodsQueryMap, requestVo, skuKey);
+            updateOrderGoodsMap(localOrderBuyNumMap, orderGoodsQueryMap, requestVo, skuKey);
         }
     }
 
-    private void updateOrderGoodsMap(Map<String, Integer> globalOrderBuyNumMap,
-                                     Map<String, Integer> localOrderBuyNumMap,
+    private void updateOrderGoodsMap(Map<String, Integer> orderBuyNumMap,
                                      Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap,
                                      UpdateUserLimitVo requestVo,
                                      String mapKey) {
         //限购map的封装
-        if (globalOrderBuyNumMap.containsKey(mapKey)) {
-            globalOrderBuyNumMap.put(mapKey, globalOrderBuyNumMap.get(mapKey) + requestVo.getGoodsNum());
-            localOrderBuyNumMap.put(mapKey, localOrderBuyNumMap.get(mapKey) + requestVo.getGoodsNum());
+        if (orderBuyNumMap.containsKey(mapKey)) {
+            orderBuyNumMap.put(mapKey, orderBuyNumMap.get(mapKey) + requestVo.getGoodsNum());
         } else {
-            globalOrderBuyNumMap.put(mapKey, requestVo.getGoodsNum());
-            localOrderBuyNumMap.put(mapKey, requestVo.getGoodsNum());
+            orderBuyNumMap.put(mapKey, requestVo.getGoodsNum());
             //将活动id、goodsId、skuId对应的关系存入本地线程变量
             UserLimitBaseBo limitBaseBo = new UserLimitBaseBo();
             limitBaseBo.setPid(requestVo.getPid());
@@ -371,9 +375,6 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
     }
 
     protected void updateUserLimitRecord(Map<String, Integer> orderBuyNumMap) {
-        List<UserGoodsLimitEntity> goodsLimitEntityList = new ArrayList<>();
-        List<UserLimitEntity> activityLimitEntityList = new ArrayList<>();
-        List<SkuLimitInfoEntity> activityGoodsSoldEntityList = new ArrayList<>();
         UserLimitBaseBo baseBo = null;
         LimitInfoEntity limitInfoEntity = null;
         for (Map.Entry<String, Integer> entry : orderBuyNumMap.entrySet()) {
@@ -391,7 +392,7 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                     if (limitInfoEntity == null) {
                         throw new LimitationBizException(LimitationErrorCode.INVALID_LIMITATION_ACTIVITY);
                     }
-                    goodsLimitEntityList.add(LimitConvertor.convertGoodsLimit(baseBo, goodsId, entry.getValue(), limitInfoEntity));
+                    LimitContext.getLimitBo().getGoodsLimitEntityList().add(LimitConvertor.convertGoodsLimit(baseBo, goodsId, entry.getValue(), limitInfoEntity));
                     break;
                 //保存活动限购记录,多门店的时候是否会出现问题？
                 case LIMIT_PREFIX_ACTIVITY:
@@ -401,7 +402,7 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                     if (limitInfoEntity == null) {
                         throw new LimitationBizException(LimitationErrorCode.INVALID_LIMITATION_ACTIVITY);
                     }
-                    activityLimitEntityList.add(LimitConvertor.convertActivityLimit(baseBo, activityId, entry.getValue(), limitInfoEntity));
+                    LimitContext.getLimitBo().getActivityLimitEntityList().add(LimitConvertor.convertActivityLimit(baseBo, activityId, entry.getValue(), limitInfoEntity));
                     break;
                 //更新sku的售卖数量
                 case LIMIT_PREFIX_SKU:
@@ -411,20 +412,11 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                     if (limitInfoEntity == null) {
                         throw new LimitationBizException(LimitationErrorCode.INVALID_LIMITATION_ACTIVITY);
                     }
-                    activityGoodsSoldEntityList.add(LimitConvertor.convertActivitySoldEntity(baseBo, skuId, entry.getValue(), limitInfoEntity));
+                    LimitContext.getLimitBo().getActivityGoodsSoldEntityList().add(LimitConvertor.convertActivitySoldEntity(baseBo, skuId, entry.getValue(), limitInfoEntity));
                     break;
                 default:
                     break;
             }
-        }
-        if (CollectionUtils.isNotEmpty(goodsLimitEntityList)) {
-            LimitContext.getLimitBo().setGoodsLimitEntityList(goodsLimitEntityList);
-        }
-        if (CollectionUtils.isNotEmpty(activityLimitEntityList)) {
-            LimitContext.getLimitBo().setActivityLimitEntityList(activityLimitEntityList);
-        }
-        if (CollectionUtils.isNotEmpty(activityGoodsSoldEntityList)) {
-            LimitContext.getLimitBo().setActivityGoodsSoldEntityList(activityGoodsSoldEntityList);
         }
     }
 
@@ -453,6 +445,92 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
     @Override
     public void doReverse(List<LimitOrderChangeLogEntity> logList) {
 
+    }
+
+    public void reverseSaveOrDeductUserLimit(List<LimitOrderChangeLogEntity> logList,
+                                             Map<String, UserLimitEntity> activityMap,
+                                             Map<String, UserGoodsLimitEntity> goodsLimitMap,
+                                             Map<String, SkuLimitInfoEntity> skuLimitMap) {
+
+        for (LimitOrderChangeLogEntity logEntity : logList) {
+            if (Objects.equals(logEntity.getBizType(), ActivityTypeEnum.PRIVILEGE_PRICE.getType())
+                    || Objects.equals(logEntity.getBizType(), ActivityTypeEnum.DISCOUNT.getType())) {
+                buildActivityBuyInfoLogEntity(activityMap, logEntity);
+                buildGoodsBuyInfoLogEntity(goodsLimitMap, logEntity);
+                buildSkuBuyInfoLogEntity(skuLimitMap, logEntity);
+            } else if (Objects.equals(logEntity.getBizType(), LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel())) {
+                buildGoodsBuyInfoLogEntity(goodsLimitMap, logEntity);
+                buildSkuBuyInfoLogEntity(skuLimitMap, logEntity);
+            } else if (Objects.equals(logEntity.getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
+                buildCombinationBuyLogEntity(activityMap, skuLimitMap, logEntity);
+            }
+        }
+    }
+
+    private void buildCombinationBuyLogEntity(Map<String, UserLimitEntity> activityMap, Map<String, SkuLimitInfoEntity> skuLimitMap, LimitOrderChangeLogEntity logEntity) {
+        buildActivityBuyInfoLogEntity(activityMap, logEntity);
+        String prefixKey = LIMIT_PREFIX_SKU + logEntity.getBizType();
+        if (skuLimitMap.get(prefixKey + logEntity.getBizId()) == null) {
+            SkuLimitInfoEntity skuLimitInfoEntity = new SkuLimitInfoEntity();
+            skuLimitInfoEntity.setPid(logEntity.getPid());
+            skuLimitInfoEntity.setStoreId(logEntity.getStoreId());
+            skuLimitInfoEntity.setLimitId(logEntity.getLimitId());
+            skuLimitInfoEntity.setGoodsId(logEntity.getBizId());
+            skuLimitInfoEntity.setSkuId(logEntity.getBizId());
+            skuLimitInfoEntity.setSoldNum(logEntity.getBuyNum());
+            skuLimitMap.put(prefixKey + logEntity.getBizId(), skuLimitInfoEntity);
+        } else {
+            skuLimitMap.get(prefixKey + logEntity.getBizId()).setSoldNum(skuLimitMap.get(prefixKey + logEntity.getBizId()).getSoldNum() + logEntity.getBuyNum());
+        }
+    }
+
+    private void buildActivityBuyInfoLogEntity(Map<String, UserLimitEntity> activityMap, LimitOrderChangeLogEntity logEntity) {
+        String prefixKey = LIMIT_PREFIX_ACTIVITY + logEntity.getBizType();
+        if (activityMap.get(prefixKey + logEntity.getBizId()) == null) {
+            UserLimitEntity userLimitEntity = new UserLimitEntity();
+            userLimitEntity.setPid(logEntity.getPid());
+            userLimitEntity.setStoreId(logEntity.getStoreId());
+            userLimitEntity.setLimitId(logEntity.getLimitId());
+            userLimitEntity.setWid(logEntity.getWid());
+            userLimitEntity.setBuyNum(logEntity.getBuyNum());
+            activityMap.put(prefixKey + logEntity.getBizId(), userLimitEntity);
+        } else {
+            activityMap.get(prefixKey + logEntity.getBizId()).setBuyNum(activityMap.get(prefixKey + logEntity.getBizId()).getBuyNum() + logEntity.getBuyNum());
+        }
+    }
+
+    private void buildGoodsBuyInfoLogEntity(Map<String, UserGoodsLimitEntity> goodsLimitMap, LimitOrderChangeLogEntity logEntity) {
+        String prefixKey = LIMIT_PREFIX_GOODS + logEntity.getBizType();
+        if (goodsLimitMap.get(prefixKey + logEntity.getGoodsId()) == null) {
+            UserGoodsLimitEntity userGoodsLimitEntity = new UserGoodsLimitEntity();
+            userGoodsLimitEntity.setPid(logEntity.getPid());
+            userGoodsLimitEntity.setStoreId(logEntity.getStoreId());
+            userGoodsLimitEntity.setLimitId(logEntity.getLimitId());
+            userGoodsLimitEntity.setGoodsId(logEntity.getGoodsId());
+            userGoodsLimitEntity.setWid(logEntity.getWid());
+            userGoodsLimitEntity.setBuyNum(logEntity.getBuyNum());
+            goodsLimitMap.put(prefixKey + logEntity.getGoodsId(), userGoodsLimitEntity);
+        } else {
+            goodsLimitMap.get(prefixKey + logEntity.getGoodsId()).setBuyNum(goodsLimitMap.get(prefixKey + logEntity.getGoodsId()).getBuyNum() + logEntity.getBuyNum());
+        }
+    }
+
+    private void buildSkuBuyInfoLogEntity(Map<String, SkuLimitInfoEntity> skuLimitMap, LimitOrderChangeLogEntity logEntity) {
+        String prefixKey = LIMIT_PREFIX_SKU + logEntity.getBizType();
+        if (logEntity.getSkuId() != null) {
+            if (skuLimitMap.get(prefixKey + logEntity.getSkuId()) == null) {
+                SkuLimitInfoEntity skuLimitInfoEntity = new SkuLimitInfoEntity();
+                skuLimitInfoEntity.setPid(logEntity.getPid());
+                skuLimitInfoEntity.setStoreId(logEntity.getStoreId());
+                skuLimitInfoEntity.setLimitId(logEntity.getLimitId());
+                skuLimitInfoEntity.setGoodsId(logEntity.getGoodsId());
+                skuLimitInfoEntity.setSoldNum(logEntity.getBuyNum());
+                skuLimitInfoEntity.setSkuId(logEntity.getSkuId());
+                skuLimitMap.put(prefixKey + logEntity.getSkuId(), skuLimitInfoEntity);
+            } else {
+                skuLimitMap.get(prefixKey + logEntity.getSkuId()).setSoldNum(skuLimitMap.get(prefixKey + logEntity.getSkuId()).getSoldNum() + logEntity.getBuyNum());
+            }
+        }
     }
 
     protected void checkCreateOrDeductOrderParams(List<UpdateUserLimitVo> vos) {

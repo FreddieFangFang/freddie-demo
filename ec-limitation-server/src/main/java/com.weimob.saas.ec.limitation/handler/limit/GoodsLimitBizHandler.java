@@ -48,7 +48,7 @@ public class GoodsLimitBizHandler extends BaseHandler implements LimitBizHandler
         validLimitation(null, goodsLimitInfoEntityList, null,
                 userGoodsLimitRecodeList, null, localOrderBuyNumMap);
         /** 5 封装更新数据库入参 **/
-        updateUserLimitRecord(LimitContext.getLimitBo().getGlobalOrderBuyNumMap());
+        updateUserLimitRecord(localOrderBuyNumMap);
 
     }
 

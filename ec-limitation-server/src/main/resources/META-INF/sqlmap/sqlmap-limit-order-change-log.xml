@@ -49,7 +49,7 @@
   </sql>
 
   <insert id="insertLog" parameterType="LimitOrderChangeLogEntity">
-    INSERT intolimit_order_change_log (
+    INSERT INTO limit_order_change_log (
       pid,
       store_id,
       wid,

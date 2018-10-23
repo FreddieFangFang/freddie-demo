@@ -55,7 +55,7 @@ public class ActivityLimitBizHandler extends BaseHandler implements LimitBizHand
         validLimitation(limitInfoEntityList, null, userLimitEntityList,
                 null, null, localOrderBuyNumMap);
         /** 5 封装更新数据库入参 **/
-        updateUserLimitRecord(LimitContext.getLimitBo().getGlobalOrderBuyNumMap());
+        updateUserLimitRecord(localOrderBuyNumMap);
 
     }
 }
