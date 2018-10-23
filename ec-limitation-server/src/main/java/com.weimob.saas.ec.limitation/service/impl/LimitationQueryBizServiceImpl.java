@@ -409,43 +409,44 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                                   List<UserLimitEntity> queryUserLimitList, List<SkuLimitInfoEntity> querySkuLimitList) {
         for (QueryGoodsLimitInfoListVo vo : requestVo.getGoodsDetailList()) {
             Long limitId = limitIdMap.get(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId()));
+            // 保存优惠套装限购时，存入SKU表的goodsId以及skuId都是bizId，所以需要特殊处理一下
             if (Objects.equals(vo.getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
-                // 保存优惠套装限购时，存入SKU表的goodsId以及skuId都是bizId，所以需要特殊处理一下
                 vo.setGoodsId(vo.getBizId());
                 vo.setSkuId(vo.getBizId());
-
-                UserLimitEntity userLimitEntity = new UserLimitEntity();
-                userLimitEntity.setLimitId(limitId);
-                userLimitEntity.setPid(vo.getPid());
-                userLimitEntity.setStoreId(vo.getStoreId());
-                userLimitEntity.setBizType(vo.getBizType());
-                userLimitEntity.setBizId(vo.getBizId());
-                userLimitEntity.setWid(vo.getWid());
-                queryUserLimitList.add(userLimitEntity);
-
-                SkuLimitInfoEntity skuLimitInfoEntity = new SkuLimitInfoEntity();
-                skuLimitInfoEntity.setLimitId(limitId);
-                skuLimitInfoEntity.setPid(vo.getPid());
-                skuLimitInfoEntity.setStoreId(vo.getStoreId());
-                skuLimitInfoEntity.setGoodsId(vo.getGoodsId());
-                skuLimitInfoEntity.setSkuId(vo.getSkuId());
-                querySkuLimitList.add(skuLimitInfoEntity);
-                continue;
             }
-            GoodsLimitInfoEntity goodsLimitInfoEntity = new GoodsLimitInfoEntity();
-            goodsLimitInfoEntity.setPid(vo.getPid());
-            goodsLimitInfoEntity.setStoreId(vo.getStoreId());
-            goodsLimitInfoEntity.setGoodsId(vo.getGoodsId());
-            goodsLimitInfoEntity.setLimitId(limitId);
-            queryGoodsLimitList.add(goodsLimitInfoEntity);
+            UserLimitEntity userLimitEntity = new UserLimitEntity();
+            userLimitEntity.setLimitId(limitId);
+            userLimitEntity.setPid(vo.getPid());
+            userLimitEntity.setStoreId(vo.getStoreId());
+            userLimitEntity.setBizType(vo.getBizType());
+            userLimitEntity.setBizId(vo.getBizId());
+            userLimitEntity.setWid(vo.getWid());
+            queryUserLimitList.add(userLimitEntity);
 
-            UserGoodsLimitEntity userGoodsLimitEntity = new UserGoodsLimitEntity();
-            userGoodsLimitEntity.setPid(vo.getPid());
-            userGoodsLimitEntity.setStoreId(vo.getStoreId());
-            userGoodsLimitEntity.setWid(vo.getWid());
-            userGoodsLimitEntity.setGoodsId(vo.getGoodsId());
-            userGoodsLimitEntity.setLimitId(limitId);
-            queryUserGoodsLimitList.add(userGoodsLimitEntity);
+            SkuLimitInfoEntity skuLimitInfoEntity = new SkuLimitInfoEntity();
+            skuLimitInfoEntity.setLimitId(limitId);
+            skuLimitInfoEntity.setPid(vo.getPid());
+            skuLimitInfoEntity.setStoreId(vo.getStoreId());
+            skuLimitInfoEntity.setGoodsId(vo.getGoodsId());
+            skuLimitInfoEntity.setSkuId(vo.getSkuId());
+            querySkuLimitList.add(skuLimitInfoEntity);
+
+            if (!Objects.equals(vo.getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
+                GoodsLimitInfoEntity goodsLimitInfoEntity = new GoodsLimitInfoEntity();
+                goodsLimitInfoEntity.setPid(vo.getPid());
+                goodsLimitInfoEntity.setStoreId(vo.getStoreId());
+                goodsLimitInfoEntity.setGoodsId(vo.getGoodsId());
+                goodsLimitInfoEntity.setLimitId(limitId);
+                queryGoodsLimitList.add(goodsLimitInfoEntity);
+
+                UserGoodsLimitEntity userGoodsLimitEntity = new UserGoodsLimitEntity();
+                userGoodsLimitEntity.setPid(vo.getPid());
+                userGoodsLimitEntity.setStoreId(vo.getStoreId());
+                userGoodsLimitEntity.setWid(vo.getWid());
+                userGoodsLimitEntity.setGoodsId(vo.getGoodsId());
+                userGoodsLimitEntity.setLimitId(limitId);
+                queryUserGoodsLimitList.add(userGoodsLimitEntity);
+            }
         }
     }
 
