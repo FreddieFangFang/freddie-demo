@@ -1,10 +1,7 @@
 package com.weimob.saas.ec.limitation.service.impl;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
-import com.weimob.saas.ec.limitation.common.LimitLevelEnum;
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
 import com.weimob.saas.ec.limitation.dao.*;
 import com.weimob.saas.ec.limitation.entity.*;
@@ -21,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 
 /**
  * @author lujialin
@@ -121,18 +117,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         if (Objects.equals(requestVo.getGoodsDetailList().get(0).getBizType(), ActivityTypeEnum.DISCOUNT.getType())
                 && Objects.equals(requestVo.getGoodsDetailList().get(0).getActivityStockType(), LimitConstant.DISCOUNT_TYPE_STOCK)) {
             //限时折扣要校验活动限购
-            List<UserLimitEntity> userLimitEntityList = userLimitDao.listUserLimitByLimitId(queryUserLimitList);
-            if (CollectionUtils.isNotEmpty(userLimitEntityList)) {
-                for (UserLimitEntity vo : userLimitEntityList) {
-                    //多门店下单，进行合并
-                    if (activityUserLimitNumMap.get(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId())) == null) {
-                        activityUserLimitNumMap.put(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId()), vo.getBuyNum());
-                    } else {
-                        Integer buyNum = activityUserLimitNumMap.get(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId()));
-                        activityUserLimitNumMap.put(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId()), vo.getBuyNum() + buyNum);
-                    }
-                }
-            }
+            queryUserActivityBuyRecord(queryUserLimitList, activityUserLimitNumMap);
 
             return buildResponseVo(requestVo, limitIdMap, activityLimitNumMap, activityUserLimitNumMap, goodsLimitNumMap, userGoodsLimitNumMap, userPidGoodsLimitNumMap);
 
@@ -141,18 +126,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 && Objects.equals(requestVo.getGoodsDetailList().get(0).getActivityStockType(), LimitConstant.DISCOUNT_TYPE_SKU))) {
             //特权价要校验活动限购和sku可售数量
             List<SkuLimitInfoEntity> skuLimitList = skuLimitInfoDao.listSkuLimit(querySkuLimitList);
-            List<UserLimitEntity> userLimitEntityList = userLimitDao.listUserLimitByLimitId(queryUserLimitList);
-            if (CollectionUtils.isNotEmpty(userLimitEntityList)) {
-                for (UserLimitEntity vo : userLimitEntityList) {
-                    //多门店下单，进行合并
-                    if (activityUserLimitNumMap.get(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId())) == null) {
-                        activityUserLimitNumMap.put(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId()), vo.getBuyNum());
-                    } else {
-                        Integer buyNum = activityUserLimitNumMap.get(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId()));
-                        activityUserLimitNumMap.put(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId()), vo.getBuyNum() + buyNum);
-                    }
-                }
-            }
+            queryUserActivityBuyRecord(queryUserLimitList, activityUserLimitNumMap);
             GoodsLimitInfoListResponseVo responseVo = buildResponseVo(requestVo, limitIdMap, activityLimitNumMap, activityUserLimitNumMap, goodsLimitNumMap, userGoodsLimitNumMap, userPidGoodsLimitNumMap);
             //处理sku的限购
             validGoodsSkuLimit(requestVo, limitIdMap, skuLimitList, responseVo);
@@ -164,19 +138,36 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             validGoodsSkuLimit(requestVo, limitIdMap, skuLimitList, responseVo);
             return responseVo;
         } else if (Objects.equals(requestVo.getGoodsDetailList().get(0).getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
-            return buildCombinationBuyResponseVo(requestVo, limitIdMap, activityLimitNumMap, activityUserLimitNumMap, querySkuLimitList);
+            return buildCombinationBuyResponseVo(requestVo, limitIdMap, activityLimitNumMap, activityUserLimitNumMap, querySkuLimitList, queryUserLimitList);
         } else {
             return new GoodsLimitInfoListResponseVo();
+        }
+    }
+
+    private void queryUserActivityBuyRecord(List<UserLimitEntity> queryUserLimitList, Map<String, Integer> activityUserLimitNumMap) {
+        List<UserLimitEntity> userLimitEntityList = userLimitDao.listUserLimitByLimitId(queryUserLimitList);
+        if (CollectionUtils.isNotEmpty(userLimitEntityList)) {
+            for (UserLimitEntity vo : userLimitEntityList) {
+                //多门店下单，进行合并
+                if (activityUserLimitNumMap.get(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId())) == null) {
+                    activityUserLimitNumMap.put(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId()), vo.getBuyNum());
+                } else {
+                    Integer buyNum = activityUserLimitNumMap.get(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId()));
+                    activityUserLimitNumMap.put(MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId()), vo.getBuyNum() + buyNum);
+                }
+            }
         }
     }
 
     private GoodsLimitInfoListResponseVo buildCombinationBuyResponseVo(GoodsLimitInfoListRequestVo requestVo, Map<String, Long> limitIdMap,
                                                Map<String, Integer> activityLimitNumMap,
                                                Map<String, Integer> activityUserLimitNumMap,
-                                               List<SkuLimitInfoEntity> querySkuLimitList) {
+                                               List<SkuLimitInfoEntity> querySkuLimitList,
+                                               List<UserLimitEntity> queryUserLimitList) {
         GoodsLimitInfoListResponseVo responseVo = new GoodsLimitInfoListResponseVo();
         List<GoodsLimitInfoListVo> goodsLimitInfoList = new ArrayList<>();
-        validActivityLimit(requestVo, limitIdMap, activityLimitNumMap, activityUserLimitNumMap, goodsLimitInfoList);
+        queryUserActivityBuyRecord(queryUserLimitList, activityUserLimitNumMap);
+        validActivityLimit(requestVo, activityLimitNumMap, activityUserLimitNumMap, goodsLimitInfoList);
         List<SkuLimitInfoEntity> skuLimitList = skuLimitInfoDao.listSkuLimit(querySkuLimitList);
         responseVo.setGoodsLimitInfoList(goodsLimitInfoList);
         validGoodsSkuLimit(requestVo, limitIdMap, skuLimitList, responseVo);
@@ -243,7 +234,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                                                          Map<String, Integer> userGoodsLimitNumMap, Map<String, Integer> userPidGoodsLimitNumMap) {
         GoodsLimitInfoListResponseVo responseVo = new GoodsLimitInfoListResponseVo();
         List<GoodsLimitInfoListVo> goodsLimitInfoList = new ArrayList<>();
-        validActivityLimit(requestVo, limitIdMap, activityLimitNumMap, activityUserLimitNumMap, goodsLimitInfoList);
+        validActivityLimit(requestVo, activityLimitNumMap, activityUserLimitNumMap, goodsLimitInfoList);
         validGoodsLimit(requestVo, limitIdMap, goodsLimitNumMap, userGoodsLimitNumMap, goodsLimitInfoList, userPidGoodsLimitNumMap);
         responseVo.setGoodsLimitInfoList(goodsLimitInfoList);
         return responseVo;
@@ -342,7 +333,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         }
     }
 
-    private void validActivityLimit(GoodsLimitInfoListRequestVo requestVo, Map<String, Long> limitIdMap, Map<String, Integer> activityLimitNumMap, Map<String, Integer> activityUserLimitNumMap, List<GoodsLimitInfoListVo> goodsLimitInfoList) {
+    private void validActivityLimit(GoodsLimitInfoListRequestVo requestVo, Map<String, Integer> activityLimitNumMap, Map<String, Integer> activityUserLimitNumMap, List<GoodsLimitInfoListVo> goodsLimitInfoList) {
         for (QueryGoodsLimitInfoListVo vo : requestVo.getGoodsDetailList()) {
             GoodsLimitInfoListVo goodsLimitInfoListVo = new GoodsLimitInfoListVo();
             goodsLimitInfoListVo.setPid(vo.getPid());
