@@ -384,11 +384,13 @@
       sku_limit_info
     WHERE
       <foreach item="item" index="index" collection="list" separator="or">
-        pid = #{item.pid}
-        AND limit_id = #{item.limitId}
-        <if test="#{item.deleted} == null">
-          AND is_deleted = 0
-        </if>
+        (
+          pid = #{item.pid}
+          AND limit_id = #{item.limitId}
+          <if test="#{item.deleted} == null">
+            AND is_deleted = 0
+          </if>
+        )
       </foreach>
     /*SkuLimitInfoDao.listSkuLimitByLimitIdList*/
   </select>

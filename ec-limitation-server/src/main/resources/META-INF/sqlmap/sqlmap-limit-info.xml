@@ -149,12 +149,12 @@
       limit_info
     WHERE
       <foreach item="item" index="index" collection="list" separator="or">
-        pid = #{item.pid}
+        (pid = #{item.pid}
         AND biz_id = #{item.bizId}
         AND biz_type = #{item.bizType}
         <if test="item.deleted == null">
           AND is_deleted = 0
-        </if>
+        </if>)
       </foreach>
   /*LimitInfoDao.listLimitInfoByBizId*/
   </select>
