@@ -11,6 +11,7 @@ public class LimitParam {
     private Integer bizType;
     private Long limitId;
     private Long goodsId;
+    private Integer deleted;
 
     public LimitParam() {
 
@@ -31,6 +32,13 @@ public class LimitParam {
         this.pid = pid;
         this.bizId = bizId;
         this.bizType = bizType;
+    }
+
+    public LimitParam(Long pid, Long bizId, Integer bizType, Integer deleted) {
+        this.pid = pid;
+        this.bizId = bizId;
+        this.bizType = bizType;
+        this.deleted = deleted;
     }
 
     public Long getPid() {
@@ -71,5 +79,13 @@ public class LimitParam {
 
     public void setGoodsId(Long goodsId) {
         this.goodsId = goodsId;
+    }
+
+    public Integer getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Integer deleted) {
+        this.deleted = deleted;
     }
 }

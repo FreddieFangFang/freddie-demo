@@ -24,4 +24,6 @@ public class LimitConstant {
     public static final int DATA_TYPE_OVER = 1;
     //适用部分门店类型
     public static final int SELECT_PART_STORE = 2;
+    //已删除
+    public static final int DELETED = 1;
 }
