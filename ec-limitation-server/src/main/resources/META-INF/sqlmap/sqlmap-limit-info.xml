@@ -136,7 +136,7 @@
       pid = #{pid}
     AND biz_id = #{bizId}
     AND biz_type = #{bizType}
-    <if test="deleted != 1">
+    <if test="deleted == null">
       AND is_deleted = 0
     </if>
   /*LimitInfoDao.getLimitInfo*/
@@ -152,7 +152,7 @@
         pid = #{item.pid}
         AND biz_id = #{item.bizId}
         AND biz_type = #{item.bizType}
-        <if test="#{item.deleted} != 1">
+        <if test="item.deleted == null">
           AND is_deleted = 0
         </if>
       </foreach>
