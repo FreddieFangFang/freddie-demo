@@ -339,7 +339,9 @@
     WHERE
       pid = #{pid}
     AND limit_id = #{limitId}
-    AND is_deleted = 0
+    <if test="deleted != 1">
+      AND is_deleted = 0
+    </if>
   /*SkuLimitInfoDao.listSkuLimitByLimitId*/
   </select>
 
@@ -384,7 +386,9 @@
       <foreach item="item" index="index" collection="list" separator="or">
         pid = #{item.pid}
         AND limit_id = #{item.limitId}
-        AND is_deleted = 0
+        <if test="#{item.deleted} != 1">
+          AND is_deleted = 0
+        </if>
       </foreach>
     /*SkuLimitInfoDao.listSkuLimitByLimitIdList*/
   </select>

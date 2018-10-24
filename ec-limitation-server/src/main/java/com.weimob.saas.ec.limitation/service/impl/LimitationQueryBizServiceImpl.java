@@ -552,7 +552,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         if (Objects.equals(requestVo.getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
             List<SkuLimitInfoEntity> skuLimitInfoEntities = null;
             try {
-                skuLimitInfoEntities = skuLimitInfoDao.listSkuLimitByLimitId(new LimitParam(infoEntity.getPid(), infoEntity.getLimitId()));
+                skuLimitInfoEntities = skuLimitInfoDao.listSkuLimitByLimitId(new LimitParam(infoEntity.getPid(), LimitConstant.DELETED, infoEntity.getLimitId()));
             } catch (Exception e) {
                 throw new LimitationBizException(LimitationErrorCode.SQL_QUERY_SKU_INFO_ERROR, e);
             }
@@ -689,7 +689,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         // 构建查询限购主表入参
         List<LimitParam> limitParams = new ArrayList<>(requestVo.getBizIds().size());
         for (Long bizId : requestVo.getBizIds()) {
-            LimitParam limitParam = new LimitParam(requestVo.getPid(), bizId, requestVo.getBizType());
+            LimitParam limitParam = new LimitParam(requestVo.getPid(), bizId, requestVo.getBizType(), LimitConstant.DELETED);
             limitParams.add(limitParam);
         }
 
@@ -707,7 +707,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         // 构建查询SKU表入参
         List<LimitParam> skuLimitParams = new ArrayList<>(limitInfoList.size());
         for (LimitInfoEntity limitInfo : limitInfoList) {
-            skuLimitParams.add(new LimitParam(requestVo.getPid(), limitInfo.getLimitId()));
+            skuLimitParams.add(new LimitParam(requestVo.getPid(), LimitConstant.DELETED, limitInfo.getLimitId()));
         }
 
         // 查询SKU表获取限购信息

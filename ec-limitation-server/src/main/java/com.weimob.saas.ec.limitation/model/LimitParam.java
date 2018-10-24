@@ -22,6 +22,12 @@ public class LimitParam {
         this.limitId = limitId;
     }
 
+    public LimitParam(Long pid, Integer deleted, Long limitId) {
+        this.pid = pid;
+        this.limitId = limitId;
+        this.deleted = deleted;
+    }
+
     public LimitParam(Long pid, Long limitId, Long goodsId) {
         this.pid = pid;
         this.limitId = limitId;
