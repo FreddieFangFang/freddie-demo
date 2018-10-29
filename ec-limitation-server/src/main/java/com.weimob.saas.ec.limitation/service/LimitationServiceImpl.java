@@ -199,17 +199,26 @@ public class LimitationServiceImpl {
         deleteSkuLimitInfo(entity.getPid(), entity.getLimitId(), pointGoodsIdList);
     }
 
-    public List<SkuLimitInfoEntity> updatePrivilegePriceGoodsLimitInfo(List<GoodsLimitInfoEntity> oldGoodsLimitInfoEntityList, List<SkuLimitInfoEntity> skuLimitInfoList) {
+    public List<SkuLimitInfoEntity> updatePrivilegePriceGoodsLimitInfo(List<GoodsLimitInfoEntity> newGoodsLimitInfoEntityList, List<SkuLimitInfoEntity> skuLimitInfoList) {
 
-        for (GoodsLimitInfoEntity oldGoodsLimitInfoEntity : oldGoodsLimitInfoEntityList) {
-            Integer update = 0;
-            //迁移过来的数据只有一条，更新为0则插入
-            update = goodsLimitInfoDao.updateGoodsLimit(oldGoodsLimitInfoEntity);
-            if (update == 0) {
-                List<GoodsLimitInfoEntity> goodsList = new ArrayList<>();
-                goodsList.add(oldGoodsLimitInfoEntity);
-                goodsLimitInfoDao.batchInsertGoodsLimit(goodsList);
+        Long pid = null;
+        Long limitId = null;
+        if (CollectionUtils.isNotEmpty(newGoodsLimitInfoEntityList)) {
+            for (GoodsLimitInfoEntity goodsLimitInfoEntity : newGoodsLimitInfoEntityList) {
+                Integer update = 0;
+                //迁移过来的数据只有一条，更新为0则插入
+                update = goodsLimitInfoDao.updateGoodsLimit(goodsLimitInfoEntity);
+                if (update == 0) {
+                    List<GoodsLimitInfoEntity> goodsList = new ArrayList<>();
+                    goodsList.add(goodsLimitInfoEntity);
+                    goodsLimitInfoDao.batchInsertGoodsLimit(goodsList);
+                }
             }
+            pid = newGoodsLimitInfoEntityList.get(0).getPid();
+            limitId = newGoodsLimitInfoEntityList.get(0).getLimitId();
+        } else {
+            pid = skuLimitInfoList.get(0).getPid();
+            limitId = skuLimitInfoList.get(0).getLimitId();
         }
 
         /**
@@ -231,8 +240,6 @@ public class LimitationServiceImpl {
             }
         }
         Iterator<Map.Entry<Long, List<SkuLimitInfoEntity>>> iterator = goodsSkuMap.entrySet().iterator();
-        Long pid = oldGoodsLimitInfoEntityList.get(0).getPid();
-        Long limitId = oldGoodsLimitInfoEntityList.get(0).getLimitId();
         DeleteGoodsParam limitParam = new DeleteGoodsParam();
         limitParam.setPid(pid);
         limitParam.setLimitId(limitId);

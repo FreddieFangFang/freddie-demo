@@ -144,7 +144,8 @@ public class LimitationUpdateFacadeService {
             if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), requestVo.getBizType())
                     || (Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), requestVo.getBizType())
                     && Objects.equals(requestVo.getActivityStockType(), LimitConstant.DISCOUNT_TYPE_SKU))
-                    || Objects.equals(LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel(), requestVo.getBizType())) {
+                    || Objects.equals(LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel(), requestVo.getBizType())
+                    || Objects.equals(LimitBizTypeEnum.BIZ_TYPE_COMMUNITY_GROUPON.getLevel(), requestVo.getBizType())) {
                 VerifyParamUtils.checkListParam(LimitationErrorCode.SKUINFO_IS_NULL, requestVo.getSkuLimitInfoList());
                 for (SkuLimitInfo info : requestVo.getSkuLimitInfoList()) {
                     VerifyParamUtils.checkParam(LimitationErrorCode.SKUINFO_IS_NULL, info.getSkuId());
