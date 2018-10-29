@@ -11,12 +11,12 @@ import java.util.List;
  */
 public class SaveGoodsLimitInfoVo extends BaseRequest {
     /**
-     * 活动限购的活动id，商品限购的goodsId
+     * 业务id（活动id/积分商城商品id）
      */
     private Long bizId;
 
     /**
-     * 活动类型的活动类型，商品限购类型暂定30
+     * 业务类型，积分商城暂定30
      */
     private Integer bizType;
 
@@ -25,11 +25,11 @@ public class SaveGoodsLimitInfoVo extends BaseRequest {
      */
     private Long goodsId;
     /**
-     * 限购级别
+     * 限购级别，取值范围，参见：{@link com.weimob.saas.ec.limitation.common.LimitLevelEnum}
      */
     private Integer limitLevel;
     /**
-     * 限购维度
+     * 限购对每个人还是所有人，取值范围，参见：{@link com.weimob.saas.ec.limitation.common.LimitTypeEnum}
      */
     private Integer goodsLimitType;
     /**
@@ -45,15 +45,15 @@ public class SaveGoodsLimitInfoVo extends BaseRequest {
      */
     private List<SkuLimitInfo> skuLimitInfoList;
     /**
-     * 限购渠道类型
+     * 限购渠道类型（0：线上，1：线下；目前统一传0）
      */
     private String channelType;
     /**
-     * 限购来源
+     * 限购来源（0：公众号，1：小程序；目前传0,1）
      */
     private String source;
     /**
-     * 限时折扣1.冻结库存；2.可用sku
+     * 限时折扣须传，其他不传（1.冻结库存；2.可用sku）
      */
     private Integer activityStockType;
 
