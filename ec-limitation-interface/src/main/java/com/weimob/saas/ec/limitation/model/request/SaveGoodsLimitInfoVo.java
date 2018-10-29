@@ -45,7 +45,7 @@ public class SaveGoodsLimitInfoVo extends BaseRequest {
      */
     private List<SkuLimitInfo> skuLimitInfoList;
     /**
-     * 限购渠道类型（0：线上，1：线下；目前统一传0）
+     * 限购渠道类型（0：线上；1：线下；0,1：线上+线下；）
      */
     private String channelType;
     /**
