@@ -446,7 +446,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         QueryGoodsLimitNumListResponseVo responseVo = new QueryGoodsLimitNumListResponseVo();
         List<QueryGoodsLimitNumVo> queryGoodsLimitNumList = new ArrayList<>();
         // 如果是 社区团购， 只查询sku限购信息
-        Map<String, List<SkuLimitInfoEntity>> grouponSkuLimitNumMap = null;
+        Map<String, List<SkuLimitInfoEntity>> communityGrouponSkuLimitNumMap = null;
         if(Objects.equals(requestVo.getQueryGoodslimitNumVoList().get(0).getBizType(), ActivityTypeEnum.COMMUNITY_GROUPON.getType())){
             for (QueryGoodsLimitNumListVo request : requestVo.getQueryGoodslimitNumVoList()) {
                 QueryGoodsLimitNumVo queryGoodsLimitNumVo = new QueryGoodsLimitNumVo();
@@ -456,8 +456,8 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 queryGoodsLimitNumVo.setBizType(request.getBizType());
                 //查询sku的限购数量
                 List<SkuLimitInfo> skuLimitInfoList = new ArrayList<>();
-                if (MapUtils.isNotEmpty(grouponSkuLimitNumMap)) {
-                    List<SkuLimitInfoEntity> skuLimitInfoEntityList = grouponSkuLimitNumMap.get(MapKeyUtil.buildPidStoreIdGoodsId(request.getPid(), request.getGoodsId()));
+                if (MapUtils.isNotEmpty(communityGrouponSkuLimitNumMap)) {
+                    List<SkuLimitInfoEntity> skuLimitInfoEntityList = communityGrouponSkuLimitNumMap.get(MapKeyUtil.buildPidStoreIdGoodsId(request.getPid(), request.getGoodsId()));
                     if (CollectionUtils.isNotEmpty(skuLimitInfoEntityList)) {
                         for (SkuLimitInfoEntity entity : skuLimitInfoEntityList) {
                             SkuLimitInfo skuLimitInfo = new SkuLimitInfo();

@@ -198,7 +198,7 @@ public class LimitationServiceImpl {
 
         deleteSkuLimitInfo(entity.getPid(), entity.getLimitId(), pointGoodsIdList);
     }
-    public void deleteGrouponLimitInfo(LimitInfoEntity oldLimitInfoEntity) {
+    public void deleteCommunityGrouponLimitInfo(LimitInfoEntity oldLimitInfoEntity) {
         limitInfoDao.deleteLimitInfo(oldLimitInfoEntity);
 
         LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
