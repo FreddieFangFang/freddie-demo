@@ -221,6 +221,21 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
                     limitationService.deletePointGoodsLimitInfo(entity, pointGoodsIdList);
                 }
                 break;
+            case BIZ_TYPE_COMMUNITY_GROUPON:
+                LimitInfoEntity limitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(pid, bizId, bizType));
+                if (limitInfoEntity == null) {
+                    throw new LimitationBizException(LimitationErrorCode.LIMITATION_IS_NULL);
+                }
+                for (BatchDeleteGoodsLimitVo limitVo : requestVo.getDeleteGoodsLimitVoList()) {
+                    goodsIdList.add(limitVo.getGoodsId());
+                    LimitOrderChangeLogEntity limitOrderChangeLogEntity = buildChangeLog(limitVo, LimitServiceNameEnum.DELETE_GOODS_LIMIT.name(), limitInfoEntity.getLimitId());
+                    logEntityList.add(limitOrderChangeLogEntity);
+                }
+
+                //社区团购删除sku限购信息
+                limitationService.deleteGrouponLimitInfo(limitInfoEntity);
+
+                break;
             default:
                 break;
         }

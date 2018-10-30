@@ -198,7 +198,16 @@ public class LimitationServiceImpl {
 
         deleteSkuLimitInfo(entity.getPid(), entity.getLimitId(), pointGoodsIdList);
     }
+    public void deleteGrouponLimitInfo(LimitInfoEntity oldLimitInfoEntity) {
+        limitInfoDao.deleteLimitInfo(oldLimitInfoEntity);
 
+        LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
+        deleteEntity.setPid(oldLimitInfoEntity.getPid());
+        deleteEntity.setLimitId(oldLimitInfoEntity.getLimitId());
+        limitStoreRelationshipDao.deleteStoreRelationship(deleteEntity);
+
+        deleteSkuLimitInfo(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId(), null);
+    }
     public List<SkuLimitInfoEntity> updatePrivilegePriceGoodsLimitInfo(List<GoodsLimitInfoEntity> newGoodsLimitInfoEntityList, List<SkuLimitInfoEntity> skuLimitInfoList) {
 
         Long pid = null;
