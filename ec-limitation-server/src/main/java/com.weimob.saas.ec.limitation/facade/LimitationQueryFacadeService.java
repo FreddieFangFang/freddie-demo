@@ -107,7 +107,8 @@ public class LimitationQueryFacadeService {
             if (request.getCheckLimit()) {
                 VerifyParamUtils.checkParam(LimitationErrorCode.GOODSNUM_IS_NULL, request.getGoodsBuyNum());
             }
-            if (Objects.equals(request.getBizType(), ActivityTypeEnum.PRIVILEGE_PRICE.getType())) {
+            if (Objects.equals(request.getBizType(), ActivityTypeEnum.PRIVILEGE_PRICE.getType())
+                    || Objects.equals(request.getBizType(), ActivityTypeEnum.COMMUNITY_GROUPON.getType())) {
                 VerifyParamUtils.checkParam(LimitationErrorCode.SKUID_IS_NULL, request.getSkuId());
             }
             if (Objects.equals(request.getBizType(), ActivityTypeEnum.DISCOUNT.getType())) {
