@@ -130,6 +130,62 @@
   /*UserGoodsLimitDao.listUserGoodsLimit*/
   </select>
 
+  <select id="listUserGoodsLimitListByWid" resultMap="BaseResultMap" parameterType="java.util.List">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM
+    user_goods_limit
+    WHERE
+      pid = #{item.pid}
+      AND wid = #{item.wid}
+      AND is_deleted = 0
+    /*UserGoodsLimitDao.listUserGoodsLimit*/
+  </select>
+
+  <update id="updateUserGoodsLimitListByWid" parameterType="UserGoodsLimitEntity">
+    <foreach item="item" index="index" collection="list" open="" close="" separator=";">
+      UPDATE
+        user_goods_limit
+      SET
+        buy_num = #{buyNum},
+        update_time = NOW()
+      WHERE
+        pid = #{pid}
+      AND store_id = #{storeId}
+      AND wid = #{wid}
+      AND limit_id = #{limitId}
+      AND goods_id = #{goodsId}
+    </foreach>
+  /*UserGoodsLimitDao.updateUserGoodsLimitListByWid*/
+  </update>
+  <insert id="saveUserGoodsLimitListByWid" parameterType="UserGoodsLimitEntity">
+    INSERT INTO user_goods_limit (
+      pid,
+      store_id,
+      wid,
+      limit_id,
+      goods_id,
+      buy_num,
+      is_deleted,
+      create_time,
+      update_time
+      )
+    VALUES
+    <foreach item="item" index="index" collection="list" open="" close="" separator=",">
+      (
+      #{item.pid},
+      #{item.storeId},
+      #{item.wid},
+      #{item.limitId},
+      #{item.goodsId},
+      #{item.buyNum},
+      0,
+      NOW(),
+      NOW()
+      )
+    </foreach>
+  /*UserGoodsLimitDao.saveUserGoodsLimitListByWid*/
+  </insert>
   <select id="listOrderUserGoodsLimit" resultMap="BaseResultMap" parameterType="java.util.List">
     SELECT
       usergoodslimit.pid,

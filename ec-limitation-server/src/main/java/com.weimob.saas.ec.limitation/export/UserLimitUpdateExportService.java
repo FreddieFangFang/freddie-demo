@@ -3,11 +3,14 @@ package com.weimob.saas.ec.limitation.export;
 import com.weimob.saas.ec.common.exception.BaseException;
 import com.weimob.saas.ec.common.exception.CommonErrorCode;
 import com.weimob.saas.ec.common.export.BaseExportService;
+import com.weimob.saas.ec.common.request.MergeWidRequest;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.facade.UserLimitUpdateFacadeService;
 import com.weimob.saas.ec.limitation.model.request.DeductUserLimitRequestVo;
+import com.weimob.saas.ec.limitation.model.request.QueryGoodsLimitNumRequestVo;
 import com.weimob.saas.ec.limitation.model.request.ReverseUserLimitRequestVo;
 import com.weimob.saas.ec.limitation.model.request.SaveUserLimitRequestVo;
+import com.weimob.saas.ec.limitation.model.response.QueryGoodsLimitNumListResponseVo;
 import com.weimob.saas.ec.limitation.model.response.ReverseUserLimitResponseVo;
 import com.weimob.saas.ec.limitation.model.response.UpdateUserLimitResponseVo;
 import com.weimob.saas.ec.limitation.service.UserLimitUpdateService;
@@ -103,4 +106,9 @@ public class UserLimitUpdateExportService extends BaseExportService implements U
         }
 
         return soaResponse;    }
+
+    @Override
+    public SoaResponse<Boolean, LimitationErrorCode> mergeLimitByWid(MergeWidRequest requestVo) {
+        return process(userLimitUpdateFacadeService, "mergeLimitByWid", requestVo);
+    }
 }
