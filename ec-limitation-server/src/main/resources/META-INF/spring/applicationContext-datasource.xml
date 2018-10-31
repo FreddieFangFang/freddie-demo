@@ -46,7 +46,8 @@
 
     <aop:config>
         <aop:pointcut id="serviceMethod"
-                      expression="execution(* com.weimob.saas.ec.limitation.service.LimitationServiceImpl.*(..))"/>
+                      expression="execution(* com.weimob.saas.ec.limitation.service.LimitationServiceImpl.*(..)) or
+                      execution(* com.weimob.saas.ec.limitation.service.impl.LimitationUpdateBizServiceImpl.*(..))"/>
         <aop:advisor pointcut-ref="serviceMethod" advice-ref="limitationTxAdvice"/>
     </aop:config>
 </beans>
