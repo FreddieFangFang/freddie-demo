@@ -80,6 +80,15 @@ public interface UserLimitDao {
     Integer saveUserLimitListByWid(List<UserLimitEntity> userLimitEntityList);
 
     /**
+     * @title 批量删除用户活动购买记录（所有pid,storeId,limitId下的）
+     * @author fei.zheng
+     * @date 2018/10/30 20:27
+     * @parameterExample
+     * @returnExample com.weimob.saas.ec.limitation.entity.UserLimitEntity
+     */
+    Integer deleteUserLimitListByWid(List<UserLimitEntity> userLimitEntityList);
+
+    /**
      * @title 批量查询用户活动购买记录
      * @author qi.he
      * @date 2018/10/12 0012 17:39

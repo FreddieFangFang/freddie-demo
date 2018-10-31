@@ -473,6 +473,10 @@ public class LimitationServiceImpl {
         //这里批量插入是不是要 做大小限制？
         return userLimitDao.saveUserLimitListByWid(userLimitEntityList);
     }
+    public Integer deleteUserLimitList(List<UserLimitEntity> userLimitEntityList){
+        //这里批量插入是不是要 做大小限制？
+        return userLimitDao.deleteUserLimitListByWid(userLimitEntityList);
+    }
     public List<UserGoodsLimitEntity> getUserGoodsLimitList(Long pid, Long wid){
         UserGoodsLimitEntity userGoodsLimitEntity = new UserGoodsLimitEntity();
         userGoodsLimitEntity.setPid(pid);
@@ -487,5 +491,8 @@ public class LimitationServiceImpl {
 
         return userGoodsLimitDao.saveUserGoodsLimitListByWid(userGoodsLimitEntityList);
     }
+    public Integer deleteUserGoodsLimitList(List<UserGoodsLimitEntity> userGoodsLimitEntityList){
 
+        return userGoodsLimitDao.deleteUserGoodsLimitListByWid(userGoodsLimitEntityList);
+    }
 }

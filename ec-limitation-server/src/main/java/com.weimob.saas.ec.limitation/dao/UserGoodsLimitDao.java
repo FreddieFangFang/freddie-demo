@@ -90,6 +90,15 @@ public interface UserGoodsLimitDao {
     Integer saveUserGoodsLimitListByWid(List<UserGoodsLimitEntity> userGoodsLimitEntityList);
 
     /**
+     * @title 批量删除查询用户活动购买记录（所有pid,storeId,limitId下的）
+     * @author fei.zheng
+     * @date 2018/10/31 10:06
+     * @parameterExample
+     * @returnExample
+     */
+    Integer deleteUserGoodsLimitListByWid(List<UserGoodsLimitEntity> userGoodsLimitEntityList);
+
+    /**
      * @title 查询订单中用户商品购买记录
      * @author qi.he
      * @date 2018/10/13 0013 20:55

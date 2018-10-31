@@ -120,6 +120,7 @@ public class UserLimitUpdateFacadeService {
         }
         limitationService.updateUserLimitList(updateUserLimit);
         limitationService.saveUserLimitList(saveUserLimit);
+        limitationService.deleteUserLimitList(oldLimit);
     }
 
     private void mergeUserGoodsLimit(Long pid, Long newWid, Long oldWid) {
@@ -157,5 +158,6 @@ public class UserLimitUpdateFacadeService {
         }
         limitationService.updateUserGoodsLimitList(updateUserGoodsLimit);
         limitationService.saveUserGoodsLimitList(saveUserGoodsLimit);
+        limitationService.deleteUserGoodsLimitList(oldLimit);
     }
 }

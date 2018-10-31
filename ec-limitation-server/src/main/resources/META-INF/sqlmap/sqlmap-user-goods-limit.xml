@@ -186,6 +186,22 @@
     </foreach>
   /*UserGoodsLimitDao.saveUserGoodsLimitListByWid*/
   </insert>
+  <update id="deleteUserGoodsLimitListByWid" parameterType="UserGoodsLimitEntity">
+    UPDATE
+      user_goods_limit
+    SET
+      is_deleted = 1,
+      update_time = NOW()
+    WHERE
+    <foreach item="item" index="index" collection="list" open="" close="" separator=",">
+      ( pid = #{pid}
+      AND store_id = #{storeId}
+      AND wid = #{wid}
+      AND limit_id = #{limitId}
+      AND goods_id = #{goodsId})
+    </foreach>
+    /*UserGoodsLimitDao.deleteUserGoodsLimitListByWid*/
+  </update>
   <select id="listOrderUserGoodsLimit" resultMap="BaseResultMap" parameterType="java.util.List">
     SELECT
       usergoodslimit.pid,

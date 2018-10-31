@@ -134,6 +134,22 @@
     /*UserLimitDao.saveUserLimitListByWid*/
   </update>
 
+  <update id="deleteUserLimitListByWid" parameterType="UserLimitEntity">
+    UPDATE
+      user_limit
+    SET
+      is_deleted = 1,
+      update_time = NOW()
+    WHERE
+    <foreach item="item" index="index" collection="list" open=""  close="" separator=",">
+      ( pid = #{item.pid}
+      AND store_id = #{item.storeId}
+      AND wid = #{item.wid}
+      AND limit_id = #{item.limitId})
+    </foreach>
+    /*UserLimitDao.deleteUserLimitListByWid*/
+  </update>
+
   <update id="deductUserLimit" parameterType="UserLimitEntity">
     UPDATE
       user_limit
