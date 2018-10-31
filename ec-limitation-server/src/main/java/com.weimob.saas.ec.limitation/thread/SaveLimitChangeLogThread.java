@@ -18,16 +18,15 @@ public class SaveLimitChangeLogThread implements Runnable {
 
     private List<LimitOrderChangeLogEntity> logEntityList;
 
-    private String globalTicket;
-
+    private RpcContext rpcContext;
     public SaveLimitChangeLogThread() {
 
     }
     // 影子库异步线程传入tiket写入影子库
-    public SaveLimitChangeLogThread(LimitOrderChangeLogDao limitOrderChangeLogDao, List<LimitOrderChangeLogEntity> logEntityList, String globalTicket) {
+    public SaveLimitChangeLogThread(LimitOrderChangeLogDao limitOrderChangeLogDao, List<LimitOrderChangeLogEntity> logEntityList, RpcContext rpcContext) {
         this.limitOrderChangeLogDao = limitOrderChangeLogDao;
         this.logEntityList = logEntityList;
-        this.globalTicket = globalTicket;
+        this.rpcContext = rpcContext;
     }
 
     public SaveLimitChangeLogThread(LimitOrderChangeLogDao limitOrderChangeLogDao, List<LimitOrderChangeLogEntity> logEntityList) {
@@ -54,8 +53,8 @@ public class SaveLimitChangeLogThread implements Runnable {
     @Override
     public void run() {
         // 日志信息写入影子库
-        RpcContext rpcContext = RpcContext.getContext();
-        rpcContext.setGlobalTicket(globalTicket);
+//        RpcContext rpcContext = RpcContext.getContext();
+//        rpcContext.setGlobalTicket(globalTicket);
         for (LimitOrderChangeLogEntity orderChangeLogEntity : logEntityList) {
             try {
                 limitOrderChangeLogDao.insert(orderChangeLogEntity);

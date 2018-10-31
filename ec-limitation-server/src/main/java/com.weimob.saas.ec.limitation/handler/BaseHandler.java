@@ -76,7 +76,7 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
             logEntityList.add(logEntity);
         }
         // 异步线程调用需要传globalTicket
-        threadExecutor.execute(new SaveLimitChangeLogThread(limitOrderChangeLogDao, logEntityList, globalTicket));
+        threadExecutor.execute(new SaveLimitChangeLogThread(limitOrderChangeLogDao, logEntityList, RpcContext.getContext()));
     }
 
     protected Map<Integer, List<UpdateUserLimitVo>> buildActivityMap(List<UpdateUserLimitVo> vos) {
