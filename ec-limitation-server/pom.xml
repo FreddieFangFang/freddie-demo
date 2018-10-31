@@ -24,6 +24,7 @@
     <druid.version>1.0.21-cat-SNAPSHOT</druid.version>
     <dubbo-version>2.7.0-weimob-RELEASE</dubbo-version>
     <genId.version>1.0.0-SNAPSHOT</genId.version>
+    <http-register-client.version>1.0.0-SNAPSHOT</http-register-client.version>
   </properties>
 
   <dependencies>
@@ -130,6 +131,13 @@
         </exclusion>
       </exclusions>
     </dependency>
+
+    <dependency>
+      <groupId>com.weimob.arch.http</groupId>
+      <artifactId>http-register-client</artifactId>
+      <version>${http-register-client.version}</version>
+    </dependency>
+
   </dependencies>
   <build>
     <finalName>ec-limitation-server</finalName>

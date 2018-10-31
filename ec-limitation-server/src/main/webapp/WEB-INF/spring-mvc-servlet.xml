@@ -35,5 +35,7 @@
 	<!-- 对于@RequestMapping标签的解析 可选配置 -->
 	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
 	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
-		
+
+	<import resource="classpath*:spring/applicationContext-httpRegister.xml"/>
+
 </beans>
