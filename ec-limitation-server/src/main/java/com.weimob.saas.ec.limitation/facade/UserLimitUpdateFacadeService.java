@@ -15,6 +15,7 @@ import com.weimob.saas.ec.limitation.model.response.ReverseUserLimitResponseVo;
 import com.weimob.saas.ec.limitation.model.response.UpdateUserLimitResponseVo;
 import com.weimob.saas.ec.limitation.service.LimitationServiceImpl;
 import com.weimob.saas.ec.limitation.utils.LimitContext;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -114,20 +115,39 @@ public class UserLimitUpdateFacadeService {
         for(Map.Entry<String,UserLimitEntity> entry:newLimitMap.entrySet()){
             updateUserLimit.add(entry.getValue());
         }
-        //wid2中剩余的
+        //wid2中剩余的，wid设置成wid1的值
         for(Map.Entry<String,UserLimitEntity> entry:oldLimitMap.entrySet()){
-            saveUserLimit.add(entry.getValue());
+            UserLimitEntity userLimitEntity = entry.getValue();
+            UserLimitEntity newUserLimitEntity = new UserLimitEntity();
+            newUserLimitEntity.setPid(userLimitEntity.getPid());
+            newUserLimitEntity.setBuyNum(userLimitEntity.getBuyNum());
+            newUserLimitEntity.setStoreId(userLimitEntity.getStoreId());
+            newUserLimitEntity.setLimitId(userLimitEntity.getLimitId());
+            newUserLimitEntity.setBizId(userLimitEntity.getBizId());
+            newUserLimitEntity.setBizType(userLimitEntity.getBizType());
+            newUserLimitEntity.setWid(newWid);
+            saveUserLimit.add(newUserLimitEntity);
         }
-        limitationService.updateUserLimitList(updateUserLimit);
-        limitationService.saveUserLimitList(saveUserLimit);
-        limitationService.deleteUserLimitList(oldLimit);
+//        try {
+        if(CollectionUtils.isNotEmpty(updateUserLimit)){
+            limitationService.updateUserLimitList(updateUserLimit);
+        }
+        if(CollectionUtils.isNotEmpty(saveUserLimit)){
+            limitationService.saveUserLimitList(saveUserLimit);
+        }
+        if(CollectionUtils.isNotEmpty(oldLimit)){
+            limitationService.deleteUserLimitList(oldLimit);
+        }
+//        } catch (Exception e){
+//        }
     }
 
     private void mergeUserGoodsLimit(Long pid, Long newWid, Long oldWid) {
         List<UserGoodsLimitEntity> newLimit = limitationService.getUserGoodsLimitList(pid,newWid);
         Map<String,UserGoodsLimitEntity> newLimitMap = new HashMap<>();
         for(UserGoodsLimitEntity userGoodsLimitEntity :newLimit){
-            String LimitKey = userGoodsLimitEntity.getPid()+"_"+userGoodsLimitEntity.getStoreId()+"_"+userGoodsLimitEntity.getLimitId();
+            String LimitKey = userGoodsLimitEntity.getPid()+"_"+userGoodsLimitEntity.getStoreId()
+                    +"_"+userGoodsLimitEntity.getLimitId()+"_"+userGoodsLimitEntity.getGoodsId();
             newLimitMap.put(LimitKey,userGoodsLimitEntity);
         }
 
@@ -135,14 +155,15 @@ public class UserLimitUpdateFacadeService {
         List<UserGoodsLimitEntity> oldLimit = limitationService.getUserGoodsLimitList(pid,oldWid);
         Map<String,UserGoodsLimitEntity> oldLimitMap = new HashMap<>();
         for(UserGoodsLimitEntity userGoodsLimitEntity :oldLimit){
-            String LimitKey = userGoodsLimitEntity.getPid()+"_"+userGoodsLimitEntity.getStoreId()+"_"+userGoodsLimitEntity.getLimitId();
-            newLimitMap.put(LimitKey,userGoodsLimitEntity);
+            String LimitKey = userGoodsLimitEntity.getPid()+"_"+userGoodsLimitEntity.getStoreId()
+                    +"_"+userGoodsLimitEntity.getLimitId()+"_"+userGoodsLimitEntity.getGoodsId();
+            oldLimitMap.put(LimitKey,userGoodsLimitEntity);
         }
 
         for(Map.Entry<String,UserGoodsLimitEntity> entry:newLimitMap.entrySet()){
             if(oldLimitMap.get(entry.getKey())!=null){
                 UserGoodsLimitEntity newUserLimitEntity = entry.getValue();
-                UserGoodsLimitEntity oldUserLimitEntity = newLimitMap.get(entry.getKey());
+                UserGoodsLimitEntity oldUserLimitEntity = oldLimitMap.get(entry.getKey());
                 newUserLimitEntity.setBuyNum(newUserLimitEntity.getBuyNum()+oldUserLimitEntity.getBuyNum());
                 oldLimitMap.remove(entry.getKey());//从wid2中移除
             }
@@ -152,12 +173,29 @@ public class UserLimitUpdateFacadeService {
         for(Map.Entry<String,UserGoodsLimitEntity> entry:newLimitMap.entrySet()){
             updateUserGoodsLimit.add(entry.getValue());
         }
-        //wid2中剩余的
+        //wid2中剩余的，wid设置成wid1的值
         for(Map.Entry<String,UserGoodsLimitEntity> entry:oldLimitMap.entrySet()){
-            saveUserGoodsLimit.add(entry.getValue());
+            UserGoodsLimitEntity userGoodsLimitEntity = entry.getValue();
+            UserGoodsLimitEntity newUserGoodsLimitEntity = new UserGoodsLimitEntity();
+            newUserGoodsLimitEntity.setPid(userGoodsLimitEntity.getPid());
+            newUserGoodsLimitEntity.setBuyNum(userGoodsLimitEntity.getBuyNum());
+            newUserGoodsLimitEntity.setStoreId(userGoodsLimitEntity.getStoreId());
+            newUserGoodsLimitEntity.setLimitId(userGoodsLimitEntity.getLimitId());
+            newUserGoodsLimitEntity.setGoodsId(userGoodsLimitEntity.getGoodsId());
+            newUserGoodsLimitEntity.setWid(newWid);
+            saveUserGoodsLimit.add(newUserGoodsLimitEntity);
         }
-        limitationService.updateUserGoodsLimitList(updateUserGoodsLimit);
-        limitationService.saveUserGoodsLimitList(saveUserGoodsLimit);
-        limitationService.deleteUserGoodsLimitList(oldLimit);
+//        try {
+        if(CollectionUtils.isNotEmpty(updateUserGoodsLimit)) {
+            limitationService.updateUserGoodsLimitList(updateUserGoodsLimit);
+        }
+        if(CollectionUtils.isNotEmpty(saveUserGoodsLimit)) {
+            limitationService.saveUserGoodsLimitList(saveUserGoodsLimit);
+        }
+        if(CollectionUtils.isNotEmpty(oldLimit)) {
+            limitationService.deleteUserGoodsLimitList(oldLimit);
+        }
+//        } catch (Exception e){
+//        }
     }
 }

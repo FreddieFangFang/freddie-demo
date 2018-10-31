@@ -130,14 +130,14 @@
   /*UserGoodsLimitDao.listUserGoodsLimit*/
   </select>
 
-  <select id="listUserGoodsLimitListByWid" resultMap="BaseResultMap" parameterType="java.util.List">
+  <select id="listUserGoodsLimitListByWid" resultMap="BaseResultMap" parameterType="UserGoodsLimitEntity">
     SELECT
     <include refid="Base_Column_List"/>
     FROM
     user_goods_limit
     WHERE
-      pid = #{item.pid}
-      AND wid = #{item.wid}
+      pid = #{pid}
+      AND wid = #{wid}
       AND is_deleted = 0
     /*UserGoodsLimitDao.listUserGoodsLimit*/
   </select>
@@ -147,14 +147,14 @@
       UPDATE
         user_goods_limit
       SET
-        buy_num = #{buyNum},
+        buy_num = #{item.buyNum},
         update_time = NOW()
       WHERE
-        pid = #{pid}
-      AND store_id = #{storeId}
-      AND wid = #{wid}
-      AND limit_id = #{limitId}
-      AND goods_id = #{goodsId}
+        pid = #{item.pid}
+      AND store_id = #{item.storeId}
+      AND wid = #{item.wid}
+      AND limit_id = #{item.limitId}
+      AND goods_id = #{item.goodsId}
     </foreach>
   /*UserGoodsLimitDao.updateUserGoodsLimitListByWid*/
   </update>
@@ -187,18 +187,19 @@
   /*UserGoodsLimitDao.saveUserGoodsLimitListByWid*/
   </insert>
   <update id="deleteUserGoodsLimitListByWid" parameterType="UserGoodsLimitEntity">
+    <foreach item="item" index="index" collection="list" open="" close="" separator=";">
     UPDATE
       user_goods_limit
     SET
       is_deleted = 1,
       update_time = NOW()
     WHERE
-    <foreach item="item" index="index" collection="list" open="" close="" separator=",">
-      ( pid = #{pid}
-      AND store_id = #{storeId}
-      AND wid = #{wid}
-      AND limit_id = #{limitId}
-      AND goods_id = #{goodsId})
+
+       pid = #{item.pid}
+      AND store_id = #{item.storeId}
+      AND wid = #{item.wid}
+      AND limit_id = #{item.limitId}
+      AND goods_id = #{item.goodsId}
     </foreach>
     /*UserGoodsLimitDao.deleteUserGoodsLimitListByWid*/
   </update>

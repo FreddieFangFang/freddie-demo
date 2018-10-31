@@ -134,18 +134,18 @@
     /*UserLimitDao.saveUserLimitListByWid*/
   </update>
 
-  <update id="deleteUserLimitListByWid" parameterType="UserLimitEntity">
+  <update id="deleteUserLimitListByWid" parameterType="UserLimitEntity" >
+    <foreach item="item" index="index" collection="list" open=""  close="" separator=";">
     UPDATE
       user_limit
     SET
       is_deleted = 1,
       update_time = NOW()
     WHERE
-    <foreach item="item" index="index" collection="list" open=""  close="" separator=",">
-      ( pid = #{item.pid}
+       pid = #{item.pid}
       AND store_id = #{item.storeId}
       AND wid = #{item.wid}
-      AND limit_id = #{item.limitId})
+      AND limit_id = #{item.limitId}
     </foreach>
     /*UserLimitDao.deleteUserLimitListByWid*/
   </update>
@@ -179,7 +179,7 @@
   /*UserLimitDao.getUserLimit*/
   </select>
 
-  <select id="getUserLimitListByWid" parameterType="UserLimitEntity" resultType="UserLimitEntity">
+  <select id="getUserLimitListByWid" parameterType="UserLimitEntity" resultMap="BaseResultMap">
     SELECT
       <include refid="Base_Column_List"/>
     FROM
