@@ -30,7 +30,9 @@
                 <value>cat.properties</value>
                 <value>datasource_ec_limitation.properties</value>
                 <value>datasource_ec_limitation_global.properties</value>
-                <!-- 
+                <value>datasource_ec_limitation_stress.properties</value>
+                <value>datasource_ec_limitation_global_stress.properties</value>
+                <!--
                 <value>datasource_genId.properties</value>
                  -->
             </list>

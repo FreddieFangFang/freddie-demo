@@ -1,5 +1,6 @@
 package com.weimob.saas.ec.limitation.thread;
 
+import com.alibaba.dubbo.rpc.RpcContext;
 import com.weimob.saas.ec.limitation.dao.LimitOrderChangeLogDao;
 import com.weimob.saas.ec.limitation.entity.LimitOrderChangeLogEntity;
 import com.weimob.saas.ec.limitation.exception.LimitationBizException;
@@ -17,8 +18,16 @@ public class SaveLimitChangeLogThread implements Runnable {
 
     private List<LimitOrderChangeLogEntity> logEntityList;
 
+    private String globalTicket;
+
     public SaveLimitChangeLogThread() {
 
+    }
+    // 影子库异步线程传入tiket写入影子库
+    public SaveLimitChangeLogThread(LimitOrderChangeLogDao limitOrderChangeLogDao, List<LimitOrderChangeLogEntity> logEntityList, String globalTicket) {
+        this.limitOrderChangeLogDao = limitOrderChangeLogDao;
+        this.logEntityList = logEntityList;
+        this.globalTicket = globalTicket;
     }
 
     public SaveLimitChangeLogThread(LimitOrderChangeLogDao limitOrderChangeLogDao, List<LimitOrderChangeLogEntity> logEntityList) {
@@ -44,6 +53,9 @@ public class SaveLimitChangeLogThread implements Runnable {
 
     @Override
     public void run() {
+        // 日志信息写入影子库
+        RpcContext rpcContext = RpcContext.getContext();
+        rpcContext.setGlobalTicket(globalTicket);
         for (LimitOrderChangeLogEntity orderChangeLogEntity : logEntityList) {
             try {
                 limitOrderChangeLogDao.insert(orderChangeLogEntity);

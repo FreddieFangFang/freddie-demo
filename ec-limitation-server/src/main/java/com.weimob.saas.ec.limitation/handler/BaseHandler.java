@@ -1,5 +1,6 @@
 package com.weimob.saas.ec.limitation.handler;
 
+import com.alibaba.dubbo.rpc.RpcContext;
 import com.weimob.saas.ec.limitation.common.LimitServiceNameEnum;
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
 import com.weimob.saas.ec.limitation.dao.LimitInfoDao;
@@ -64,11 +65,18 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
         //异步写日志 SaveLimitChangeLogThread
         List<LimitOrderChangeLogEntity> logEntityList = new ArrayList<>();
         LimitOrderChangeLogEntity logEntity = null;
+        // 保存日志表需要从limit_info表查询数据 需要切换数据源
+        RpcContext rpcContext = RpcContext.getContext();
+        String globalTicket = rpcContext.getGlobalTicket();
+        if (globalTicket != null && globalTicket.startsWith("EC_STRESS-")) {
+            rpcContext.setGlobalTicket(null);
+        }
         for (T inputVo : vos) {
             logEntity = createOrderChangeLog(inputVo);
             logEntityList.add(logEntity);
         }
-        threadExecutor.execute(new SaveLimitChangeLogThread(limitOrderChangeLogDao, logEntityList));
+        // 异步线程调用需要传globalTicket
+        threadExecutor.execute(new SaveLimitChangeLogThread(limitOrderChangeLogDao, logEntityList, globalTicket));
     }
 
     protected Map<Integer, List<UpdateUserLimitVo>> buildActivityMap(List<UpdateUserLimitVo> vos) {
