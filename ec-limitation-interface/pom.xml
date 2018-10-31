@@ -14,7 +14,7 @@
 
   <properties>
     <junit.version>3.8.1</junit.version>
-    <ec-common.version>1.0.0-SNAPSHOT</ec-common.version>
+    <ec-common.version>1.0.2-SNAPSHOT</ec-common.version>
   </properties>
 
   <dependencies>
