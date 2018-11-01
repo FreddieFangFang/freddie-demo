@@ -66,11 +66,6 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
         List<LimitOrderChangeLogEntity> logEntityList = new ArrayList<>();
         LimitOrderChangeLogEntity logEntity = null;
         // 保存日志表需要从limit_info表查询数据 需要切换数据源
-        RpcContext rpcContext = RpcContext.getContext();
-        String globalTicket = rpcContext.getGlobalTicket();
-        if (globalTicket != null && globalTicket.startsWith("EC_STRESS-")) {
-            rpcContext.setGlobalTicket(null);
-        }
         for (T inputVo : vos) {
             logEntity = createOrderChangeLog(inputVo);
             logEntityList.add(logEntity);

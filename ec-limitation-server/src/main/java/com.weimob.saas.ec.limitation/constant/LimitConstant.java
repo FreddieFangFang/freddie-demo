@@ -22,4 +22,14 @@ public class LimitConstant {
     public static final int DATA_TYPE_INIT = 0;
     //更新数据
     public static final int DATA_TYPE_OVER = 1;
+    //限购回滚队列
+    public static final String KEY_LIMITATION_REVERSE_QUEUE = "limitationReverseQueue";
+    //限购回滚队列
+    public static final String EC_STRESS_KEY_LIMITATION_REVERSE_QUEUE = "stressLimitationReverseQueue";
+    //限购回滚定时任务开关开启
+    public static final int LIMITATION_REVERSE_TASK_OFF = 0;
+    //压测限购回滚定时任务标志
+    public static final int LIMITATION_REVERSE_IS_STRESS = 1;
+    //真实限购回滚定时任务标志
+    public static final int LIMITATION_REVERSE_NO_STRESS = 0;
 }

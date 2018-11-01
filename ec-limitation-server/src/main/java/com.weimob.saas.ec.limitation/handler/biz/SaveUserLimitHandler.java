@@ -73,12 +73,6 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         //limitBizChain.execute();
         //限购商品的类型分组
 
-        // 查询不需要走影子库 切换为真是数据库
-        RpcContext rpcContext = RpcContext.getContext();
-        String globalTicket = rpcContext.getGlobalTicket();
-        if (globalTicket != null && globalTicket.startsWith("EC_STRESS-")) {
-            rpcContext.setGlobalTicket(null);
-        }
         Map<Integer, List<UpdateUserLimitVo>> activityMap = buildActivityMap(updateUserLimitVoList);
         Iterator<Map.Entry<Integer, List<UpdateUserLimitVo>>> iterator = activityMap.entrySet().iterator();
         while (iterator.hasNext()) {
@@ -98,8 +92,6 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
                 activityLimitBizHandler.doLimitHandler(vos);
             }
         }
-        // 写入需要写到影子库 设置影子库ticket
-        rpcContext.setGlobalTicket(globalTicket);
         limitationService.saveUserLimitRecord(LimitContext.getLimitBo().getGoodsLimitEntityList(),
                 LimitContext.getLimitBo().getActivityLimitEntityList(), LimitContext.getLimitBo().getActivityGoodsSoldEntityList());
 
