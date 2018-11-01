@@ -37,7 +37,11 @@ public class UserLimitUpdateExportService extends BaseExportService implements U
     public SoaResponse<UpdateUserLimitResponseVo, LimitationErrorCode> saveUserLimit(SaveUserLimitRequestVo requestVo) {
         SoaResponse<UpdateUserLimitResponseVo, LimitationErrorCode> soaResponse = new SoaResponse<>();
         try {
-            LimitContext.setTicket(soaResponse.getMonitorTrackId());
+            if (RpcContext.getContext().getGlobalTicket() != null && RpcContext.getContext().getGlobalTicket().startsWith("EC_STRESS-")) {
+                LimitContext.setTicket(RpcContext.getContext().getGlobalTicket());
+            } else {
+                LimitContext.setTicket(soaResponse.getMonitorTrackId());
+            }
             UpdateUserLimitResponseVo updateUserLimitResponseVo = userLimitUpdateFacadeService.saveUserLimit(requestVo);
 
             soaResponse.setResponseVo(updateUserLimitResponseVo);
