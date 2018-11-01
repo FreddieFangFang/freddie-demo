@@ -37,7 +37,7 @@ public class ReverseUserLimitHandler {
         //1.查询回滚订单日志表
         List<LimitOrderChangeLogEntity> orderChangeLogEntityList = null;
         try {
-            orderChangeLogEntityList = limitOrderChangeLogDao.queryOrderChangeLogListByTicket(ticket);
+                orderChangeLogEntityList = limitOrderChangeLogDao.queryOrderChangeLogListByTicket(ticket);
         } catch (Exception e) {
             LOGGER.error("fail to query order entity list", e);
             throw new LimitationBizException(LimitationErrorCode.SQL_QUERY_ORDER_CHANGE_LOG_ERROR, e);

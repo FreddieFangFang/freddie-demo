@@ -89,12 +89,12 @@ public class UserLimitUpdateExportService extends BaseExportService implements U
     public SoaResponse<ReverseUserLimitResponseVo, LimitationErrorCode> reverseUserLimit(ReverseUserLimitRequestVo requestVo) {
 
         SoaResponse soaResponse = new SoaResponse<>();
-        ReverseUserLimitResponseVo reverseUserLimitResponseVo = null;
+//        ReverseUserLimitResponseVo reverseUserLimitResponseVo = null;
 
         try {
-            LimitContext.setTicket(soaResponse.getMonitorTrackId());
-            reverseUserLimitResponseVo = userLimitUpdateFacadeService.reverseUserLimit(requestVo);
-            soaResponse.setResponseVo(reverseUserLimitResponseVo);
+//            LimitContext.setTicket(soaResponse.getMonitorTrackId());
+            userLimitUpdateFacadeService.reverseUserLimit(requestVo);
+            soaResponse.setResponseVo(new ReverseUserLimitResponseVo(true));
         } catch (BaseException baseException) {
             LOGGER.error(" throw biz exception!, monitorTrackId:" + soaResponse.getMonitorTrackId(), baseException);
             soaResponse.setProcessResult(false);
