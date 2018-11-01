@@ -56,12 +56,7 @@ public class UserLimitUpdateFacadeService {
         try {
             reverseUserLimitHandler.reverse(requestVo.getTicket());
         } catch (Exception e){
-            // 回滚用户限购 先将限购ticket写入redis队列中(压测和正常设置不同的key)
-            if (RpcContext.getContext().getGlobalTicket() != null && RpcContext.getContext().getGlobalTicket().startsWith("EC_STRESS-")) {
-                LimitationRedisClientUtils.pushDataToQueue(LimitConstant.EC_STRESS_KEY_LIMITATION_REVERSE_QUEUE,requestVo.getTicket());
-            } else {
-                LimitationRedisClientUtils.pushDataToQueue(LimitConstant.KEY_LIMITATION_REVERSE_QUEUE,requestVo.getTicket());
-            }
+            LimitationRedisClientUtils.pushDataToQueue(LimitConstant.KEY_LIMITATION_REVERSE_QUEUE,requestVo.getTicket());
         }
         return new ReverseUserLimitResponseVo(true);
     }

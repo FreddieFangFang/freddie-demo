@@ -1,7 +1,6 @@
 package com.weimob.saas.ec.limitation.handler.biz;
 
 import com.alibaba.dubbo.rpc.RpcContext;
-import com.alibaba.fastjson.JSON;
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
 import com.weimob.saas.ec.limitation.dao.LimitOrderChangeLogDao;
 import com.weimob.saas.ec.limitation.entity.LimitOrderChangeLogEntity;
@@ -67,14 +66,8 @@ public class ReverseUserLimitHandler {
         }
     }
 
-    public void reverseFromCacheQueue(Integer reversePopSize, Integer stress) {
-        List<Object> objectList = null;
-        if (stress.equals(LimitConstant.LIMITATION_REVERSE_IS_STRESS)) {
-            RpcContext.getContext().setGlobalTicket("EC_STRESS-"+System.currentTimeMillis());
-            objectList = LimitationRedisClientUtils.popDataFromQueen(LimitConstant.EC_STRESS_KEY_LIMITATION_REVERSE_QUEUE, reversePopSize);
-        } else {
-            objectList = LimitationRedisClientUtils.popDataFromQueen(LimitConstant.KEY_LIMITATION_REVERSE_QUEUE, reversePopSize);
-        }
+    public void reverseFromCacheQueue(Integer reversePopSize) {
+        List<Object> objectList = LimitationRedisClientUtils.popDataFromQueen(LimitConstant.KEY_LIMITATION_REVERSE_QUEUE, reversePopSize);
         if (CollectionUtils.isEmpty(objectList)) {
             return;
         }
@@ -84,6 +77,7 @@ public class ReverseUserLimitHandler {
         }
         for(String ticket : ticketList){
             try {
+                RpcContext.getContext().setGlobalTicket(ticket);
                 reverse(ticket);
             } catch (Exception e){
                 // 如果异步订单回滚日志表没有查询到 就将ticket写入队列后边

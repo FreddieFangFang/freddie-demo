@@ -1,5 +1,6 @@
 package com.weimob.saas.ec.limitation.export;
 
+import com.alibaba.dubbo.rpc.RpcContext;
 import com.weimob.saas.ec.common.exception.BaseException;
 import com.weimob.saas.ec.common.exception.CommonErrorCode;
 import com.weimob.saas.ec.common.export.BaseExportService;
@@ -62,7 +63,11 @@ public class UserLimitUpdateExportService extends BaseExportService implements U
         UpdateUserLimitResponseVo updateUserLimitResponseVo = null;
 
         try {
-            LimitContext.setTicket(soaResponse.getMonitorTrackId());
+            if (RpcContext.getContext().getGlobalTicket() != null && RpcContext.getContext().getGlobalTicket().startsWith("EC_STRESS-")) {
+                LimitContext.setTicket(RpcContext.getContext().getGlobalTicket());
+            } else {
+                LimitContext.setTicket(soaResponse.getMonitorTrackId());
+            }
             updateUserLimitResponseVo = userLimitUpdateFacadeService.deductUserLimit(requestVo);
             soaResponse.setResponseVo(updateUserLimitResponseVo);
         } catch (BaseException baseException) {

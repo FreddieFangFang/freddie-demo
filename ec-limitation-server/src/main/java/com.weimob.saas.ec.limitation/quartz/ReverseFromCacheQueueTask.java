@@ -29,7 +29,8 @@ public class ReverseFromCacheQueueTask {
 
 	
 
-	public void reverseFromCacheQueue() { if(taskSwitch == LimitConstant.LIMITATION_REVERSE_TASK_OFF ){
+	public void reverseFromCacheQueue() {
+		if(taskSwitch == LimitConstant.LIMITATION_REVERSE_TASK_OFF ){
 			return;
 		}
 		if (!SoaUtil.getLocalIp().equals(runTaskIp)) {
@@ -37,15 +38,16 @@ public class ReverseFromCacheQueueTask {
 		}
 		if (isReverseFromCacheQueue.compareAndSet(false, true)) {
 			try {
-				reverseUserLimitHandler.reverseFromCacheQueue(reversePopSize, stress);
+				reverseUserLimitHandler.reverseFromCacheQueue(reversePopSize);
 			} catch (Exception e) {
 				log.error("reverseFromCacheQueueTask error", e);
 			} finally {
 				isReverseFromCacheQueue.compareAndSet(true, false);
 			}
-		} else {
-			Cat.logError("reverseFromCacheQueueTask run with conflict, because last reverseFromCacheQueueTask is running",new Exception());
 		}
+//		else {
+//			Cat.logError("reverseFromCacheQueueTask run with conflict, because last reverseFromCacheQueueTask is running",new Exception());
+//		}
 	}
 
 	public Integer getTaskSwitch() {
