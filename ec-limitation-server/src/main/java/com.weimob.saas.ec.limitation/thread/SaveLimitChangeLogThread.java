@@ -55,6 +55,7 @@ public class SaveLimitChangeLogThread implements Runnable {
         // 日志信息写入影子库
         for (LimitOrderChangeLogEntity orderChangeLogEntity : logEntityList) {
             try {
+                RpcContext.getContext().setGlobalTicket(rpcContext.getGlobalTicket());
                 limitOrderChangeLogDao.insert(orderChangeLogEntity);
             } catch (Exception e) {
                 throw new LimitationBizException(LimitationErrorCode.SQL_INSERT_ORDER_LOG_ERROR);
