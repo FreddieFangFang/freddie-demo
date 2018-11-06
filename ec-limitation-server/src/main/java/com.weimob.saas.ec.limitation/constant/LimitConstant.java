@@ -1,7 +1,5 @@
 package com.weimob.saas.ec.limitation.constant;
 
-import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
-
 /**
  * @author lujialin
  * @description 限购常量
@@ -32,4 +30,6 @@ public class LimitConstant {
     public static final int LIMITATION_REVERSE_IS_STRESS = 1;
     //真实限购回滚定时任务标志
     public static final int LIMITATION_REVERSE_NO_STRESS = 0;
+    //默认RpcId
+    public static final String DEFAULT_RPC_ID = "0.0.1";
 }

@@ -77,7 +77,7 @@ public class ReverseUserLimitHandler {
         for(String ticket : ticketList){
             try {
                 RpcContext.getContext().setGlobalTicket(ticket);
-                RpcContext.getContext().setRpcId("1.0.0.0");
+                RpcContext.getContext().setRpcId(LimitConstant.DEFAULT_RPC_ID);
                 reverse(ticket);
             } catch (Exception e){
                 // 如果异步订单回滚日志表没有查询到 就将ticket写入队列后边
