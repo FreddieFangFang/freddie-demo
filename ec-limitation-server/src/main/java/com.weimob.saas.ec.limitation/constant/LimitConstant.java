@@ -1,7 +1,5 @@
 package com.weimob.saas.ec.limitation.constant;
 
-import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
-
 /**
  * @author lujialin
  * @description 限购常量
@@ -26,4 +24,16 @@ public class LimitConstant {
     public static final int SELECT_PART_STORE = 2;
     //已删除
     public static final int DELETED = 1;
+    //限购回滚队列
+    public static final String KEY_LIMITATION_REVERSE_QUEUE = "limitationReverseQueue";
+    //限购回滚队列
+    public static final String EC_STRESS_KEY_LIMITATION_REVERSE_QUEUE = "stressLimitationReverseQueue";
+    //限购回滚定时任务开关开启
+    public static final int LIMITATION_REVERSE_TASK_OFF = 0;
+    //压测限购回滚定时任务标志
+    public static final int LIMITATION_REVERSE_IS_STRESS = 1;
+    //真实限购回滚定时任务标志
+    public static final int LIMITATION_REVERSE_NO_STRESS = 0;
+    //默认RpcId
+    public static final String DEFAULT_RPC_ID = "0.0.1";
 }

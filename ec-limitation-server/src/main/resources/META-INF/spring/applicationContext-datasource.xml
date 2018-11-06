@@ -10,27 +10,50 @@
     <bean id="datasource_ec_limitation" class="com.weimob.arch.wdd.datasource.DynamicDataSource"/>
     <bean id="datasource_ec_limitation_global" class="com.weimob.arch.wdd.datasource.DynamicDataSource"/>
 
+    <!-- 压测数据源 -->
+    <bean id="datasource_ec_limitation_stress" class="com.weimob.arch.wdd.datasource.DynamicDataSource"/>
+    <bean id="datasource_ec_limitation_global_stress" class="com.weimob.arch.wdd.datasource.DynamicDataSource"/>
+    <!-- 数据源映射规则 -->
+    <bean id="shard_datasource_ec_limitation" class="com.weimob.stress.datasource.StressRoutingDataSource">
+        <property name="targetDataSources">
+            <map>
+                <entry key="stressTargetDataSource" value-ref="datasource_ec_limitation_stress"></entry>
+            </map>
+        </property>
+        <property name="defaultTargetDataSource" ref="datasource_ec_limitation" >
+        </property>
+    </bean>
+
+    <bean id="shard_datasource_ec_limitation_global" class="com.weimob.stress.datasource.StressRoutingDataSource">
+        <property name="targetDataSources">
+            <map>
+                <entry key="stressTargetDataSource" value-ref="datasource_ec_limitation_global_stress"></entry>
+            </map>
+        </property>
+        <property name="defaultTargetDataSource" ref="datasource_ec_limitation_global" >
+        </property>
+    </bean>
+
 
     <bean id="limitationSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="configLocation">
             <value>classpath:META-INF/sqlmap/sqlMapConfig-limitation.xml</value>
         </property>
-        <property name="dataSource" ref="datasource_ec_limitation"/>
+        <property name="dataSource" ref="shard_datasource_ec_limitation"/>
     </bean>
-
     <bean id="globalSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="configLocation">
             <value>classpath:META-INF/sqlmap/sqlMapConfig-global.xml</value>
         </property>
-        <property name="dataSource" ref="datasource_ec_limitation_global"/>
+        <property name="dataSource" ref="shard_datasource_ec_limitation_global"/>
     </bean>
-
     <alias name="datasource_ec_limitation_global" alias="datasource_genId"/>
 
     <bean id="limitationTransactionManager"
           class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="datasource_ec_limitation"/>
+        <property name="dataSource" ref="shard_datasource_ec_limitation"/>
     </bean>
+
     <tx:advice id="limitationTxAdvice" transaction-manager="limitationTransactionManager">
         <tx:attributes>
             <!-- TODO 需要根据具体情况进行修改 -->

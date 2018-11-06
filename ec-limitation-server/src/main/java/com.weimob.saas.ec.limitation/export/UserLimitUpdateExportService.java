@@ -1,5 +1,6 @@
 package com.weimob.saas.ec.limitation.export;
 
+import com.alibaba.dubbo.rpc.RpcContext;
 import com.weimob.saas.ec.common.exception.BaseException;
 import com.weimob.saas.ec.common.exception.CommonErrorCode;
 import com.weimob.saas.ec.common.export.BaseExportService;
@@ -36,7 +37,11 @@ public class UserLimitUpdateExportService extends BaseExportService implements U
     public SoaResponse<UpdateUserLimitResponseVo, LimitationErrorCode> saveUserLimit(SaveUserLimitRequestVo requestVo) {
         SoaResponse<UpdateUserLimitResponseVo, LimitationErrorCode> soaResponse = new SoaResponse<>();
         try {
-            LimitContext.setTicket(soaResponse.getMonitorTrackId());
+            if (RpcContext.getContext().getGlobalTicket() != null && RpcContext.getContext().getGlobalTicket().startsWith("EC_STRESS-")) {
+                LimitContext.setTicket(RpcContext.getContext().getGlobalTicket());
+            } else {
+                LimitContext.setTicket(soaResponse.getMonitorTrackId());
+            }
             UpdateUserLimitResponseVo updateUserLimitResponseVo = userLimitUpdateFacadeService.saveUserLimit(requestVo);
 
             soaResponse.setResponseVo(updateUserLimitResponseVo);
@@ -62,7 +67,11 @@ public class UserLimitUpdateExportService extends BaseExportService implements U
         UpdateUserLimitResponseVo updateUserLimitResponseVo = null;
 
         try {
-            LimitContext.setTicket(soaResponse.getMonitorTrackId());
+            if (RpcContext.getContext().getGlobalTicket() != null && RpcContext.getContext().getGlobalTicket().startsWith("EC_STRESS-")) {
+                LimitContext.setTicket(RpcContext.getContext().getGlobalTicket());
+            } else {
+                LimitContext.setTicket(soaResponse.getMonitorTrackId());
+            }
             updateUserLimitResponseVo = userLimitUpdateFacadeService.deductUserLimit(requestVo);
             soaResponse.setResponseVo(updateUserLimitResponseVo);
         } catch (BaseException baseException) {
@@ -84,12 +93,12 @@ public class UserLimitUpdateExportService extends BaseExportService implements U
     public SoaResponse<ReverseUserLimitResponseVo, LimitationErrorCode> reverseUserLimit(ReverseUserLimitRequestVo requestVo) {
 
         SoaResponse soaResponse = new SoaResponse<>();
-        ReverseUserLimitResponseVo reverseUserLimitResponseVo = null;
+//        ReverseUserLimitResponseVo reverseUserLimitResponseVo = null;
 
         try {
-            LimitContext.setTicket(soaResponse.getMonitorTrackId());
-            reverseUserLimitResponseVo = userLimitUpdateFacadeService.reverseUserLimit(requestVo);
-            soaResponse.setResponseVo(reverseUserLimitResponseVo);
+//            LimitContext.setTicket(soaResponse.getMonitorTrackId());
+            userLimitUpdateFacadeService.reverseUserLimit(requestVo);
+            soaResponse.setResponseVo(new ReverseUserLimitResponseVo(true));
         } catch (BaseException baseException) {
             LOGGER.error(" throw biz exception!, monitorTrackId:" + soaResponse.getMonitorTrackId(), baseException);
             soaResponse.setProcessResult(false);
