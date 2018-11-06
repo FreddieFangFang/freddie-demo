@@ -8,7 +8,6 @@ import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.handler.Handler;
 import com.weimob.saas.ec.limitation.handler.ReverseLimitHandlerFactory;
-import com.weimob.saas.ec.limitation.model.request.ReverseUserLimitRequestVo;
 import com.weimob.saas.ec.limitation.utils.LimitationRedisClientUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
@@ -78,6 +77,7 @@ public class ReverseUserLimitHandler {
         for(String ticket : ticketList){
             try {
                 RpcContext.getContext().setGlobalTicket(ticket);
+                RpcContext.getContext().setRpcId("1.0.0.0");
                 reverse(ticket);
             } catch (Exception e){
                 // 如果异步订单回滚日志表没有查询到 就将ticket写入队列后边
