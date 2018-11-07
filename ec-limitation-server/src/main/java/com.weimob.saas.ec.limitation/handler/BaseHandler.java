@@ -2,7 +2,7 @@ package com.weimob.saas.ec.limitation.handler;
 
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
-import com.weimob.saas.ec.limitation.common.LimitLevelEnum;
+import com.alibaba.dubbo.rpc.RpcContext;
 import com.weimob.saas.ec.limitation.common.LimitServiceNameEnum;
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
 import com.weimob.saas.ec.limitation.dao.LimitInfoDao;
@@ -20,7 +20,6 @@ import com.weimob.saas.ec.limitation.utils.LimitContext;
 import com.weimob.saas.ec.limitation.utils.VerifyParamUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.aspectj.lang.annotation.After;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -71,11 +70,13 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
         //异步写日志 SaveLimitChangeLogThread
         List<LimitOrderChangeLogEntity> logEntityList = new ArrayList<>();
         LimitOrderChangeLogEntity logEntity = null;
+        // 保存日志表需要从limit_info表查询数据 需要切换数据源
         for (T inputVo : vos) {
             logEntity = createOrderChangeLog(inputVo);
             logEntityList.add(logEntity);
         }
-        threadExecutor.execute(new SaveLimitChangeLogThread(limitOrderChangeLogDao, logEntityList));
+        // 异步线程调用需要传globalTicket
+        threadExecutor.execute(new SaveLimitChangeLogThread(limitOrderChangeLogDao, logEntityList, RpcContext.getContext()));
     }
 
     protected Map<Integer, List<UpdateUserLimitVo>> buildActivityMap(List<UpdateUserLimitVo> vos) {

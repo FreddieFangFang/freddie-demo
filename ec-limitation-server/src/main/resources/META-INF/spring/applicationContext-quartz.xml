@@ -1,0 +1,40 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+	
+	<!-- 正常数据  从缓存回滚限购定时任务开始 -->
+	<bean name="startReverseFromCacheQueueQuertz" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="reverseFromCacheQueueJobTrigger" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="reverseFromCacheQueueJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="reverseFromCacheQueueJobDetail" />
+		</property>
+		<property name="cronExpression">
+			<value>${reverseFromCacheQueueTask.cronExpression}</value>
+		</property>
+	</bean>
+
+	<bean id="reverseFromCacheQueueJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="reverseFromCacheQueueTask" />
+		</property>
+		<property name="targetMethod">
+			<value>reverseFromCacheQueue</value>
+		</property>
+	</bean>
+
+	<bean id="reverseFromCacheQueueTask" class="com.weimob.saas.ec.limitation.quartz.ReverseFromCacheQueueTask">
+		<property name="taskSwitch" value="${reverseFromCacheQueueTask.taskSwitch}" />
+		<property name="runTaskIp" value="${reverseFromCacheQueueTask.runTaskIp}" />
+		<property name="reversePopSize" value="${reverseFromCacheQueueTask.reversePopSize}" />
+		<property name="reverseUserLimitHandler" ref="reverseUserLimitHandler"/>
+	</bean>
+	<!-- 从缓存回滚限购定时任务结束 -->
+</beans>

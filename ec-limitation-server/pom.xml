@@ -24,10 +24,44 @@
     <druid.version>1.0.21-cat-SNAPSHOT</druid.version>
     <dubbo-version>2.7.0-weimob-RELEASE</dubbo-version>
     <genId.version>1.0.0-SNAPSHOT</genId.version>
+    <stress-datasource.version>1.0.0-SNAPSHOT</stress-datasource.version>
+    <jedis-enhance-client.version>1.0.0-SNAPSHOT</jedis-enhance-client.version>
+    <quartz.version>2.2.1</quartz.version>
   </properties>
 
   <dependencies>
-	
+    <dependency>
+      <groupId>org.quartz-scheduler</groupId>
+      <artifactId>quartz</artifactId>
+      <version>${quartz.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.weimob.arch</groupId>
+      <artifactId>jedis-enhance-client</artifactId>
+      <version>${jedis-enhance-client.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.dianping.cat</groupId>
+          <artifactId>cat-client</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>redis.clients</groupId>
+          <artifactId>jedis</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.alibaba</groupId>
+          <artifactId>dubbo</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>com.weimob.stress</groupId>
+      <artifactId>datasource</artifactId>
+      <version>${stress-datasource.version}</version>
+    </dependency>
+
 	<dependency>
       <groupId>com.weimob.saas</groupId>
       <artifactId>ec-limitation-interface</artifactId>

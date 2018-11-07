@@ -1,5 +1,7 @@
 package com.weimob.saas.ec.limitation.facade;
 
+import com.weimob.saas.ec.limitation.constant.LimitConstant;
+import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.handler.biz.DeductUserLimitHandler;
 import com.weimob.saas.ec.limitation.handler.biz.ReverseUserLimitHandler;
 import com.weimob.saas.ec.limitation.handler.biz.SaveUserLimitHandler;
@@ -7,10 +9,11 @@ import com.weimob.saas.ec.limitation.model.LimitBo;
 import com.weimob.saas.ec.limitation.model.request.DeductUserLimitRequestVo;
 import com.weimob.saas.ec.limitation.model.request.ReverseUserLimitRequestVo;
 import com.weimob.saas.ec.limitation.model.request.SaveUserLimitRequestVo;
-import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
 import com.weimob.saas.ec.limitation.model.response.ReverseUserLimitResponseVo;
 import com.weimob.saas.ec.limitation.model.response.UpdateUserLimitResponseVo;
 import com.weimob.saas.ec.limitation.utils.LimitContext;
+import com.weimob.saas.ec.limitation.utils.LimitationRedisClientUtils;
+import com.weimob.saas.ec.limitation.utils.VerifyParamUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,9 +51,15 @@ public class UserLimitUpdateFacadeService {
 
     public ReverseUserLimitResponseVo reverseUserLimit(ReverseUserLimitRequestVo requestVo) {
 
-        LimitContext.setLimitBo(new LimitBo());
-        reverseUserLimitHandler.reverse(requestVo.getTicket());
+        VerifyParamUtils.checkParam(LimitationErrorCode.REQUEST_PARAM_IS_NULL, requestVo);
+        VerifyParamUtils.checkParam(LimitationErrorCode.REQUEST_PARAM_IS_NULL, requestVo.getTicket());
 
+        try {
+            reverseUserLimitHandler.reverse(requestVo.getTicket());
+        } catch (Exception e){
+            LimitationRedisClientUtils.pushDataToQueue(LimitConstant.KEY_LIMITATION_REVERSE_QUEUE,requestVo.getTicket());
+        }
         return new ReverseUserLimitResponseVo(true);
     }
+
 }
