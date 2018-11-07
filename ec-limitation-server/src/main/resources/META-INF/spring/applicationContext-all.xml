@@ -16,6 +16,8 @@
 	<import resource="classpath*:META-INF/spring/applicationContext-dubbo.xml"/>
 	<import resource="classpath*:META-INF/spring/applicationContext-reference.xml"/>
 	<import resource="classpath*:META-INF/spring/applicationContext-threadpool.xml"/>
+	<import resource="classpath*:META-INF/spring/applicationContext-quartz.xml"/>
+	<import resource="classpath*:META-INF/spring/applicationContext-redis.xml"/>
 
 	<!-- genId -->
 	<import resource="classpath*:META-INF/genId/spring/applicationContext-genId-all.xml" />

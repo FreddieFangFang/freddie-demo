@@ -3,6 +3,8 @@ package com.weimob.saas.ec.limitation.facade;
 import com.weimob.saas.ec.common.request.MergeWidRequest;
 import com.weimob.saas.ec.limitation.entity.UserGoodsLimitEntity;
 import com.weimob.saas.ec.limitation.entity.UserLimitEntity;
+import com.weimob.saas.ec.limitation.constant.LimitConstant;
+import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.handler.biz.DeductUserLimitHandler;
 import com.weimob.saas.ec.limitation.handler.biz.ReverseUserLimitHandler;
 import com.weimob.saas.ec.limitation.handler.biz.SaveUserLimitHandler;
@@ -10,12 +12,13 @@ import com.weimob.saas.ec.limitation.model.LimitBo;
 import com.weimob.saas.ec.limitation.model.request.DeductUserLimitRequestVo;
 import com.weimob.saas.ec.limitation.model.request.ReverseUserLimitRequestVo;
 import com.weimob.saas.ec.limitation.model.request.SaveUserLimitRequestVo;
-import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
 import com.weimob.saas.ec.limitation.model.response.ReverseUserLimitResponseVo;
 import com.weimob.saas.ec.limitation.model.response.UpdateUserLimitResponseVo;
 import com.weimob.saas.ec.limitation.service.LimitationServiceImpl;
 import com.weimob.saas.ec.limitation.utils.LimitContext;
 import org.apache.commons.collections.CollectionUtils;
+import com.weimob.saas.ec.limitation.utils.LimitationRedisClientUtils;
+import com.weimob.saas.ec.limitation.utils.VerifyParamUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -60,9 +63,14 @@ public class UserLimitUpdateFacadeService {
 
     public ReverseUserLimitResponseVo reverseUserLimit(ReverseUserLimitRequestVo requestVo) {
 
-        LimitContext.setLimitBo(new LimitBo());
-        reverseUserLimitHandler.reverse(requestVo.getTicket());
+        VerifyParamUtils.checkParam(LimitationErrorCode.REQUEST_PARAM_IS_NULL, requestVo);
+        VerifyParamUtils.checkParam(LimitationErrorCode.REQUEST_PARAM_IS_NULL, requestVo.getTicket());
 
+        try {
+            reverseUserLimitHandler.reverse(requestVo.getTicket());
+        } catch (Exception e){
+            LimitationRedisClientUtils.pushDataToQueue(LimitConstant.KEY_LIMITATION_REVERSE_QUEUE,requestVo.getTicket());
+        }
         return new ReverseUserLimitResponseVo(true);
     }
 
@@ -72,16 +80,8 @@ public class UserLimitUpdateFacadeService {
         Long oldWid = mergeWidRequest.getOldWid();
         //1.合并 user-limit
         mergeUserLimit(pid,newWid, oldWid);
-
-
         //2.合并 user-goods-limit
         mergeUserGoodsLimit(pid,newWid, oldWid);
-
-        //wid2累加到wid1上面，然后wid2删除
-        //回滚操作？ 是指wid2并到wid1后，发现问题再回退这个合并操作？？
-        //如果合并的时候，日志表发生了回滚，会导致wid2来回滚发现没有wid2了，回滚失败，现在暂时不管了
-        //单个合并  还是  一键后台合并
-        // wid1 和wid2 之间的联系，我们怎么获得
         return true;
     }
 
@@ -128,7 +128,6 @@ public class UserLimitUpdateFacadeService {
             newUserLimitEntity.setWid(newWid);
             saveUserLimit.add(newUserLimitEntity);
         }
-//        try {
         if(CollectionUtils.isNotEmpty(updateUserLimit)){
             limitationService.updateUserLimitList(updateUserLimit);
         }
@@ -138,8 +137,6 @@ public class UserLimitUpdateFacadeService {
         if(CollectionUtils.isNotEmpty(oldLimit)){
             limitationService.deleteUserLimitList(oldLimit);
         }
-//        } catch (Exception e){
-//        }
     }
 
     private void mergeUserGoodsLimit(Long pid, Long newWid, Long oldWid) {
@@ -185,7 +182,6 @@ public class UserLimitUpdateFacadeService {
             newUserGoodsLimitEntity.setWid(newWid);
             saveUserGoodsLimit.add(newUserGoodsLimitEntity);
         }
-//        try {
         if(CollectionUtils.isNotEmpty(updateUserGoodsLimit)) {
             limitationService.updateUserGoodsLimitList(updateUserGoodsLimit);
         }
@@ -195,7 +191,5 @@ public class UserLimitUpdateFacadeService {
         if(CollectionUtils.isNotEmpty(oldLimit)) {
             limitationService.deleteUserGoodsLimitList(oldLimit);
         }
-//        } catch (Exception e){
-//        }
     }
 }
