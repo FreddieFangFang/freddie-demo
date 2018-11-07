@@ -491,7 +491,7 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
     }
 
     private void buildActivityBuyInfoLogEntity(Map<String, UserLimitEntity> activityMap, LimitOrderChangeLogEntity logEntity) {
-        String prefixKey = LIMIT_PREFIX_ACTIVITY + logEntity.getBizType();
+        String prefixKey = LIMIT_PREFIX_ACTIVITY + logEntity.getWid() + logEntity.getBizType();
         if (activityMap.get(prefixKey + logEntity.getBizId()) == null) {
             UserLimitEntity userLimitEntity = new UserLimitEntity();
             userLimitEntity.setPid(logEntity.getPid());
@@ -499,14 +499,14 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
             userLimitEntity.setLimitId(logEntity.getLimitId());
             userLimitEntity.setWid(logEntity.getWid());
             userLimitEntity.setBuyNum(logEntity.getBuyNum());
-            activityMap.put(prefixKey + logEntity.getBizId(), userLimitEntity);
+            activityMap.put(prefixKey +logEntity.getBizId(), userLimitEntity);
         } else {
             activityMap.get(prefixKey + logEntity.getBizId()).setBuyNum(activityMap.get(prefixKey + logEntity.getBizId()).getBuyNum() + logEntity.getBuyNum());
         }
     }
 
     private void buildGoodsBuyInfoLogEntity(Map<String, UserGoodsLimitEntity> goodsLimitMap, LimitOrderChangeLogEntity logEntity) {
-        String prefixKey = LIMIT_PREFIX_GOODS + logEntity.getBizType();
+        String prefixKey = LIMIT_PREFIX_GOODS + logEntity.getWid() + logEntity.getBizType();
         if (goodsLimitMap.get(prefixKey + logEntity.getGoodsId()) == null) {
             UserGoodsLimitEntity userGoodsLimitEntity = new UserGoodsLimitEntity();
             userGoodsLimitEntity.setPid(logEntity.getPid());
@@ -522,7 +522,7 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
     }
 
     private void buildSkuBuyInfoLogEntity(Map<String, SkuLimitInfoEntity> skuLimitMap, LimitOrderChangeLogEntity logEntity) {
-        String prefixKey = LIMIT_PREFIX_SKU + logEntity.getBizType();
+        String prefixKey = LIMIT_PREFIX_SKU + logEntity.getWid() + logEntity.getBizType();
         if (logEntity.getSkuId() != null) {
             if (skuLimitMap.get(prefixKey + logEntity.getSkuId()) == null) {
                 SkuLimitInfoEntity skuLimitInfoEntity = new SkuLimitInfoEntity();
