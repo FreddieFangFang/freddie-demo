@@ -45,13 +45,12 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
     protected final String LIMIT_PREFIX_ACTIVITY = "LIMIT_ACTIVITY_";
     protected final String LIMIT_PREFIX_GOODS = "LIMIT_GOODS_";
     protected final String LIMIT_PREFIX_SKU = "LIMIT_SKU_";
-    private static final String localIp = SoaUtil.getLocalIp();
 
     @Override
     public String doHandler(List<T> vos) {
         String ticket = "";
         if (RpcContext.getContext().getGlobalTicket().startsWith("EC_STRESS-")) {
-            ticket = RpcContext.getContext().getGlobalTicket() + localIp;
+            ticket = RpcContext.getContext().getGlobalTicket();
         } else {
             ticket = LimitContext.getTicket();
         }

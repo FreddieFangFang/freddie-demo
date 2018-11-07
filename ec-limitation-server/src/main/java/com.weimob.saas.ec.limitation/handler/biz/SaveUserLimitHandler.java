@@ -38,8 +38,7 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
     private SkuLimitBizHandler skuLimitBizHandler;
     @Autowired
     private LimitationServiceImpl limitationService;
-
-    private static final String localIp = SoaUtil.getLocalIp();
+    
 
     @Override
     protected void checkParams(List<UpdateUserLimitVo> vos) {
@@ -97,7 +96,7 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         orderChangeLogEntity.setLimitId(limitInfoEntity.getLimitId());
         orderChangeLogEntity.setWid(vo.getWid());
         if (RpcContext.getContext().getGlobalTicket().startsWith("EC_STRESS-")) {
-            orderChangeLogEntity.setTicket(RpcContext.getContext().getGlobalTicket() + localIp);
+            orderChangeLogEntity.setTicket(RpcContext.getContext().getGlobalTicket());
         } else {
             orderChangeLogEntity.setTicket(LimitContext.getTicket());
         }
