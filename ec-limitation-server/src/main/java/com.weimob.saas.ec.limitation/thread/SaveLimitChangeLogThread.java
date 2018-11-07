@@ -6,6 +6,7 @@ import com.weimob.saas.ec.limitation.dao.LimitOrderChangeLogDao;
 import com.weimob.saas.ec.limitation.entity.LimitOrderChangeLogEntity;
 import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
@@ -58,7 +59,9 @@ public class SaveLimitChangeLogThread implements Runnable {
         for (LimitOrderChangeLogEntity orderChangeLogEntity : logEntityList) {
             try {
                 RpcContext.getContext().setGlobalTicket(rpcContext.getGlobalTicket());
-                RpcContext.getContext().setRpcId(LimitConstant.DEFAULT_RPC_ID);
+                if (StringUtils.isBlank(rpcContext.getRpcId())) {
+                    RpcContext.getContext().setRpcId(LimitConstant.DEFAULT_RPC_ID);
+                }
                 limitOrderChangeLogDao.insertLog(orderChangeLogEntity);
             } catch (Exception e) {
                 throw new LimitationBizException(LimitationErrorCode.SQL_INSERT_ORDER_LOG_ERROR);

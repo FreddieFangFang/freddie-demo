@@ -56,7 +56,10 @@ public class UserLimitUpdateExportService extends BaseExportService implements U
             soaResponse.setProcessResult(false);
             soaResponse.setReturnCode(CommonErrorCode.FAIL.getErrorCode());
             soaResponse.setReturnMsg(CommonErrorCode.FAIL.getErrorMsg());
+        } finally {
+            LimitContext.clearAll();
         }
+
         return soaResponse;
     }
 
@@ -84,6 +87,8 @@ public class UserLimitUpdateExportService extends BaseExportService implements U
             soaResponse.setProcessResult(false);
             soaResponse.setReturnCode(CommonErrorCode.FAIL.getErrorCode());
             soaResponse.setReturnMsg(CommonErrorCode.FAIL.getErrorMsg());
+        } finally {
+            LimitContext.clearAll();
         }
 
         return soaResponse;
@@ -93,10 +98,8 @@ public class UserLimitUpdateExportService extends BaseExportService implements U
     public SoaResponse<ReverseUserLimitResponseVo, LimitationErrorCode> reverseUserLimit(ReverseUserLimitRequestVo requestVo) {
 
         SoaResponse soaResponse = new SoaResponse<>();
-//        ReverseUserLimitResponseVo reverseUserLimitResponseVo = null;
 
         try {
-//            LimitContext.setTicket(soaResponse.getMonitorTrackId());
             userLimitUpdateFacadeService.reverseUserLimit(requestVo);
             soaResponse.setResponseVo(new ReverseUserLimitResponseVo(true));
         } catch (BaseException baseException) {
@@ -109,7 +112,10 @@ public class UserLimitUpdateExportService extends BaseExportService implements U
             soaResponse.setProcessResult(false);
             soaResponse.setReturnCode(CommonErrorCode.FAIL.getErrorCode());
             soaResponse.setReturnMsg(CommonErrorCode.FAIL.getErrorMsg());
+        } finally {
+            LimitContext.clearAll();
         }
 
-        return soaResponse;    }
+        return soaResponse;
+    }
 }

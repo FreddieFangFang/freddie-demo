@@ -146,6 +146,7 @@
       <foreach item="item" index="index" collection="list" separator="or">
         (
           limitinfo.pid = #{item.pid}
+          AND usergoodslimit.pid = #{item.pid}
           AND limitinfo.biz_id = #{item.bizId}
           AND limitinfo.biz_type = #{item.bizType}
           AND wid = #{item.wid}
