@@ -1,6 +1,7 @@
 package com.weimob.saas.ec.limitation.handler;
 
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
+import com.weimob.saas.ec.common.util.SoaUtil;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
 import com.alibaba.dubbo.rpc.RpcContext;
 import com.weimob.saas.ec.limitation.common.LimitServiceNameEnum;
@@ -44,12 +45,13 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
     protected final String LIMIT_PREFIX_ACTIVITY = "LIMIT_ACTIVITY_";
     protected final String LIMIT_PREFIX_GOODS = "LIMIT_GOODS_";
     protected final String LIMIT_PREFIX_SKU = "LIMIT_SKU_";
+    private static final String localIp = SoaUtil.getLocalIp();
 
     @Override
     public String doHandler(List<T> vos) {
         String ticket = "";
         if (RpcContext.getContext().getGlobalTicket().startsWith("EC_STRESS-")) {
-            ticket = RpcContext.getContext().getGlobalTicket();
+            ticket = RpcContext.getContext().getGlobalTicket() + localIp;
         } else {
             ticket = LimitContext.getTicket();
         }
