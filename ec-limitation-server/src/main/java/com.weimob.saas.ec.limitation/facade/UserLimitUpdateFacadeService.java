@@ -1,6 +1,5 @@
 package com.weimob.saas.ec.limitation.facade;
 
-import com.alibaba.dubbo.rpc.RpcContext;
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.handler.biz.DeductUserLimitHandler;
@@ -10,7 +9,6 @@ import com.weimob.saas.ec.limitation.model.LimitBo;
 import com.weimob.saas.ec.limitation.model.request.DeductUserLimitRequestVo;
 import com.weimob.saas.ec.limitation.model.request.ReverseUserLimitRequestVo;
 import com.weimob.saas.ec.limitation.model.request.SaveUserLimitRequestVo;
-import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
 import com.weimob.saas.ec.limitation.model.response.ReverseUserLimitResponseVo;
 import com.weimob.saas.ec.limitation.model.response.UpdateUserLimitResponseVo;
 import com.weimob.saas.ec.limitation.utils.LimitContext;
@@ -53,7 +51,6 @@ public class UserLimitUpdateFacadeService {
 
     public ReverseUserLimitResponseVo reverseUserLimit(ReverseUserLimitRequestVo requestVo) {
 
-       //TODO 先查询changelog 有无记录  有：直接回滚， 没有  push
         VerifyParamUtils.checkParam(LimitationErrorCode.REQUEST_PARAM_IS_NULL, requestVo);
         VerifyParamUtils.checkParam(LimitationErrorCode.REQUEST_PARAM_IS_NULL, requestVo.getTicket());
 
