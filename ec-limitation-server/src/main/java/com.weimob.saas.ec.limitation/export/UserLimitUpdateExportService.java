@@ -37,11 +37,11 @@ public class UserLimitUpdateExportService extends BaseExportService implements U
     public SoaResponse<UpdateUserLimitResponseVo, LimitationErrorCode> saveUserLimit(SaveUserLimitRequestVo requestVo) {
         SoaResponse<UpdateUserLimitResponseVo, LimitationErrorCode> soaResponse = new SoaResponse<>();
         try {
-            if (RpcContext.getContext().getGlobalTicket() != null && RpcContext.getContext().getGlobalTicket().startsWith("EC_STRESS-")) {
-                LimitContext.setTicket(RpcContext.getContext().getGlobalTicket());
-            } else {
+//            if (RpcContext.getContext().getGlobalTicket() != null && RpcContext.getContext().getGlobalTicket().startsWith("EC_STRESS-")) {
+//                LimitContext.setTicket(RpcContext.getContext().getGlobalTicket());
+//            } else {
                 LimitContext.setTicket(soaResponse.getMonitorTrackId());
-            }
+//            }
             UpdateUserLimitResponseVo updateUserLimitResponseVo = userLimitUpdateFacadeService.saveUserLimit(requestVo);
 
             soaResponse.setResponseVo(updateUserLimitResponseVo);
@@ -70,11 +70,11 @@ public class UserLimitUpdateExportService extends BaseExportService implements U
         UpdateUserLimitResponseVo updateUserLimitResponseVo = null;
 
         try {
-            if (RpcContext.getContext().getGlobalTicket() != null && RpcContext.getContext().getGlobalTicket().startsWith("EC_STRESS-")) {
-                LimitContext.setTicket(RpcContext.getContext().getGlobalTicket());
-            } else {
+//            if (RpcContext.getContext().getGlobalTicket() != null && RpcContext.getContext().getGlobalTicket().startsWith("EC_STRESS-")) {
+//                LimitContext.setTicket(RpcContext.getContext().getGlobalTicket());
+//            } else {
                 LimitContext.setTicket(soaResponse.getMonitorTrackId());
-            }
+//            }
             updateUserLimitResponseVo = userLimitUpdateFacadeService.deductUserLimit(requestVo);
             soaResponse.setResponseVo(updateUserLimitResponseVo);
         } catch (BaseException baseException) {

@@ -1,5 +1,6 @@
 package com.weimob.saas.ec.limitation.handler.biz;
 
+import com.alibaba.dubbo.rpc.RpcContext;
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitServiceNameEnum;
@@ -92,7 +93,11 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         }
         orderChangeLogEntity.setLimitId(limitInfoEntity.getLimitId());
         orderChangeLogEntity.setWid(vo.getWid());
-        orderChangeLogEntity.setTicket(LimitContext.getTicket());
+        if (RpcContext.getContext().getGlobalTicket().startsWith("EC_STRESS-")) {
+            orderChangeLogEntity.setTicket(RpcContext.getContext().getGlobalTicket());
+        } else {
+            orderChangeLogEntity.setTicket(LimitContext.getTicket());
+        }
         orderChangeLogEntity.setServiceName(getServiceName().name());
         orderChangeLogEntity.setReferId(vo.getOrderNo().toString());
         orderChangeLogEntity.setStatus(LimitConstant.ORDER_LOG_STATUS_INIT);

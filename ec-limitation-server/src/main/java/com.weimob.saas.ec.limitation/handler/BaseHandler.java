@@ -47,7 +47,12 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
 
     @Override
     public String doHandler(List<T> vos) {
-        String ticket = LimitContext.getTicket();
+        String ticket = "";
+        if (RpcContext.getContext().getGlobalTicket().startsWith("EC_STRESS-")) {
+            ticket = RpcContext.getContext().getGlobalTicket();
+        } else {
+            ticket = LimitContext.getTicket();
+        }
         try {
             checkParams(vos);
 
