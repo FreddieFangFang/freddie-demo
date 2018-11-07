@@ -59,9 +59,7 @@ public class SaveLimitChangeLogThread implements Runnable {
         for (LimitOrderChangeLogEntity orderChangeLogEntity : logEntityList) {
             try {
                 RpcContext.getContext().setGlobalTicket(rpcContext.getGlobalTicket());
-                if (StringUtils.isBlank(rpcContext.getRpcId())) {
-                    RpcContext.getContext().setRpcId(LimitConstant.DEFAULT_RPC_ID);
-                }
+                RpcContext.getContext().setRpcId(LimitConstant.DEFAULT_RPC_ID);
                 limitOrderChangeLogDao.insertLog(orderChangeLogEntity);
             } catch (Exception e) {
                 throw new LimitationBizException(LimitationErrorCode.SQL_INSERT_ORDER_LOG_ERROR);
