@@ -1,0 +1,52 @@
+package com.weimob.saas.ec.limitation.model;
+
+import com.weimob.saas.ec.common.request.BaseRequest;
+
+import java.util.List;
+
+/**
+ * @description //查询商品限购入参
+ * @author haojie.jin
+ * @date 6:04 PM 2018/11/7
+ * @param
+ * @return
+ **/
+
+public class CommonLimitParam extends BaseRequest {
+    private Long limitId;
+    private List<Long> goodsIdList;
+    private List<Long> skuIdList;
+    private List<Long> limitIdList;
+
+    public Long getLimitId() {
+        return limitId;
+    }
+
+    public void setLimitId(Long limitId) {
+        this.limitId = limitId;
+    }
+
+    public List<Long> getGoodsIdList() {
+        return goodsIdList;
+    }
+
+    public void setGoodsIdList(List<Long> goodsIdList) {
+        this.goodsIdList = goodsIdList;
+    }
+
+    public List<Long> getSkuIdList() {
+        return skuIdList;
+    }
+
+    public void setSkuIdList(List<Long> skuIdList) {
+        this.skuIdList = skuIdList;
+    }
+
+    public List<Long> getLimitIdList() {
+        return limitIdList;
+    }
+
+    public void setLimitIdList(List<Long> limitIdList) {
+        this.limitIdList = limitIdList;
+    }
+}

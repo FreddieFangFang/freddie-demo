@@ -158,4 +158,21 @@
   /*UserGoodsLimitDao.listOrderUserGoodsLimit*/
   </select>
 
+  <select id="listUserGoodsLimitByGoodsIdList" resultMap="BaseResultMap" parameterType="com.weimob.saas.ec.limitation.model.CommonLimitParam">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM
+    user_goods_limit
+    WHERE
+    pid = #{pid}
+    AND limit_id = #{limitId}
+    AND wid = #{wid}
+    AND is_deleted = 0)
+    AND goods_id IN
+    <foreach item="id" index="index" collection="goodsIdList" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+    /*UserGoodsLimitDao.listUserGoodsLimit*/
+  </select>
+
 </mapper>
