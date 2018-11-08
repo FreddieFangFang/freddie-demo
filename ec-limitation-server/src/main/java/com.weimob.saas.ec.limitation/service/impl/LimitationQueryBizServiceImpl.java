@@ -156,7 +156,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         List<SkuLimitInfoEntity> skuLimitList = new ArrayList<>(queryList.size());
 
         // 每个线程查询5个
-        int perNum = 1;
+        int perNum = 50;
         int totalSize = queryList.size();
         // 线程数目
         int threadNum = totalSize / perNum + (totalSize % perNum == 0 ? 0 : 1);
