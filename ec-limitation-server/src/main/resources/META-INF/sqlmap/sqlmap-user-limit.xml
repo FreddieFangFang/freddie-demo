@@ -158,7 +158,7 @@
   /*UserLimitDao.listUserLimitByLimitId*/
   </select>
 
-  <select id="listUserLimitByLimitIdList" parameterType="java.util.List" resultMap="com.weimob.saas.ec.limitation.model.CommonLimitParam">
+  <select id="listUserLimitByLimitIdList" parameterType="com.weimob.saas.ec.limitation.model.CommonLimitParam" resultMap="BaseResultMap">
     SELECT
       <include refid="Base_Column_List"/>
     FROM

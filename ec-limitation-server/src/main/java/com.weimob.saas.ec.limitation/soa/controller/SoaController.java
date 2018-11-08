@@ -4,8 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.weimob.saas.ec.limitation.soa.utils.InterfaceParametersUtils;
 import com.weimob.saas.ec.limitation.utils.SpringBeanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,12 +30,19 @@ public class SoaController {
 	private static Logger logger = Logger.getLogger(SoaController.class);
 
 	@RequestMapping(value = "/service")
-	public void service(HttpServletRequest request, HttpServletResponse response) {
+	public void service(HttpServletRequest request, HttpServletResponse response, @RequestBody String requestBodyStr) {
 		Object result = null;
 		try {
 			String serviceName = request.getParameter("serviceName");
 			String methodName = request.getParameter("methodName");
-			String parameterInput = request.getParameter("paramterInput").trim();
+
+			String parameterInput = null;
+			if (StringUtils.isNotBlank(requestBodyStr)) {
+				parameterInput = requestBodyStr;
+			} else {
+				parameterInput = request.getParameter("paramterInput").trim();
+			}
+
 
 			// 每个接口均存在InvokeParamVo参数，加入到参数列表
 			// 1、单个参数{}，构造成[]

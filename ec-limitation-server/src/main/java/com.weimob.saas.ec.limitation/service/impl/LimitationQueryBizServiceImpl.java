@@ -40,12 +40,13 @@ import com.weimob.saas.ec.limitation.model.response.QueryGoodsLimitDetailVo;
 import com.weimob.saas.ec.limitation.model.response.QueryGoodsLimitNumListResponseVo;
 import com.weimob.saas.ec.limitation.model.response.QueryGoodsLimitNumVo;
 import com.weimob.saas.ec.limitation.service.LimitationQueryBizService;
+import com.weimob.saas.ec.limitation.thread.SkuQueryThread;
 import com.weimob.saas.ec.limitation.utils.CommonBizUtil;
 import com.weimob.saas.ec.limitation.utils.MapKeyUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.Future;
 
 /**
  * @author lujialin
@@ -74,6 +76,8 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
     @Autowired
     private SkuLimitInfoDao skuLimitInfoDao;
 
+    @Autowired
+    private ThreadPoolTaskExecutor threadExecutor;
 
     @Override
     public GoodsLimitInfoListResponseVo queryGoodsLimitInfoList(GoodsLimitInfoListRequestVo requestVo) {
@@ -93,18 +97,19 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         //构建限购主表信息map, key pid_bizType_bizId
         Map<String, LimitInfoEntity> limitInfoMap = this.buildLimitInfoMap(limitInfoEntityList);
 
-        //查询用户sku限购信心
+        //查询用户sku限购信息
         List<SkuLimitInfoEntity> skuLimitList = null;
         if (CommonBizUtil.isValidSkuLimit(type, activityStockType)) {
-            //todo:future并发获取提高性能
-            skuLimitList = skuLimitInfoDao.listSkuLimit(buildQueryEntity(requestVo, limitInfoMap));
+            List<SkuLimitInfoEntity> queryList = this.buildQueryEntity(requestVo, limitInfoMap);
+            skuLimitList = this.getSkuLimitInfoList(queryList);
         }
-        //获取用户活动限购数量map
-        Map<String, Integer> activityUserLimitNumMap = this.getActivityUserLimitNumMap(pid, type, wid, activityStockType, limitInfoEntityList);
 
+        //获取用户活动限购数量map
+        Map<String, Integer> activityUserLimitNumMap =
+                this.getActivityUserLimitNumMap(pid, type, wid, activityStockType, limitInfoEntityList);
 
         //如果是优惠套装
-        if (ObjectUtils.equals(type, ActivityTypeEnum.COMBINATION_BUY.getType())) {
+        if (CommonBizUtil.isValidCombination(type)) {
             return buildCombinationBuyResponseVo(requestVo, skuLimitList, limitInfoMap, activityUserLimitNumMap);
         }
 
@@ -145,6 +150,37 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         } else {
             return new GoodsLimitInfoListResponseVo();
         }
+    }
+
+    public List<SkuLimitInfoEntity>  getSkuLimitInfoList(List<SkuLimitInfoEntity> queryList) {
+        List<SkuLimitInfoEntity> skuLimitList = new ArrayList<>(queryList.size());
+
+        // 每个线程查询5个
+        int perNum = 1;
+        int totalSize = queryList.size();
+        // 线程数目
+        int threadNum = totalSize / perNum + (totalSize % perNum == 0 ? 0 : 1);
+
+        List<SkuQueryThread> taskList = new ArrayList<>(threadNum);
+        for (int i = 0; i < threadNum; i++) {
+            if (i == threadNum - 1) {
+                taskList.add(new SkuQueryThread(queryList.subList(i * perNum, totalSize + 1), skuLimitInfoDao));
+            } else {
+                taskList.add(new SkuQueryThread(queryList.subList(i * perNum, (i + 1) * perNum), skuLimitInfoDao));
+            }
+        }
+
+        List<Future<List<SkuLimitInfoEntity>>> taskResultList = new ArrayList<>();
+
+        for (SkuQueryThread task : taskList) {
+            Future<List<SkuLimitInfoEntity>> taskResult = threadExecutor.submit(task);
+            taskResultList.add(taskResult);
+        }
+        // 得到执行结果
+        if (SkuQueryThread.isAllDone(taskResultList, skuLimitList)) {
+            taskResultList.clear();
+        }
+        return skuLimitList;
     }
 
     private Map<String, Integer> getActivityUserLimitNumMap(Long pid, Integer type, Long wid, Integer activityStockType, List<LimitInfoEntity> limitInfoEntityList) {
@@ -1215,6 +1251,16 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             }
         }
         return goodsLimitNumMap;
+    }
+
+
+    public static void main(String[] args) {
+        // 每个线程查询5个
+        int perNum = 50;
+        int size = 100;
+
+        int threadNum = size / perNum  + (size % perNum == 0 ? 0 : 1);
+        System.out.println(threadNum);
     }
 
 }
