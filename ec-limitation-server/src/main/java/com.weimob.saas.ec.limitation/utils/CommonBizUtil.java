@@ -59,7 +59,8 @@ public class CommonBizUtil {
     public static boolean isValidUserActivityLimit(Integer bizType,Integer activityStockType) {
         return isValidDiscountStock(bizType, activityStockType)
                 || isValidCombination(bizType)
-                || isValidDiscountSku(bizType, activityStockType);
+                || isValidDiscountSku(bizType, activityStockType)
+                || isValidPrivilegePrice(bizType);
 
     }
 

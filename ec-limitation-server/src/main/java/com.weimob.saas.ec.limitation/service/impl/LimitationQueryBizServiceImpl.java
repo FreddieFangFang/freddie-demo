@@ -164,7 +164,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         List<SkuQueryThread> taskList = new ArrayList<>(threadNum);
         for (int i = 0; i < threadNum; i++) {
             if (i == threadNum - 1) {
-                taskList.add(new SkuQueryThread(queryList.subList(i * perNum, totalSize + 1), skuLimitInfoDao));
+                taskList.add(new SkuQueryThread(queryList.subList(i * perNum, totalSize), skuLimitInfoDao));
             } else {
                 taskList.add(new SkuQueryThread(queryList.subList(i * perNum, (i + 1) * perNum), skuLimitInfoDao));
             }
