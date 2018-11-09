@@ -26,14 +26,7 @@ public class SkuQueryThread implements Callable<List<SkuLimitInfoEntity>> {
 
     @Override
     public List<SkuLimitInfoEntity> call() {
-        long starTime = System.currentTimeMillis();
-        System.out.println(Thread.currentThread().getName() + " start" + "， startTime=" + starTime);
-
         List<SkuLimitInfoEntity> list = skuLimitInfoDao.listSkuLimit(requestList);
-
-        long endTime = System.currentTimeMillis();
-
-        System.out.println(Thread.currentThread().getName() + " end" + "， endTime=" + endTime);
         return list;
     }
 
