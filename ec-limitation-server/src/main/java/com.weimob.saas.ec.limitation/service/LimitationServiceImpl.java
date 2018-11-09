@@ -421,6 +421,7 @@ public class LimitationServiceImpl {
     private void updateSkuSoldNum(List<SkuLimitInfoEntity> activityGoodsSoldEntityList) {
         Integer updateResult;
         if (CollectionUtils.isNotEmpty(activityGoodsSoldEntityList)) {
+            Collections.sort(activityGoodsSoldEntityList);
             for (SkuLimitInfoEntity activitySoldEntity : activityGoodsSoldEntityList) {
                 try {
                     updateResult = skuLimitInfoDao.increaseSkuSoldNum(activitySoldEntity);
@@ -437,6 +438,7 @@ public class LimitationServiceImpl {
     private void updateUserLimit(List<UserLimitEntity> activityLimitEntityList) {
         Integer updateResult;
         if (CollectionUtils.isNotEmpty(activityLimitEntityList)) {
+            Collections.sort(activityLimitEntityList);
             for (UserLimitEntity activityLimitEntity : activityLimitEntityList) {
                 UserLimitEntity oldUserLimitEntity;
                 try {
