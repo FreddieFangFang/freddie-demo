@@ -267,7 +267,7 @@
         )
       </foreach>
       )
-  /*SkuLimitInfoDao.listSkuLimit*/
+  /*SkuLimitInfoDao.listSkuLimitBySkuList*/
   </select>
 
   <select id="listOrderSkuLimit" resultMap="BaseResultMap" parameterType="com.weimob.saas.ec.limitation.model.CommonLimitParam">
