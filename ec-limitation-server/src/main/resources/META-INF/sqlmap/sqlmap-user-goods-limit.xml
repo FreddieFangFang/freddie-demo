@@ -167,7 +167,7 @@
     pid = #{pid}
     AND limit_id = #{limitId}
     AND wid = #{wid}
-    AND is_deleted = 0)
+    AND is_deleted = 0
     AND goods_id IN
     <foreach item="id" index="index" collection="goodsIdList" open="(" separator="," close=")">
       #{id}

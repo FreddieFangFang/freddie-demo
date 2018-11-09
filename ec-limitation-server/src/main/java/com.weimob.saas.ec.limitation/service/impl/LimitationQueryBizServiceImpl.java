@@ -1224,7 +1224,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             commonLimitParam.setGoodsIdList(requestLimitGoodsMap.get(key));
             commonLimitParam.setWid(wid);
             tmpUserGoodsLimitList = userGoodsLimitDao.listUserGoodsLimitByGoodsIdList(commonLimitParam);
-            if (CollectionUtils.isNotEmpty(goodsLimitInfoList)) {
+            if (CollectionUtils.isNotEmpty(tmpUserGoodsLimitList)) {
                 userGoodsLimitList.addAll(tmpUserGoodsLimitList);
             }
         }
