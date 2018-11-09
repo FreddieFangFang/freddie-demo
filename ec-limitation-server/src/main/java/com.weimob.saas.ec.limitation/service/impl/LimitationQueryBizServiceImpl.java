@@ -100,7 +100,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         List<SkuLimitInfoEntity> skuLimitList = new ArrayList<>();
         if (CommonBizUtil.isValidSkuLimit(type, activityStockType)) {
             List<SkuLimitInfoEntity> queryList = this.buildQueryEntity(requestVo, limitInfoMap);
-            skuLimitList = this.getSkuLimitInfoList(queryList);
+            skuLimitList = this.getSkuLimitInfoList(queryList, pid);
         }
         //获取用户活动限购数量map
         Map<String, Integer> activityUserLimitNumMap =
@@ -151,7 +151,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         }
     }
 
-    public List<SkuLimitInfoEntity>  getSkuLimitInfoList(List<SkuLimitInfoEntity> queryList) {
+    public List<SkuLimitInfoEntity> getSkuLimitInfoList(List<SkuLimitInfoEntity> queryList, Long pid) {
         List<SkuLimitInfoEntity> skuLimitList = new ArrayList<>(queryList.size());
 
         // 每个线程查询5个
@@ -161,11 +161,17 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         int threadNum = totalSize / perNum + (totalSize % perNum == 0 ? 0 : 1);
 
         List<SkuQueryThread> taskList = new ArrayList<>(threadNum);
+
+
         for (int i = 0; i < threadNum; i++) {
+            CommonLimitParam commonLimitParam = new CommonLimitParam();
+            commonLimitParam.setPid(pid);
             if (i == threadNum - 1) {
-                taskList.add(new SkuQueryThread(queryList.subList(i * perNum, totalSize), skuLimitInfoDao));
+                commonLimitParam.setSkuLimitInfoEntityList(queryList.subList(i * perNum, totalSize));
+                taskList.add(new SkuQueryThread(commonLimitParam, skuLimitInfoDao));
             } else {
-                taskList.add(new SkuQueryThread(queryList.subList(i * perNum, (i + 1) * perNum), skuLimitInfoDao));
+                commonLimitParam.setSkuLimitInfoEntityList(queryList.subList(i * perNum, (i + 1) * perNum));
+                taskList.add(new SkuQueryThread(commonLimitParam, skuLimitInfoDao));
             }
         }
 

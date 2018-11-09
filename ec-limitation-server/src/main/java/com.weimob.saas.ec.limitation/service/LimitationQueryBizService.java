@@ -31,6 +31,7 @@ public interface LimitationQueryBizService {
 
     QueryActivityLimitInfoListResponseVo queryActivityLimitInfoList(QueryActivityLimitInfoListRequestVo requestVo);
 
-    public List<SkuLimitInfoEntity> getSkuLimitInfoList(List<SkuLimitInfoEntity> queryList);
+    List<SkuLimitInfoEntity> getSkuLimitInfoList(List<SkuLimitInfoEntity> queryList, Long pid);
+
 
     }

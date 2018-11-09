@@ -2,6 +2,7 @@ package com.weimob.saas.ec.limitation.thread;
 
 import com.weimob.saas.ec.limitation.dao.SkuLimitInfoDao;
 import com.weimob.saas.ec.limitation.entity.SkuLimitInfoEntity;
+import com.weimob.saas.ec.limitation.model.CommonLimitParam;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,19 +15,18 @@ public class SkuQueryThread implements Callable<List<SkuLimitInfoEntity>> {
     private static final Log logger = LogFactory.getLog(SkuQueryThread.class);
 
 
-    private List<SkuLimitInfoEntity> requestList;
+    private CommonLimitParam commonLimitParam;
 
     private SkuLimitInfoDao skuLimitInfoDao;
 
-
-    public SkuQueryThread(List<SkuLimitInfoEntity> requestList, SkuLimitInfoDao skuLimitInfoDao) {
-        this.requestList = requestList;
+    public SkuQueryThread(CommonLimitParam commonLimitParam, SkuLimitInfoDao skuLimitInfoDao) {
+        this.commonLimitParam = commonLimitParam;
         this.skuLimitInfoDao = skuLimitInfoDao;
     }
 
     @Override
     public List<SkuLimitInfoEntity> call() {
-        List<SkuLimitInfoEntity> list = skuLimitInfoDao.listSkuLimit(requestList);
+        List<SkuLimitInfoEntity> list = skuLimitInfoDao.listSkuLimitBySkuList(commonLimitParam);
         return list;
     }
 

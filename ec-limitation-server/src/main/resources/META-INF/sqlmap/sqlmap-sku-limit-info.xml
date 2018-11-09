@@ -242,7 +242,35 @@
   /*SkuLimitInfoDao.listSkuLimit*/
   </select>
 
-  <select id="listOrderSkuLimit" resultMap="BaseResultMap" parameterType="java.util.List">
+  <select id="listSkuLimitBySkuList" resultMap="BaseResultMap" parameterType="com.weimob.saas.ec.limitation.model.CommonLimitParam">
+    SELECT
+      pid,
+      store_id,
+      limit_id,
+      limit_type,
+      goods_id,
+      sku_id,
+      limit_num,
+      sold_num,
+      version
+    FROM
+      sku_limit_info
+    WHERE
+      pid = #{pid}
+      AND is_deleted = 0 and (
+      <foreach item="item" index="index" collection="skuLimitInfoEntityList" separator="or">(
+          goods_id = #{item.goodsId}
+          AND limit_id = #{item.limitId}
+          <if test="item.skuId != null">
+              AND sku_id =#{item.skuId}
+          </if>
+        )
+      </foreach>
+      )
+  /*SkuLimitInfoDao.listSkuLimit*/
+  </select>
+
+  <select id="listOrderSkuLimit" resultMap="BaseResultMap" parameterType="com.weimob.saas.ec.limitation.model.CommonLimitParam">
     SELECT
       skulimtinfo.pid pid,
       skulimtinfo.store_id store_id,

@@ -1,6 +1,7 @@
 package com.weimob.saas.ec.limitation.model;
 
 import com.weimob.saas.ec.common.request.BaseRequest;
+import com.weimob.saas.ec.limitation.entity.SkuLimitInfoEntity;
 
 import java.util.List;
 import java.util.Set;
@@ -18,6 +19,7 @@ public class CommonLimitParam extends BaseRequest {
     private Set<Long> goodsIdList;
     private List<Long> skuIdList;
     private List<Long> limitIdList;
+    private List<SkuLimitInfoEntity> skuLimitInfoEntityList;
 
     public Long getLimitId() {
         return limitId;
@@ -50,5 +52,13 @@ public class CommonLimitParam extends BaseRequest {
 
     public void setLimitIdList(List<Long> limitIdList) {
         this.limitIdList = limitIdList;
+    }
+
+    public List<SkuLimitInfoEntity> getSkuLimitInfoEntityList() {
+        return skuLimitInfoEntityList;
+    }
+
+    public void setSkuLimitInfoEntityList(List<SkuLimitInfoEntity> skuLimitInfoEntityList) {
+        this.skuLimitInfoEntityList = skuLimitInfoEntityList;
     }
 }

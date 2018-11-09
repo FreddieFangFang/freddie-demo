@@ -36,7 +36,7 @@ public class SpringTest {
         queryList.add(entity);
 
 
-        limitationQueryBizService.getSkuLimitInfoList(queryList);
+        limitationQueryBizService.getSkuLimitInfoList(queryList, 1L);
 
 
 
