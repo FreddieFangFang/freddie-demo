@@ -77,7 +77,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
     private SkuLimitInfoDao skuLimitInfoDao;
 
     @Autowired
-    private ThreadPoolTaskExecutor skuThreadExecutor;
+    private ThreadPoolTaskExecutor threadExecutor;
 
     @Override
     public GoodsLimitInfoListResponseVo queryGoodsLimitInfoList(GoodsLimitInfoListRequestVo requestVo) {
@@ -178,7 +178,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         List<Future<List<SkuLimitInfoEntity>>> taskResultList = new ArrayList<>();
 
         for (SkuQueryThread task : taskList) {
-            Future<List<SkuLimitInfoEntity>> taskResult = skuThreadExecutor.submit(task);
+            Future<List<SkuLimitInfoEntity>> taskResult = threadExecutor.submit(task);
             taskResultList.add(taskResult);
         }
         // 得到执行结果
