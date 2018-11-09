@@ -97,7 +97,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         //构建限购主表信息map, key pid_bizType_bizId
         Map<String, LimitInfoEntity> limitInfoMap = this.buildLimitInfoMap(limitInfoEntityList);
         //查询用户sku限购信息
-        List<SkuLimitInfoEntity> skuLimitList = null;
+        List<SkuLimitInfoEntity> skuLimitList = new ArrayList<>();
         if (CommonBizUtil.isValidSkuLimit(type, activityStockType)) {
             List<SkuLimitInfoEntity> queryList = this.buildQueryEntity(requestVo, limitInfoMap);
             skuLimitList = this.getSkuLimitInfoList(queryList);
