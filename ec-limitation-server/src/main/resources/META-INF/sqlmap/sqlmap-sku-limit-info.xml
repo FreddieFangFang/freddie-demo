@@ -139,7 +139,7 @@
     UPDATE
       sku_limit_info
     SET
-      sold_num = sold_num +#{soldNum},
+      sold_num = sold_num + #{soldNum},
       update_time = NOW()
     WHERE
         pid = #{pid}
