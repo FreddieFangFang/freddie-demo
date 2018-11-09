@@ -126,23 +126,25 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         //限时折扣冻结库存
         if (CommonBizUtil.isValidDiscountStock(type, activityStockType)) {
             //限时折扣要校验活动限购
-            return buildResponseVo(requestVo, activityUserLimitNumMap, goodsLimitNumMap, userGoodsLimitNumMap, userPidGoodsLimitNumMap, limitInfoMap);
+            return this.buildResponseVo(requestVo,
+                    activityUserLimitNumMap, goodsLimitNumMap, userGoodsLimitNumMap, userPidGoodsLimitNumMap, limitInfoMap);
 
         }
         //特权价 && 限时折扣sku
         else if (CommonBizUtil.isValidPrivilegePrice(type) || CommonBizUtil.isValidDiscountSku(type, activityStockType)) {
             //特权价要校验活动限购和sku可售数量
-            GoodsLimitInfoListResponseVo responseVo =
-                    buildResponseVo(requestVo, activityUserLimitNumMap, goodsLimitNumMap, userGoodsLimitNumMap, userPidGoodsLimitNumMap, limitInfoMap);
+            GoodsLimitInfoListResponseVo responseVo = this.buildResponseVo(requestVo, activityUserLimitNumMap,
+                            goodsLimitNumMap, userGoodsLimitNumMap, userPidGoodsLimitNumMap, limitInfoMap);
             //处理sku的限购
-            validGoodsSkuLimit(requestVo, skuLimitList, responseVo, limitInfoMap);
+            this.validGoodsSkuLimit(requestVo, skuLimitList, responseVo, limitInfoMap);
             return responseVo;
         }
         //积分商城
         else if (CommonBizUtil.isValidPoint(type)) {
-            GoodsLimitInfoListResponseVo responseVo = buildGoodsLimitInfoListResponseVo(requestVo, goodsLimitNumMap, userGoodsLimitNumMap, limitInfoMap);
+            GoodsLimitInfoListResponseVo responseVo = this.buildGoodsLimitInfoListResponseVo(requestVo, goodsLimitNumMap,
+                    userGoodsLimitNumMap, limitInfoMap);
             //处理sku的限购
-            validGoodsSkuLimit(requestVo, skuLimitList, responseVo, limitInfoMap);
+            this.validGoodsSkuLimit(requestVo, skuLimitList, responseVo, limitInfoMap);
             return responseVo;
         } else {
             return new GoodsLimitInfoListResponseVo();
@@ -197,7 +199,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         //用户活动购买记录map
         Map<String, Integer> activityUserLimitNumMap =null;
         if (CommonBizUtil.isValidUserActivityLimit(type, activityStockType)) {
-            activityUserLimitNumMap = queryUserActivityBuyRecord(userLimitParam);
+            activityUserLimitNumMap = this.queryUserActivityBuyRecord(userLimitParam);
         }
         return activityUserLimitNumMap;
     }
