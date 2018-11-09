@@ -3,6 +3,7 @@ package com.weimob.saas.ec.limitation.model;
 import com.weimob.saas.ec.common.request.BaseRequest;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @description //查询商品限购入参
@@ -14,7 +15,7 @@ import java.util.List;
 
 public class CommonLimitParam extends BaseRequest {
     private Long limitId;
-    private List<Long> goodsIdList;
+    private Set<Long> goodsIdList;
     private List<Long> skuIdList;
     private List<Long> limitIdList;
 
@@ -26,11 +27,12 @@ public class CommonLimitParam extends BaseRequest {
         this.limitId = limitId;
     }
 
-    public List<Long> getGoodsIdList() {
+
+    public Set<Long> getGoodsIdList() {
         return goodsIdList;
     }
 
-    public void setGoodsIdList(List<Long> goodsIdList) {
+    public void setGoodsIdList(Set<Long> goodsIdList) {
         this.goodsIdList = goodsIdList;
     }
 
