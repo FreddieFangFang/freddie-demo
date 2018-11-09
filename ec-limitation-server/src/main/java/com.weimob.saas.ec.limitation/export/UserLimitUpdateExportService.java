@@ -48,6 +48,8 @@ public class UserLimitUpdateExportService extends BaseExportService implements U
             soaResponse.setProcessResult(false);
             soaResponse.setReturnCode(CommonErrorCode.FAIL.getErrorCode());
             soaResponse.setReturnMsg(CommonErrorCode.FAIL.getErrorMsg());
+        } finally {
+            LimitContext.clearAll();
         }
         return soaResponse;
     }
@@ -70,6 +72,8 @@ public class UserLimitUpdateExportService extends BaseExportService implements U
             soaResponse.setProcessResult(false);
             soaResponse.setReturnCode(CommonErrorCode.FAIL.getErrorCode());
             soaResponse.setReturnMsg(CommonErrorCode.FAIL.getErrorMsg());
+        } finally {
+            LimitContext.clearAll();
         }
         return soaResponse;
     }
