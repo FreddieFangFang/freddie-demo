@@ -126,7 +126,7 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         try {
             limitationService.updateUserLimitRecord(new ArrayList<>(goodsLimitMap.values()), new ArrayList<>(activityMap.values()), new ArrayList<>(skuLimitMap.values()));
         } catch (Exception e) {
-            throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_GOODS_LIMIT_ERROR, e);
+            throw new LimitationBizException(LimitationErrorCode.CREATE_ORDER_REVERSE_FAIL, e);
         }
     }
 }
