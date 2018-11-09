@@ -2,7 +2,7 @@ package com.weimob.saas.ec.limitation.entity;
 
 import java.util.Date;
 
-public class SkuLimitInfoEntity {
+public class SkuLimitInfoEntity implements Comparable<SkuLimitInfoEntity> {
     private Long id;
 
     private Long pid;
@@ -131,5 +131,20 @@ public class SkuLimitInfoEntity {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    @Override
+    public int compareTo(SkuLimitInfoEntity o) {
+        int result = this.getLimitId().intValue() - o.getLimitId().intValue();
+        if (result != 0) {
+            return result;
+        } else {
+            result = this.getGoodsId().intValue() - o.getLimitId().intValue();
+            if (result != 0) {
+                return result;
+            } else {
+                return this.getSkuId().intValue() - o.getSkuId().intValue();
+            }
+        }
     }
 }

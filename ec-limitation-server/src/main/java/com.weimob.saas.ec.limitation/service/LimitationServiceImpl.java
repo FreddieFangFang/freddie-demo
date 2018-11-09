@@ -299,6 +299,7 @@ public class LimitationServiceImpl {
 
         Integer updateResult;
         if (!CollectionUtils.isEmpty(goodsLimitEntityList)) {
+            Collections.sort(goodsLimitEntityList);
             for (UserGoodsLimitEntity goodsLimitEntity : goodsLimitEntityList) {
                 try {
                     updateResult = userGoodsLimitDao.deductUserGoodsLimit(goodsLimitEntity);
@@ -312,6 +313,7 @@ public class LimitationServiceImpl {
         }
 
         if (!CollectionUtils.isEmpty(activityLimitEntityList)) {
+            Collections.sort(activityLimitEntityList);
             for (UserLimitEntity activityLimitEntity : activityLimitEntityList) {
                 try {
                     updateResult = userLimitDao.deductUserLimit(activityLimitEntity);
@@ -325,6 +327,7 @@ public class LimitationServiceImpl {
         }
 
         if (!CollectionUtils.isEmpty(activityGoodsSoldEntityList)) {
+            Collections.sort(activityGoodsSoldEntityList);
             for (SkuLimitInfoEntity activitySoldEntity : activityGoodsSoldEntityList) {
                 try {
                     updateResult = skuLimitInfoDao.deductSkuSoldNum(activitySoldEntity);
@@ -467,6 +470,7 @@ public class LimitationServiceImpl {
     private void updateUserGoodsLimit(List<UserGoodsLimitEntity> goodsLimitEntityList) {
         Integer updateResult;
         if (CollectionUtils.isNotEmpty(goodsLimitEntityList)) {
+            Collections.sort(goodsLimitEntityList);
             for (UserGoodsLimitEntity goodsLimitEntity : goodsLimitEntityList) {
                 UserGoodsLimitEntity oldUserGoodsLimitEntity;
                 try {
