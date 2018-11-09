@@ -126,7 +126,6 @@
       limit_order_change_log
     WHERE
       ticket = #{ticket}
-    AND status = 0
   /*LimitOrderChangeLogDao.listLogByTicket*/
   </select>
 

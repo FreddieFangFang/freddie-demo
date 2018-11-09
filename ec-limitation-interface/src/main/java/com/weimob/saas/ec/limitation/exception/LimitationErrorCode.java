@@ -73,9 +73,9 @@ public enum LimitationErrorCode {
 
     /*****************************业务异常04**********************************/
     SQL_UPDATE_USER_GOODS_LIMIT_ERROR("1080000400001", "更新用户商品购买记录数据库异常"),
-    SQL_UPDATE_USER_LIMIT_ERROR("1080000400002", "数据库更新异常"),
+    SQL_UPDATE_USER_LIMIT_ERROR("1080000400002", "更新用户购买记录数据库异常"),
     SQL_UPDATE_SKU_SOLD_NUM_ERROR("1080000400003", "更新SKU已售数量数据库异常"),
-    SQL_INSERT_ORDER_LOG_ERROR("1080000400004", "数据库插入异常"),
+    SQL_INSERT_ORDER_LOG_ERROR("1080000400004", "保存日志数据数据库异常"),
     SQL_QUERY_ORDER_CHANGE_LOG_ERROR("1080000400005", "查询下单记录异常"),
     SQL_UPDATE_ORDER_CHANGE_LOG_ERROR("1080000400006", "更新下单的日志状态异常"),
     SQL_SAVE_LIMIT_INFO_ERROR("1080000400007", "保存限购信息数据库异常"),
