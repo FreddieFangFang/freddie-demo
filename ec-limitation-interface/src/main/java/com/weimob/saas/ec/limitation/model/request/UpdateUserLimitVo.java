@@ -132,26 +132,6 @@ public class UpdateUserLimitVo extends BaseRequest implements Comparable<UpdateU
 
     @Override
     public int compareTo(UpdateUserLimitVo o) {
-        int result = this.getWid().intValue() - o.getWid().intValue();
-        if (result != 0) {
-            return result;
-        } else {
-            result = this.getBizType() - o.getBizType();
-            if (result != 0) {
-                return result;
-            } else {
-                result = this.getBizId().intValue() - o.getBizId().intValue();
-                if (result != 0) {
-                    return result;
-                } else {
-                    result = this.getGoodsId().intValue() - o.getGoodsId().intValue();
-                    if (result != 0) {
-                        return result;
-                    } else {
-                        return this.getSkuId().intValue() - o.getSkuId().intValue();
-                    }
-                }
-            }
-        }
+        return 0;
     }
 }
