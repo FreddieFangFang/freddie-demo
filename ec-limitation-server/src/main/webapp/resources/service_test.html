@@ -1,99 +1,185 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
 <html>
- <head>
+<head>
   <title>接口测试</title>
   <meta charset="UTF-8">
   <meta name="Generator" content="EditPlus">
   <meta name="Author" content="">
   <meta name="Keywords" content="">
   <meta name="Description" content="">
- </head>
+</head>
 <script type="text/javascript" src="js/jquery.js"></script>
-<script type="text/javascript" src="js/jquery_extend.js"></script>
 <script type="text/javascript">
+    $(document).ready(
+        function () {
+            $.ajax({
+                type: "POST",
+                contentType: "application/json;charset=UTF-8",
+                "url": "../getServiceList",
+                success: function (resp) {
+                    $("#serviceName").empty();
+                    $.each(JSON.parse(resp), function (index, value) {
+                        $("#serviceName").append("<option value='" + value + "'>" + value + "</option>");
+                    });
+                    var serviceName = $("#serviceName").val();
+                    $.ajax({
+//              type: "POST",
+//              contentType: "application/json;charset=UTF-8",
+                        "url": "../getMethodList",
+                        data: "serviceName=" + serviceName,
+                        success: function (resp) {
+                            $("#methodName").empty();
+                            $.each(JSON.parse(resp), function (index, value) {
+                                $("#methodName").append("<option value='" + value + "'>" + value + "</option>");
+                            });
+                            var methodName = $("#methodName").val();
+                            $.ajax({
+                                "url": "../loadParam",
+                                /*"dataType":"json",*/
+                                data: "serviceName=" + serviceName + "&methodName=" + methodName,
+                                success: function (resp) {
+                                    $("#parameterInput").val("");
+                                    $("#parameterInput").val(JSON.parse(resp));
+                                }
+                            });
+                        }
+                    });
+                }
+            });
 
-$(document).ready(function(){
-	 $("#submitBtn").click(function(){
-		 $.post($("#serviceUrl").val(),
-				{
-			      serviceName:$("#serviceName").val(),
-			      methodName:$("#methodName").val(),
-			      paramterInput:$("#paramterInput").val()
-				},
-				function(data,status){
-				     $("#invokeOnput").val(data);
-		        }
-		 );
-	 });
-	 
-	 $("#loadBtn").click(function(){
-		 $.post($("#loadUrl").val(),
-				{
-			      serviceName:$("#serviceName").val(),
-			      methodName:$("#methodName").val()
-				},
-				function(data,status){
-				     $("#paramterInput").val(data);
-		        }
-		 );
-	 });
-	 
-	 $("#resetBtn").click(function(){
-		 $("#invokeOnput").val("");
-		 paramterInput:$("#paramterInput").val("");
-	 });
-	 
-	 $("#urlBtn").click(function(){
-		 var url = $("#serviceUrl").val()+"?&serviceName="+$("#serviceName").val()+"&methodName="+$("#methodName").val()+"&paramterInput="+$("#paramterInput").val();
-		 $("#url_content").val(encodeURI(url));
-	 });
-	 
-});
+            $("#submitBtn").click(function () {
+                var serviceName = $("#serviceName").val();
+                var methodName = $("#methodName").val();
+                var parameterInput = $("#parameterInput").val();
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+                    "url": "../service",
+                    /*"dataType":"json",*/
+                    data: "serviceName=" + serviceName + "&methodName=" + methodName + "&parameterInput="
+                    + parameterInput,
+                    success: function (resp) {
+                        $("#invokeOutput").val("");
+                        $("#invokeOutput").val(resp);
+                    }
+                });
+            });
 
+            $("#loadBtn").click(function () {
+                var serviceName = $("#serviceName").val();
+                var methodName = $("#methodName").val();
+                $.ajax({
+                    "url": "../loadParam",
+                    /*"dataType":"json",*/
+                    data: "serviceName=" + serviceName + "&methodName=" + methodName,
+                    success: function (resp) {
+                        $("#parameterInput").val("");
+                        $("#parameterInput").val(JSON.parse(resp));
+                    }
+                });
+            });
+
+            $("#resetBtn").click(function () {
+                $("#invokeOutput").val("");
+                $("#parameterInput").val("");
+            });
+
+            $("#urlBtn").click(function () {
+                var url = "serviceName=" + $("#serviceName").val() + "&methodName="
+                    + $("#methodName").val() + "&parameterInput=" + $("#parameterInput").val();
+                $("#url_content").val(encodeURI(url));
+            });
+
+            $("#serviceName").bind("change", function () {
+                var serviceName = $(this).val();
+                $.ajax({
+                    "url": "../getMethodList",
+                    "dataType": "json",
+                    data: "serviceName=" + serviceName,
+                    success: function (resp) {
+                        $("#methodName").empty();
+                        $.each(resp, function (index, value) {
+                            $("#methodName").append("<option value='" + value + "'>" + value + "</option>");
+                        });
+                        var methodName = $("#methodName").val();
+                        $.ajax({
+                            "url": "../loadParam",
+                            /*"dataType":"json",*/
+                            data: "serviceName=" + serviceName + "&methodName=" + methodName,
+                            success: function (resp) {
+                                $("#parameterInput").val("");
+                                $("#parameterInput").val(JSON.parse(resp));
+                            }
+                        });
+                    }
+                });
+            });
+
+            $("#methodName").bind("change", function () {
+                var serviceName = $("#serviceName").val();
+                var methodName = $(this).val();
+                $.ajax({
+                    "url": "../loadParam",
+                    /*"dataType":"json",*/
+                    data: "serviceName=" + serviceName + "&methodName=" + methodName,
+                    success: function (resp) {
+                        $("#parameterInput").val("");
+                        $("#parameterInput").val(JSON.parse(resp));
+                    }
+                });
+            });
+        }
+    );
 </script>
- <body>
- <div class="title">Service Test</div>
-	<div class="main">
-  <table width=100%  border=1  cellpadding="5" cellspacing="0" bordercolorlight="#cccccc" bordercolordark="#FFFFFF">
-  <tr>
-	<td width=10%>Service Name</td>
-	<td width=45%>
-	<input type="hidden" id="serviceUrl" style="width:80%;height:100%" value="../service">
-	<input type="hidden" id="loadUrl" style="width:80%;height:100%" value="../load">
-	<input type="text" id="serviceName" style="width:80%;height:100%" value="weimobService">
-	</td>
-	<td width=45%  rowspan="2"  align="center"  >Output</td>
-  </tr>
-   <tr>
-	<td>Method Name</td>
-	<td>
-	   <input type="text" id="methodName" style="width:80%;height:100%" value="newTotal"><input type="button" value=" 加载参数  " id="loadBtn">
-	</td>
-	
-  </tr>
-  <tr>
-	<td>Paramter Input<br>(JSON)</td>
-	<td height=450px><textarea id="paramterInput"  row="100" style="width:100%;height:100%">
-		{
+<body>
+<div class="title">Service Test</div>
+<div class="main">
+  <table width=100% border=1 cellpadding="5" cellspacing="0" bordercolorlight="#cccccc"
+         bordercolordark="#FFFFFF">
+    <tr>
+      <td width=14%>Service Name</td>
+      <td width=43%>
+        <select style="width:80%; height:100%; " id="serviceName">
 
-"total":100
-}
-	
-	
-	</textarea></td>
-	<td  width=40%>
-	    <textarea id="invokeOnput"  row="100" style="width:100%;height:100%"></textarea>
-	</td>
-  </tr>
-  <tr>
+        </select>
+      </td>
+      <td width=43% rowspan="2" align="center">Output</td>
+    </tr>
+    <tr>
+      <td>Method Name</td>
+      <td>
+        <select id="methodName" style="width:80%;height:100%">
+
+        </select>
+        <input type="button" value=" 加载参数  " id="loadBtn">
+      </td>
+    </tr>
+    <tr>
+      <td>Example</td>
+      <td colspan="2">
+        <textarea id="" row="100" style="width: 100%; height: 100%">{"pid":1254,"storeId":1470154,"wid":100}</textarea>
+      </td>
+    </tr>
+    <tr>
+      <td>Parameter Input<br>(JSON)</td>
+      <td height=400px><textarea id="parameterInput" row="100"
+                                 style="width: 100%; height: 100%"></textarea></td>
+      <td height=400px><textarea id="invokeOutput" row="100"
+                                 style="width: 100%; height: 100%"></textarea></td>
+    </tr>
+    <tr>
       <td>URL</td>
-	  <td colspan=2><textarea id="url_content"  row="100" style="width:100%;height:100%"></textarea></td>
-  </tr>
-   <tr>
-	  <td align="center" colspan=3><input type="button" value=" 提交 " id="submitBtn"><input type="button" value=" 重置  " id="resetBtn"><input type="button" value=" 构造URL  " id="urlBtn"></td>
-  </tr>
-  
+      <td colspan=2><textarea id="url_content" row="100"
+                              style="width: 100%; height: 100%"></textarea></td>
+    </tr>
+    <tr>
+      <td align="center" colspan=3>
+        <input type="button" value=" 提交 " id="submitBtn">
+        <input type="button" value=" 重置  " id="resetBtn">
+        <input type="button" value="构造URL" id="urlBtn"></td>
+    </tr>
   </table>
- </div>
- </body>
+</div>
+</body>
 </html>
