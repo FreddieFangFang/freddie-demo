@@ -1,5 +1,6 @@
 package com.weimob.saas.ec.limitation.service.impl;
 
+import com.alibaba.dubbo.rpc.RpcContext;
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitLevelEnum;
@@ -147,7 +148,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
             orderChangeLogEntity.setStatus(LimitConstant.ORDER_LOG_STATUS_INIT);
             logEntityList.add(orderChangeLogEntity);
         }
-        threadExecutor.execute(new SaveLimitChangeLogThread(limitOrderChangeLogDao, logEntityList));
+        threadExecutor.execute(new SaveLimitChangeLogThread(limitOrderChangeLogDao, logEntityList, RpcContext.getContext()));
     }
 
     private void buildDeleteLimitationGoodsChangeLog(List<GoodsLimitInfoEntity> goodsLimitInfoEntityList, String name, DeleteLimitationRequestVo requestVo) {
@@ -167,7 +168,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
                 orderChangeLogEntity.setStatus(LimitConstant.ORDER_LOG_STATUS_INIT);
                 logEntityList.add(orderChangeLogEntity);
             }
-            threadExecutor.execute(new SaveLimitChangeLogThread(limitOrderChangeLogDao, logEntityList));
+            threadExecutor.execute(new SaveLimitChangeLogThread(limitOrderChangeLogDao, logEntityList, RpcContext.getContext()));
         }
     }
 
@@ -240,7 +241,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
                 break;
         }
 
-        threadExecutor.execute(new SaveLimitChangeLogThread(limitOrderChangeLogDao, logEntityList));
+        threadExecutor.execute(new SaveLimitChangeLogThread(limitOrderChangeLogDao, logEntityList, RpcContext.getContext()));
 
         return new LimitationUpdateResponseVo(bizId, true, LimitContext.getTicket());
     }
@@ -354,7 +355,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
             orderChangeLogEntity.setStatus(LimitConstant.ORDER_LOG_STATUS_INIT);
             logEntityList.add(orderChangeLogEntity);
         }
-        threadExecutor.execute(new SaveLimitChangeLogThread(limitOrderChangeLogDao, logEntityList));
+        threadExecutor.execute(new SaveLimitChangeLogThread(limitOrderChangeLogDao, logEntityList, RpcContext.getContext()));
     }
 
     @Override
@@ -476,7 +477,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
                 logEntityList.add(orderChangeLogEntity);
             }
         }
-        threadExecutor.execute(new SaveLimitChangeLogThread(limitOrderChangeLogDao, logEntityList));
+        threadExecutor.execute(new SaveLimitChangeLogThread(limitOrderChangeLogDao, logEntityList, RpcContext.getContext()));
     }
 
     private List<GoodsLimitInfoEntity> buildQueryGoodsLimitList(SaveGoodsLimitInfoRequestVo saveGoodsLimitInfoRequestVo, Long limitId) {

@@ -57,7 +57,6 @@ public class LimitationUpdateExportService extends BaseExportService implements 
         try {
             LimitContext.setTicket(soaResponse.getMonitorTrackId());
             responseVo = limitationUpdateFacadeService.deleteLimitationInfo(requestVo);
-            LimitContext.clearAll();
             soaResponse.setResponseVo(responseVo);
         } catch (BaseException baseException) {
             LOGGER.error(" throw biz exception!, monitorTrackId:" + soaResponse.getMonitorTrackId(), baseException);
@@ -69,6 +68,8 @@ public class LimitationUpdateExportService extends BaseExportService implements 
             soaResponse.setProcessResult(false);
             soaResponse.setReturnCode(CommonErrorCode.FAIL.getErrorCode());
             soaResponse.setReturnMsg(CommonErrorCode.FAIL.getErrorMsg());
+        } finally {
+            LimitContext.clearAll();
         }
 
         return soaResponse;
@@ -82,7 +83,6 @@ public class LimitationUpdateExportService extends BaseExportService implements 
         try {
             LimitContext.setTicket(soaResponse.getMonitorTrackId());
             responseVo = limitationUpdateFacadeService.batchDeleteGoodsLimit(requestVo);
-            LimitContext.clearAll();
             soaResponse.setResponseVo(responseVo);
         } catch (BaseException baseException) {
             LOGGER.error(" throw biz exception!, monitorTrackId:" + soaResponse.getMonitorTrackId(), baseException);
@@ -94,6 +94,8 @@ public class LimitationUpdateExportService extends BaseExportService implements 
             soaResponse.setProcessResult(false);
             soaResponse.setReturnCode(CommonErrorCode.FAIL.getErrorCode());
             soaResponse.setReturnMsg(CommonErrorCode.FAIL.getErrorMsg());
+        } finally {
+            LimitContext.clearAll();
         }
 
         return soaResponse;
@@ -107,7 +109,6 @@ public class LimitationUpdateExportService extends BaseExportService implements 
         try {
             LimitContext.setTicket(soaResponse.getMonitorTrackId());
             responseVo = limitationUpdateFacadeService.saveGoodsLimitInfo(requestVo);
-            LimitContext.clearAll();
             soaResponse.setResponseVo(responseVo);
         } catch (BaseException baseException) {
             LOGGER.error(" throw biz exception!, monitorTrackId:" + soaResponse.getMonitorTrackId(), baseException);
@@ -119,6 +120,8 @@ public class LimitationUpdateExportService extends BaseExportService implements 
             soaResponse.setProcessResult(false);
             soaResponse.setReturnCode(CommonErrorCode.FAIL.getErrorCode());
             soaResponse.setReturnMsg(CommonErrorCode.FAIL.getErrorMsg());
+        } finally {
+            LimitContext.clearAll();
         }
 
         return soaResponse;
@@ -132,7 +135,6 @@ public class LimitationUpdateExportService extends BaseExportService implements 
         try {
             LimitContext.setTicket(soaResponse.getMonitorTrackId());
             responseVo = limitationUpdateFacadeService.updateGoodsLimitInfo(requestVo);
-            LimitContext.clearAll();
             soaResponse.setResponseVo(responseVo);
         } catch (BaseException baseException) {
             LOGGER.error(" throw biz exception!, monitorTrackId:" + soaResponse.getMonitorTrackId(), baseException);
@@ -144,6 +146,8 @@ public class LimitationUpdateExportService extends BaseExportService implements 
             soaResponse.setProcessResult(false);
             soaResponse.setReturnCode(CommonErrorCode.FAIL.getErrorCode());
             soaResponse.setReturnMsg(CommonErrorCode.FAIL.getErrorMsg());
+        } finally {
+            LimitContext.clearAll();
         }
 
         return soaResponse;

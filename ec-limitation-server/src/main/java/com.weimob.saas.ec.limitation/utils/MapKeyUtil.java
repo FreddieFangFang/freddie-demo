@@ -7,8 +7,16 @@ package com.weimob.saas.ec.limitation.utils;
  */
 public class MapKeyUtil {
 
+    public static final int LIMIT_ID_PID_INDEX = 0;
+    public static final int LIMIT_ID_BIZTYPE_INDEX = 1;
+    public static final int LIMIT_ID_BIZID_INDEX = 2;
+
     public static String buildLimitIdMapKey(Long pid, Integer bizType, Long bizId) {
         return pid + "_" + bizType + "_" + bizId;
+    }
+
+    public static String[] getLimitIdMapKeyArray(String key) {
+        return key.split("_");
     }
 
     public static String buildGoodsLimitNumMap(Long pid, Long storeId, Long limitId, Long goodsId) {

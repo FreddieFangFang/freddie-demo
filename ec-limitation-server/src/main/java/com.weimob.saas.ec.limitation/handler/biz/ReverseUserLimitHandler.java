@@ -45,22 +45,23 @@ public class ReverseUserLimitHandler {
         if (CollectionUtils.isEmpty(orderChangeLogEntityList)) {
             throw new LimitationBizException(LimitationErrorCode.INVALID_REVERSE_TICKET);
         }
+        if (orderChangeLogEntityList.get(0).getStatus() == 0){
+            //2.服务名
+            String serviceName = orderChangeLogEntityList.get(0).getServiceName();
+            Handler<?> handler = reverseLimitHandlerFactory.getHandlerByServiceName(serviceName);
+            handler.doReverse(orderChangeLogEntityList);
 
-        //2.服务名
-        String serviceName = orderChangeLogEntityList.get(0).getServiceName();
-        Handler<?> handler = reverseLimitHandlerFactory.getHandlerByServiceName(serviceName);
-        handler.doReverse(orderChangeLogEntityList);
+            //3.修改订单日志表
+            Integer updateResult = 0;
 
-        //3.修改订单日志表
-        Integer updateResult = 0;
-
-        try {
-            updateResult = limitOrderChangeLogDao.updateLogStatusByTicket(ticket);
-        } catch (Exception e) {
-            throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_ORDER_CHANGE_LOG_ERROR, e);
-        }
-        if (updateResult == 0) {
-            throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_ORDER_CHANGE_LOG_ERROR);
+            try {
+                updateResult = limitOrderChangeLogDao.updateLogStatusByTicket(ticket);
+            } catch (Exception e) {
+                throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_ORDER_CHANGE_LOG_ERROR, e);
+            }
+            if (updateResult == 0) {
+                throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_ORDER_CHANGE_LOG_ERROR);
+            }
         }
     }
 
