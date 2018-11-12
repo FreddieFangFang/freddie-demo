@@ -65,7 +65,6 @@
       pid = #{pid}
     AND limit_id = #{limitId}
     AND is_deleted = 0
-    AND wid > 0
   /*UserGoodsLimitDao.deleteDiscountUserGoodsLimit*/
   </update>
 
