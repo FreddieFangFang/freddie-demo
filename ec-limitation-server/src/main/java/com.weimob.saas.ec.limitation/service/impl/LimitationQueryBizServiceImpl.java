@@ -659,8 +659,8 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         Integer activityStockType = requestVo.getQueryGoodslimitNumVoList().get(0).getActivityStockType();
         List<GoodsLimitInfoEntity> goodsLimitInfoEntityList;
         Map<String, List<GoodsLimitInfoEntity>> goodsLimitNumMap = null;
-        if(!Objects.equals(bizType, ActivityTypeEnum.PRIVILEGE_PRICE.getType()))
-        {
+        // 非社区团购查goods限购信息
+        if (!Objects.equals(bizType, LimitBizTypeEnum.BIZ_TYPE_COMMUNITY_GROUPON.getLevel())) {
             goodsLimitInfoEntityList = goodsLimitInfoDao.listGoodsLimitNum(requestVo.getQueryGoodslimitNumVoList());
             if (CollectionUtils.isEmpty(goodsLimitInfoEntityList)) {
                 return responseVo;
@@ -683,7 +683,8 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             queryGoodsLimitNumVo.setGoodsId(request.getGoodsId());
             queryGoodsLimitNumVo.setBizId(request.getBizId());
             queryGoodsLimitNumVo.setBizType(request.getBizType());
-            if(!Objects.equals(bizType, ActivityTypeEnum.PRIVILEGE_PRICE.getType())){
+            // 非社区团购查goods限购信息
+            if (!Objects.equals(bizType, LimitBizTypeEnum.BIZ_TYPE_COMMUNITY_GROUPON.getLevel())) {
                 List<GoodsLimitInfoEntity> entityList = goodsLimitNumMap.get(MapKeyUtil.buildPidStoreIdGoodsId(request.getPid(), request.getGoodsId()));
                 if (CollectionUtils.isEmpty(entityList)) {
                     continue;
@@ -696,7 +697,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                     }
                 }
             }
-                //如果是特权价或者限时折扣可售数量的 +社区团购，需要设置sku的限购数量
+            //如果是特权价或者限时折扣可售数量的 +社区团购，需要设置sku的限购数量
             List<SkuLimitInfo> skuLimitInfoList = new ArrayList<>();
             if (MapUtils.isNotEmpty(skuLimitNumMap)) {
                 List<SkuLimitInfoEntity> skuLimitInfoEntityList = skuLimitNumMap.get(MapKeyUtil.buildPidStoreIdGoodsId(request.getPid(), request.getGoodsId()));
