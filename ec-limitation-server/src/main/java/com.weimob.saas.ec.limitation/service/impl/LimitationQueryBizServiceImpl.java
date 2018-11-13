@@ -44,17 +44,13 @@ import com.weimob.saas.ec.limitation.utils.CommonBizUtil;
 import com.weimob.saas.ec.limitation.utils.MapKeyUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Future;
 
 /**
@@ -64,6 +60,8 @@ import java.util.concurrent.Future;
  */
 @Service(value = "limitationQueryBizService")
 public class LimitationQueryBizServiceImpl implements LimitationQueryBizService {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(LimitationQueryBizServiceImpl.class);
 
     @Autowired
     private LimitInfoDao limitInfoDao;
@@ -94,6 +92,14 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         Map<String, Set<Long>> requestLimitGoodsMap = this.groupRequestGoodsToMap(requestVo);
         //获取入参商品的限购主表信息
         List<LimitInfoEntity> limitInfoEntityList = this.getLimitInfo(pid, type, requestLimitMap);
+        if (limitInfoEntityList.contains(null)) {
+            LOGGER.error("查询限购主表空指针复现---》list.size为："+ limitInfoEntityList.size()+ "");
+            for (LimitInfoEntity entity : limitInfoEntityList) {
+                if (entity != null) {
+                    LOGGER.error(entity.toString());
+                }
+            }
+        }
         //构建限购主表信息map, key pid_bizType_bizId
         Map<String, LimitInfoEntity> limitInfoMap = this.buildLimitInfoMap(limitInfoEntityList);
         //查询用户sku限购信息
@@ -101,6 +107,16 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         if (CommonBizUtil.isValidSkuLimit(type, activityStockType)) {
             List<SkuLimitInfoEntity> queryList = this.buildQueryEntity(requestVo, limitInfoMap);
             skuLimitList = this.getSkuLimitInfoList(queryList, pid);
+            if (CollectionUtils.isNotEmpty(skuLimitList)) {
+                if (skuLimitList.contains(null)) {
+                    LOGGER.error("查询SKU表空指针复现---》list.size为："+ skuLimitList.size()+ "");
+                    for (SkuLimitInfoEntity entity : skuLimitList) {
+                        if (entity != null) {
+                            LOGGER.error(entity.toString());
+                        }
+                    }
+                }
+            }
         }
         //获取用户活动限购数量map
         Map<String, Integer> activityUserLimitNumMap =
@@ -151,6 +167,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         }
     }
 
+    @Override
     public List<SkuLimitInfoEntity> getSkuLimitInfoList(List<SkuLimitInfoEntity> queryList, Long pid) {
         List<SkuLimitInfoEntity> skuLimitList = new ArrayList<>(queryList.size());
 
@@ -737,6 +754,14 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
 
     private Map<String, List<GoodsLimitInfoEntity>> buildGoodsLimitMap(List<GoodsLimitInfoEntity> goodsLimitInfoEntityList) {
         Map<String, List<GoodsLimitInfoEntity>> goodsLimitNumMap = new HashMap<>();
+        if (goodsLimitInfoEntityList.contains(null)) {
+            LOGGER.error("查询商品限购表空指针复现---》list.size为："+ goodsLimitInfoEntityList.size()+ "");
+            for (GoodsLimitInfoEntity goodsEntity : goodsLimitInfoEntityList) {
+                if (goodsEntity != null) {
+                    LOGGER.error(goodsEntity.toString());
+                }
+            }
+        }
         for (GoodsLimitInfoEntity entity : goodsLimitInfoEntityList) {
             if (CollectionUtils.isEmpty(goodsLimitNumMap.get(MapKeyUtil.buildPidStoreIdGoodsId(entity.getPid(), entity.getGoodsId())))) {
                 List<GoodsLimitInfoEntity> entityList = new ArrayList<>();

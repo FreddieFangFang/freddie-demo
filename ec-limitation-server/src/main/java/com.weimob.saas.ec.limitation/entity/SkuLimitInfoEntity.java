@@ -147,4 +147,9 @@ public class SkuLimitInfoEntity implements Comparable<SkuLimitInfoEntity> {
             }
         }
     }
+
+    @Override
+    public String toString() {
+        return "本次查询数据为：pid：" + this.pid + ", limitId：" + this.limitId + ", goodsId: " + this.goodsId + ", skuId： " + this.skuId;
+    }
 }

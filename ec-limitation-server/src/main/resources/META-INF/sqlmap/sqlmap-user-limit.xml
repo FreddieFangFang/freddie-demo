@@ -70,6 +70,7 @@
     AND biz_id = #{bizId}
     AND biz_type = #{bizType}
     AND is_deleted = 0
+    AND wid > 0
   /*UserLimitDao.deleteDiscountUserLimit*/
   </update>
 

@@ -132,4 +132,9 @@ public class GoodsLimitInfoEntity {
     public void setLimitLevel(Integer limitLevel) {
         this.limitLevel = limitLevel;
     }
+
+    @Override
+    public String toString() {
+        return "本次查询数据为：pid：" + this.pid + ", limitId：" + this.limitId + ", goodsId：" + this.goodsId;
+    }
 }
