@@ -198,7 +198,7 @@ public class LimitationServiceImpl {
 
         deleteSkuLimitInfo(entity.getPid(), entity.getLimitId(), pointGoodsIdList);
     }
-    public void deleteCommunityGrouponLimitInfo(LimitInfoEntity oldLimitInfoEntity) {
+    public void deleteCommunityGrouponLimitInfo(LimitInfoEntity oldLimitInfoEntity, List<Long> goodsIdList) {
         limitInfoDao.deleteLimitInfo(oldLimitInfoEntity);
 
         LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
@@ -206,7 +206,7 @@ public class LimitationServiceImpl {
         deleteEntity.setLimitId(oldLimitInfoEntity.getLimitId());
         limitStoreRelationshipDao.deleteStoreRelationship(deleteEntity);
 
-        deleteSkuLimitInfo(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId(), null);
+        deleteSkuLimitInfo(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId(), goodsIdList);
     }
     public List<SkuLimitInfoEntity> updatePrivilegePriceGoodsLimitInfo(List<GoodsLimitInfoEntity> newGoodsLimitInfoEntityList, List<SkuLimitInfoEntity> skuLimitInfoList) {
 
@@ -411,7 +411,9 @@ public class LimitationServiceImpl {
             param.setPid(pid);
             param.setLimitId(limitId);
             param.setGoodsIdList(goodsIdList);
-            goodsLimitInfoDao.reverseGoodsLimit(param);
+            if (!Objects.equals(LimitBizTypeEnum.BIZ_TYPE_COMMUNITY_GROUPON.getLevel(), bizType)) {
+                goodsLimitInfoDao.reverseGoodsLimit(param);
+            }
             skuLimitInfoDao.reverseSkuLimitStatusByGoodsId(param);
         }
     }
@@ -421,7 +423,8 @@ public class LimitationServiceImpl {
                                         List<LimitOrderChangeLogEntity> logList) {
         limitInfoDao.reverseLimitInfoStatus(limitId);
 
-        if (!Objects.equals(logList.get(0).getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
+        if (!Objects.equals(logList.get(0).getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())
+                ||!Objects.equals(logList.get(0).getBizType(), ActivityTypeEnum.COMMUNITY_GROUPON.getType())) {
             DeleteGoodsParam param = new DeleteGoodsParam();
             param.setPid(pid);
             param.setLimitId(limitId);

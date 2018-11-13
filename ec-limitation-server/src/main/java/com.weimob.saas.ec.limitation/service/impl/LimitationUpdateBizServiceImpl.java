@@ -235,7 +235,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
                 }
 
                 //社区团购删除sku限购信息
-                limitationService.deleteCommunityGrouponLimitInfo(limitInfoEntity);
+                limitationService.deleteCommunityGrouponLimitInfo(limitInfoEntity,goodsIdList);
 
                 break;
             default:
