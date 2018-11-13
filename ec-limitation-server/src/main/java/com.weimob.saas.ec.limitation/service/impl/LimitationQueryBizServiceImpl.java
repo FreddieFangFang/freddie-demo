@@ -655,68 +655,48 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
     public QueryGoodsLimitNumListResponseVo queryGoodsLimitNumList(QueryGoodsLimitNumRequestVo requestVo) {
         QueryGoodsLimitNumListResponseVo responseVo = new QueryGoodsLimitNumListResponseVo();
         List<QueryGoodsLimitNumVo> queryGoodsLimitNumList = new ArrayList<>();
-        // 如果是 社区团购， 只查询sku限购信息
-        Map<String, List<SkuLimitInfoEntity>> communityGrouponSkuLimitNumMap = null;
-        if(Objects.equals(requestVo.getQueryGoodslimitNumVoList().get(0).getBizType(), ActivityTypeEnum.COMMUNITY_GROUPON.getType())){
-            for (QueryGoodsLimitNumListVo request : requestVo.getQueryGoodslimitNumVoList()) {
-                QueryGoodsLimitNumVo queryGoodsLimitNumVo = new QueryGoodsLimitNumVo();
-                queryGoodsLimitNumVo.setPid(request.getPid());
-                queryGoodsLimitNumVo.setGoodsId(request.getGoodsId());
-                queryGoodsLimitNumVo.setBizId(request.getBizId());
-                queryGoodsLimitNumVo.setBizType(request.getBizType());
-                //查询sku的限购数量
-                List<SkuLimitInfo> skuLimitInfoList = new ArrayList<>();
-                if (MapUtils.isNotEmpty(communityGrouponSkuLimitNumMap)) {
-                    List<SkuLimitInfoEntity> skuLimitInfoEntityList = communityGrouponSkuLimitNumMap.get(MapKeyUtil.buildPidStoreIdGoodsId(request.getPid(), request.getGoodsId()));
-                    if (CollectionUtils.isNotEmpty(skuLimitInfoEntityList)) {
-                        for (SkuLimitInfoEntity entity : skuLimitInfoEntityList) {
-                            SkuLimitInfo skuLimitInfo = new SkuLimitInfo();
-                            skuLimitInfo.setSkuId(entity.getSkuId());
-                            skuLimitInfo.setSkuLimitNum(entity.getLimitNum());
-                            skuLimitInfo.setAlreadySoldNum(entity.getSoldNum());
-                            skuLimitInfo.setSkuLimitType(entity.getLimitType());
-                            skuLimitInfoList.add(skuLimitInfo);
-                        }
-                    }
-                }
-                queryGoodsLimitNumVo.setSkuLimitInfoList(skuLimitInfoList);
-                queryGoodsLimitNumList.add(queryGoodsLimitNumVo);
-                responseVo.setQueryGoodsLimitNumList(queryGoodsLimitNumList);
+        Integer bizType = requestVo.getQueryGoodslimitNumVoList().get(0).getBizType();
+        Integer activityStockType = requestVo.getQueryGoodslimitNumVoList().get(0).getActivityStockType();
+        List<GoodsLimitInfoEntity> goodsLimitInfoEntityList;
+        Map<String, List<GoodsLimitInfoEntity>> goodsLimitNumMap = null;
+        if(!Objects.equals(bizType, ActivityTypeEnum.PRIVILEGE_PRICE.getType()))
+        {
+            goodsLimitInfoEntityList = goodsLimitInfoDao.listGoodsLimitNum(requestVo.getQueryGoodslimitNumVoList());
+            if (CollectionUtils.isEmpty(goodsLimitInfoEntityList)) {
                 return responseVo;
             }
+            goodsLimitNumMap = buildGoodsLimitMap(goodsLimitInfoEntityList);
         }
-        List<GoodsLimitInfoEntity> goodsLimitInfoEntityList = goodsLimitInfoDao.listGoodsLimitNum(requestVo.getQueryGoodslimitNumVoList());
-        if (CollectionUtils.isEmpty(goodsLimitInfoEntityList)) {
-            return responseVo;
-        }
-        //如果是特权价或者限时折扣可售数量的，需要查询sku的限购数量
+        //如果是特权价或者限时折扣可售数量的 +社区团购，需要查询sku的限购数量
         Map<String, List<SkuLimitInfoEntity>> skuLimitNumMap = null;
-        if (Objects.equals(requestVo.getQueryGoodslimitNumVoList().get(0).getBizType(), ActivityTypeEnum.PRIVILEGE_PRICE.getType())
-                || (Objects.equals(requestVo.getQueryGoodslimitNumVoList().get(0).getBizType(), ActivityTypeEnum.DISCOUNT.getType())
-                && Objects.equals(requestVo.getQueryGoodslimitNumVoList().get(0).getActivityStockType(), LimitConstant.DISCOUNT_TYPE_SKU))
-                || Objects.equals(requestVo.getQueryGoodslimitNumVoList().get(0).getBizType(), LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel())) {
+        if (Objects.equals(bizType, ActivityTypeEnum.PRIVILEGE_PRICE.getType())
+                || (Objects.equals(bizType, ActivityTypeEnum.DISCOUNT.getType())
+                && Objects.equals(activityStockType, LimitConstant.DISCOUNT_TYPE_SKU))
+                || Objects.equals(bizType, LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel())
+                || Objects.equals(bizType, LimitBizTypeEnum.BIZ_TYPE_COMMUNITY_GROUPON.getLevel())) {
             List<SkuLimitInfoEntity> skuLimitInfoEntityList = skuLimitInfoDao.listSkuLimitNum(requestVo.getQueryGoodslimitNumVoList());
             skuLimitNumMap = buildSkuLimitMap(skuLimitInfoEntityList);
         }
-        Map<String, List<GoodsLimitInfoEntity>> goodsLimitNumMap = buildGoodsLimitMap(goodsLimitInfoEntityList);
         for (QueryGoodsLimitNumListVo request : requestVo.getQueryGoodslimitNumVoList()) {
             QueryGoodsLimitNumVo queryGoodsLimitNumVo = new QueryGoodsLimitNumVo();
             queryGoodsLimitNumVo.setPid(request.getPid());
             queryGoodsLimitNumVo.setGoodsId(request.getGoodsId());
             queryGoodsLimitNumVo.setBizId(request.getBizId());
             queryGoodsLimitNumVo.setBizType(request.getBizType());
-            List<GoodsLimitInfoEntity> entityList = goodsLimitNumMap.get(MapKeyUtil.buildPidStoreIdGoodsId(request.getPid(), request.getGoodsId()));
-            if (CollectionUtils.isEmpty(entityList)) {
-                continue;
-            }
-            for (GoodsLimitInfoEntity entity : entityList) {
-                if (entity.getLimitLevel() != null && entity.getLimitLevel() == 1) {
-                    queryGoodsLimitNumVo.setPidGoodsLimitNum(entity.getLimitNum());
-                } else {
-                    queryGoodsLimitNumVo.setGoodsLimitNum(entity.getLimitNum());
+            if(!Objects.equals(bizType, ActivityTypeEnum.PRIVILEGE_PRICE.getType())){
+                List<GoodsLimitInfoEntity> entityList = goodsLimitNumMap.get(MapKeyUtil.buildPidStoreIdGoodsId(request.getPid(), request.getGoodsId()));
+                if (CollectionUtils.isEmpty(entityList)) {
+                    continue;
+                }
+                for (GoodsLimitInfoEntity entity : entityList) {
+                    if (entity.getLimitLevel() != null && entity.getLimitLevel() == 1) {
+                        queryGoodsLimitNumVo.setPidGoodsLimitNum(entity.getLimitNum());
+                    } else {
+                        queryGoodsLimitNumVo.setGoodsLimitNum(entity.getLimitNum());
+                    }
                 }
             }
-            //如果是特权价或者限时折扣可售数量的，需要查询sku的限购数量
+                //如果是特权价或者限时折扣可售数量的 +社区团购，需要设置sku的限购数量
             List<SkuLimitInfo> skuLimitInfoList = new ArrayList<>();
             if (MapUtils.isNotEmpty(skuLimitNumMap)) {
                 List<SkuLimitInfoEntity> skuLimitInfoEntityList = skuLimitNumMap.get(MapKeyUtil.buildPidStoreIdGoodsId(request.getPid(), request.getGoodsId()));
