@@ -55,20 +55,22 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         while (iterator.hasNext()) {
             Map.Entry<Integer, List<UpdateUserLimitVo>> entry = iterator.next();
             List<UpdateUserLimitVo> vos = entry.getValue();
-            if (Objects.equals(vos.get(0).getBizType(), LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel())) {
+            Integer bizType = vos.get(0).getBizType();
+            Integer activityStockType = vos.get(0).getActivityStockType();
+            if (Objects.equals(bizType, LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel())) {
                 goodsLimitBizHandler.doLimitHandler(vos);
                 skuLimitBizHandler.doLimitHandler(vos);
-            } else if (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.PRIVILEGE_PRICE.getType())
-                    || (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.DISCOUNT.getType())
-                    && Objects.equals(vos.get(0).getActivityStockType(), LimitConstant.DISCOUNT_TYPE_SKU))) {
+            } else if (Objects.equals(bizType, ActivityTypeEnum.PRIVILEGE_PRICE.getType())
+                    || (Objects.equals(bizType, ActivityTypeEnum.DISCOUNT.getType())
+                    && Objects.equals(activityStockType, LimitConstant.DISCOUNT_TYPE_SKU))) {
                 goodsLimitBizHandler.doLimitHandler(vos);
                 activityLimitBizHandler.doLimitHandler(vos);
                 skuLimitBizHandler.doLimitHandler(vos);
-            } else if (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.DISCOUNT.getType())) {
+            } else if (Objects.equals(bizType, ActivityTypeEnum.DISCOUNT.getType())) {
                 goodsLimitBizHandler.doLimitHandler(vos);
                 activityLimitBizHandler.doLimitHandler(vos);
-            } else if (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())||
-                       Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.COMMUNITY_GROUPON.getType())) {
+            } else if (Objects.equals(bizType, ActivityTypeEnum.COMBINATION_BUY.getType())||
+                       Objects.equals(bizType, ActivityTypeEnum.COMMUNITY_GROUPON.getType())) {
                 activityLimitBizHandler.doLimitHandler(vos);
                 skuLimitBizHandler.doLimitHandler(vos);
             }
