@@ -123,7 +123,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
                 limitationService.deleteCombinationLimitInfo(oldLimitInfoEntity);
                 break;
             case BIZ_TYPE_COMMUNITY_GROUPON:
-                limitationService.deleteCommunityGrouponLimitInfo(oldLimitInfoEntity);
+                limitationService.deleteCommunityGrouponLimitInfo(oldLimitInfoEntity,null);
                 break;
             default:
                 break;
