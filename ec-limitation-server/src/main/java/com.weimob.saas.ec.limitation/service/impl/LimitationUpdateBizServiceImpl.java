@@ -304,23 +304,12 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
                 break;
             case BIZ_TYPE_COMMUNITY_GROUPON:
                 // 社区团购SKU限购
-                Integer updateResult;
                 LimitInfoEntity limitInfo = limitInfoDao.getLimitInfo(new LimitParam(pid, bizId, bizType));
                 if (limitInfo == null) {
-                    //第一次添加商品，需保存主表信息
-                    limitId = IdUtils.getLimitId(pid);
-                    limitInfo = buildPointGoodsLimitInfoEntity(limitId, saveGoodsLimitInfoRequestVo.getGoodsList().get(0));
-                    try {
-                        updateResult = limitInfoDao.insertLimitInfo(limitInfo);
-                    } catch (Exception e) {
-                        throw new LimitationBizException(LimitationErrorCode.SQL_SAVE_LIMIT_INFO_ERROR, e);
-                    }
-                    if (updateResult == 0) {
-                        throw new LimitationBizException(LimitationErrorCode.SQL_SAVE_LIMIT_INFO_ERROR);
-                    }
+                    throw new LimitationBizException(LimitationErrorCode.LIMITATION_IS_NULL);
                 }
-                limitId = limitId == null ? limitInfo.getLimitId() : limitId;
-                List<SkuLimitInfoEntity> skuLimitInfos = buildSkuLimitInfoEntity(limitId, saveGoodsLimitInfoRequestVo);
+                List<SkuLimitInfoEntity> skuLimitInfos = buildSkuLimitInfoEntity(limitInfo.getLimitId(), saveGoodsLimitInfoRequestVo);
+                Integer updateResult;
                 try {
                     updateResult = skuLimitInfoDao.batchInsertSkuLimit(skuLimitInfos);
                 } catch (Exception e) {
