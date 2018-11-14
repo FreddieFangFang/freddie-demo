@@ -118,6 +118,10 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 }
             }
         }
+        //如果是社区团购,返回结果
+        if (CommonBizUtil.isValidCommunityGroupon(type)) {
+            return buildCommunityResponseVo(requestVo, skuLimitList, limitInfoMap);
+        }
         //获取用户活动限购数量map
         Map<String, Integer> activityUserLimitNumMap =
                 this.getActivityUserLimitNumMap(pid, type, wid, activityStockType, limitInfoEntityList);
@@ -350,6 +354,37 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         });
     }
 
+    private GoodsLimitInfoListResponseVo buildCommunityResponseVo(GoodsLimitInfoListRequestVo requestVo,
+                                                                  List<SkuLimitInfoEntity> skuLimitList,
+                                                                  Map<String, LimitInfoEntity> limitInfoMap) {
+        List<GoodsLimitInfoListVo> goodsLimitInfoList = new ArrayList<>();
+        LimitInfoEntity limitInfoEntity = null;
+        for (QueryGoodsLimitInfoListVo vo : requestVo.getGoodsDetailList()) {
+            GoodsLimitInfoListVo goodsLimitInfoListVo = new GoodsLimitInfoListVo();
+            goodsLimitInfoListVo.setPid(vo.getPid());
+            goodsLimitInfoListVo.setStoreId(vo.getStoreId());
+            goodsLimitInfoListVo.setWid(vo.getWid());
+            goodsLimitInfoListVo.setBizType(vo.getBizType());
+            goodsLimitInfoListVo.setBizId(vo.getBizId());
+            goodsLimitInfoListVo.setGoodsId(vo.getGoodsId());
+            goodsLimitInfoListVo.setSkuId(vo.getSkuId());
+            goodsLimitInfoListVo.setCanBuyNum(Integer.MAX_VALUE);
+            String limitIdKey = MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId());
+            limitInfoEntity = limitInfoMap.get(limitIdKey);
+            Integer activityLimitNum = limitInfoEntity == null ? null : limitInfoEntity.getLimitNum();
+            if (activityLimitNum == null) {
+                continue;
+            }
+            goodsLimitInfoListVo.setActivityLimitNum(activityLimitNum);
+            goodsLimitInfoList.add(goodsLimitInfoListVo);
+        }
+        // 校验sku限购
+        GoodsLimitInfoListResponseVo responseVo = new GoodsLimitInfoListResponseVo();
+        responseVo.setGoodsLimitInfoList(goodsLimitInfoList);
+        validGoodsSkuLimit(requestVo, skuLimitList, responseVo, limitInfoMap);
+        return responseVo;
+    }
+
     private GoodsLimitInfoListResponseVo buildCombinationBuyResponseVo(
             GoodsLimitInfoListRequestVo requestVo,
             List<SkuLimitInfoEntity> skuLimitList,
@@ -384,7 +419,6 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             Long limitId = limitInfoEntity == null ? null : limitInfoEntity.getLimitId();
 
             if (skuLimitMap.get(MapKeyUtil.buildSkuLimitMapKey(vo.getPid(), limitId, vo.getGoodsId(), vo.getSkuId())) == null) {
-                //throw new LimitationBizException(LimitationErrorCode.LIMIT_SKU_IS_NULL);
                 continue;
             }
             Integer alreadyBuyNum = skuLimitMap.get(MapKeyUtil.buildSkuLimitMapKey(vo.getPid(), limitId, vo.getGoodsId(), vo.getSkuId())).getSoldNum();
@@ -582,7 +616,6 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             Integer activityLimitNum = limitInfoEntity == null ? null : limitInfoEntity.getLimitNum();
 
             if (activityLimitNum == null) {
-                //throw new LimitationBizException(LimitationErrorCode.LIMIT_ACTIVITY_IS_NULL);
                 continue;
             }
             goodsLimitInfoListVo.setActivityLimitNum(activityLimitNum);

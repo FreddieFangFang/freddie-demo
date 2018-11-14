@@ -13,6 +13,9 @@ public class CommonBizUtil {
         return Objects.equals(ActivityTypeEnum.COMBINATION_BUY.getType(), bizType);
     }
 
+    public static boolean isValidCommunityGroupon(Integer bizType) {
+        return Objects.equals(ActivityTypeEnum.COMMUNITY_GROUPON.getType(), bizType);
+    }
 
     public static boolean isValidPrivilegePrice(Integer bizType) {
         return Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), bizType);
