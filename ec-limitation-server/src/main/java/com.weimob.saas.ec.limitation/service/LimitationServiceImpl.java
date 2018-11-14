@@ -368,8 +368,10 @@ public class LimitationServiceImpl {
     }
 
     public void reverseUpdateGoodsLimit(List<GoodsLimitInfoEntity> goodsLimitInfoEntityList, List<SkuLimitInfoEntity> updateSkuList, List<SkuLimitInfoEntity> insertSkuList, List<SkuLimitInfoEntity> deleteSkuList) {
-        for (GoodsLimitInfoEntity oldGoodsLimitInfoEntity : goodsLimitInfoEntityList) {
-            goodsLimitInfoDao.updateGoodsLimit(oldGoodsLimitInfoEntity);
+        if (CollectionUtils.isNotEmpty(goodsLimitInfoEntityList)) {
+            for (GoodsLimitInfoEntity oldGoodsLimitInfoEntity : goodsLimitInfoEntityList) {
+                goodsLimitInfoDao.updateGoodsLimit(oldGoodsLimitInfoEntity);
+            }
         }
 
         if (CollectionUtils.isNotEmpty(updateSkuList)) {
