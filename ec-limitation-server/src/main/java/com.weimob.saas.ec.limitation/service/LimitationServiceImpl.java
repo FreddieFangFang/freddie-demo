@@ -275,108 +275,67 @@ public class LimitationServiceImpl {
 
     public void saveUserLimitRecord(List<UserGoodsLimitEntity> goodsLimitEntityList, List<UserLimitEntity> activityLimitEntityList,
                                     List<SkuLimitInfoEntity> activityGoodsSoldEntityList) {
+        // 新增/更新用户商品购买记录
+        updateUserGoodsLimit(goodsLimitEntityList);
 
-        Integer updateResult = 0;
-        if (CollectionUtils.isNotEmpty(goodsLimitEntityList)) {
-            for (UserGoodsLimitEntity goodsLimitEntity : goodsLimitEntityList) {
-                try {
-                    UserGoodsLimitEntity oldUserGoodsLimitEntity = userGoodsLimitDao.getUserGoodsLimit(goodsLimitEntity);
-                    if (oldUserGoodsLimitEntity == null) {
-                        updateResult = userGoodsLimitDao.insertUserGoodsLimit(goodsLimitEntity);
-                    } else {
-                        updateResult = userGoodsLimitDao.updateUserGoodsLimit(goodsLimitEntity);
-                    }
-                } catch (Exception e) {
-                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_GOODS_LIMIT_ERROR, e);
-                }
-                if (updateResult == 0) {
-                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_GOODS_LIMIT_ERROR);
-                }
-            }
-        }
+        // 新增/更新用户活动购买记录
+        updateUserLimit(activityLimitEntityList);
 
-        if (CollectionUtils.isNotEmpty(activityLimitEntityList)) {
-            for (UserLimitEntity activityLimitEntity : activityLimitEntityList) {
-                try {
-                    UserLimitEntity oldUserLimitEntity = userLimitDao.getUserLimit(activityLimitEntity);
-                    if (oldUserLimitEntity == null) {
-                        updateResult = userLimitDao.insertUserLimit(activityLimitEntity);
-                    } else {
-                        updateResult = userLimitDao.updateUserLimit(activityLimitEntity);
-                    }
-                } catch (Exception e) {
-                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_LIMIT_ERROR, e);
-                }
-                if (updateResult == 0) {
-                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_LIMIT_ERROR);
-                }
-            }
-        }
-
-        if (CollectionUtils.isNotEmpty(activityGoodsSoldEntityList)) {
-            for (SkuLimitInfoEntity activitySoldEntity : activityGoodsSoldEntityList) {
-                try {
-                    updateResult = skuLimitInfoDao.increaseSkuSoldNum(activitySoldEntity);
-                } catch (Exception e) {
-                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_SKU_SOLD_NUM_ERROR, e);
-                }
-                if (updateResult == 0) {
-                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_SKU_SOLD_NUM_ERROR);
-                }
-            }
-        }
-
+        // 更新SKU表已售数量
+        updateSkuSoldNum(activityGoodsSoldEntityList);
     }
 
     /**
-     * 修改限购记录
-     *
+     * 修改用户购买记录
      * @param goodsLimitEntityList
      * @param activityLimitEntityList
      * @param activityGoodsSoldEntityList
-     * @scenes 取消下单
+     * @scenes 取消订单/维权
      * @author Pengqin ZHOU
      * @date 2018/6/8
      */
     public void updateUserLimitRecord(List<UserGoodsLimitEntity> goodsLimitEntityList, List<UserLimitEntity> activityLimitEntityList,
                                       List<SkuLimitInfoEntity> activityGoodsSoldEntityList) {
 
-        Integer updateResult = 0;
+        Integer updateResult;
         if (!CollectionUtils.isEmpty(goodsLimitEntityList)) {
+            Collections.sort(goodsLimitEntityList);
             for (UserGoodsLimitEntity goodsLimitEntity : goodsLimitEntityList) {
                 try {
                     updateResult = userGoodsLimitDao.deductUserGoodsLimit(goodsLimitEntity);
                 } catch (Exception e) {
-                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_GOODS_LIMIT_ERROR, e);
+                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_GOODS_LIMIT_DEDUCT_BUY_NUM_ERROR, e);
                 }
-                if (updateResult.equals(0)) {
-                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_GOODS_LIMIT_ERROR);
+                if (updateResult == 0) {
+                    throw new LimitationBizException(LimitationErrorCode.ACTIVITY_EXPIRED);
                 }
             }
         }
 
         if (!CollectionUtils.isEmpty(activityLimitEntityList)) {
+            Collections.sort(activityLimitEntityList);
             for (UserLimitEntity activityLimitEntity : activityLimitEntityList) {
                 try {
                     updateResult = userLimitDao.deductUserLimit(activityLimitEntity);
                 } catch (Exception e) {
-                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_LIMIT_ERROR, e);
+                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_LIMIT_DEDUCT_BUY_NUM_ERROR, e);
                 }
-                if (updateResult.equals(0)) {
-                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_LIMIT_ERROR);
+                if (updateResult == 0) {
+                    throw new LimitationBizException(LimitationErrorCode.ACTIVITY_EXPIRED);
                 }
             }
         }
 
         if (!CollectionUtils.isEmpty(activityGoodsSoldEntityList)) {
+            Collections.sort(activityGoodsSoldEntityList);
             for (SkuLimitInfoEntity activitySoldEntity : activityGoodsSoldEntityList) {
                 try {
                     updateResult = skuLimitInfoDao.deductSkuSoldNum(activitySoldEntity);
                 } catch (Exception e) {
-                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_SKU_SOLD_NUM_ERROR, e);
+                    throw new LimitationBizException(LimitationErrorCode.SQL_DEDUCT_SKU_SOLD_NUM_ERROR, e);
                 }
                 if (updateResult == 0) {
-                    throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_SKU_SOLD_NUM_ERROR);
+                    throw new LimitationBizException(LimitationErrorCode.ACTIVITY_EXPIRED);
                 }
             }
         }
@@ -450,7 +409,7 @@ public class LimitationServiceImpl {
             DeleteGoodsParam param = new DeleteGoodsParam();
             param.setPid(pid);
             param.setLimitId(limitId);
-            param.setGoodsIdList(new ArrayList<Long>(goodsIdSet));
+            param.setGoodsIdList(new ArrayList<>(goodsIdSet));
             goodsLimitInfoDao.reverseGoodsLimit(param);
         }
 
@@ -491,8 +450,92 @@ public class LimitationServiceImpl {
 
         return userGoodsLimitDao.saveUserGoodsLimitListByWid(userGoodsLimitEntityList);
     }
-    public Integer deleteUserGoodsLimitList(List<UserGoodsLimitEntity> userGoodsLimitEntityList){
+    public Integer deleteUserGoodsLimitList(List<UserGoodsLimitEntity> userGoodsLimitEntityList) {
 
         return userGoodsLimitDao.deleteUserGoodsLimitListByWid(userGoodsLimitEntityList);
+    }
+    private void updateSkuSoldNum(List<SkuLimitInfoEntity> activityGoodsSoldEntityList) {
+        Integer updateResult;
+        if (CollectionUtils.isNotEmpty(activityGoodsSoldEntityList)) {
+            Collections.sort(activityGoodsSoldEntityList);
+            for (SkuLimitInfoEntity activitySoldEntity : activityGoodsSoldEntityList) {
+                try {
+                    updateResult = skuLimitInfoDao.increaseSkuSoldNum(activitySoldEntity);
+                } catch (Exception e) {
+                    throw new LimitationBizException(LimitationErrorCode.SQL_INCREASE_SKU_SOLD_NUM_ERROR, e);
+                }
+                if (updateResult == 0) {
+                    throw new LimitationBizException(LimitationErrorCode.SQL_INCREASE_SKU_SOLD_NUM_ERROR);
+                }
+            }
+        }
+    }
+
+    private void updateUserLimit(List<UserLimitEntity> activityLimitEntityList) {
+        Integer updateResult;
+        if (CollectionUtils.isNotEmpty(activityLimitEntityList)) {
+            Collections.sort(activityLimitEntityList);
+            for (UserLimitEntity activityLimitEntity : activityLimitEntityList) {
+                UserLimitEntity oldUserLimitEntity;
+                try {
+                    oldUserLimitEntity = userLimitDao.getUserLimit(activityLimitEntity);
+                } catch (Exception e) {
+                    throw new LimitationBizException(LimitationErrorCode.SQL_QUERY_USER_LIMIT_ERROR, e);
+                }
+                if (oldUserLimitEntity == null) {
+                    try {
+                        updateResult = userLimitDao.insertUserLimit(activityLimitEntity);
+                    } catch (Exception e) {
+                        throw new LimitationBizException(LimitationErrorCode.SQL_SAVE_USER_LIMIT_ERROR, e);
+                    }
+                    if (updateResult == 0) {
+                        throw new LimitationBizException(LimitationErrorCode.SQL_SAVE_USER_LIMIT_ERROR);
+                    }
+                } else {
+                    try {
+                        updateResult = userLimitDao.updateUserLimit(activityLimitEntity);
+                    } catch (Exception e) {
+                        throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_LIMIT_INCREASE_BUY_NUM_ERROR, e);
+                    }
+                    if (updateResult == 0) {
+                        throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_LIMIT_INCREASE_BUY_NUM_ERROR);
+                    }
+                }
+            }
+        }
+    }
+
+    private void updateUserGoodsLimit(List<UserGoodsLimitEntity> goodsLimitEntityList) {
+        Integer updateResult;
+        if (CollectionUtils.isNotEmpty(goodsLimitEntityList)) {
+            Collections.sort(goodsLimitEntityList);
+            for (UserGoodsLimitEntity goodsLimitEntity : goodsLimitEntityList) {
+                UserGoodsLimitEntity oldUserGoodsLimitEntity;
+                try {
+                    oldUserGoodsLimitEntity = userGoodsLimitDao.getUserGoodsLimit(goodsLimitEntity);
+                } catch (Exception e) {
+                    throw new LimitationBizException(LimitationErrorCode.SQL_QUERY_USER_GOODS_LIMIT_ERROR, e);
+                }
+                if (oldUserGoodsLimitEntity == null) {
+                    try {
+                        updateResult = userGoodsLimitDao.insertUserGoodsLimit(goodsLimitEntity);
+                    } catch (Exception e) {
+                        throw new LimitationBizException(LimitationErrorCode.SQL_SAVE_USER_GOODS_LIMIT_ERROR, e);
+                    }
+                    if (updateResult == 0) {
+                        throw new LimitationBizException(LimitationErrorCode.SQL_SAVE_USER_GOODS_LIMIT_ERROR);
+                    }
+                } else {
+                    try {
+                        updateResult = userGoodsLimitDao.updateUserGoodsLimit(goodsLimitEntity);
+                    } catch (Exception e) {
+                        throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_GOODS_LIMIT_INCREASE_BUY_NUM_ERROR, e);
+                    }
+                    if (updateResult == 0) {
+                        throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_GOODS_LIMIT_INCREASE_BUY_NUM_ERROR);
+                    }
+                }
+            }
+        }
     }
 }

@@ -28,9 +28,12 @@
     <stress-datasource.version>1.0.0-SNAPSHOT</stress-datasource.version>
     <jedis-enhance-client.version>1.0.0-SNAPSHOT</jedis-enhance-client.version>
     <quartz.version>2.2.1</quartz.version>
+    <ec-activity-common.version>1.0.6-SNAPSHOT</ec-activity-common.version>
   </properties>
 
   <dependencies>
+
+
     <dependency>
       <groupId>org.quartz-scheduler</groupId>
       <artifactId>quartz</artifactId>
@@ -170,6 +173,29 @@
       <groupId>com.weimob.arch.http</groupId>
       <artifactId>http-register-client</artifactId>
       <version>${http-register-client.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.weimob.saas</groupId>
+      <artifactId>ec-activity-common</artifactId>
+      <version>${ec-activity-common.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>jedis-enhance-client</artifactId>
+          <groupId>com.weimob.arch</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.hibernate.validator/hibernate-validator -->
+    <dependency>
+      <groupId>org.hibernate.validator</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <version>6.0.9.Final</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>RELEASE</version>
     </dependency>
 
   </dependencies>

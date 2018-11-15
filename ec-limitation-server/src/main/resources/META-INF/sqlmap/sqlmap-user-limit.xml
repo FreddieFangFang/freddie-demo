@@ -70,6 +70,7 @@
     AND biz_id = #{bizId}
     AND biz_type = #{bizType}
     AND is_deleted = 0
+    AND wid > 0
   /*UserLimitDao.deleteDiscountUserLimit*/
   </update>
 
@@ -230,6 +231,22 @@
         AND is_deleted = 0
       </foreach>
   /*UserLimitDao.listUserLimitByLimitId*/
+  </select>
+
+  <select id="listUserLimitByLimitIdList" parameterType="com.weimob.saas.ec.limitation.model.CommonLimitParam" resultMap="BaseResultMap">
+    SELECT
+      <include refid="Base_Column_List"/>
+    FROM
+      user_limit
+    WHERE
+    pid = #{pid}
+    AND wid = #{wid}
+    AND is_deleted = 0
+    AND limit_id IN
+    <foreach item="id" index="index" collection="limitIdList" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  /*UserLimitDao.listUserLimitByLimitIdList*/
   </select>
 
 </mapper>

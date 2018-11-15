@@ -1,11 +1,11 @@
 package com.weimob.saas.ec.limitation.dao;
 
 import com.weimob.saas.ec.limitation.entity.SkuLimitInfoEntity;
+import com.weimob.saas.ec.limitation.model.CommonLimitParam;
 import com.weimob.saas.ec.limitation.model.DeleteGoodsParam;
 import com.weimob.saas.ec.limitation.model.DeleteSkuParam;
 import com.weimob.saas.ec.limitation.model.LimitParam;
 import com.weimob.saas.ec.limitation.model.request.QueryGoodsLimitNumListVo;
-import com.weimob.saas.ec.limitation.model.request.SkuLimitInfo;
 import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
 
 import java.util.List;
@@ -118,6 +118,8 @@ public interface SkuLimitInfoDao {
      * @return java.util.List<com.weimob.saas.ec.limitation.entity.SkuLimitInfoEntity>
      */
     List<SkuLimitInfoEntity> listSkuLimit(List<SkuLimitInfoEntity> querySkuLimitList);
+
+    List<SkuLimitInfoEntity> listSkuLimitBySkuList(CommonLimitParam commonLimitParam);
 
     /**
      * @title 查询订单中SKU限购信息

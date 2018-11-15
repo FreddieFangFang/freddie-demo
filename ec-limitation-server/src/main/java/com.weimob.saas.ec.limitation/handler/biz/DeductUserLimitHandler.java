@@ -68,10 +68,10 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
                     || Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
                 groupingOrderActivityRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
                 groupingOrderSkuRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
-                super.updateUserLimitRecord(LimitContext.getLimitBo().getGlobalOrderBuyNumMap());
+                super.updateUserLimitRecord(localOrderBuyNumMap);
             } else if (Objects.equals(vos.get(0).getBizType(), ActivityTypeEnum.DISCOUNT.getType())) {
                 groupingOrderActivityRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
-                super.updateUserLimitRecord(LimitContext.getLimitBo().getGlobalOrderBuyNumMap());
+                super.updateUserLimitRecord(localOrderBuyNumMap);
             }
         }
         // 3.2 操作数据库
@@ -150,7 +150,7 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         try {
             limitationService.saveUserLimitRecord(new ArrayList<>(goodsLimitMap.values()), new ArrayList<>(activityMap.values()), new ArrayList<>(skuLimitMap.values()));
         } catch (Exception e) {
-            throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_GOODS_LIMIT_ERROR, e);
+            throw new LimitationBizException(LimitationErrorCode.CANCEL_ORDER_REVERSE_FAIL, e);
         }
     }
 }

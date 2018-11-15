@@ -2,7 +2,7 @@ package com.weimob.saas.ec.limitation.entity;
 
 import java.util.Date;
 
-public class UserLimitEntity {
+public class UserLimitEntity implements Comparable<UserLimitEntity> {
     private Long id;
 
     private Long pid;
@@ -111,5 +111,15 @@ public class UserLimitEntity {
 
     public void setBizType(Integer bizType) {
         this.bizType = bizType;
+    }
+
+    @Override
+    public int compareTo(UserLimitEntity o) {
+        int result = this.getWid().intValue() - o.getWid().intValue();
+        if (result != 0) {
+            return result;
+        } else {
+            return this.getLimitId().intValue() - o.getLimitId().intValue();
+        }
     }
 }

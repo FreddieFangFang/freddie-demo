@@ -1,6 +1,8 @@
 package com.weimob.saas.ec.limitation.handler.biz;
 
+import com.alibaba.dubbo.rpc.RpcContext;
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
+import com.weimob.saas.ec.common.util.SoaUtil;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitServiceNameEnum;
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
@@ -36,6 +38,7 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
     private SkuLimitBizHandler skuLimitBizHandler;
     @Autowired
     private LimitationServiceImpl limitationService;
+    
 
     @Override
     protected void checkParams(List<UpdateUserLimitVo> vos) {
@@ -92,7 +95,11 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         }
         orderChangeLogEntity.setLimitId(limitInfoEntity.getLimitId());
         orderChangeLogEntity.setWid(vo.getWid());
-        orderChangeLogEntity.setTicket(LimitContext.getTicket());
+        if (RpcContext.getContext().getGlobalTicket().startsWith("EC_STRESS-")) {
+            orderChangeLogEntity.setTicket(RpcContext.getContext().getGlobalTicket());
+        } else {
+            orderChangeLogEntity.setTicket(LimitContext.getTicket());
+        }
         orderChangeLogEntity.setServiceName(getServiceName().name());
         orderChangeLogEntity.setReferId(vo.getOrderNo().toString());
         orderChangeLogEntity.setStatus(LimitConstant.ORDER_LOG_STATUS_INIT);
@@ -119,7 +126,7 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         try {
             limitationService.updateUserLimitRecord(new ArrayList<>(goodsLimitMap.values()), new ArrayList<>(activityMap.values()), new ArrayList<>(skuLimitMap.values()));
         } catch (Exception e) {
-            throw new LimitationBizException(LimitationErrorCode.SQL_UPDATE_USER_GOODS_LIMIT_ERROR, e);
+            throw new LimitationBizException(LimitationErrorCode.CREATE_ORDER_REVERSE_FAIL, e);
         }
     }
 }

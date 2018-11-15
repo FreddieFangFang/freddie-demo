@@ -1,6 +1,5 @@
 package com.weimob.saas.ec.limitation.export;
 
-import com.alibaba.dubbo.rpc.RpcContext;
 import com.weimob.saas.ec.common.exception.BaseException;
 import com.weimob.saas.ec.common.exception.CommonErrorCode;
 import com.weimob.saas.ec.common.export.BaseExportService;
@@ -35,20 +34,13 @@ public class UserLimitUpdateExportService extends BaseExportService implements U
     @Autowired
     private UserLimitUpdateFacadeService userLimitUpdateFacadeService;
 
-
     @Override
     public SoaResponse<UpdateUserLimitResponseVo, LimitationErrorCode> saveUserLimit(SaveUserLimitRequestVo requestVo) {
         SoaResponse<UpdateUserLimitResponseVo, LimitationErrorCode> soaResponse = new SoaResponse<>();
         try {
-            if (RpcContext.getContext().getGlobalTicket() != null && RpcContext.getContext().getGlobalTicket().startsWith("EC_STRESS-")) {
-                LimitContext.setTicket(RpcContext.getContext().getGlobalTicket());
-            } else {
-                LimitContext.setTicket(soaResponse.getMonitorTrackId());
-            }
+            LimitContext.setTicket(soaResponse.getMonitorTrackId());
             UpdateUserLimitResponseVo updateUserLimitResponseVo = userLimitUpdateFacadeService.saveUserLimit(requestVo);
-
             soaResponse.setResponseVo(updateUserLimitResponseVo);
-
         } catch (BaseException baseException) {
             LOGGER.error(" throw biz exception!, monitorTrackId:" + soaResponse.getMonitorTrackId(), baseException);
             soaResponse.setProcessResult(false);
@@ -59,22 +51,18 @@ public class UserLimitUpdateExportService extends BaseExportService implements U
             soaResponse.setProcessResult(false);
             soaResponse.setReturnCode(CommonErrorCode.FAIL.getErrorCode());
             soaResponse.setReturnMsg(CommonErrorCode.FAIL.getErrorMsg());
+        } finally {
+            LimitContext.clearAll();
         }
         return soaResponse;
     }
 
     @Override
     public SoaResponse<UpdateUserLimitResponseVo, LimitationErrorCode> deductUserLimit(DeductUserLimitRequestVo requestVo) {
-
         SoaResponse<UpdateUserLimitResponseVo, LimitationErrorCode> soaResponse = new SoaResponse<>();
         UpdateUserLimitResponseVo updateUserLimitResponseVo = null;
-
         try {
-            if (RpcContext.getContext().getGlobalTicket() != null && RpcContext.getContext().getGlobalTicket().startsWith("EC_STRESS-")) {
-                LimitContext.setTicket(RpcContext.getContext().getGlobalTicket());
-            } else {
-                LimitContext.setTicket(soaResponse.getMonitorTrackId());
-            }
+            LimitContext.setTicket(soaResponse.getMonitorTrackId());
             updateUserLimitResponseVo = userLimitUpdateFacadeService.deductUserLimit(requestVo);
             soaResponse.setResponseVo(updateUserLimitResponseVo);
         } catch (BaseException baseException) {
@@ -87,19 +75,16 @@ public class UserLimitUpdateExportService extends BaseExportService implements U
             soaResponse.setProcessResult(false);
             soaResponse.setReturnCode(CommonErrorCode.FAIL.getErrorCode());
             soaResponse.setReturnMsg(CommonErrorCode.FAIL.getErrorMsg());
+        } finally {
+            LimitContext.clearAll();
         }
-
         return soaResponse;
     }
 
     @Override
     public SoaResponse<ReverseUserLimitResponseVo, LimitationErrorCode> reverseUserLimit(ReverseUserLimitRequestVo requestVo) {
-
         SoaResponse soaResponse = new SoaResponse<>();
-//        ReverseUserLimitResponseVo reverseUserLimitResponseVo = null;
-
         try {
-//            LimitContext.setTicket(soaResponse.getMonitorTrackId());
             userLimitUpdateFacadeService.reverseUserLimit(requestVo);
             soaResponse.setResponseVo(new ReverseUserLimitResponseVo(true));
         } catch (BaseException baseException) {
@@ -114,7 +99,8 @@ public class UserLimitUpdateExportService extends BaseExportService implements U
             soaResponse.setReturnMsg(CommonErrorCode.FAIL.getErrorMsg());
         }
 
-        return soaResponse;    }
+        return soaResponse;
+    }
 
     @Override
     public SoaResponse<Boolean, LimitationErrorCode> mergeLimitByWid(MergeWidRequest requestVo) {

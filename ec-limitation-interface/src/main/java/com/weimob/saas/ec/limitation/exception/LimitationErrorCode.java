@@ -69,29 +69,38 @@ public enum LimitationErrorCode {
     LIMIT_SKU_IS_NULL("1080000200006", "SKU限购记录为空"),
     INVALID_REVERSE_TICKET("1080000200006", "非法的回滚ticket"),
     INVALID_LIMITATION_ACTIVITY("1080000200007", "限购活动已过期"),
+    ACTIVITY_EXPIRED("1080010200008", "活动已过期，取消订单或维权失败"),
 
 
     /*****************************业务异常04**********************************/
-    SQL_UPDATE_USER_GOODS_LIMIT_ERROR("1080000400001", "更新用户商品购买记录数据库异常"),
-    SQL_UPDATE_USER_LIMIT_ERROR("1080000400002", "数据库更新异常"),
-    SQL_UPDATE_SKU_SOLD_NUM_ERROR("1080000400003", "更新SKU已售数量数据库异常"),
-    SQL_INSERT_ORDER_LOG_ERROR("1080000400004", "数据库插入异常"),
-    SQL_QUERY_ORDER_CHANGE_LOG_ERROR("1080000400005", "查询下单记录异常"),
+    SQL_UPDATE_USER_GOODS_LIMIT_INCREASE_BUY_NUM_ERROR("1080000400001", "更新用户商品购买记录表：增加用户已购数量数据库异常"),
+    SQL_UPDATE_USER_LIMIT_INCREASE_BUY_NUM_ERROR("1080000400002", "更新用户活动购买记录表：增加用户已购数量数据库异常"),
+    SQL_INCREASE_SKU_SOLD_NUM_ERROR("1080000400003", "增加SKU已售数量数据库异常"),
+    SQL_INSERT_ORDER_LOG_ERROR("1080000400004", "新增日志数据数据库异常"),
+    SQL_QUERY_ORDER_CHANGE_LOG_ERROR("1080000400005", "查询下单记录数据库异常"),
     SQL_UPDATE_ORDER_CHANGE_LOG_ERROR("1080000400006", "更新下单的日志状态异常"),
-    SQL_SAVE_LIMIT_INFO_ERROR("1080000400007", "保存限购信息数据库异常"),
+    SQL_SAVE_LIMIT_INFO_ERROR("1080000400007", "新增限购主表信息数据库异常"),
     SQL_SAVE_STORE_RELATIONSHIP_ERROR("1080000400008", "保存限购门店关系数据库异常"),
-    SQL_SAVE_SKU_INFO_ERROR("1080000400009", "保存SKU限购信息数据库异常"),
-    SQL_SAVE_GOODS_INFO_ERROR("1080000400010", "保存商品限购信息数据库异常"),
-    SQL_QUERY_LIMIT_INFO_ERROR("1080020400011", "查询限购信息数据库异常"),
-    SQL_UPDATE_LIMIT_INFO_ERROR("1080010400012", "更新限购信息数据库异常"),
+    SQL_SAVE_SKU_INFO_ERROR("1080000400009", "新增SKU限购信息数据库异常"),
+    SQL_SAVE_GOODS_INFO_ERROR("1080000400010", "新增商品限购信息数据库异常"),
+    SQL_QUERY_LIMIT_INFO_ERROR("1080020400011", "查询限购主表信息数据库异常"),
+    SQL_UPDATE_LIMIT_INFO_ERROR("1080010400012", "更新限购主表信息数据库异常"),
     SQL_DELETE_STORE_RELATIONSHIP_ERROR("1080010400013", "删除限购门店关系数据库异常"),
     SQL_UPDATE_SKU_LIMIT_NUM_ERROR("1080010400014", "更新SKU可售数量数据库异常"),
-    SQL_DELETE_LIMIT_INFO_ERROR("1080010400015", "删除限购信息数据库异常"),
+    SQL_DELETE_LIMIT_INFO_ERROR("1080010400015", "删除限购主表信息数据库异常"),
     SQL_DELETE_SKU_LIMIT_NUM_ERROR("1080010400016", "删除SKU可售数量数据库异常"),
-    SQL_QUERY_LIMIT_INFO_LIST_ERROR("1080020400017", "批量查询限购信息数据库异常"),
+    SQL_QUERY_LIMIT_INFO_LIST_ERROR("1080020400017", "批量查询限购主表信息数据库异常"),
     SQL_QUERY_SKU_INFO_ERROR("1080020400018", "查询SKU限购信息数据库异常"),
     SQL_QUERY_SKU_INFO_LIST_ERROR("1080020400019", "批量查询SKU限购信息数据库异常"),
-
+    SQL_SAVE_USER_GOODS_LIMIT_ERROR("1080000400020", "新增用户商品购买记录数据库异常"),
+    SQL_SAVE_USER_LIMIT_ERROR("1080000400021", "新增用户活动购买记录数据库异常"),
+    SQL_QUERY_USER_GOODS_LIMIT_ERROR("1080020400022", "查询用户商品购买记录数据库异常"),
+    SQL_QUERY_USER_LIMIT_ERROR("1080020400023", "查询用户活动购买记录数据库异常"),
+    CANCEL_ORDER_REVERSE_FAIL("1080010400024", "取消订单回滚失败"),
+    CREATE_ORDER_REVERSE_FAIL("1080010400025", "用户下单回滚失败"),
+    SQL_UPDATE_USER_GOODS_LIMIT_DEDUCT_BUY_NUM_ERROR("1080010400026", "更新用户商品购买记录表：扣减用户已购数量数据库异常"),
+    SQL_UPDATE_USER_LIMIT_DEDUCT_BUY_NUM_ERROR("1080010400027", "更新用户活动购买记录表：扣减用户已购数量数据库异常"),
+    SQL_DEDUCT_SKU_SOLD_NUM_ERROR("1080010400028", "扣减SKU已售数量数据库异常"),
 
 
     ;
@@ -100,12 +109,12 @@ public enum LimitationErrorCode {
     private String errorMsg;
     private String returnMsg;
 
-    private LimitationErrorCode(String errorCode, String errorMsg) {
+    LimitationErrorCode(String errorCode, String errorMsg) {
         this.errorCode = errorCode;
         this.errorMsg = errorMsg;
     }
 
-    private LimitationErrorCode(String errorCode, String errorMsg, String returnMsg) {
+    LimitationErrorCode(String errorCode, String errorMsg, String returnMsg) {
         this.errorCode = errorCode;
         this.errorMsg = errorMsg;
         this.returnMsg = returnMsg;
