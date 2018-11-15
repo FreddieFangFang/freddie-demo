@@ -56,7 +56,8 @@ public class CommonBizUtil {
         return isValidCombination(bizType)
                 || isValidDiscountSku(bizType, activityStockType)
                 || isValidPoint(bizType)
-                || isValidPrivilegePrice(bizType);
+                || isValidPrivilegePrice(bizType)
+                || isValidCommunityGroupon(bizType);
 
     }
     public static boolean isValidUserActivityLimit(Integer bizType,Integer activityStockType) {
