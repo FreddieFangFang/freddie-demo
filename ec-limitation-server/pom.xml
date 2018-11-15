@@ -70,6 +70,12 @@
       <groupId>com.weimob.saas</groupId>
       <artifactId>ec-limitation-interface</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>validation-api</artifactId>
+          <groupId>javax.validation</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -183,15 +189,25 @@
           <artifactId>jedis-enhance-client</artifactId>
           <groupId>com.weimob.arch</groupId>
         </exclusion>
+        <exclusion>
+          <artifactId>validation-api</artifactId>
+          <groupId>javax.validation</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
 
     <!-- https://mvnrepository.com/artifact/org.hibernate.validator/hibernate-validator -->
-    <dependency>
-      <groupId>org.hibernate.validator</groupId>
-      <artifactId>hibernate-validator</artifactId>
-      <version>6.0.9.Final</version>
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>org.hibernate.validator</groupId>-->
+      <!--<artifactId>hibernate-validator</artifactId>-->
+      <!--<version>6.0.9.Final</version>-->
+        <!--<exclusions>-->
+            <!--<exclusion>-->
+                <!--<artifactId>validation-api</artifactId>-->
+                <!--<groupId>javax.validation</groupId>-->
+            <!--</exclusion>-->
+        <!--</exclusions>-->
+    <!--</dependency>-->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
