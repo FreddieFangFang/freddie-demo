@@ -1,5 +1,6 @@
 package com.weimob.saas.ec.limitation.service;
 
+import com.weimob.saas.ec.common.request.MergeWidRequest;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.model.request.DeductUserLimitRequestVo;
 import com.weimob.saas.ec.limitation.model.request.ReverseUserLimitRequestVo;
@@ -53,4 +54,13 @@ public interface UserLimitUpdateService {
      * @return
      */
     SoaResponse<ReverseUserLimitResponseVo, LimitationErrorCode> reverseUserLimit(ReverseUserLimitRequestVo requestVo);
+
+    /**
+     * @title  合并wid
+     * @author fei.zheng
+     * @date 2018/10/31 10:54
+     * @parameterExample
+     * @returnExample
+     */
+    SoaResponse<Boolean, LimitationErrorCode> mergeLimitByWid(MergeWidRequest requestVo);
 }

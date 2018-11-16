@@ -88,6 +88,69 @@
   /*UserLimitDao.updateUserLimit*/
   </update>
 
+  <update id="updateUserLimitListByWid" parameterType="UserLimitEntity">
+    <foreach item="item" index="index" collection="list" open=""  close="" separator=";">
+      UPDATE
+        user_limit
+      SET
+        buy_num = #{item.buyNum},
+        update_time = NOW()
+      WHERE
+        pid = #{item.pid}
+      AND store_id = #{item.storeId}
+      AND wid = #{item.wid}
+      AND limit_id = #{item.limitId}
+    </foreach>
+  /*UserLimitDao.updateUserLimitListByWid*/
+  </update>
+
+  <update id="saveUserLimitListByWid" parameterType="UserLimitEntity">
+    INSERT INTO user_limit (
+      pid,
+      store_id,
+      wid,
+      limit_id,
+      biz_id,
+      biz_type,
+      buy_num,
+      is_deleted,
+      create_time,
+      update_time
+    )
+    VALUES
+    <foreach item="item" index="index" collection="list" open="" close="" separator=",">
+      (
+      #{item.pid},
+      #{item.storeId},
+      #{item.wid},
+      #{item.limitId},
+      #{item.bizId},
+      #{item.bizType},
+      #{item.buyNum},
+      0,
+      NOW(),
+      NOW()
+      )
+    </foreach>
+    /*UserLimitDao.saveUserLimitListByWid*/
+  </update>
+
+  <update id="deleteUserLimitListByWid" parameterType="UserLimitEntity" >
+    <foreach item="item" index="index" collection="list" open=""  close="" separator=";">
+    UPDATE
+      user_limit
+    SET
+      is_deleted = 1,
+      update_time = NOW()
+    WHERE
+       pid = #{item.pid}
+      AND store_id = #{item.storeId}
+      AND wid = #{item.wid}
+      AND limit_id = #{item.limitId}
+    </foreach>
+    /*UserLimitDao.deleteUserLimitListByWid*/
+  </update>
+
   <update id="deductUserLimit" parameterType="UserLimitEntity">
     UPDATE
       user_limit
@@ -115,6 +178,17 @@
     AND limit_id = #{limitId}
     AND is_deleted = 0
   /*UserLimitDao.getUserLimit*/
+  </select>
+
+  <select id="getUserLimitListByWid" parameterType="UserLimitEntity" resultMap="BaseResultMap">
+    SELECT
+      <include refid="Base_Column_List"/>
+    FROM
+      user_limit
+    WHERE
+      wid = #{wid}
+    AND is_deleted = 0
+    /*UserLimitDao.getUserLimitByWid*/
   </select>
 
   <select id="listUserLimitByBizId" resultMap="BaseResultMap" parameterType="java.util.List">

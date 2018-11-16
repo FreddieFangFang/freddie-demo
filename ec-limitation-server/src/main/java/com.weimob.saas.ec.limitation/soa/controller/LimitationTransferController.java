@@ -1,9 +1,14 @@
 package com.weimob.saas.ec.limitation.soa.controller;
 
+import com.weimob.saas.ec.common.request.MergeWidRequest;
 import com.weimob.saas.ec.common.response.HttpResponse;
+import com.weimob.saas.ec.common.util.SoaUtil;
+import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
+import com.weimob.saas.ec.limitation.export.UserLimitUpdateExportService;
 import com.weimob.saas.ec.limitation.model.request.LimitationTransferRequestVo;
 import com.weimob.saas.ec.limitation.model.response.LimitationTransferResponseVo;
 import com.weimob.saas.ec.limitation.thread.LimitationTransferThread;
+import com.weimob.soa.common.response.SoaResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Controller;
@@ -25,7 +30,8 @@ public class LimitationTransferController {
 
     @Autowired
     private ThreadPoolTaskExecutor threadExecutor;
-
+    @Autowired
+    private UserLimitUpdateExportService userLimitUpdateExportService;
     @RequestMapping(value = "/limitationTransfer")
     @ResponseBody
     public HttpResponse<LimitationTransferResponseVo> limitationTransfer(@RequestBody LimitationTransferRequestVo requestVo) {
@@ -40,5 +46,12 @@ public class LimitationTransferController {
         responseVo.setStatus(true);
         httpResponse.setData(responseVo);
         return httpResponse;
+    }
+
+    @RequestMapping(value = "/mergeLimitByWid")
+    @ResponseBody
+    public HttpResponse<Boolean> mergeLimitByWid(@RequestBody MergeWidRequest requestVo) {
+        SoaResponse<Boolean, LimitationErrorCode> soaResponse = userLimitUpdateExportService.mergeLimitByWid(requestVo);
+        return SoaUtil.convertSoaResponseToHttpResponse(soaResponse);
     }
 }

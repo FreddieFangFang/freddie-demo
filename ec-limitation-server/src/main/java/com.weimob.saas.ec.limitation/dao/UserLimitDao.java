@@ -54,6 +54,42 @@ public interface UserLimitDao {
     UserLimitEntity getUserLimit(UserLimitEntity activityLimitEntity);
 
     /**
+     * @title 查询用户活动购买记录（所有pid,storeId,limitId下的）
+     * @author fei.zheng
+     * @date 2018/10/30 20:27
+     * @parameterExample
+     * @returnExample com.weimob.saas.ec.limitation.entity.UserLimitEntity
+     */
+    List<UserLimitEntity> getUserLimitListByWid(UserLimitEntity activityLimitEntity);
+
+    /**
+     * @title 批量更新用户活动购买记录（所有pid,storeId,limitId下的）
+     * @author fei.zheng
+     * @date 2018/10/30 20:27
+     * @parameterExample
+     * @returnExample com.weimob.saas.ec.limitation.entity.UserLimitEntity
+     */
+
+    Integer updateUserLimitListByWid(List<UserLimitEntity> userLimitEntityList);
+    /**
+     * @title 批量新增用户活动购买记录（所有pid,storeId,limitId下的）
+     * @author fei.zheng
+     * @date 2018/10/30 20:27
+     * @parameterExample
+     * @returnExample com.weimob.saas.ec.limitation.entity.UserLimitEntity
+     */
+    Integer saveUserLimitListByWid(List<UserLimitEntity> userLimitEntityList);
+
+    /**
+     * @title 批量删除用户活动购买记录（所有pid,storeId,limitId下的）
+     * @author fei.zheng
+     * @date 2018/10/30 20:27
+     * @parameterExample
+     * @returnExample com.weimob.saas.ec.limitation.entity.UserLimitEntity
+     */
+    Integer deleteUserLimitListByWid(List<UserLimitEntity> userLimitEntityList);
+
+    /**
      * @title 批量查询用户活动购买记录
      * @author qi.he
      * @date 2018/10/12 0012 17:39

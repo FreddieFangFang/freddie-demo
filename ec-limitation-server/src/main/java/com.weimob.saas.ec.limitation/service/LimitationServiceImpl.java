@@ -439,6 +439,42 @@ public class LimitationServiceImpl {
         }
     }
 
+    public List<UserLimitEntity> getUserLimitList(Long pid, Long wid){
+        UserLimitEntity activityLimitEntity = new UserLimitEntity();
+        activityLimitEntity.setPid(pid);
+        activityLimitEntity.setWid(wid);
+        return userLimitDao.getUserLimitListByWid(activityLimitEntity);
+    }
+    public Integer updateUserLimitList(List<UserLimitEntity> userLimitEntityList){
+        //这里批量更新是不是要 做大小限制？
+        return userLimitDao.updateUserLimitListByWid(userLimitEntityList);
+    }
+    public Integer saveUserLimitList(List<UserLimitEntity> userLimitEntityList){
+        //这里批量插入是不是要 做大小限制？
+        return userLimitDao.saveUserLimitListByWid(userLimitEntityList);
+    }
+    public Integer deleteUserLimitList(List<UserLimitEntity> userLimitEntityList){
+        //这里批量插入是不是要 做大小限制？
+        return userLimitDao.deleteUserLimitListByWid(userLimitEntityList);
+    }
+    public List<UserGoodsLimitEntity> getUserGoodsLimitList(Long pid, Long wid){
+        UserGoodsLimitEntity userGoodsLimitEntity = new UserGoodsLimitEntity();
+        userGoodsLimitEntity.setPid(pid);
+        userGoodsLimitEntity.setWid(wid);
+        return userGoodsLimitDao.listUserGoodsLimitListByWid(userGoodsLimitEntity);
+    }
+    public Integer updateUserGoodsLimitList(List<UserGoodsLimitEntity> userGoodsLimitEntityList){
+
+        return userGoodsLimitDao.updateUserGoodsLimitListByWid(userGoodsLimitEntityList);
+    }
+    public Integer saveUserGoodsLimitList(List<UserGoodsLimitEntity> userGoodsLimitEntityList){
+
+        return userGoodsLimitDao.saveUserGoodsLimitListByWid(userGoodsLimitEntityList);
+    }
+    public Integer deleteUserGoodsLimitList(List<UserGoodsLimitEntity> userGoodsLimitEntityList) {
+
+        return userGoodsLimitDao.deleteUserGoodsLimitListByWid(userGoodsLimitEntityList);
+    }
     private void updateSkuSoldNum(List<SkuLimitInfoEntity> activityGoodsSoldEntityList) {
         Integer updateResult;
         if (CollectionUtils.isNotEmpty(activityGoodsSoldEntityList)) {
