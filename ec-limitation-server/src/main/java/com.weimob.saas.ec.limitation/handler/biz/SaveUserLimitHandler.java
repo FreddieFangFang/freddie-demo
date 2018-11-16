@@ -69,9 +69,10 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
             } else if (Objects.equals(bizType, ActivityTypeEnum.DISCOUNT.getType())) {
                 goodsLimitBizHandler.doLimitHandler(vos);
                 activityLimitBizHandler.doLimitHandler(vos);
-            } else if (Objects.equals(bizType, ActivityTypeEnum.COMBINATION_BUY.getType())||
-                       Objects.equals(bizType, ActivityTypeEnum.COMMUNITY_GROUPON.getType())) {
+            } else if (Objects.equals(bizType, ActivityTypeEnum.COMBINATION_BUY.getType())){
                 activityLimitBizHandler.doLimitHandler(vos);
+                skuLimitBizHandler.doLimitHandler(vos);
+            } else if (Objects.equals(bizType, ActivityTypeEnum.COMMUNITY_GROUPON.getType())){
                 skuLimitBizHandler.doLimitHandler(vos);
             }
         }

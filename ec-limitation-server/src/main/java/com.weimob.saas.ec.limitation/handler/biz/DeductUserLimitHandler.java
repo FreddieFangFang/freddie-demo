@@ -72,9 +72,11 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
                 groupingOrderGoodsRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
                 groupingOrderActivityRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
                 super.updateUserLimitRecord(localOrderBuyNumMap);
-            } else if (Objects.equals(bizType, ActivityTypeEnum.COMMUNITY_GROUPON.getType())
-                    || Objects.equals(bizType, ActivityTypeEnum.COMBINATION_BUY.getType())) {
+            } else if (Objects.equals(bizType, ActivityTypeEnum.COMBINATION_BUY.getType())) {
                 groupingOrderActivityRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
+                groupingOrderSkuRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
+                super.updateUserLimitRecord(localOrderBuyNumMap);
+            } else if (Objects.equals(bizType, ActivityTypeEnum.COMMUNITY_GROUPON.getType())){
                 groupingOrderSkuRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
                 super.updateUserLimitRecord(localOrderBuyNumMap);
             }
