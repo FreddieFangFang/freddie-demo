@@ -2,7 +2,6 @@ package com.weimob.saas.ec.limitation.handler.biz;
 
 import com.alibaba.dubbo.rpc.RpcContext;
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
-import com.weimob.saas.ec.common.util.SoaUtil;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitServiceNameEnum;
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
@@ -16,6 +15,7 @@ import com.weimob.saas.ec.limitation.handler.limit.SkuLimitBizHandler;
 import com.weimob.saas.ec.limitation.model.LimitParam;
 import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
 import com.weimob.saas.ec.limitation.service.LimitationServiceImpl;
+import com.weimob.saas.ec.limitation.utils.CommonBizUtil;
 import com.weimob.saas.ec.limitation.utils.LimitContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,22 +57,16 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
             List<UpdateUserLimitVo> vos = entry.getValue();
             Integer bizType = vos.get(0).getBizType();
             Integer activityStockType = vos.get(0).getActivityStockType();
-            if (Objects.equals(bizType, LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel())) {
-                goodsLimitBizHandler.doLimitHandler(vos);
-                skuLimitBizHandler.doLimitHandler(vos);
-            } else if (Objects.equals(bizType, ActivityTypeEnum.PRIVILEGE_PRICE.getType())
-                    || (Objects.equals(bizType, ActivityTypeEnum.DISCOUNT.getType())
-                    && Objects.equals(activityStockType, LimitConstant.DISCOUNT_TYPE_SKU))) {
-                goodsLimitBizHandler.doLimitHandler(vos);
+            //处理活动限购
+            if (CommonBizUtil.isValidActivityLimit(bizType)) {
                 activityLimitBizHandler.doLimitHandler(vos);
-                skuLimitBizHandler.doLimitHandler(vos);
-            } else if (Objects.equals(bizType, ActivityTypeEnum.DISCOUNT.getType())) {
+            }
+            //处理商品限购
+            if (CommonBizUtil.isValidGoodsLimit(bizType)) {
                 goodsLimitBizHandler.doLimitHandler(vos);
-                activityLimitBizHandler.doLimitHandler(vos);
-            } else if (Objects.equals(bizType, ActivityTypeEnum.COMBINATION_BUY.getType())){
-                activityLimitBizHandler.doLimitHandler(vos);
-                skuLimitBizHandler.doLimitHandler(vos);
-            } else if (Objects.equals(bizType, ActivityTypeEnum.COMMUNITY_GROUPON.getType())){
+            }
+            //处理SKU限购
+            if (CommonBizUtil.isValidSkuLimit(bizType, activityStockType)) {
                 skuLimitBizHandler.doLimitHandler(vos);
             }
         }

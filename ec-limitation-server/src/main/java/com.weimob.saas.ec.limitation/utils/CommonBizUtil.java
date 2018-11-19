@@ -37,6 +37,10 @@ public class CommonBizUtil {
         return Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), bizType);
     }
 
+    public static boolean isValidNynj(Integer bizType) {
+        return Objects.equals(ActivityTypeEnum.NYNJ.getType(), bizType);
+    }
+
 
     /**
      * @description 积分商城
@@ -50,12 +54,35 @@ public class CommonBizUtil {
 
 
 
+
+    /**
+     * @description 需要校验活动限购的活动
+     * @author qi.he
+     * @date 2018/11/19 16:26
+     **/
+    public static boolean isValidActivityLimit(Integer bizType) {
+        return isValidDiscount(bizType)
+                || isValidPrivilegePrice(bizType)
+                || isValidCombination(bizType)
+                || isValidNynj(bizType);
+    }
+
+    /**
+     * @description 需要校验商品限购的活动
+     * @author qi.he
+     * @date 2018/11/19 16:26
+     **/
+    public static boolean isValidGoodsLimit(Integer bizType) {
+        return isValidDiscount(bizType)
+                || isValidPoint(bizType)
+                || isValidPrivilegePrice(bizType);
+    }
+
     /**
      * @description 需要校验sku限购的活动
      * @author haojie.jin
      * @date 5:00 PM 2018/11/8
      **/
-
     public static boolean isValidSkuLimit(Integer bizType,Integer activityStockType) {
         return isValidCombination(bizType)
                 || isValidDiscountSku(bizType, activityStockType)
@@ -71,16 +98,9 @@ public class CommonBizUtil {
                 || isValidPrivilegePrice(bizType);
     }
 
-    public static boolean isValidGoodsLimit(Integer bizType) {
-        return isValidDiscount(bizType)
-                || isValidPoint(bizType)
-                || isValidPrivilegePrice(bizType);
-    }
-
     public static boolean isValidGoodsSkuLimit(Integer bizType,Integer activityStockType) {
         return isValidDiscountSku(bizType, activityStockType)
                 || isValidPoint(bizType)
                 || isValidPrivilegePrice(bizType);
     }
-
 }
