@@ -13,6 +13,14 @@ public class DeleteGoodsParam extends BaseRequest{
     private Long limitId;
     private List<Long> goodsIdList;
 
+    public DeleteGoodsParam() {
+    }
+
+    public DeleteGoodsParam(Long pid, Long limitId, List<Long> goodsIdList) {
+        super.setPid(pid);
+        this.limitId = limitId;
+        this.goodsIdList = goodsIdList;
+    }
 
     public Long getLimitId() {
         return limitId;
