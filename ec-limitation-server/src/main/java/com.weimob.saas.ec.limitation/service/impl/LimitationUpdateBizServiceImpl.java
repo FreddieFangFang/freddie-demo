@@ -10,6 +10,7 @@ import com.weimob.saas.ec.limitation.dao.*;
 import com.weimob.saas.ec.limitation.entity.*;
 import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
+import com.weimob.saas.ec.limitation.model.DeleteGoodsParam;
 import com.weimob.saas.ec.limitation.model.LimitParam;
 import com.weimob.saas.ec.limitation.model.request.*;
 import com.weimob.saas.ec.limitation.model.response.DeleteDiscountUserLimitInfoResponseVo;
@@ -235,7 +236,11 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
                 }
 
                 //社区团购删除sku限购信息
-                limitationService.deleteSkuLimitInfo(pid,limitInfoEntity.getLimitId(),goodsIdList);
+                DeleteGoodsParam param = new DeleteGoodsParam();
+                param.setPid(pid);
+                param.setLimitId(limitInfoEntity.getLimitId());
+                param.setGoodsIdList(goodsIdList);
+                skuLimitInfoDao.deleteSkuLimitByGoodsId(param);
 
                 break;
             default:
