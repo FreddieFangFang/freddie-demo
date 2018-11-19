@@ -30,7 +30,6 @@ public class LimitationUpdateFacadeService {
 
     /**
      * 保存限购主要信息
-     *
      * @param requestVo
      * @return
      */
@@ -39,6 +38,70 @@ public class LimitationUpdateFacadeService {
         validateRequestParam(requestVo);
 
         return limitationUpdateBizService.saveLimitationInfo(requestVo);
+    }
+
+    /**
+     * 更新限购主要信息
+     * @param requestVo
+     * @return
+     */
+    public LimitationUpdateResponseVo updateLimitationInfo(LimitationInfoRequestVo requestVo) {
+        //校验参数
+        validateRequestParam(requestVo);
+
+        return limitationUpdateBizService.updateLimitationInfo(requestVo);
+    }
+
+    public LimitationUpdateResponseVo deleteLimitationInfo(DeleteLimitationRequestVo requestVo) {
+
+        validateDeleteRequestParam(requestVo);
+
+        return limitationUpdateBizService.deleteLimitationInfo(requestVo);
+    }
+
+    public LimitationUpdateResponseVo batchDeleteGoodsLimit(BatchDeleteGoodsLimitRequestVo requestVo) {
+
+        validateBatchDeleteRequestParam(requestVo);
+
+        return limitationUpdateBizService.batchDeleteGoodsLimit(requestVo);
+    }
+
+    public SaveGoodsLimitInfoResponseVo saveGoodsLimitInfo(SaveGoodsLimitInfoRequestVo requestVo) {
+        valiateSaveGoodsLimitInfoRequsetVo(requestVo);
+
+        return limitationUpdateBizService.saveGoodsLimitInfo(requestVo);
+    }
+
+    public SaveGoodsLimitInfoResponseVo updateGoodsLimitInfo(SaveGoodsLimitInfoRequestVo requestVo) {
+        valiateSaveGoodsLimitInfoRequsetVo(requestVo);
+
+        return limitationUpdateBizService.updateGoodsLimitInfo(requestVo);
+    }
+
+    public DeleteDiscountUserLimitInfoResponseVo deleteDiscountUserLimitInfo(DeleteDiscountUserLimitInfoRequestVo requestVo) {
+        valiateDeleteDiscountUserLimitInfoRequestVo(requestVo);
+
+        return limitationUpdateBizService.deleteDiscountUserLimitInfo(requestVo);
+    }
+
+    private void validateDeleteRequestParam(DeleteLimitationRequestVo requestVo) {
+        VerifyParamUtils.checkParam(LimitationErrorCode.REQUEST_PARAM_IS_NULL, requestVo);
+        VerifyParamUtils.checkParam(LimitationErrorCode.PID_IS_NULL, requestVo.getPid());
+        VerifyParamUtils.checkParam(LimitationErrorCode.BIZID_IS_NULL, requestVo.getBizId());
+        VerifyParamUtils.checkParam(LimitationErrorCode.BIZTYPE_IS_NULL, requestVo.getBizType());
+    }
+
+    private void validateBatchDeleteRequestParam(BatchDeleteGoodsLimitRequestVo requestVo) {
+        VerifyParamUtils.checkParam(LimitationErrorCode.REQUEST_PARAM_IS_NULL, requestVo);
+        for (BatchDeleteGoodsLimitVo request : requestVo.getDeleteGoodsLimitVoList()) {
+            VerifyParamUtils.checkParam(LimitationErrorCode.PID_IS_NULL, request.getPid());
+            VerifyParamUtils.checkParam(LimitationErrorCode.BIZID_IS_NULL, request.getBizId());
+            VerifyParamUtils.checkParam(LimitationErrorCode.BIZTYPE_IS_NULL, request.getBizType());
+            VerifyParamUtils.checkParam(LimitationErrorCode.GOODSID_IS_NULL, request.getGoodsId());
+            if (Objects.equals(request.getBizType(), ActivityTypeEnum.DISCOUNT.getType())) {
+                VerifyParamUtils.checkParam(LimitationErrorCode.ACTIVITY_STOCK_TYPE_IS_NULL, request.getActivityStockType());
+            }
+        }
     }
 
     private void validateRequestParam(LimitationInfoRequestVo requestVo) {
@@ -66,60 +129,6 @@ public class LimitationUpdateFacadeService {
             VerifyParamUtils.checkParam(LimitationErrorCode.PARTICULAE_GROUP_TYPE_IS_NULL,
                     requestVo.getThresholdInfo().getParticularGroupType());
         }
-    }
-
-    /**
-     * 更新限购主要信息
-     *
-     * @param requestVo
-     * @return
-     */
-    public LimitationUpdateResponseVo updateLimitationInfo(LimitationInfoRequestVo requestVo) {
-        //校验参数
-        validateRequestParam(requestVo);
-
-        return limitationUpdateBizService.updateLimitationInfo(requestVo);
-    }
-
-
-    public LimitationUpdateResponseVo deleteLimitationInfo(DeleteLimitationRequestVo requestVo) {
-
-        validateDeleteRequestParam(requestVo);
-
-        return limitationUpdateBizService.deleteLimitationInfo(requestVo);
-    }
-
-    private void validateDeleteRequestParam(DeleteLimitationRequestVo requestVo) {
-        VerifyParamUtils.checkParam(LimitationErrorCode.REQUEST_PARAM_IS_NULL, requestVo);
-        VerifyParamUtils.checkParam(LimitationErrorCode.PID_IS_NULL, requestVo.getPid());
-        VerifyParamUtils.checkParam(LimitationErrorCode.BIZID_IS_NULL, requestVo.getBizId());
-        VerifyParamUtils.checkParam(LimitationErrorCode.BIZTYPE_IS_NULL, requestVo.getBizType());
-    }
-
-    public LimitationUpdateResponseVo batchDeleteGoodsLimit(BatchDeleteGoodsLimitRequestVo requestVo) {
-
-        validateBatchDeleteRequestParam(requestVo);
-
-        return limitationUpdateBizService.batchDeleteGoodsLimit(requestVo);
-    }
-
-    private void validateBatchDeleteRequestParam(BatchDeleteGoodsLimitRequestVo requestVo) {
-        VerifyParamUtils.checkParam(LimitationErrorCode.REQUEST_PARAM_IS_NULL, requestVo);
-        for (BatchDeleteGoodsLimitVo request : requestVo.getDeleteGoodsLimitVoList()) {
-            VerifyParamUtils.checkParam(LimitationErrorCode.PID_IS_NULL, request.getPid());
-            VerifyParamUtils.checkParam(LimitationErrorCode.BIZID_IS_NULL, request.getBizId());
-            VerifyParamUtils.checkParam(LimitationErrorCode.BIZTYPE_IS_NULL, request.getBizType());
-            VerifyParamUtils.checkParam(LimitationErrorCode.GOODSID_IS_NULL, request.getGoodsId());
-            if (Objects.equals(request.getBizType(), ActivityTypeEnum.DISCOUNT.getType())) {
-                VerifyParamUtils.checkParam(LimitationErrorCode.ACTIVITY_STOCK_TYPE_IS_NULL, request.getActivityStockType());
-            }
-        }
-    }
-
-    public SaveGoodsLimitInfoResponseVo saveGoodsLimitInfo(SaveGoodsLimitInfoRequestVo requestVo) {
-        valiateSaveGoodsLimitInfoRequsetVo(requestVo);
-
-        return limitationUpdateBizService.saveGoodsLimitInfo(requestVo);
     }
 
     private void valiateSaveGoodsLimitInfoRequsetVo(SaveGoodsLimitInfoRequestVo saveGoodsLimitInfoRequestVo) {
@@ -154,18 +163,6 @@ public class LimitationUpdateFacadeService {
                 }
             }
         }
-    }
-
-    public SaveGoodsLimitInfoResponseVo updateGoodsLimitInfo(SaveGoodsLimitInfoRequestVo requestVo) {
-        valiateSaveGoodsLimitInfoRequsetVo(requestVo);
-
-        return limitationUpdateBizService.updateGoodsLimitInfo(requestVo);
-    }
-
-    public DeleteDiscountUserLimitInfoResponseVo deleteDiscountUserLimitInfo(DeleteDiscountUserLimitInfoRequestVo requestVo) {
-        valiateDeleteDiscountUserLimitInfoRequestVo(requestVo);
-
-        return limitationUpdateBizService.deleteDiscountUserLimitInfo(requestVo);
     }
 
     private void valiateDeleteDiscountUserLimitInfoRequestVo(DeleteDiscountUserLimitInfoRequestVo requestVo) {
