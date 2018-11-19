@@ -2,6 +2,7 @@ package com.weimob.saas.ec.limitation.service.impl;
 
 import com.alibaba.dubbo.rpc.RpcContext;
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
+import com.weimob.saas.ec.common.constant.BizTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitLevelEnum;
 import com.weimob.saas.ec.limitation.common.LimitServiceNameEnum;
@@ -194,20 +195,22 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         Integer bizType = saveGoodsLimitInfoRequestVo.getGoodsList().get(0).getBizType();
         Long pid = saveGoodsLimitInfoRequestVo.getGoodsList().get(0).getPid();
         Integer activityStockType = saveGoodsLimitInfoRequestVo.getGoodsList().get(0).getActivityStockType();
+        //非积分商城，则去获取limitId
+        if (!Objects.equals(LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel(), bizType)) {
+            limitId = getLimitInfoEntity(pid, bizId, bizType).getLimitId();
+        }
         switch (LimitBizTypeEnum.getLimitLevelEnumByLevel(bizType)) {
             case BIZ_TYPE_DISCOUNT:
             case BIZ_TYPE_PRIVILEGE_PRICE:
-                //限时折扣,特权价，先查询limitId，再插入限购商品表
-                /** 1 查询限购主表信息*/
-                LimitInfoEntity oldLimitInfoEntity = getLimitInfoEntity(pid, bizId, bizType);
-                limitId = oldLimitInfoEntity.getLimitId();
+                //构建商品限购表数据
                 goodsLimitInfoEntityList = buildGoodsLimitInfoEntity(limitId, saveGoodsLimitInfoRequestVo);
-                /** 2 如果是特权价，插入goods、sku限购表*/
+                //如果是特权价，插入goods、sku限购表
                 if (CommonBizUtil.isValidGoodsSkuLimit(bizType, activityStockType)) {
                     List<SkuLimitInfoEntity> skuLimitInfoList = buildSkuLimitInfoEntity(limitId, saveGoodsLimitInfoRequestVo);
                     limitationService.addSkuLimitInfoList(skuLimitInfoList, goodsLimitInfoEntityList);
-                } else {
-                    /** 3 插入商品限购表*/
+                }
+                //插入商品限购表
+                else {
                     limitationService.addGoodsLimitInfoEntity(goodsLimitInfoEntityList);
                 }
                 break;
@@ -223,8 +226,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
                 break;
             case BIZ_TYPE_COMMUNITY_GROUPON:
                 // 社区团购SKU限购
-                LimitInfoEntity limitInfo = getLimitInfoEntity(pid, bizId, bizType);
-                List<SkuLimitInfoEntity> skuLimitInfos = buildSkuLimitInfoEntity(limitInfo.getLimitId(), saveGoodsLimitInfoRequestVo);
+                List<SkuLimitInfoEntity> skuLimitInfos = buildSkuLimitInfoEntity(limitId, saveGoodsLimitInfoRequestVo);
                 Integer updateResult;
                 try {
                     updateResult = skuLimitInfoDao.batchInsertSkuLimit(skuLimitInfos);
