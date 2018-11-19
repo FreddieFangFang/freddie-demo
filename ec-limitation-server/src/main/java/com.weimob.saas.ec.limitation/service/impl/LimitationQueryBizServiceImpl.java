@@ -92,14 +92,6 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         Map<String, Set<Long>> requestLimitGoodsMap = this.groupRequestGoodsToMap(requestVo);
         //获取入参商品的限购主表信息
         List<LimitInfoEntity> limitInfoEntityList = this.getLimitInfo(pid, type, requestLimitMap);
-        if (limitInfoEntityList.contains(null)) {
-            LOGGER.error("查询限购主表空指针复现---》list.size为："+ limitInfoEntityList.size()+ "");
-            for (LimitInfoEntity entity : limitInfoEntityList) {
-                if (entity != null) {
-                    LOGGER.error(entity.toString());
-                }
-            }
-        }
         //构建限购主表信息map, key pid_bizType_bizId
         Map<String, LimitInfoEntity> limitInfoMap = this.buildLimitInfoMap(limitInfoEntityList);
         //查询用户sku限购信息
@@ -107,16 +99,6 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         if (CommonBizUtil.isValidSkuLimit(type, activityStockType)) {
             List<SkuLimitInfoEntity> queryList = this.buildQueryEntity(requestVo, limitInfoMap);
             skuLimitList = this.getSkuLimitInfoList(queryList, pid);
-            if (CollectionUtils.isNotEmpty(skuLimitList)) {
-                if (skuLimitList.contains(null)) {
-                    LOGGER.error("查询SKU表空指针复现---》list.size为："+ skuLimitList.size()+ "");
-                    for (SkuLimitInfoEntity entity : skuLimitList) {
-                        if (entity != null) {
-                            LOGGER.error(entity.toString());
-                        }
-                    }
-                }
-            }
         }
         //如果是社区团购,返回结果
         if (CommonBizUtil.isValidCommunityGroupon(type)) {
@@ -692,32 +674,28 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         Integer activityStockType = requestVo.getQueryGoodslimitNumVoList().get(0).getActivityStockType();
         List<GoodsLimitInfoEntity> goodsLimitInfoEntityList;
         Map<String, List<GoodsLimitInfoEntity>> goodsLimitNumMap = null;
-        // 非社区团购查goods限购信息
-        if (!Objects.equals(bizType, LimitBizTypeEnum.BIZ_TYPE_COMMUNITY_GROUPON.getLevel())) {
+        // 如果活动类型为 特权价/限时折扣/积分商城，则需要查询商品限购
+        if (CommonBizUtil.isValidGoodsLimit(bizType)) {
             goodsLimitInfoEntityList = goodsLimitInfoDao.listGoodsLimitNum(requestVo.getQueryGoodslimitNumVoList());
             if (CollectionUtils.isEmpty(goodsLimitInfoEntityList)) {
                 return responseVo;
             }
             goodsLimitNumMap = buildGoodsLimitMap(goodsLimitInfoEntityList);
         }
-        //如果是特权价或者限时折扣可售数量的 +社区团购，需要查询sku的限购数量
+        //如果活动类型为 特权价/限时折扣可售数量/积分商城/社区团购，则需要查询sku的限购数量
         Map<String, List<SkuLimitInfoEntity>> skuLimitNumMap = null;
-        if (Objects.equals(bizType, ActivityTypeEnum.PRIVILEGE_PRICE.getType())
-                || (Objects.equals(bizType, ActivityTypeEnum.DISCOUNT.getType())
-                && Objects.equals(activityStockType, LimitConstant.DISCOUNT_TYPE_SKU))
-                || Objects.equals(bizType, LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel())
-                || Objects.equals(bizType, LimitBizTypeEnum.BIZ_TYPE_COMMUNITY_GROUPON.getLevel())) {
+        if (CommonBizUtil.isValidSkuLimit(bizType, activityStockType)) {
             List<SkuLimitInfoEntity> skuLimitInfoEntityList = skuLimitInfoDao.listSkuLimitNum(requestVo.getQueryGoodslimitNumVoList());
             skuLimitNumMap = buildSkuLimitMap(skuLimitInfoEntityList);
         }
+        //构建出参
         for (QueryGoodsLimitNumListVo request : requestVo.getQueryGoodslimitNumVoList()) {
             QueryGoodsLimitNumVo queryGoodsLimitNumVo = new QueryGoodsLimitNumVo();
             queryGoodsLimitNumVo.setPid(request.getPid());
             queryGoodsLimitNumVo.setGoodsId(request.getGoodsId());
             queryGoodsLimitNumVo.setBizId(request.getBizId());
             queryGoodsLimitNumVo.setBizType(request.getBizType());
-            // 非社区团购查goods限购信息
-            if (!Objects.equals(bizType, LimitBizTypeEnum.BIZ_TYPE_COMMUNITY_GROUPON.getLevel())) {
+            if (MapUtils.isNotEmpty(goodsLimitNumMap)) {
                 List<GoodsLimitInfoEntity> entityList = goodsLimitNumMap.get(MapKeyUtil.buildPidStoreIdGoodsId(request.getPid(), request.getGoodsId()));
                 if (CollectionUtils.isEmpty(entityList)) {
                     continue;
@@ -730,9 +708,9 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                     }
                 }
             }
-            //如果是特权价或者限时折扣可售数量的 +社区团购，需要设置sku的限购数量
-            List<SkuLimitInfo> skuLimitInfoList = new ArrayList<>();
+            List<SkuLimitInfo> skuLimitInfoList = null;
             if (MapUtils.isNotEmpty(skuLimitNumMap)) {
+                skuLimitInfoList = new ArrayList<>();
                 List<SkuLimitInfoEntity> skuLimitInfoEntityList = skuLimitNumMap.get(MapKeyUtil.buildPidStoreIdGoodsId(request.getPid(), request.getGoodsId()));
                 if (CollectionUtils.isNotEmpty(skuLimitInfoEntityList)) {
                     for (SkuLimitInfoEntity entity : skuLimitInfoEntityList) {
@@ -768,14 +746,6 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
 
     private Map<String, List<GoodsLimitInfoEntity>> buildGoodsLimitMap(List<GoodsLimitInfoEntity> goodsLimitInfoEntityList) {
         Map<String, List<GoodsLimitInfoEntity>> goodsLimitNumMap = new HashMap<>();
-        if (goodsLimitInfoEntityList.contains(null)) {
-            LOGGER.error("查询商品限购表空指针复现---》list.size为："+ goodsLimitInfoEntityList.size()+ "");
-            for (GoodsLimitInfoEntity goodsEntity : goodsLimitInfoEntityList) {
-                if (goodsEntity != null) {
-                    LOGGER.error(goodsEntity.toString());
-                }
-            }
-        }
         for (GoodsLimitInfoEntity entity : goodsLimitInfoEntityList) {
             if (CollectionUtils.isEmpty(goodsLimitNumMap.get(MapKeyUtil.buildPidStoreIdGoodsId(entity.getPid(), entity.getGoodsId())))) {
                 List<GoodsLimitInfoEntity> entityList = new ArrayList<>();

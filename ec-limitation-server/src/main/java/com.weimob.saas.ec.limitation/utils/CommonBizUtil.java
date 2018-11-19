@@ -33,6 +33,10 @@ public class CommonBizUtil {
                 && Objects.equals(activityStockType, LimitConstant.DISCOUNT_TYPE_SKU);
     }
 
+    public static boolean isValidDiscount(Integer bizType) {
+        return Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), bizType);
+    }
+
 
     /**
      * @description 积分商城
@@ -58,15 +62,18 @@ public class CommonBizUtil {
                 || isValidPoint(bizType)
                 || isValidPrivilegePrice(bizType)
                 || isValidCommunityGroupon(bizType);
-
     }
     public static boolean isValidUserActivityLimit(Integer bizType,Integer activityStockType) {
         return isValidDiscountStock(bizType, activityStockType)
                 || isValidCombination(bizType)
                 || isValidDiscountSku(bizType, activityStockType)
                 || isValidPrivilegePrice(bizType);
-
     }
 
+    public static boolean isValidGoodsLimit(Integer bizType) {
+        return isValidDiscount(bizType)
+                || isValidPoint(bizType)
+                || isValidPrivilegePrice(bizType);
+    }
 
 }
