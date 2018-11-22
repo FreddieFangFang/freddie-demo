@@ -719,6 +719,9 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                         skuLimitInfo.setSkuLimitNum(entity.getLimitNum());
                         skuLimitInfo.setAlreadySoldNum(entity.getSoldNum());
                         skuLimitInfo.setSkuLimitType(entity.getLimitType());
+                        // 实际剩余数量
+                        int realBalance = entity.getLimitNum() - entity.getSoldNum() > 0 ? entity.getLimitNum() - entity.getSoldNum() : 0;
+                        skuLimitInfo.setCanBuySkuNum(realBalance);
                         skuLimitInfoList.add(skuLimitInfo);
                     }
                 }

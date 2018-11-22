@@ -14,7 +14,7 @@ public class SkuLimitInfo implements Serializable{
     private static final long serialVersionUID = 628342779876026582L;
     private Long skuId;
     /**
-     * sku限购数
+     * 限购数量
      */
     private Integer skuLimitNum;
 
@@ -24,12 +24,12 @@ public class SkuLimitInfo implements Serializable{
     private Integer skuLimitType;
 
     /**
-     * 已经购买的sku数量
+     * 已售数量
      */
     private Integer alreadySoldNum;
 
     /**
-     * sku还能买的数量
+     * 实际剩余数量
      */
     private Integer canBuySkuNum;
 
