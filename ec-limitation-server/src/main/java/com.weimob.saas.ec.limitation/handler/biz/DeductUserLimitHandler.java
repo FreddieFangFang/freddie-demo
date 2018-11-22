@@ -12,6 +12,7 @@ import com.weimob.saas.ec.limitation.handler.BaseHandler;
 import com.weimob.saas.ec.limitation.model.LimitParam;
 import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
 import com.weimob.saas.ec.limitation.service.LimitationServiceImpl;
+import com.weimob.saas.ec.limitation.utils.CommonBizUtil;
 import com.weimob.saas.ec.limitation.utils.LimitContext;
 import com.weimob.saas.ec.limitation.utils.VerifyParamUtils;
 import org.apache.log4j.Logger;
@@ -43,8 +44,7 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
             validRepeatDeductLimitNum(updateUserLimitVoList);
         }
 
-        //2.分组
-        //限购商品的类型分组
+        //2.按活动类型分组
         Map<Integer, List<UpdateUserLimitVo>> activityMap = buildActivityMap(updateUserLimitVoList);
         Iterator<Map.Entry<Integer, List<UpdateUserLimitVo>>> iterator = activityMap.entrySet().iterator();
         while (iterator.hasNext()) {
@@ -57,29 +57,16 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
 
             //3.更新限购记录
             //3.1 判断活动类型
-            if (Objects.equals(bizType, LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel())) {
-                groupingOrderGoodsRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
-                groupingOrderSkuRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
-                super.updateUserLimitRecord(localOrderBuyNumMap);
-            } else if (Objects.equals(bizType, ActivityTypeEnum.PRIVILEGE_PRICE.getType())
-                    || (Objects.equals(bizType, ActivityTypeEnum.DISCOUNT.getType())
-                    && Objects.equals(activityStockType, LimitConstant.DISCOUNT_TYPE_SKU))) {
-                groupingOrderGoodsRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
+            if (CommonBizUtil.isValidActivityLimit(bizType)) {
                 groupingOrderActivityRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
-                groupingOrderSkuRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
-                super.updateUserLimitRecord(localOrderBuyNumMap);
-            } else if (Objects.equals(bizType, ActivityTypeEnum.DISCOUNT.getType())) {
-                groupingOrderGoodsRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
-                groupingOrderActivityRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
-                super.updateUserLimitRecord(localOrderBuyNumMap);
-            } else if (Objects.equals(bizType, ActivityTypeEnum.COMBINATION_BUY.getType())) {
-                groupingOrderActivityRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
-                groupingOrderSkuRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
-                super.updateUserLimitRecord(localOrderBuyNumMap);
-            } else if (Objects.equals(bizType, ActivityTypeEnum.COMMUNITY_GROUPON.getType())){
-                groupingOrderSkuRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
-                super.updateUserLimitRecord(localOrderBuyNumMap);
             }
+            if (CommonBizUtil.isValidGoodsLimit(bizType)) {
+                groupingOrderGoodsRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
+            }
+            if (CommonBizUtil.isValidSkuLimit(bizType, activityStockType)) {
+                groupingOrderSkuRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
+            }
+            super.updateUserLimitRecord(localOrderBuyNumMap);
         }
         // 3.2 操作数据库
         limitationService.updateUserLimitRecord(LimitContext.getLimitBo().getGoodsLimitEntityList(), LimitContext.getLimitBo().getActivityLimitEntityList(), LimitContext.getLimitBo().getActivityGoodsSoldEntityList());
