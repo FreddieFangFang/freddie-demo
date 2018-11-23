@@ -11,6 +11,7 @@ import com.weimob.saas.ec.limitation.model.response.DeleteDiscountUserLimitInfoR
 import com.weimob.saas.ec.limitation.model.response.LimitationUpdateResponseVo;
 import com.weimob.saas.ec.limitation.model.response.SaveGoodsLimitInfoResponseVo;
 import com.weimob.saas.ec.limitation.service.LimitationUpdateBizService;
+import com.weimob.saas.ec.limitation.utils.CommonBizUtil;
 import com.weimob.saas.ec.limitation.utils.VerifyParamUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -150,11 +151,7 @@ public class LimitationUpdateFacadeService {
             if (Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), requestVo.getBizType())) {
                 VerifyParamUtils.checkParam(LimitationErrorCode.ACTIVITY_STOCK_TYPE_IS_NULL, requestVo.getActivityStockType());
             }
-            if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), requestVo.getBizType())
-                    || (Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), requestVo.getBizType())
-                    && Objects.equals(requestVo.getActivityStockType(), LimitConstant.DISCOUNT_TYPE_SKU))
-                    || Objects.equals(LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel(), requestVo.getBizType())
-                    || Objects.equals(LimitBizTypeEnum.BIZ_TYPE_COMMUNITY_GROUPON.getLevel(), requestVo.getBizType())) {
+            if (CommonBizUtil.isValidSkuLimit(requestVo.getBizType(), requestVo.getActivityStockType())) {
                 VerifyParamUtils.checkListParam(LimitationErrorCode.SKUINFO_IS_NULL, requestVo.getSkuLimitInfoList());
                 for (SkuLimitInfo info : requestVo.getSkuLimitInfoList()) {
                     VerifyParamUtils.checkParam(LimitationErrorCode.SKUINFO_IS_NULL, info.getSkuId());
