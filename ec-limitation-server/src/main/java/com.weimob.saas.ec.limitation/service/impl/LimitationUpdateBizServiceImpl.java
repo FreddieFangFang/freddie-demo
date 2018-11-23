@@ -221,10 +221,8 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
 
     @Override
     public DeleteDiscountUserLimitInfoResponseVo deleteDiscountUserLimitInfo(DeleteDiscountUserLimitInfoRequestVo requestVo) {
-        DeleteDiscountUserLimitInfoResponseVo responseVo = new DeleteDiscountUserLimitInfoResponseVo();
         limitationService.deleteDiscountUserLimitInfo(requestVo);
-        responseVo.setStatus(true);
-        return responseVo;
+        return new DeleteDiscountUserLimitInfoResponseVo(true);
     }
 
     private void deleteSkuLimitInfo(Long pid, Integer bizType, Integer activityStockType, List<Long> goodsIdList, LimitInfoEntity limitInfoEntity) {

@@ -13,6 +13,18 @@ public class DeleteDiscountUserLimitInfoResponseVo implements Serializable {
 
     private String ticket;
 
+    public DeleteDiscountUserLimitInfoResponseVo() {
+    }
+
+    public DeleteDiscountUserLimitInfoResponseVo(Boolean status) {
+        this.status = status;
+    }
+
+    public DeleteDiscountUserLimitInfoResponseVo(Boolean status, String ticket) {
+        this.status = status;
+        this.ticket = ticket;
+    }
+
     public Boolean getStatus() {
         return status;
     }
