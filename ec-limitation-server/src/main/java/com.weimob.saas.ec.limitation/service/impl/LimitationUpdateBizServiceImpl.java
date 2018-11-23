@@ -123,48 +123,40 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         Long bizId = requestVo.getDeleteGoodsLimitVoList().get(0).getBizId();
         Integer bizType = requestVo.getDeleteGoodsLimitVoList().get(0).getBizType();
         Integer activityStockType = null;
-        List<Long> goodsIdList = new ArrayList<>();
+        List<Long> goodsIdList = new ArrayList<>(requestVo.getDeleteGoodsLimitVoList().size());
         List<LimitOrderChangeLogEntity> logEntityList = new ArrayList<>();
-        switch (LimitBizTypeEnum.getLimitLevelEnumByLevel(bizType)) {
-            case BIZ_TYPE_DISCOUNT:
-            case BIZ_TYPE_PRIVILEGE_PRICE:
-                LimitInfoEntity oldLimitInfoEntity = getLimitInfoEntity(pid, bizId, bizType);
-                //构建日志表数据
-                buildDeleteGoodsLimitLog(requestVo, goodsIdList, logEntityList, oldLimitInfoEntity);
 
-                if (Objects.equals(bizType, ActivityTypeEnum.PRIVILEGE_PRICE.getType())
-                        || (Objects.equals(bizType, ActivityTypeEnum.DISCOUNT.getType()))
-                        && Objects.equals(activityStockType, LimitConstant.DISCOUNT_TYPE_SKU)) {
-                    limitationService.deleteSkuLimitInfo(pid, oldLimitInfoEntity.getLimitId(), goodsIdList);
-                } else {
-                    limitationService.deleteGoodsLimitInfo(pid, oldLimitInfoEntity.getLimitId(), goodsIdList);
-                }
-                break;
-            case BIZ_TYPE_POINT:
-                //积分商城,删除主表信息，商品表信息
-                for (BatchDeleteGoodsLimitVo limitVo : requestVo.getDeleteGoodsLimitVoList()) {
-                    List<Long> pointGoodsIdList = new ArrayList<>();
-                    LimitInfoEntity entity = new LimitInfoEntity();
-                    entity.setPid(limitVo.getPid());
-                    pointGoodsIdList.add(limitVo.getGoodsId());
-                    LimitInfoEntity oldPointLimitInfoEntity = getLimitInfoEntity(limitVo.getPid(), limitVo.getBizId(), limitVo.getBizType());
-                    LimitOrderChangeLogEntity limitOrderChangeLogEntity = buildChangeLog(limitVo, LimitServiceNameEnum.DELETE_GOODS_LIMIT.name(), oldPointLimitInfoEntity.getLimitId());
-                    logEntityList.add(limitOrderChangeLogEntity);
-                    entity.setLimitId(oldPointLimitInfoEntity.getLimitId());
-                    entity.setVersion(oldPointLimitInfoEntity.getVersion());
-                    limitationService.deletePointGoodsLimitInfo(entity, pointGoodsIdList);
-                }
-                break;
-            case BIZ_TYPE_COMMUNITY_GROUPON:
-                LimitInfoEntity limitInfoEntity = getLimitInfoEntity(pid, bizId, bizType);
-                //构建日志表数据
-                buildDeleteGoodsLimitLog(requestVo, goodsIdList, logEntityList, limitInfoEntity);
-                //社区团购删除sku限购信息
-                skuLimitInfoDao.deleteSkuLimitByGoodsId(new DeleteGoodsParam(pid, limitInfoEntity.getLimitId(), goodsIdList));
-                break;
-            default:
-                break;
+        // 积分商城走单独的逻辑
+        if (CommonBizUtil.isValidPoint(bizType)) {
+            for (BatchDeleteGoodsLimitVo limitVo : requestVo.getDeleteGoodsLimitVoList()) {
+                LimitInfoEntity oldPointLimitInfoEntity = getLimitInfoEntity(limitVo.getPid(), limitVo.getBizId(), limitVo.getBizType());
+                LimitOrderChangeLogEntity limitOrderChangeLogEntity = buildChangeLog(limitVo, LimitServiceNameEnum.DELETE_GOODS_LIMIT.name(), oldPointLimitInfoEntity.getLimitId());
+                logEntityList.add(limitOrderChangeLogEntity);
+                LimitInfoEntity entity = new LimitInfoEntity();
+                entity.setPid(limitVo.getPid());
+                entity.setLimitId(oldPointLimitInfoEntity.getLimitId());
+                entity.setVersion(oldPointLimitInfoEntity.getVersion());
+                List<Long> pointGoodsIdList = new ArrayList<>();
+                pointGoodsIdList.add(limitVo.getGoodsId());
+                limitationService.deletePointGoodsLimitInfo(entity, pointGoodsIdList);
+            }
         }
+        // 其他活动类型走通用逻辑
+        else {
+            // 查询限购主表信息
+            LimitInfoEntity limitInfoEntity = getLimitInfoEntity(pid, bizId, bizType);
+
+            // 构建日志表数据
+            buildDeleteGoodsLimitLog(requestVo, goodsIdList, logEntityList, limitInfoEntity);
+
+            // 删除商品限购表信息
+            deleteGoodsLimitInfo(pid, bizType, goodsIdList, limitInfoEntity);
+
+            // 删除sku限购表信息
+            deleteSkuLimitInfo(pid, bizType, activityStockType, goodsIdList, limitInfoEntity);
+        }
+
+        // 保存日志
         threadExecutor.execute(new SaveLimitChangeLogThread(limitOrderChangeLogDao, logEntityList, RpcContext.getContext()));
 
         return new LimitationUpdateResponseVo(bizId, true, LimitContext.getTicket());
@@ -233,6 +225,34 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         limitationService.deleteDiscountUserLimitInfo(requestVo);
         responseVo.setStatus(true);
         return responseVo;
+    }
+
+    private void deleteSkuLimitInfo(Long pid, Integer bizType, Integer activityStockType, List<Long> goodsIdList, LimitInfoEntity limitInfoEntity) {
+        if (CommonBizUtil.isValidSkuLimit(bizType, activityStockType)) {
+            Integer updateResult;
+            try {
+                updateResult = skuLimitInfoDao.deleteSkuLimitByGoodsId(new DeleteGoodsParam(pid, limitInfoEntity.getLimitId(), goodsIdList));
+            } catch (Exception e) {
+                throw new LimitationBizException(LimitationErrorCode.SQL_DELETE_SKU_LIMIT_NUM_ERROR, e);
+            }
+            if (updateResult == 0) {
+                throw new LimitationBizException(LimitationErrorCode.SQL_DELETE_SKU_LIMIT_NUM_ERROR);
+            }
+        }
+    }
+
+    private void deleteGoodsLimitInfo(Long pid, Integer bizType, List<Long> goodsIdList, LimitInfoEntity limitInfoEntity) {
+        if (CommonBizUtil.isValidGoodsLimit(bizType)) {
+            Integer updateResult;
+            try {
+                updateResult = goodsLimitInfoDao.deleteGoodsLimitByGoodsId(new DeleteGoodsParam(pid, limitInfoEntity.getLimitId(), goodsIdList));
+            } catch (Exception e) {
+                throw new LimitationBizException(LimitationErrorCode.SQL_DELETE_GOODS_LIMIT_ERROR, e);
+            }
+            if (updateResult == 0) {
+                throw new LimitationBizException(LimitationErrorCode.SQL_DELETE_GOODS_LIMIT_ERROR);
+            }
+        }
     }
 
     private void saveSkuLimitInfo(SaveGoodsLimitInfoRequestVo saveGoodsLimitInfoRequestVo, Integer bizType, Integer activityStockType, Long limitId) {

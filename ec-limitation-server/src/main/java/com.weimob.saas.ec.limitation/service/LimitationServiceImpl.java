@@ -84,7 +84,7 @@ public class LimitationServiceImpl {
 
     public void deleteLimitInfo(LimitInfoEntity entity, Integer bizType) {
         // 删除限购主表信息
-        Integer updateResult = 0;
+        Integer updateResult;
         try {
             updateResult = limitInfoDao.deleteLimitInfo(entity);
         } catch (Exception e) {
