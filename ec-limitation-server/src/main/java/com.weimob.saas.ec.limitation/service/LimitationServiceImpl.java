@@ -69,22 +69,7 @@ public class LimitationServiceImpl {
         }
     }
 
-    public void saveGoodsLimitInfo(LimitInfoEntity limitInfoEntity, List<GoodsLimitInfoEntity> goodsLimitInfoEntity, List<SkuLimitInfoEntity> skuLimitInfoList) {
-        limitInfoDao.insertLimitInfo(limitInfoEntity);
-        goodsLimitInfoDao.batchInsertGoodsLimit(goodsLimitInfoEntity);
-        skuLimitInfoDao.batchInsertSkuLimit(skuLimitInfoList);
-    }
-
-    public void addGoodsLimitInfoEntity(List<GoodsLimitInfoEntity> goodsLimitInfoEntity) {
-        goodsLimitInfoDao.batchInsertGoodsLimit(goodsLimitInfoEntity);
-    }
-
-    public void addSkuLimitInfoList(List<SkuLimitInfoEntity> skuLimitInfoList, List<GoodsLimitInfoEntity> goodsLimitInfoEntity) {
-        goodsLimitInfoDao.batchInsertGoodsLimit(goodsLimitInfoEntity);
-        skuLimitInfoDao.batchInsertSkuLimit(skuLimitInfoList);
-    }
-
-    public void updateGoodsLimitInfoEntity(List<GoodsLimitInfoEntity> goodsLimitInfoEntityList) {
+    public void updateGoodsLimitInfo(List<GoodsLimitInfoEntity> goodsLimitInfoEntityList) {
         for (GoodsLimitInfoEntity goodsLimitInfoEntity : goodsLimitInfoEntityList) {
             Integer update = 0;
             //迁移过来的数据只有一条，更新为0则插入
@@ -141,18 +126,10 @@ public class LimitationServiceImpl {
         deleteSkuLimitInfo(entity.getPid(), entity.getLimitId(), pointGoodsIdList);
     }
 
-    public List<SkuLimitInfoEntity> updateGoodsAndSkuLimitInfo(List<GoodsLimitInfoEntity> goodsLimitInfos, List<SkuLimitInfoEntity> skuLimitInfos) {
+    public List<SkuLimitInfoEntity> updateSkuLimitInfo(List<SkuLimitInfoEntity> skuLimitInfos) {
 
-        Long pid = null;
-        Long limitId = null;
-        if (CollectionUtils.isNotEmpty(goodsLimitInfos)) {
-            updateGoodsLimitInfoEntity(goodsLimitInfos);
-            pid = goodsLimitInfos.get(0).getPid();
-            limitId = goodsLimitInfos.get(0).getLimitId();
-        } else {
-            pid = skuLimitInfos.get(0).getPid();
-            limitId = skuLimitInfos.get(0).getLimitId();
-        }
+        Long pid = skuLimitInfos.get(0).getPid();
+        Long limitId = skuLimitInfos.get(0).getLimitId();
 
         /**
          * 1.原来有，现在有，更新。

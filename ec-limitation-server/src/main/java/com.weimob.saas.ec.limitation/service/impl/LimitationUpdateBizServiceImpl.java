@@ -207,19 +207,17 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         LimitInfoEntity oldLimitInfoEntity = getLimitInfoEntity(pid, bizId, bizType);
         Long limitId = oldLimitInfoEntity.getLimitId();
 
-        // 2.查询商品限购表信息
+        // 2.查询商品限购表信息并更新
         if (CommonBizUtil.isValidGoodsLimit(bizType)) {
             newGoodsLimitInfoEntityList = buildGoodsLimitInfoEntity(limitId, saveGoodsLimitInfoRequestVo);
             oldGoodsLimitInfoList = goodsLimitInfoDao.listGoodsLimitByGoodsId(buildQueryGoodsLimitList(saveGoodsLimitInfoRequestVo, limitId));
+            limitationService.updateGoodsLimitInfo(newGoodsLimitInfoEntityList);
         }
 
         // 3.查询sku限购表信息并更新
         if (CommonBizUtil.isValidSkuLimit(bizType, activityStockType)) {
             newSkuLimitInfoList = buildSkuLimitInfoEntity(limitId, saveGoodsLimitInfoRequestVo);
-            // 需要更新商品限购值，删除sku商品记录，插入新的sku商品记录
-            oldSkuLimitInfoList = limitationService.updateGoodsAndSkuLimitInfo(newGoodsLimitInfoEntityList, newSkuLimitInfoList);
-        } else {
-            limitationService.updateGoodsLimitInfoEntity(newGoodsLimitInfoEntityList);
+            oldSkuLimitInfoList = limitationService.updateSkuLimitInfo(newSkuLimitInfoList);
         }
 
         //插入日志
