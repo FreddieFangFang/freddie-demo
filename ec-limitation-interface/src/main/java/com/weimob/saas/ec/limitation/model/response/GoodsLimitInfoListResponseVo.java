@@ -13,6 +13,13 @@ public class GoodsLimitInfoListResponseVo implements Serializable {
 
     private List<GoodsLimitInfoListVo> goodsLimitInfoList;
 
+    public GoodsLimitInfoListResponseVo() {
+    }
+
+    public GoodsLimitInfoListResponseVo(List<GoodsLimitInfoListVo> goodsLimitInfoList) {
+        this.goodsLimitInfoList = goodsLimitInfoList;
+    }
+
     public List<GoodsLimitInfoListVo> getGoodsLimitInfoList() {
         return goodsLimitInfoList;
     }

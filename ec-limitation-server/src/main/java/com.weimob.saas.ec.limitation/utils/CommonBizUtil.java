@@ -30,11 +30,11 @@ public class CommonBizUtil {
     }
 
     public static boolean isValidPoint(Integer bizType) {
-        return Objects.equals(bizType, LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel());
+        return Objects.equals(LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel(), bizType);
     }
 
     public static boolean isValidLimitQuantity(Integer bizType) {
-        return Objects.equals(bizType, LimitBizTypeEnum.BIZ_TYPE_LIMIT_QUANTITY.getLevel());
+        return Objects.equals(ActivityTypeEnum.LIMIT_QUANTITY.getType(), bizType);
     }
 
     public static boolean isValidDiscountStock(Integer bizType, Integer activityStockType) {
@@ -86,18 +86,5 @@ public class CommonBizUtil {
                 || isValidPoint(bizType)
                 || isValidPrivilegePrice(bizType)
                 || isValidCommunityGroupon(bizType);
-    }
-
-    public static boolean isValidUserActivityLimit(Integer bizType,Integer activityStockType) {
-        return isValidDiscountStock(bizType, activityStockType)
-                || isValidCombination(bizType)
-                || isValidDiscountSku(bizType, activityStockType)
-                || isValidPrivilegePrice(bizType);
-    }
-
-    public static boolean isValidGoodsSkuLimit(Integer bizType,Integer activityStockType) {
-        return isValidDiscountSku(bizType, activityStockType)
-                || isValidPoint(bizType)
-                || isValidPrivilegePrice(bizType);
     }
 }
