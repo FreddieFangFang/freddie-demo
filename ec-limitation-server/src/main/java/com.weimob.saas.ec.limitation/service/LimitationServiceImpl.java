@@ -141,26 +141,17 @@ public class LimitationServiceImpl {
         deleteSkuLimitInfo(entity.getPid(), entity.getLimitId(), pointGoodsIdList);
     }
 
-    public List<SkuLimitInfoEntity> updatePrivilegePriceGoodsLimitInfo(List<GoodsLimitInfoEntity> newGoodsLimitInfoEntityList, List<SkuLimitInfoEntity> skuLimitInfoList) {
+    public List<SkuLimitInfoEntity> updateGoodsAndSkuLimitInfo(List<GoodsLimitInfoEntity> goodsLimitInfos, List<SkuLimitInfoEntity> skuLimitInfos) {
 
         Long pid = null;
         Long limitId = null;
-        if (CollectionUtils.isNotEmpty(newGoodsLimitInfoEntityList)) {
-            for (GoodsLimitInfoEntity goodsLimitInfoEntity : newGoodsLimitInfoEntityList) {
-                Integer update = 0;
-                //迁移过来的数据只有一条，更新为0则插入
-                update = goodsLimitInfoDao.updateGoodsLimit(goodsLimitInfoEntity);
-                if (update == 0) {
-                    List<GoodsLimitInfoEntity> goodsList = new ArrayList<>();
-                    goodsList.add(goodsLimitInfoEntity);
-                    goodsLimitInfoDao.batchInsertGoodsLimit(goodsList);
-                }
-            }
-            pid = newGoodsLimitInfoEntityList.get(0).getPid();
-            limitId = newGoodsLimitInfoEntityList.get(0).getLimitId();
+        if (CollectionUtils.isNotEmpty(goodsLimitInfos)) {
+            updateGoodsLimitInfoEntity(goodsLimitInfos);
+            pid = goodsLimitInfos.get(0).getPid();
+            limitId = goodsLimitInfos.get(0).getLimitId();
         } else {
-            pid = skuLimitInfoList.get(0).getPid();
-            limitId = skuLimitInfoList.get(0).getLimitId();
+            pid = skuLimitInfos.get(0).getPid();
+            limitId = skuLimitInfos.get(0).getLimitId();
         }
 
         /**
@@ -168,11 +159,11 @@ public class LimitationServiceImpl {
          * 2.原来有，现在没有，删除。
          * 3.原来没有，现在有，新增
          */
-        if (CollectionUtils.isEmpty(skuLimitInfoList)) {
+        if (CollectionUtils.isEmpty(skuLimitInfos)) {
             return new ArrayList<>(0);
         }
         Map<Long, List<SkuLimitInfoEntity>> goodsSkuMap = new HashMap<>();
-        for (SkuLimitInfoEntity skuLimitInfoEntity : skuLimitInfoList) {
+        for (SkuLimitInfoEntity skuLimitInfoEntity : skuLimitInfos) {
             if (CollectionUtils.isEmpty(goodsSkuMap.get(skuLimitInfoEntity.getGoodsId()))) {
                 List<SkuLimitInfoEntity> skuLimitInfoEntityList = new ArrayList<>();
                 skuLimitInfoEntityList.add(skuLimitInfoEntity);

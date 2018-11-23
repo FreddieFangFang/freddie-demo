@@ -194,28 +194,30 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
 
     @Override
     public SaveGoodsLimitInfoResponseVo updateGoodsLimitInfo(SaveGoodsLimitInfoRequestVo saveGoodsLimitInfoRequestVo) {
-        //直接处理限购商品表，需要判断类型决定是否处理sku限购表
         Long bizId = saveGoodsLimitInfoRequestVo.getGoodsList().get(0).getBizId();
         Integer bizType = saveGoodsLimitInfoRequestVo.getGoodsList().get(0).getBizType();
         Long pid = saveGoodsLimitInfoRequestVo.getGoodsList().get(0).getPid();
         Integer activityStockType = saveGoodsLimitInfoRequestVo.getGoodsList().get(0).getActivityStockType();
-        /** 1 查询限购主表信息*/
+        List<GoodsLimitInfoEntity> newGoodsLimitInfoEntityList = null;
+        List<GoodsLimitInfoEntity> oldGoodsLimitInfoList = null;
+        List<SkuLimitInfoEntity> oldSkuLimitInfoList = null;
+        List<SkuLimitInfoEntity> newSkuLimitInfoList = null;
+
+        // 1.查询限购主表信息
         LimitInfoEntity oldLimitInfoEntity = getLimitInfoEntity(pid, bizId, bizType);
         Long limitId = oldLimitInfoEntity.getLimitId();
 
-        /** 2 更新商品限购表限购值*/
-        List<GoodsLimitInfoEntity> newGoodsLimitInfoEntityList = null;
-        List<GoodsLimitInfoEntity> oldGoodsLimitInfoList = null;
+        // 2.查询商品限购表信息
         if (CommonBizUtil.isValidGoodsLimit(bizType)) {
             newGoodsLimitInfoEntityList = buildGoodsLimitInfoEntity(limitId, saveGoodsLimitInfoRequestVo);
             oldGoodsLimitInfoList = goodsLimitInfoDao.listGoodsLimitByGoodsId(buildQueryGoodsLimitList(saveGoodsLimitInfoRequestVo, limitId));
         }
-        List<SkuLimitInfoEntity> oldSkuLimitInfoList = new ArrayList<>();
-        List<SkuLimitInfoEntity> newSkuLimitInfoList = null;
+
+        // 3.查询sku限购表信息并更新
         if (CommonBizUtil.isValidSkuLimit(bizType, activityStockType)) {
-            /** 3 特权价需要更新商品限购值，删除sku商品记录，插入新的sku商品记录*/
             newSkuLimitInfoList = buildSkuLimitInfoEntity(limitId, saveGoodsLimitInfoRequestVo);
-            oldSkuLimitInfoList = limitationService.updatePrivilegePriceGoodsLimitInfo(newGoodsLimitInfoEntityList, newSkuLimitInfoList);
+            // 需要更新商品限购值，删除sku商品记录，插入新的sku商品记录
+            oldSkuLimitInfoList = limitationService.updateGoodsAndSkuLimitInfo(newGoodsLimitInfoEntityList, newSkuLimitInfoList);
         } else {
             limitationService.updateGoodsLimitInfoEntity(newGoodsLimitInfoEntityList);
         }
@@ -401,7 +403,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
                 logEntityList.add(orderChangeLogEntity);
             }
         }
-        if (CollectionUtils.isNotEmpty(oldGoodsLimitInfoList)) {
+        if (CollectionUtils.isNotEmpty(newGoodsLimitInfoEntityList)) {
             for (GoodsLimitInfoEntity vo : newGoodsLimitInfoEntityList) {
                 LimitOrderChangeLogEntity orderChangeLogEntity = new LimitOrderChangeLogEntity();
                 orderChangeLogEntity.setPid(vo.getPid());
