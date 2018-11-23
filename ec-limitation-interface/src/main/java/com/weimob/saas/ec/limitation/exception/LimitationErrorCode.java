@@ -101,6 +101,7 @@ public enum LimitationErrorCode {
     SQL_UPDATE_USER_GOODS_LIMIT_DEDUCT_BUY_NUM_ERROR("1080010400026", "更新用户商品购买记录表：扣减用户已购数量数据库异常"),
     SQL_UPDATE_USER_LIMIT_DEDUCT_BUY_NUM_ERROR("1080010400027", "更新用户活动购买记录表：扣减用户已购数量数据库异常"),
     SQL_DEDUCT_SKU_SOLD_NUM_ERROR("1080010400028", "扣减SKU已售数量数据库异常"),
+    SQL_DELETE_GOODS_LIMIT_ERROR("1080010400029", "删除商品限购信息数据库异常"),
 
 
     ;

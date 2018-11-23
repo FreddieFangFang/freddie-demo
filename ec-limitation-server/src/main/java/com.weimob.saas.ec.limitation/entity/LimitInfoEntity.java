@@ -173,9 +173,4 @@ public class LimitInfoEntity {
     public void setSelectStoreType(Integer selectStoreType) {
         this.selectStoreType = selectStoreType;
     }
-
-    @Override
-    public String toString() {
-        return "本次查询数据为：pid：" + this.pid + ", limitId：" + this.limitId;
-    }
 }

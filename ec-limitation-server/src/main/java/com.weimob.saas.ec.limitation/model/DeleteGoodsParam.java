@@ -16,6 +16,11 @@ public class DeleteGoodsParam extends BaseRequest{
     public DeleteGoodsParam() {
     }
 
+    public DeleteGoodsParam(Long pid, Long limitId) {
+        super.setPid(pid);
+        this.limitId = limitId;
+    }
+
     public DeleteGoodsParam(Long pid, Long limitId, List<Long> goodsIdList) {
         super.setPid(pid);
         this.limitId = limitId;

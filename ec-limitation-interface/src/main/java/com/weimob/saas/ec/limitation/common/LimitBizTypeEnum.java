@@ -18,7 +18,8 @@ public enum LimitBizTypeEnum {
     BIZ_TYPE_NYNJ(ActivityTypeEnum.NYNJ.getType(), "N元N件"),
     BIZ_TYPE_COMBINATION_BUY(ActivityTypeEnum.COMBINATION_BUY.getType(), "优惠套装"),
     BIZ_TYPE_REDEMPTION(ActivityTypeEnum.REDEMPTION.getType(), "加价购"),
-    BIZ_TYPE_COMMUNITY_GROUPON(ActivityTypeEnum.COMMUNITY_GROUPON.getType(), "社区团购");
+    BIZ_TYPE_COMMUNITY_GROUPON(ActivityTypeEnum.COMMUNITY_GROUPON.getType(), "社区团购"),
+    BIZ_TYPE_LIMIT_QUANTITY(ActivityTypeEnum.LIMIT_QUANTITY.getType(), "限量抢购");
 
     private Integer level;
 

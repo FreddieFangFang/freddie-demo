@@ -90,47 +90,30 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
     @Override
     public LimitationUpdateResponseVo deleteLimitationInfo(DeleteLimitationRequestVo requestVo) {
         // 1.查询限购主表信息
-        LimitInfoEntity oldLimitInfoEntity = null;
+        LimitInfoEntity limitInfoEntity = null;
         try {
-            oldLimitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
+            limitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
         } catch (Exception e) {
             throw new LimitationBizException(LimitationErrorCode.SQL_QUERY_LIMIT_INFO_ERROR, e);
         }
-        if (oldLimitInfoEntity == null) {
+        if (limitInfoEntity == null) {
             return new LimitationUpdateResponseVo(null, true);
         }
 
         // 2.查询商品表或者sku表，保存未删除的记录到日志表，以便进行回滚
-        List<SkuLimitInfoEntity> skuLimitInfoEntityList = skuLimitInfoDao.listSkuLimitByLimitId(new LimitParam(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId()));
+        List<SkuLimitInfoEntity> skuLimitInfoEntityList = skuLimitInfoDao.listSkuLimitByLimitId(new LimitParam(limitInfoEntity.getPid(), limitInfoEntity.getLimitId()));
         if (CollectionUtils.isEmpty(skuLimitInfoEntityList)) {
             //没有sku记录，查询goods表
-            List<GoodsLimitInfoEntity> goodsLimitInfoEntityList = goodsLimitInfoDao.listGoodsLimitByLimitId(new LimitParam(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId()));
+            List<GoodsLimitInfoEntity> goodsLimitInfoEntityList = goodsLimitInfoDao.listGoodsLimitByLimitId(new LimitParam(limitInfoEntity.getPid(), limitInfoEntity.getLimitId()));
             buildDeleteLimitationGoodsChangeLog(goodsLimitInfoEntityList, LimitServiceNameEnum.DELETE_ACTIVITY_LIMIT.name(), requestVo);
         } else {
             buildDeleteLimitationSkuChangeLog(skuLimitInfoEntityList, LimitServiceNameEnum.DELETE_ACTIVITY_LIMIT.name(), requestVo);
         }
 
-        // 3.按活动类型进行不同处理
-        switch (LimitBizTypeEnum.getLimitLevelEnumByLevel(requestVo.getBizType())) {
-            case BIZ_TYPE_DISCOUNT:
-                limitationService.deleteDiscountLimitInfo(oldLimitInfoEntity);
-                break;
-            case BIZ_TYPE_PRIVILEGE_PRICE:
-                limitationService.deletePrivilegePriceLimitInfo(oldLimitInfoEntity);
-                break;
-            case BIZ_TYPE_NYNJ:
-                limitationService.deleteNynjLimitInfo(oldLimitInfoEntity);
-                break;
-            case BIZ_TYPE_COMBINATION_BUY:
-                limitationService.deleteCombinationLimitInfo(oldLimitInfoEntity);
-                break;
-            case BIZ_TYPE_COMMUNITY_GROUPON:
-                limitationService.deleteCommunityGrouponLimitInfo(oldLimitInfoEntity,null);
-                break;
-            default:
-                break;
-        }
-        return new LimitationUpdateResponseVo(oldLimitInfoEntity.getLimitId(), true, LimitContext.getTicket());
+        // 3.删除限购信息
+        limitationService.deleteLimitInfo(limitInfoEntity, requestVo.getBizType());
+
+        return new LimitationUpdateResponseVo(limitInfoEntity.getLimitId(), true, LimitContext.getTicket());
     }
 
     @Override
@@ -624,11 +607,8 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
     }
 
     private void buildAndUpdateStoreRelationship(LimitationInfoRequestVo requestVo, LimitInfoEntity limitInfoEntity) {
-        LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
-        deleteEntity.setPid(limitInfoEntity.getPid());
-        deleteEntity.setLimitId(limitInfoEntity.getLimitId());
         try {
-            limitStoreRelationshipDao.deleteStoreRelationship(deleteEntity);
+            limitStoreRelationshipDao.deleteStoreRelationship(new LimitStoreRelationshipEntity(limitInfoEntity.getPid(), limitInfoEntity.getLimitId()));
         } catch (Exception e) {
             throw new LimitationBizException(LimitationErrorCode.SQL_DELETE_STORE_RELATIONSHIP_ERROR, e);
         }

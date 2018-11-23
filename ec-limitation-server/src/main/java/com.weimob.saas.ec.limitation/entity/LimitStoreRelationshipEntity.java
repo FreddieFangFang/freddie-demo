@@ -17,6 +17,14 @@ public class LimitStoreRelationshipEntity {
 
     private Date updateTime;
 
+    public LimitStoreRelationshipEntity() {
+    }
+
+    public LimitStoreRelationshipEntity(Long pid, Long limitId) {
+        this.pid = pid;
+        this.limitId = limitId;
+    }
+
     public Long getId() {
         return id;
     }

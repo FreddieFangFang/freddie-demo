@@ -2,6 +2,7 @@ package com.weimob.saas.ec.limitation.service;
 
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
+import com.weimob.saas.ec.limitation.constant.LimitConstant;
 import com.weimob.saas.ec.limitation.dao.GoodsLimitInfoDao;
 import com.weimob.saas.ec.limitation.dao.LimitInfoDao;
 import com.weimob.saas.ec.limitation.dao.LimitStoreRelationshipDao;
@@ -15,6 +16,7 @@ import com.weimob.saas.ec.limitation.model.DeleteGoodsParam;
 import com.weimob.saas.ec.limitation.model.DeleteSkuParam;
 import com.weimob.saas.ec.limitation.model.LimitParam;
 import com.weimob.saas.ec.limitation.model.request.DeleteDiscountUserLimitInfoRequestVo;
+import com.weimob.saas.ec.limitation.utils.CommonBizUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,38 +44,6 @@ public class LimitationServiceImpl {
     @Autowired
     private UserLimitDao userLimitDao;
 
-    public void saveLimitationInfo(LimitInfoEntity limitInfoEntity, List<LimitStoreRelationshipEntity> storeInfoList) {
-        limitInfoDao.insertLimitInfo(limitInfoEntity);
-        if (CollectionUtils.isNotEmpty(storeInfoList)) {
-            limitStoreRelationshipDao.batchInsertStoreRelationship(storeInfoList);
-        }
-    }
-
-    public void updateLimitationInfo(LimitInfoEntity limitInfoEntity, List<LimitStoreRelationshipEntity> storeInfoList) {
-
-        limitInfoDao.updateLimitInfo(limitInfoEntity);
-
-        LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
-        deleteEntity.setPid(limitInfoEntity.getPid());
-        deleteEntity.setLimitId(limitInfoEntity.getLimitId());
-        limitStoreRelationshipDao.deleteStoreRelationship(deleteEntity);
-
-        if (CollectionUtils.isNotEmpty(storeInfoList)) {
-            limitStoreRelationshipDao.batchInsertStoreRelationship(storeInfoList);
-        }
-    }
-
-    public void deleteLimitInfo(LimitInfoEntity limitInfoEntity) {
-        limitInfoDao.deleteLimitInfo(limitInfoEntity);
-    }
-
-    public void deleteStoreInfoList(Long pid, Long limitId) {
-        LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
-        deleteEntity.setPid(pid);
-        deleteEntity.setLimitId(limitId);
-        limitStoreRelationshipDao.deleteStoreRelationship(deleteEntity);
-    }
-
     public void deleteGoodsLimitInfo(Long pid, Long limitId, List<Long> goodsIdList) {
         DeleteGoodsParam param = new DeleteGoodsParam();
         param.setPid(pid);
@@ -84,7 +54,6 @@ public class LimitationServiceImpl {
         } else {
             goodsLimitInfoDao.deleteGoodsLimitByGoodsId(param);
         }
-
     }
 
     public void deleteSkuLimitInfo(Long pid, Long limitId, List<Long> goodsIdList) {
@@ -128,42 +97,11 @@ public class LimitationServiceImpl {
         }
     }
 
-    public void deleteDiscountLimitInfo(LimitInfoEntity oldLimitInfoEntity) {
-        limitInfoDao.deleteLimitInfo(oldLimitInfoEntity);
-
-        LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
-        deleteEntity.setPid(oldLimitInfoEntity.getPid());
-        deleteEntity.setLimitId(oldLimitInfoEntity.getLimitId());
-
-        limitStoreRelationshipDao.deleteStoreRelationship(deleteEntity);
-
-        deleteSkuLimitInfo(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId(), null);
-    }
-
-    public void deletePrivilegePriceLimitInfo(LimitInfoEntity oldLimitInfoEntity) {
-        limitInfoDao.deleteLimitInfo(oldLimitInfoEntity);
-
-        LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
-        deleteEntity.setPid(oldLimitInfoEntity.getPid());
-        deleteEntity.setLimitId(oldLimitInfoEntity.getLimitId());
-        limitStoreRelationshipDao.deleteStoreRelationship(deleteEntity);
-
-        deleteSkuLimitInfo(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId(), null);
-    }
-
-    public void deleteNynjLimitInfo(LimitInfoEntity oldLimitInfoEntity) {
-        limitInfoDao.deleteLimitInfo(oldLimitInfoEntity);
-
-        LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
-        deleteEntity.setPid(oldLimitInfoEntity.getPid());
-        deleteEntity.setLimitId(oldLimitInfoEntity.getLimitId());
-        limitStoreRelationshipDao.deleteStoreRelationship(deleteEntity);
-    }
-
-    public void deleteCombinationLimitInfo(LimitInfoEntity oldLimitInfoEntity) {
+    public void deleteLimitInfo(LimitInfoEntity entity, Integer bizType) {
+        // 删除限购主表信息
         Integer updateResult = 0;
         try {
-            updateResult = limitInfoDao.deleteLimitInfo(oldLimitInfoEntity);
+            updateResult = limitInfoDao.deleteLimitInfo(entity);
         } catch (Exception e) {
             throw new LimitationBizException(LimitationErrorCode.SQL_DELETE_LIMIT_INFO_ERROR, e);
         }
@@ -171,25 +109,29 @@ public class LimitationServiceImpl {
             throw new LimitationBizException(LimitationErrorCode.SQL_DELETE_LIMIT_INFO_ERROR);
         }
 
-        LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
-        deleteEntity.setPid(oldLimitInfoEntity.getPid());
-        deleteEntity.setLimitId(oldLimitInfoEntity.getLimitId());
+        // 删除门店表信息
         try {
-            limitStoreRelationshipDao.deleteStoreRelationship(deleteEntity);
+            limitStoreRelationshipDao.deleteStoreRelationship(new LimitStoreRelationshipEntity(entity.getPid(), entity.getLimitId()));
         } catch (Exception e) {
             throw new LimitationBizException(LimitationErrorCode.SQL_DELETE_STORE_RELATIONSHIP_ERROR, e);
         }
 
-        DeleteGoodsParam param = new DeleteGoodsParam();
-        param.setPid(oldLimitInfoEntity.getPid());
-        param.setLimitId(oldLimitInfoEntity.getLimitId());
-        try {
-            updateResult = skuLimitInfoDao.deleteSkuLimitByLimitId(param);
-        } catch (Exception e) {
-            throw new LimitationBizException(LimitationErrorCode.SQL_DELETE_SKU_LIMIT_NUM_ERROR, e);
+        // 删除商品限购表信息
+        if (CommonBizUtil.isValidGoodsLimit(bizType)) {
+            try {
+                goodsLimitInfoDao.deleteGoodsLimitByLimitId(new DeleteGoodsParam(entity.getPid(), entity.getLimitId()));
+            } catch (Exception e) {
+                throw new LimitationBizException(LimitationErrorCode.SQL_DELETE_GOODS_LIMIT_ERROR, e);
+            }
         }
-        if (updateResult == 0) {
-            throw new LimitationBizException(LimitationErrorCode.SQL_DELETE_SKU_LIMIT_NUM_ERROR);
+
+        // 删除sku表限购信息
+        if (CommonBizUtil.isValidSkuLimit(bizType, LimitConstant.DISCOUNT_TYPE_SKU)) {
+            try {
+                skuLimitInfoDao.deleteSkuLimitByLimitId(new DeleteGoodsParam(entity.getPid(), entity.getLimitId()));
+            } catch (Exception e) {
+                throw new LimitationBizException(LimitationErrorCode.SQL_DELETE_SKU_LIMIT_NUM_ERROR, e);
+            }
         }
     }
 
@@ -198,16 +140,7 @@ public class LimitationServiceImpl {
 
         deleteSkuLimitInfo(entity.getPid(), entity.getLimitId(), pointGoodsIdList);
     }
-    public void deleteCommunityGrouponLimitInfo(LimitInfoEntity oldLimitInfoEntity, List<Long> goodsIdList) {
-        limitInfoDao.deleteLimitInfo(oldLimitInfoEntity);
 
-        LimitStoreRelationshipEntity deleteEntity = new LimitStoreRelationshipEntity();
-        deleteEntity.setPid(oldLimitInfoEntity.getPid());
-        deleteEntity.setLimitId(oldLimitInfoEntity.getLimitId());
-        limitStoreRelationshipDao.deleteStoreRelationship(deleteEntity);
-
-        deleteSkuLimitInfo(oldLimitInfoEntity.getPid(), oldLimitInfoEntity.getLimitId(), goodsIdList);
-    }
     public List<SkuLimitInfoEntity> updatePrivilegePriceGoodsLimitInfo(List<GoodsLimitInfoEntity> newGoodsLimitInfoEntityList, List<SkuLimitInfoEntity> skuLimitInfoList) {
 
         Long pid = null;

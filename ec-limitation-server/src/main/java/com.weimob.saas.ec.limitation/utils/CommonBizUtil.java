@@ -21,18 +21,6 @@ public class CommonBizUtil {
         return Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), bizType);
     }
 
-
-    public static boolean isValidDiscountStock(Integer bizType, Integer activityStockType) {
-        return Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), bizType)
-                && Objects.equals(activityStockType, LimitConstant.DISCOUNT_TYPE_STOCK);
-    }
-
-
-    public static boolean isValidDiscountSku(Integer bizType, Integer activityStockType) {
-        return Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), bizType)
-                && Objects.equals(activityStockType, LimitConstant.DISCOUNT_TYPE_SKU);
-    }
-
     public static boolean isValidDiscount(Integer bizType) {
         return Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), bizType);
     }
@@ -41,15 +29,22 @@ public class CommonBizUtil {
         return Objects.equals(ActivityTypeEnum.NYNJ.getType(), bizType);
     }
 
-
-    /**
-     * @description 积分商城
-     * @author haojie.jin
-     * @date 4:02 PM 2018/11/8
-     **/
-
     public static boolean isValidPoint(Integer bizType) {
         return Objects.equals(bizType, LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel());
+    }
+
+    public static boolean isValidLimitQuantity(Integer bizType) {
+        return Objects.equals(bizType, LimitBizTypeEnum.BIZ_TYPE_LIMIT_QUANTITY.getLevel());
+    }
+
+    public static boolean isValidDiscountStock(Integer bizType, Integer activityStockType) {
+        return Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), bizType)
+                && Objects.equals(activityStockType, LimitConstant.DISCOUNT_TYPE_STOCK);
+    }
+
+    public static boolean isValidDiscountSku(Integer bizType, Integer activityStockType) {
+        return Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), bizType)
+                && Objects.equals(activityStockType, LimitConstant.DISCOUNT_TYPE_SKU);
     }
 
 
@@ -64,7 +59,8 @@ public class CommonBizUtil {
         return isValidDiscount(bizType)
                 || isValidPrivilegePrice(bizType)
                 || isValidCombination(bizType)
-                || isValidNynj(bizType);
+                || isValidNynj(bizType)
+                || isValidLimitQuantity(bizType);
     }
 
     /**
@@ -75,7 +71,8 @@ public class CommonBizUtil {
     public static boolean isValidGoodsLimit(Integer bizType) {
         return isValidDiscount(bizType)
                 || isValidPoint(bizType)
-                || isValidPrivilegePrice(bizType);
+                || isValidPrivilegePrice(bizType)
+                || isValidLimitQuantity(bizType);
     }
 
     /**
