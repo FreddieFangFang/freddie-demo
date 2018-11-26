@@ -687,7 +687,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         Integer activityStockType = requestVo.getQueryGoodslimitNumVoList().get(0).getActivityStockType();
         List<GoodsLimitInfoEntity> goodsLimitInfoEntityList;
         Map<String, List<GoodsLimitInfoEntity>> goodsLimitNumMap = null;
-        // 如果活动类型为 特权价/限时折扣/积分商城，则需要查询商品限购
+        // 如果活动类型为 特权价/限时折扣/限量抢购/积分商城，则需要查询商品限购
         if (CommonBizUtil.isValidGoodsLimit(bizType)) {
             goodsLimitInfoEntityList = goodsLimitInfoDao.listGoodsLimitNum(requestVo.getQueryGoodslimitNumVoList());
             if (CollectionUtils.isEmpty(goodsLimitInfoEntityList)) {
@@ -695,7 +695,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             }
             goodsLimitNumMap = buildGoodsLimitMap(goodsLimitInfoEntityList);
         }
-        //如果活动类型为 特权价/限时折扣可售数量/积分商城/社区团购，则需要查询sku的限购数量
+        //如果活动类型为 特权价/限时折扣可售数量/限量抢购/积分商城/社区团购，则需要查询sku的限购数量
         Map<String, List<SkuLimitInfoEntity>> skuLimitNumMap = null;
         if (CommonBizUtil.isValidSkuLimit(bizType, activityStockType)) {
             List<SkuLimitInfoEntity> skuLimitInfoEntityList = skuLimitInfoDao.listSkuLimitNum(requestVo.getQueryGoodslimitNumVoList());
