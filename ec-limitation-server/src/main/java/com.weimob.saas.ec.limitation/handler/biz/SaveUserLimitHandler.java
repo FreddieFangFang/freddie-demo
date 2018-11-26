@@ -84,11 +84,10 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         orderChangeLogEntity.setBizId(vo.getBizId());
         orderChangeLogEntity.setBizType(vo.getBizType());
         orderChangeLogEntity.setBuyNum(vo.getGoodsNum());
-        orderChangeLogEntity.setGoodsId(vo.getGoodsId());
-        if (Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), vo.getBizType())
-                && Objects.equals(vo.getActivityStockType(), LimitConstant.DISCOUNT_TYPE_STOCK)) {
-
-        } else {
+        if (CommonBizUtil.isValidGoodsLimit(vo.getBizType())) {
+            orderChangeLogEntity.setGoodsId(vo.getGoodsId());
+        }
+        if (CommonBizUtil.isValidSkuLimit(vo.getBizType(), vo.getActivityStockType())) {
             orderChangeLogEntity.setSkuId(vo.getSkuId());
         }
         orderChangeLogEntity.setLimitId(limitInfoEntity.getLimitId());

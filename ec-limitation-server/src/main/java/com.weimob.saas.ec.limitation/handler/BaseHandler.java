@@ -17,6 +17,7 @@ import com.weimob.saas.ec.limitation.model.convertor.LimitConvertor;
 import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
 import com.weimob.saas.ec.limitation.service.LimitationServiceImpl;
 import com.weimob.saas.ec.limitation.thread.SaveLimitChangeLogThread;
+import com.weimob.saas.ec.limitation.utils.CommonBizUtil;
 import com.weimob.saas.ec.limitation.utils.LimitContext;
 import com.weimob.saas.ec.limitation.utils.VerifyParamUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -460,16 +461,18 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                                              Map<String, SkuLimitInfoEntity> skuLimitMap) {
 
         for (LimitOrderChangeLogEntity logEntity : logList) {
-            if (Objects.equals(logEntity.getBizType(), ActivityTypeEnum.PRIVILEGE_PRICE.getType())
-                    || Objects.equals(logEntity.getBizType(), ActivityTypeEnum.DISCOUNT.getType())) {
-                buildActivityBuyInfoLogEntity(activityMap, logEntity);
-                buildGoodsBuyInfoLogEntity(goodsLimitMap, logEntity);
-                buildSkuBuyInfoLogEntity(skuLimitMap, logEntity);
-            } else if (Objects.equals(logEntity.getBizType(), LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel())) {
-                buildGoodsBuyInfoLogEntity(goodsLimitMap, logEntity);
-                buildSkuBuyInfoLogEntity(skuLimitMap, logEntity);
-            } else if (Objects.equals(logEntity.getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
+            if (CommonBizUtil.isValidCombination(logEntity.getBizType())) {
                 buildCombinationBuyLogEntity(activityMap, skuLimitMap, logEntity);
+            } else {
+                if (CommonBizUtil.isValidActivityLimit(logEntity.getBizType())) {
+                    buildActivityBuyInfoLogEntity(activityMap, logEntity);
+                }
+                if (CommonBizUtil.isValidGoodsLimit(logEntity.getBizType())) {
+                    buildGoodsBuyInfoLogEntity(goodsLimitMap, logEntity);
+                }
+                if (CommonBizUtil.isValidSkuLimit(logEntity.getBizType(), LimitConstant.DISCOUNT_TYPE_SKU)) {
+                    buildSkuBuyInfoLogEntity(skuLimitMap, logEntity);
+                }
             }
         }
     }
