@@ -58,6 +58,7 @@ public enum LimitationErrorCode {
     ACTIVITY_THRESHOLD_INFO_IS_NULL("1080000100026", "活动可售数量相关信息为空"),
     ACTIVITY_THRESHOLD_IS_NULL("1080000100027", "活动可售数量为空"),
     PARTICULAE_GROUP_TYPE_IS_NULL("1080000100028", "特定人群类型为空"),
+    DELETE_WAY_IS_NULL("1080010100029", "删除方式为空"),
 
 
     /*****************************交互异常02**********************************/

@@ -111,7 +111,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         }
 
         // 3.删除限购信息
-        limitationService.deleteLimitInfo(limitInfoEntity, requestVo.getBizType());
+        limitationService.deleteLimitInfo(limitInfoEntity, requestVo.getBizType(), requestVo.getDeleteWay());
 
         return new LimitationUpdateResponseVo(limitInfoEntity.getLimitId(), true, LimitContext.getTicket());
     }

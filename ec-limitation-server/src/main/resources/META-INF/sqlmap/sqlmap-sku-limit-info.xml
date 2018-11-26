@@ -327,15 +327,7 @@
           AND skulimitinfo.goods_id = #{item.goodsId}
           AND limitinfo.biz_id = #{item.bizId}
           AND limitinfo.biz_type = #{item.bizType}
-          AND
-          <choose>
-            <when test="item.checkDeleteActivityGoods != null ">
-              skulimitinfo.is_deleted = #{item.checkDeleteActivityGoods}
-            </when>
-            <when test="item.checkDeleteActivityGoods==null">
-              skulimitinfo.is_deleted = 0
-            </when>
-          </choose>
+          AND skulimitinfo.is_deleted = 0
           AND
           <choose>
             <when test="item.checkDeleteActivityGoods != null ">

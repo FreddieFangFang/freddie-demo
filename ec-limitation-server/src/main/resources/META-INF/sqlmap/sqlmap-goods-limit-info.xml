@@ -212,15 +212,7 @@
           AND goodslimitinfo.goods_id = #{item.goodsId}
           AND limitinfo.biz_id = #{item.bizId}
           AND limitinfo.biz_type = #{item.bizType}
-          AND
-          <choose>
-            <when test="item.checkDeleteActivityGoods != null ">
-              goodslimitinfo.is_deleted = #{item.checkDeleteActivityGoods}
-            </when>
-            <when test="item.checkDeleteActivityGoods==null">
-              goodslimitinfo.is_deleted = 0
-            </when>
-          </choose>
+          AND goodslimitinfo.is_deleted = 0
           AND
           <choose>
             <when test="item.checkDeleteActivityGoods != null ">

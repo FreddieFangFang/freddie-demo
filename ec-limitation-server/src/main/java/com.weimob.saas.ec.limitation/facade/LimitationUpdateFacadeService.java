@@ -90,6 +90,7 @@ public class LimitationUpdateFacadeService {
         VerifyParamUtils.checkParam(LimitationErrorCode.PID_IS_NULL, requestVo.getPid());
         VerifyParamUtils.checkParam(LimitationErrorCode.BIZID_IS_NULL, requestVo.getBizId());
         VerifyParamUtils.checkParam(LimitationErrorCode.BIZTYPE_IS_NULL, requestVo.getBizType());
+        VerifyParamUtils.checkParam(LimitationErrorCode.DELETE_WAY_IS_NULL, requestVo.getDeleteWay());
     }
 
     private void validateBatchDeleteRequestParam(BatchDeleteGoodsLimitRequestVo requestVo) {

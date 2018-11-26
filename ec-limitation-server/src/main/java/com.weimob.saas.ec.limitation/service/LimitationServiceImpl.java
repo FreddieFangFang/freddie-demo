@@ -1,6 +1,7 @@
 package com.weimob.saas.ec.limitation.service;
 
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
+import com.weimob.saas.ec.limitation.common.DeleteWayEnum;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
 import com.weimob.saas.ec.limitation.dao.GoodsLimitInfoDao;
@@ -82,7 +83,7 @@ public class LimitationServiceImpl {
         }
     }
 
-    public void deleteLimitInfo(LimitInfoEntity entity, Integer bizType) {
+    public void deleteLimitInfo(LimitInfoEntity entity, Integer bizType, Integer deleteWay) {
         // 删除限购主表信息
         Integer updateResult;
         try {
@@ -99,6 +100,10 @@ public class LimitationServiceImpl {
             limitStoreRelationshipDao.deleteStoreRelationship(new LimitStoreRelationshipEntity(entity.getPid(), entity.getLimitId()));
         } catch (Exception e) {
             throw new LimitationBizException(LimitationErrorCode.SQL_DELETE_STORE_RELATIONSHIP_ERROR, e);
+        }
+
+        if (deleteWay.equals(DeleteWayEnum.ACTIVITY_EXPIRE.getType())) {
+            return;
         }
 
         // 删除商品限购表信息
