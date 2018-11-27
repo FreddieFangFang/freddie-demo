@@ -100,14 +100,18 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
             return new LimitationUpdateResponseVo(null, true);
         }
 
-        // 2.查询商品表或者sku表，保存未删除的记录到日志表，以便进行回滚
-        List<SkuLimitInfoEntity> skuLimitInfoEntityList = skuLimitInfoDao.listSkuLimitByLimitId(new LimitParam(limitInfoEntity.getPid(), limitInfoEntity.getLimitId()));
-        if (CollectionUtils.isEmpty(skuLimitInfoEntityList)) {
-            //没有sku记录，查询goods表
-            List<GoodsLimitInfoEntity> goodsLimitInfoEntityList = goodsLimitInfoDao.listGoodsLimitByLimitId(new LimitParam(limitInfoEntity.getPid(), limitInfoEntity.getLimitId()));
-            buildDeleteLimitationGoodsChangeLog(goodsLimitInfoEntityList, LimitServiceNameEnum.DELETE_ACTIVITY_LIMIT.name(), requestVo);
+        if (CommonBizUtil.isValidNynj(requestVo.getBizType())) {
+            buildDeleteLimitationLog(LimitServiceNameEnum.DELETE_ACTIVITY_LIMIT.name(), requestVo, limitInfoEntity.getLimitId());
         } else {
-            buildDeleteLimitationSkuChangeLog(skuLimitInfoEntityList, LimitServiceNameEnum.DELETE_ACTIVITY_LIMIT.name(), requestVo);
+            // 2.查询商品表或者sku表，保存未删除的记录到日志表，以便进行回滚
+            List<SkuLimitInfoEntity> skuLimitInfoEntityList = skuLimitInfoDao.listSkuLimitByLimitId(new LimitParam(limitInfoEntity.getPid(), limitInfoEntity.getLimitId()));
+            if (CollectionUtils.isEmpty(skuLimitInfoEntityList)) {
+                //没有sku记录，查询goods表
+                List<GoodsLimitInfoEntity> goodsLimitInfoEntityList = goodsLimitInfoDao.listGoodsLimitByLimitId(new LimitParam(limitInfoEntity.getPid(), limitInfoEntity.getLimitId()));
+                buildDeleteLimitationGoodsChangeLog(goodsLimitInfoEntityList, LimitServiceNameEnum.DELETE_ACTIVITY_LIMIT.name(), requestVo);
+            } else {
+                buildDeleteLimitationSkuChangeLog(skuLimitInfoEntityList, LimitServiceNameEnum.DELETE_ACTIVITY_LIMIT.name(), requestVo);
+            }
         }
 
         // 3.删除限购信息
@@ -488,6 +492,20 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
             logEntityList.add(orderChangeLogEntity);
         }
         threadExecutor.execute(new SaveLimitChangeLogThread(limitOrderChangeLogDao, logEntityList, RpcContext.getContext()));
+    }
+
+    private void buildDeleteLimitationLog(String name, DeleteLimitationRequestVo requestVo, Long limitId) {
+        LimitOrderChangeLogEntity entity = new LimitOrderChangeLogEntity();
+        entity.setPid(requestVo.getPid());
+        entity.setStoreId(requestVo.getStoreId());
+        entity.setBizId(requestVo.getBizId());
+        entity.setBizType(requestVo.getBizType());
+        entity.setLimitId(limitId);
+        entity.setTicket(LimitContext.getTicket());
+        entity.setServiceName(name);
+        entity.setIsOriginal(LimitConstant.DATA_TYPE_INIT);
+        entity.setStatus(LimitConstant.ORDER_LOG_STATUS_INIT);
+        threadExecutor.execute(new SaveLimitChangeLogThread(limitOrderChangeLogDao, Arrays.asList(entity), RpcContext.getContext()));
     }
 
     private List<SkuLimitInfoEntity> buildSkuLimitInfoEntity(Long limitId, SaveGoodsLimitInfoRequestVo saveGoodsLimitInfoRequestVo) {

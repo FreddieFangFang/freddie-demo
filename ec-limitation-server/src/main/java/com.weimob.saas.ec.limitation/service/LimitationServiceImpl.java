@@ -329,10 +329,15 @@ public class LimitationServiceImpl {
     public void reverseDeleteLimitation(Long pid, Long limitId, HashSet<Long> goodsIdSet,
                                         List<SkuLimitInfoEntity> skuLimitInfoEntityList,
                                         List<LimitOrderChangeLogEntity> logList) {
+        Integer bizType = logList.get(0).getBizType();
+
         limitInfoDao.reverseLimitInfoStatus(limitId);
 
-        if (!Objects.equals(logList.get(0).getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())
-                ||!Objects.equals(logList.get(0).getBizType(), ActivityTypeEnum.COMMUNITY_GROUPON.getType())) {
+        if (CommonBizUtil.isValidNynj(bizType)) {
+            return;
+        }
+
+        if (CommonBizUtil.isValidGoodsLimit(bizType)) {
             DeleteGoodsParam param = new DeleteGoodsParam();
             param.setPid(pid);
             param.setLimitId(limitId);
