@@ -100,7 +100,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
             return new LimitationUpdateResponseVo(null, true);
         }
         // 记录活动状态，回滚接口用于区分是否回滚主表信息
-        LimitContext.setTicket(LimitContext.getTicket() + limitInfoEntity.getIsDeleted());
+        LimitContext.setTicket(LimitContext.getTicket() + (limitInfoEntity.getIsDeleted() == true ? 1 : 0));
 
         if (CommonBizUtil.isValidNynj(requestVo.getBizType())) {
             buildDeleteLimitationLog(LimitServiceNameEnum.DELETE_ACTIVITY_LIMIT.name(), requestVo, limitInfoEntity.getLimitId());

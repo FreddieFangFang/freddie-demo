@@ -334,8 +334,8 @@ public class LimitationServiceImpl {
         Integer bizType = logList.get(0).getBizType();
         String ticket = logList.get(0).getTicket();
 
-        //如果删除时删除了限购主表，则回滚限购主表
-        if (Integer.parseInt(ticket.substring(ticket.length() - 1)) == 0) {
+        //如果删除时限购主表记录未被删除，则回滚限购主表
+        if (Integer.parseInt(ticket.substring(ticket.length() - 1)) == LimitConstant.NOT_DELETE) {
             limitInfoDao.reverseLimitInfoStatus(limitId);
         }
 
