@@ -86,20 +86,22 @@ public class LimitationServiceImpl {
     public void deleteLimitInfo(LimitInfoEntity entity, Integer bizType, Integer deleteWay) {
         // 删除限购主表信息
         Integer updateResult;
-        try {
-            updateResult = limitInfoDao.deleteLimitInfo(entity);
-        } catch (Exception e) {
-            throw new LimitationBizException(LimitationErrorCode.SQL_DELETE_LIMIT_INFO_ERROR, e);
-        }
-        if (updateResult == 0) {
-            throw new LimitationBizException(LimitationErrorCode.SQL_DELETE_LIMIT_INFO_ERROR);
-        }
+        if (!entity.getIsDeleted()) {
+            try {
+                updateResult = limitInfoDao.deleteLimitInfo(entity);
+            } catch (Exception e) {
+                throw new LimitationBizException(LimitationErrorCode.SQL_DELETE_LIMIT_INFO_ERROR, e);
+            }
+            if (updateResult == 0) {
+                throw new LimitationBizException(LimitationErrorCode.SQL_DELETE_LIMIT_INFO_ERROR);
+            }
 
-        // 删除门店表信息
-        try {
-            limitStoreRelationshipDao.deleteStoreRelationship(new LimitStoreRelationshipEntity(entity.getPid(), entity.getLimitId()));
-        } catch (Exception e) {
-            throw new LimitationBizException(LimitationErrorCode.SQL_DELETE_STORE_RELATIONSHIP_ERROR, e);
+            // 删除门店表信息
+            try {
+                limitStoreRelationshipDao.deleteStoreRelationship(new LimitStoreRelationshipEntity(entity.getPid(), entity.getLimitId()));
+            } catch (Exception e) {
+                throw new LimitationBizException(LimitationErrorCode.SQL_DELETE_STORE_RELATIONSHIP_ERROR, e);
+            }
         }
 
         if (deleteWay.equals(DeleteWayEnum.ACTIVITY_EXPIRE.getType())) {
@@ -330,8 +332,12 @@ public class LimitationServiceImpl {
                                         List<SkuLimitInfoEntity> skuLimitInfoEntityList,
                                         List<LimitOrderChangeLogEntity> logList) {
         Integer bizType = logList.get(0).getBizType();
+        String ticket = logList.get(0).getTicket();
 
-        limitInfoDao.reverseLimitInfoStatus(limitId);
+        //如果删除时删除了限购主表，则回滚限购主表
+        if (Integer.parseInt(ticket.substring(ticket.length() - 1)) == 0) {
+            limitInfoDao.reverseLimitInfoStatus(limitId);
+        }
 
         if (CommonBizUtil.isValidNynj(bizType)) {
             return;

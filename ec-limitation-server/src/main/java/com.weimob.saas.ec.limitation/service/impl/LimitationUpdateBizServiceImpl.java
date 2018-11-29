@@ -92,13 +92,15 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         // 1.查询限购主表信息
         LimitInfoEntity limitInfoEntity = null;
         try {
-            limitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
+            limitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType(), LimitConstant.DELETED));
         } catch (Exception e) {
             throw new LimitationBizException(LimitationErrorCode.SQL_QUERY_LIMIT_INFO_ERROR, e);
         }
         if (limitInfoEntity == null) {
             return new LimitationUpdateResponseVo(null, true);
         }
+        // 记录活动状态，回滚接口用于区分是否回滚主表信息
+        LimitContext.setTicket(LimitContext.getTicket() + limitInfoEntity.getIsDeleted());
 
         if (CommonBizUtil.isValidNynj(requestVo.getBizType())) {
             buildDeleteLimitationLog(LimitServiceNameEnum.DELETE_ACTIVITY_LIMIT.name(), requestVo, limitInfoEntity.getLimitId());
