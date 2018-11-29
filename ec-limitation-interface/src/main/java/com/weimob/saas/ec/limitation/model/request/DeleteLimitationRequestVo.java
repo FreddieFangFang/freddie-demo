@@ -19,7 +19,7 @@ public class DeleteLimitationRequestVo extends BaseRequest {
     private Integer bizType;
 
     /** 删除方式：1->手动删除；2->活动过期删除 {@link com.weimob.saas.ec.limitation.common.DeleteWayEnum}*/
-    private Integer deleteWay;
+    private Integer deleteWay = DeleteWayEnum.REMOVED_MANUALLY.getType();
 
     public Long getBizId() {
         return bizId;
