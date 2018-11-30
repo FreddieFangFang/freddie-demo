@@ -7,6 +7,7 @@ import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.model.request.*;
 import com.weimob.saas.ec.limitation.model.response.*;
 import com.weimob.saas.ec.limitation.service.LimitationQueryBizService;
+import com.weimob.saas.ec.limitation.utils.CommonBizUtil;
 import com.weimob.saas.ec.limitation.utils.VerifyParamUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,7 +99,7 @@ public class LimitationQueryFacadeService {
             VerifyParamUtils.checkParam(LimitationErrorCode.WID_IS_NULL, request.getWid());
             VerifyParamUtils.checkParam(LimitationErrorCode.BIZID_IS_NULL, request.getBizId());
             VerifyParamUtils.checkParam(LimitationErrorCode.BIZTYPE_IS_NULL, request.getBizType());
-            if (!Objects.equals(request.getBizType(), ActivityTypeEnum.COMBINATION_BUY.getType())) {
+            if (CommonBizUtil.isValidGoodsLimit(request.getBizType())) {
                 VerifyParamUtils.checkParam(LimitationErrorCode.GOODSID_IS_NULL, request.getGoodsId());
             }
             VerifyParamUtils.checkParam(LimitationErrorCode.LIMITLEVEL_IS_NULL, request.getLimitLevel());

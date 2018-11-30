@@ -547,7 +547,7 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
         for (UpdateUserLimitVo limitVo : vos) {
             VerifyParamUtils.checkParam(LimitationErrorCode.PID_IS_NULL, limitVo.getPid());
             VerifyParamUtils.checkParam(LimitationErrorCode.STORE_IS_NULL, limitVo.getStoreId());
-            if (!Objects.equals(ActivityTypeEnum.COMBINATION_BUY.getType(), limitVo.getBizType())) {
+            if (CommonBizUtil.isValidGoodsLimit(limitVo.getBizType())) {
                 VerifyParamUtils.checkParam(LimitationErrorCode.GOODSID_IS_NULL, limitVo.getGoodsId());
             }
             VerifyParamUtils.checkParam(LimitationErrorCode.BIZTYPE_IS_NULL, limitVo.getBizType());
@@ -561,11 +561,10 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
             if (Objects.equals(limitVo.getBizType(), ActivityTypeEnum.DISCOUNT.getType())) {
                 VerifyParamUtils.checkParam(LimitationErrorCode.ACTIVITY_STOCK_TYPE_IS_NULL, limitVo.getActivityStockType());
             }
-            if (Objects.equals(ActivityTypeEnum.PRIVILEGE_PRICE.getType(), limitVo.getBizType())
-                    || (Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), limitVo.getBizType())
-                    && Objects.equals(limitVo.getActivityStockType(), LimitConstant.DISCOUNT_TYPE_SKU))
-                    || Objects.equals(LimitBizTypeEnum.BIZ_TYPE_POINT.getLevel(), limitVo.getBizType())) {
-                VerifyParamUtils.checkParam(LimitationErrorCode.SKUINFO_IS_NULL, limitVo.getSkuId());
+            if (CommonBizUtil.isValidSkuLimit(limitVo.getBizType(), limitVo.getActivityStockType())) {
+                if (!CommonBizUtil.isValidCombination(limitVo.getBizType())) {
+                    VerifyParamUtils.checkParam(LimitationErrorCode.SKUINFO_IS_NULL, limitVo.getSkuId());
+                }
             }
         }
     }
