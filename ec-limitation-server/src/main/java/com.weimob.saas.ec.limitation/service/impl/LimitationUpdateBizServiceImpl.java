@@ -128,7 +128,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         Long pid = requestVo.getDeleteGoodsLimitVoList().get(0).getPid();
         Long bizId = requestVo.getDeleteGoodsLimitVoList().get(0).getBizId();
         Integer bizType = requestVo.getDeleteGoodsLimitVoList().get(0).getBizType();
-        Integer activityStockType = null;
+        Integer activityStockType = requestVo.getDeleteGoodsLimitVoList().get(0).getActivityStockType();
         List<Long> goodsIdList = new ArrayList<>(requestVo.getDeleteGoodsLimitVoList().size());
         List<LimitOrderChangeLogEntity> logEntityList = new ArrayList<>();
 
