@@ -15,6 +15,7 @@ import com.weimob.saas.ec.limitation.service.LimitationServiceImpl;
 import com.weimob.saas.ec.limitation.utils.CommonBizUtil;
 import com.weimob.saas.ec.limitation.utils.LimitContext;
 import com.weimob.saas.ec.limitation.utils.VerifyParamUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -85,7 +86,7 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         queryLogParameter.setStatus(LimitConstant.ORDER_LOG_STATUS_INIT);
         queryLogParameter.setServiceName(getServiceName().name());
         queryLogParameter.setBizType(vos.get(0).getBizType());
-        LimitOrderChangeLogEntity limitOrderChangeLogEntity = null;
+        List<LimitOrderChangeLogEntity> limitOrderChangeLogEntity = null;
         try {
             // SQL 默认查询 service_name = "DEDUCT_USER_LIMIT"
             limitOrderChangeLogEntity = limitOrderChangeLogDao.getLogByReferId(queryLogParameter);
@@ -94,7 +95,7 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         }
 
         //2. 如果有记录直接抛出异常
-        if (null != limitOrderChangeLogEntity) {
+        if (CollectionUtils.isNotEmpty(limitOrderChangeLogEntity)) {
             throw new LimitationBizException(LimitationErrorCode.REPEAT_ORDER_DEDUCT_LIMIT);
         }
 

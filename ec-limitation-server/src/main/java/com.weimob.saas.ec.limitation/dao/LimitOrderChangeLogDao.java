@@ -30,7 +30,7 @@ public interface LimitOrderChangeLogDao {
      * @param [queryLogParameter]
      * @return com.weimob.saas.ec.limitation.entity.LimitOrderChangeLogEntity
      */
-    LimitOrderChangeLogEntity getLogByReferId(LimitOrderChangeLogEntity queryLogParameter);
+    List<LimitOrderChangeLogEntity> getLogByReferId(LimitOrderChangeLogEntity queryLogParameter);
 
     /**
      * @title 通过Ticket查询日志记录
