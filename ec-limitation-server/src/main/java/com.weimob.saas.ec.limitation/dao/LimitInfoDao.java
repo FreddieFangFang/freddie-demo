@@ -52,6 +52,7 @@ public interface LimitInfoDao {
      */
     LimitInfoEntity getLimitInfo(LimitParam limitParam);
 
+    LimitInfoEntity getLimitInfoForDelete(LimitParam limitParam);
     /**
      * @title 批量查询限购信息
      * @author qi.he

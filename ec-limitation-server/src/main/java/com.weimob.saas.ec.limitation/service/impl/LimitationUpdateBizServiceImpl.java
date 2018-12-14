@@ -89,10 +89,10 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
 
     @Override
     public LimitationUpdateResponseVo deleteLimitationInfo(DeleteLimitationRequestVo requestVo) {
-        // 1.查询限购主表信息
+        // 1.查询限购主表信息 is_deleted=0/1 都查出来
         LimitInfoEntity limitInfoEntity = null;
         try {
-            limitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType(), LimitConstant.DELETED));
+            limitInfoEntity = limitInfoDao.getLimitInfoForDelete(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
         } catch (Exception e) {
             throw new LimitationBizException(LimitationErrorCode.SQL_QUERY_LIMIT_INFO_ERROR, e);
         }
@@ -100,8 +100,9 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
             return new LimitationUpdateResponseVo(null, true);
         }
         // 记录活动状态，回滚接口用于区分是否回滚主表信息
-        LimitContext.setTicket(LimitContext.getTicket() + (limitInfoEntity.getIsDeleted() == true ? 1 : 0));
+        LimitContext.setTicket(LimitContext.getTicket() + (limitInfoEntity.getIsDeleted() ? 1 : 0));
 
+        //N元N件只有活动限购
         if (CommonBizUtil.isValidNynj(requestVo.getBizType())) {
             buildDeleteLimitationLog(LimitServiceNameEnum.DELETE_ACTIVITY_LIMIT.name(), requestVo, limitInfoEntity.getLimitId());
         } else {
