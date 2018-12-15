@@ -116,6 +116,7 @@
       refer_id = #{referId}
     AND biz_type = #{bizType}
     AND service_name = "DEDUCT_USER_LIMIT"
+    AND status = #{status}
   /*LimitOrderChangeLogDao.getLogByReferId*/
   </select>
 
