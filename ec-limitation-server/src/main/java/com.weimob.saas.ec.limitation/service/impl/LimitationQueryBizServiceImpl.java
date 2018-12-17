@@ -1,6 +1,7 @@
 package com.weimob.saas.ec.limitation.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.dianping.cat.Cat;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.weimob.saas.ec.activity.util.group.ListToMap;
@@ -251,7 +252,13 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         if (CollectionUtils.isEmpty(limitInfoEntityList)) {
             throw new LimitationBizException(LimitationErrorCode.LIMIT_GOODS_IS_NULL);
         }
-        LOGGER.info("goodsLimitInfoDao.listGoodsLimitByGoodsIdList查询活动限购："+limitInfoEntityList+"\n  sql 入参"+JSON.toJSONString(limitInfoEntityList));
+        String message = "goodsLimitInfoDao.listGoodsLimitByGoodsIdList查询活动限购："+limitInfoEntityList+"————sql 出参："+JSON.toJSONString(limitInfoEntityList);
+        Cat.logTransaction("saas.ec-limitation-service",
+                "NullPointerExceptionLog",
+                "goodsLimitInfoDao.listGoodsLimitByGoodsIdList",
+                System.currentTimeMillis(),
+                message
+        );
         return limitInfoEntityList;
     }
 
@@ -695,7 +702,13 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             if (CollectionUtils.isEmpty(goodsLimitInfoEntityList)) {
                 return responseVo;
             }
-            LOGGER.info("goodsLimitInfoDao.listGoodsLimitNum查询商品限购："+goodsLimitInfoEntityList+"\n  sql 入参"+JSON.toJSONString(goodsLimitInfoEntityList));
+            String message = "goodsLimitInfoDao.listGoodsLimitNum查询商品限购："+goodsLimitInfoEntityList+"————sql 出参："+JSON.toJSONString(goodsLimitInfoEntityList);
+            Cat.logTransaction("saas.ec-limitation-service",
+                    "NullPointerExceptionLog",
+                    "goodsLimitInfoDao.listGoodsLimitNum",
+                    System.currentTimeMillis(),
+                    message
+            );
             goodsLimitNumMap = buildGoodsLimitMap(goodsLimitInfoEntityList);
         }
         //如果活动类型为 特权价/限时折扣可售数量/限量抢购/积分商城/社区团购，则需要查询sku的限购数量
@@ -1321,7 +1334,13 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 continue;
 
             }
-            LOGGER.info("goodsLimitInfoDao.listGoodsLimitByGoodsIdList根据商品Id查询商品限购："+tmpGoodsLimitInfoList+"\n  sql 入参"+JSON.toJSONString(tmpGoodsLimitInfoList));
+            String message = "goodsLimitInfoDao.listGoodsLimitByGoodsIdList根据商品Id查询商品限购："+tmpGoodsLimitInfoList+"————sql 出参："+JSON.toJSONString(tmpGoodsLimitInfoList);
+            Cat.logTransaction("saas.ec-limitation-service",
+                    "NullPointerExceptionLog",
+                    "goodsLimitInfoDao.listGoodsLimitByGoodsIdList",
+                    System.currentTimeMillis(),
+                    message
+            );
             if (CollectionUtils.isNotEmpty(tmpGoodsLimitInfoList)) {
                 goodsLimitInfoList.addAll(tmpGoodsLimitInfoList);
             }
