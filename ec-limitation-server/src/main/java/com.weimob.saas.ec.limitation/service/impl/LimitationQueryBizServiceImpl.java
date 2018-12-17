@@ -252,13 +252,15 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         if (CollectionUtils.isEmpty(limitInfoEntityList)) {
             throw new LimitationBizException(LimitationErrorCode.LIMIT_GOODS_IS_NULL);
         }
-        String message = "goodsLimitInfoDao.listGoodsLimitByGoodsIdList查询活动限购："+limitInfoEntityList+"————sql 出参："+JSON.toJSONString(limitInfoEntityList);
-        Cat.logTransaction("saas.ec-limitation-service",
-                "NullPointerExceptionLog",
-                "goodsLimitInfoDao.listGoodsLimitByGoodsIdList",
-                System.currentTimeMillis(),
-                message
-        );
+        if(limitInfoEntityList.contains(null)) {
+            String message = "goodsLimitInfoDao.listGoodsLimitByGoodsIdList查询活动限购：" + limitInfoEntityList + "————sql 出参：" + JSON.toJSONString(limitInfoEntityList);
+            Cat.logTransaction("saas.ec-limitation-service",
+                    "NullPointerExceptionLog",
+                    "goodsLimitInfoDao.listGoodsLimitByGoodsIdList",
+                    System.currentTimeMillis(),
+                    message
+            );
+        }
         return limitInfoEntityList;
     }
 
@@ -702,13 +704,15 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             if (CollectionUtils.isEmpty(goodsLimitInfoEntityList)) {
                 return responseVo;
             }
-            String message = "goodsLimitInfoDao.listGoodsLimitNum查询商品限购："+goodsLimitInfoEntityList+"————sql 出参："+JSON.toJSONString(goodsLimitInfoEntityList);
-            Cat.logTransaction("saas.ec-limitation-service",
-                    "NullPointerExceptionLog",
-                    "goodsLimitInfoDao.listGoodsLimitNum",
-                    System.currentTimeMillis(),
-                    message
-            );
+            if(goodsLimitInfoEntityList.contains(null)) {
+                String message = "goodsLimitInfoDao.listGoodsLimitNum查询商品限购：" + goodsLimitInfoEntityList + "————sql 出参：" + JSON.toJSONString(goodsLimitInfoEntityList);
+                Cat.logTransaction("saas.ec-limitation-service",
+                        "NullPointerExceptionLog",
+                        "goodsLimitInfoDao.listGoodsLimitNum",
+                        System.currentTimeMillis(),
+                        message
+                );
+            }
             goodsLimitNumMap = buildGoodsLimitMap(goodsLimitInfoEntityList);
         }
         //如果活动类型为 特权价/限时折扣可售数量/限量抢购/积分商城/社区团购，则需要查询sku的限购数量
@@ -1334,13 +1338,15 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 continue;
 
             }
-            String message = "goodsLimitInfoDao.listGoodsLimitByGoodsIdList根据商品Id查询商品限购："+tmpGoodsLimitInfoList+"————sql 出参："+JSON.toJSONString(tmpGoodsLimitInfoList);
-            Cat.logTransaction("saas.ec-limitation-service",
-                    "NullPointerExceptionLog",
-                    "goodsLimitInfoDao.listGoodsLimitByGoodsIdList",
-                    System.currentTimeMillis(),
-                    message
-            );
+            if(tmpGoodsLimitInfoList.contains(null)){
+                String message = "goodsLimitInfoDao.listGoodsLimitByGoodsIdList根据商品Id查询商品限购："+tmpGoodsLimitInfoList+"————sql 出参："+JSON.toJSONString(tmpGoodsLimitInfoList);
+                Cat.logTransaction("saas.ec-limitation-service",
+                        "NullPointerExceptionLog",
+                        "goodsLimitInfoDao.listGoodsLimitByGoodsIdList",
+                        System.currentTimeMillis(),
+                        message
+                );
+            }
             if (CollectionUtils.isNotEmpty(tmpGoodsLimitInfoList)) {
                 goodsLimitInfoList.addAll(tmpGoodsLimitInfoList);
             }
