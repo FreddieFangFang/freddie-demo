@@ -253,7 +253,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             throw new LimitationBizException(LimitationErrorCode.LIMIT_GOODS_IS_NULL);
         }
         if(limitInfoEntityList.contains(null)) {
-            String message = "goodsLimitInfoDao.listGoodsLimitByGoodsIdList查询活动限购：" + limitInfoEntityList + "————sql 出参：" + JSON.toJSONString(limitInfoEntityList);
+            String message = "goodsLimitInfoDao.listGoodsLimitByGoodsIdList查询活动限购：" + limitInfoEntityList + "————sql 入参：" + JSON.toJSONString(queryLimitInfoList);
             Cat.logTransaction("saas.ec-limitation-service",
                     "NullPointerExceptionLog",
                     "goodsLimitInfoDao.listGoodsLimitByGoodsIdList",
@@ -705,7 +705,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
                 return responseVo;
             }
             if(goodsLimitInfoEntityList.contains(null)) {
-                String message = "goodsLimitInfoDao.listGoodsLimitNum查询商品限购：" + goodsLimitInfoEntityList + "————sql 出参：" + JSON.toJSONString(goodsLimitInfoEntityList);
+                String message = "goodsLimitInfoDao.listGoodsLimitNum查询商品限购：" + goodsLimitInfoEntityList + "————sql 入参：" + JSON.toJSONString(requestVo);
                 Cat.logTransaction("saas.ec-limitation-service",
                         "NullPointerExceptionLog",
                         "goodsLimitInfoDao.listGoodsLimitNum",
@@ -1339,7 +1339,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
 
             }
             if(tmpGoodsLimitInfoList.contains(null)){
-                String message = "goodsLimitInfoDao.listGoodsLimitByGoodsIdList根据商品Id查询商品限购："+tmpGoodsLimitInfoList+"————sql 出参："+JSON.toJSONString(tmpGoodsLimitInfoList);
+                String message = "goodsLimitInfoDao.listGoodsLimitByGoodsIdList根据商品Id查询商品限购："+tmpGoodsLimitInfoList+"————sql 入参："+JSON.toJSONString(commonLimitParam);
                 Cat.logTransaction("saas.ec-limitation-service",
                         "NullPointerExceptionLog",
                         "goodsLimitInfoDao.listGoodsLimitByGoodsIdList",
