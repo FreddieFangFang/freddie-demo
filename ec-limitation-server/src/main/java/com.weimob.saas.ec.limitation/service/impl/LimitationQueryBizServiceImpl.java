@@ -191,14 +191,14 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         }
 
         System.out.println("监测前数据： queryList = [" + JSON.toJSONString(queryList) + "], pid = [" + pid + "], taskResultList= ["
-            + JSON.toJSONString(taskResultList) + "], skuLimitList  = ["JSON.toJSONString(skuLimitList));
+            + JSON.toJSONString(taskResultList) + "], skuLimitList  = [" + JSON.toJSONString(skuLimitList));
         // 得到执行结果
         if (SkuQueryThread.isAllDone(taskResultList, skuLimitList)) {
             taskResultList.clear();
         }
 
         System.out.println("监测后数据： queryList = [" + JSON.toJSONString(queryList) + "], pid = [" + pid + "], taskResultList= ["
-            + JSON.toJSONString(taskResultList) + "], skuLimitList  = ["JSON.toJSONString(skuLimitList));
+            + JSON.toJSONString(taskResultList) + "], skuLimitList  = [" + JSON.toJSONString(skuLimitList));
         return skuLimitList;
     }
 
