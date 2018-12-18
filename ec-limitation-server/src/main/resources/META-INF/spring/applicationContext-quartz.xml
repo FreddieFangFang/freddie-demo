@@ -57,7 +57,7 @@
 	</bean>
 
 	<bean id="widMergeFromCacheQueueTask" class="com.weimob.saas.ec.limitation.quartz.WidMergeFromCacheQueueTask">
-		<property name="taskSwitch" value="0" />
+		<property name="taskSwitch" value="1" />
 		<property name="runTaskIp" value="1" />
 		<property name="reversePopSize" value="1" />
 		<property name="UserLimitUpdateFacadeService" ref="userLimitUpdateFacadeService"/>
