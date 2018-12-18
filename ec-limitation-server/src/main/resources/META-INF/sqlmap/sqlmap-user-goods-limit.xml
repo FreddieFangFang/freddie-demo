@@ -246,7 +246,7 @@
     <foreach item="id" index="index" collection="goodsIdList" open="(" separator="," close=")">
       #{id}
     </foreach>
-    /*UserGoodsLimitDao.listUserGoodsLimit*/
+    /*UserGoodsLimitDao.listUserGoodsLimitByGoodsIdList*/
   </select>
 
 </mapper>

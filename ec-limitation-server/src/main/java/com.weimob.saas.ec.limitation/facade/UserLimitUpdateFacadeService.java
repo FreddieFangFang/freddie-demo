@@ -19,9 +19,13 @@ import com.weimob.saas.ec.limitation.utils.LimitContext;
 import org.apache.commons.collections.CollectionUtils;
 import com.weimob.saas.ec.limitation.utils.LimitationRedisClientUtils;
 import com.weimob.saas.ec.limitation.utils.VerifyParamUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +39,8 @@ import java.util.Map;
 @Service(value = "userLimitUpdateFacadeService")
 public class UserLimitUpdateFacadeService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserLimitUpdateFacadeService.class);
+
     @Autowired
     private SaveUserLimitHandler saveUserLimitHandler;
     @Autowired
@@ -43,6 +49,9 @@ public class UserLimitUpdateFacadeService {
     private ReverseUserLimitHandler reverseUserLimitHandler;
     @Autowired
     private LimitationServiceImpl limitationService;
+    @Resource(name = "mergeLimitByWid")
+    private ThreadPoolTaskExecutor mergeLimitByWid;
+
 
     public UpdateUserLimitResponseVo saveUserLimit(SaveUserLimitRequestVo requestVo) {
         LimitContext.setLimitBo(new LimitBo());
@@ -74,24 +83,41 @@ public class UserLimitUpdateFacadeService {
         return new ReverseUserLimitResponseVo(true);
     }
 
-    public boolean mergeLimitByWid(MergeWidRequest mergeWidRequest){
-        Long pid = mergeWidRequest.getPid();
-        Long newWid = mergeWidRequest.getNewWid();
-        Long oldWid = mergeWidRequest.getOldWid();
-        //1.合并 user-limit
-        mergeUserLimit(pid,newWid, oldWid);
-        //2.合并 user-goods-limit
-        mergeUserGoodsLimit(pid,newWid, oldWid);
+    public boolean mergeLimitByWid(MergeWidRequest mergeWidRequest) {
+        final Long pid = mergeWidRequest.getPid();
+        final Long newWid = mergeWidRequest.getNewWid();
+        final Long oldWid = mergeWidRequest.getOldWid();
+        mergeLimitByWid.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    //1.合并 user-limit
+                    mergeUserLimit(pid, newWid, oldWid);
+                    //2.合并 user-goods-limit
+                    mergeUserGoodsLimit(pid, newWid, oldWid);
+                } catch (Exception e) {
+                    LOGGER.error("mergeUserLimit异常...");
+                    String key = "mergeLimitByWid";
+                    String value = pid + "_" + newWid + "_" + oldWid+"_"+System.currentTimeMillis();
+                    LimitationRedisClientUtils.pushDataToQueue(key, value);
+                }
+            }
+        });
+
+
         return true;
     }
 
-    private void mergeUserLimit(Long pid, Long newWid, Long oldWid) {
+    public void mergeUserLimit(Long pid, Long newWid, Long oldWid) {
         //查出wid1
         List<UserLimitEntity> newLimit = limitationService.getUserLimitList(pid, newWid);
         Map<String,UserLimitEntity> newLimitMap = new HashMap<>();
         for(UserLimitEntity userLimitEntity :newLimit){
             String LimitKey = userLimitEntity.getPid()+"_"+userLimitEntity.getStoreId()+"_"+userLimitEntity.getLimitId();
             newLimitMap.put(LimitKey,userLimitEntity);
+        }
+        if(true){
+            throw new RuntimeException();
         }
 
         //查询wid2
@@ -139,7 +165,7 @@ public class UserLimitUpdateFacadeService {
         }
     }
 
-    private void mergeUserGoodsLimit(Long pid, Long newWid, Long oldWid) {
+    public void mergeUserGoodsLimit(Long pid, Long newWid, Long oldWid) {
         List<UserGoodsLimitEntity> newLimit = limitationService.getUserGoodsLimitList(pid,newWid);
         Map<String,UserGoodsLimitEntity> newLimitMap = new HashMap<>();
         for(UserGoodsLimitEntity userGoodsLimitEntity :newLimit){

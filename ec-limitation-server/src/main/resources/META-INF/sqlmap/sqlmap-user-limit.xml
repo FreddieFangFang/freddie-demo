@@ -186,9 +186,10 @@
     FROM
       user_limit
     WHERE
-      wid = #{wid}
+      pid = #{pid}
+    AND wid = #{wid}
     AND is_deleted = 0
-    /*UserLimitDao.getUserLimitByWid*/
+    /*UserLimitDao.getUserLimitListByWid*/
   </select>
 
   <select id="listUserLimitByBizId" resultMap="BaseResultMap" parameterType="java.util.List">

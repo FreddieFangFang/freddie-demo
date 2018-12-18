@@ -8,6 +8,7 @@
 		<property name="triggers">
 			<list>
 				<ref bean="reverseFromCacheQueueJobTrigger" />
+				<ref bean="widMergeFromCacheQueueJobTrigger" />
 			</list>
 		</property>
 	</bean>
@@ -37,4 +38,28 @@
 		<property name="reverseUserLimitHandler" ref="reverseUserLimitHandler"/>
 	</bean>
 	<!-- 从缓存回滚限购定时任务结束 -->
+
+	<!--定时任务 3分钟执行一次-->
+	<bean id="widMergeFromCacheQueueJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="widMergeFromCacheQueueJobDetail" />
+		</property>
+		<property name="cronExpression" value="0/1 * * * * ?"/>
+	</bean>
+
+	<bean id="widMergeFromCacheQueueJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="widMergeFromCacheQueueTask" />
+		</property>
+		<property name="targetMethod">
+			<value>widMergeFromCacheQueue</value>
+		</property>
+	</bean>
+
+	<bean id="widMergeFromCacheQueueTask" class="com.weimob.saas.ec.limitation.quartz.WidMergeFromCacheQueueTask">
+		<property name="taskSwitch" value="0" />
+		<property name="runTaskIp" value="1" />
+		<property name="reversePopSize" value="1" />
+		<property name="UserLimitUpdateFacadeService" ref="userLimitUpdateFacadeService"/>
+	</bean>
 </beans>
