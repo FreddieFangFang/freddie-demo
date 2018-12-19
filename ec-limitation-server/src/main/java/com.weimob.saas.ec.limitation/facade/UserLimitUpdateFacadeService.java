@@ -50,7 +50,7 @@ public class UserLimitUpdateFacadeService {
     @Autowired
     private LimitationServiceImpl limitationService;
     @Resource(name = "mergeLimitByWid")
-    private ThreadPoolTaskExecutor mergeLimitByWid;
+    private ThreadPoolTaskExecutor mergeLimitByWidExecutor;
 
 
     public UpdateUserLimitResponseVo saveUserLimit(SaveUserLimitRequestVo requestVo) {
@@ -87,7 +87,7 @@ public class UserLimitUpdateFacadeService {
         final Long pid = mergeWidRequest.getPid();
         final Long newWid = mergeWidRequest.getNewWid();
         final Long oldWid = mergeWidRequest.getOldWid();
-        mergeLimitByWid.execute(new Runnable() {
+        mergeLimitByWidExecutor.execute(new Runnable() {
             @Override
             public void run() {
                 try {

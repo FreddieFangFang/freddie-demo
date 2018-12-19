@@ -41,7 +41,7 @@ public class LimitConstant {
     //限购回滚定时任务开关开启
     public static final int LIMITATION_WIDMERGE_TASK_OFF = 0;
     //wid合并补偿队列
-    public static final String KEY_LIMITATION_WIDMERGE_QUEUE = "mergeLimitByWid";
-    //wid合并补偿 1小时候cat报错人工干预
+    public static final String KEY_LIMITATION_WIDMERGE_QUEUE = "mergeLimitByWidQueue";
+    //wid合并补偿 1小时cat报错人工干预
     public static final Long WIDMERGE_EXPIRE = 60 * 60 * 1000L;
 }

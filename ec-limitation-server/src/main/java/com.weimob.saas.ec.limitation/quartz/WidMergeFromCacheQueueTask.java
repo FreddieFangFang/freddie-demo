@@ -47,9 +47,9 @@ public class WidMergeFromCacheQueueTask {
         if (taskSwitch == LimitConstant.LIMITATION_WIDMERGE_TASK_OFF) {
             return;
         }
-//        if (!SoaUtil.getLocalIp().equals(runTaskIp)) {
-//            return;
-//        }
+        if (!SoaUtil.getLocalIp().equals(runTaskIp)) {
+            return;
+        }
         if (isReverseFromCacheQueue.compareAndSet(false, true)) {
             try {
                 List<Object> objectList = LimitationRedisClientUtils.popDataFromQueen(LimitConstant.KEY_LIMITATION_WIDMERGE_QUEUE, reversePopSize);
@@ -66,7 +66,7 @@ public class WidMergeFromCacheQueueTask {
                     Long newWid = Long.parseLong(values[1]);
                     Long oldWid = Long.parseLong(values[2]);
                     Long time = Long.parseLong(values[3]);
-                    long current = System.currentTimeMillis();
+                    Long current = System.currentTimeMillis();
                     if ((current - time) > LimitConstant.WIDMERGE_EXPIRE) {
                         Cat.logTransaction("saas.ec-limitation-service",
                                 "WidMergeExceptionLog",
