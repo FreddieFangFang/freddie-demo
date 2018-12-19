@@ -45,7 +45,7 @@ public class ReverseUserLimitHandler {
         if (CollectionUtils.isEmpty(orderChangeLogEntityList)) {
             throw new LimitationBizException(LimitationErrorCode.INVALID_REVERSE_TICKET);
         }
-        if (orderChangeLogEntityList.get(0).getStatus() == 0){
+        if (orderChangeLogEntityList.get(0).getStatus() == LimitConstant.ORDER_LOG_STATUS_INIT){
             //2.服务名
             String serviceName = orderChangeLogEntityList.get(0).getServiceName();
             Handler<?> handler = reverseLimitHandlerFactory.getHandlerByServiceName(serviceName);
