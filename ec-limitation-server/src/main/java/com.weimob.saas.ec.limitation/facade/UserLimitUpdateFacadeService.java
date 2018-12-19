@@ -97,9 +97,8 @@ public class UserLimitUpdateFacadeService {
                     mergeUserGoodsLimit(pid, newWid, oldWid);
                 } catch (Exception e) {
                     LOGGER.error("mergeUserLimit异常...");
-                    String key = "mergeLimitByWid";
                     String value = pid + "_" + newWid + "_" + oldWid+"_"+System.currentTimeMillis();
-                    LimitationRedisClientUtils.pushDataToQueue(key, value);
+                    LimitationRedisClientUtils.pushDataToQueue(LimitConstant.KEY_LIMITATION_WIDMERGE_QUEUE, value);
                 }
             }
         });
@@ -115,9 +114,6 @@ public class UserLimitUpdateFacadeService {
         for(UserLimitEntity userLimitEntity :newLimit){
             String LimitKey = userLimitEntity.getPid()+"_"+userLimitEntity.getStoreId()+"_"+userLimitEntity.getLimitId();
             newLimitMap.put(LimitKey,userLimitEntity);
-        }
-        if(true){
-            throw new RuntimeException();
         }
 
         //查询wid2

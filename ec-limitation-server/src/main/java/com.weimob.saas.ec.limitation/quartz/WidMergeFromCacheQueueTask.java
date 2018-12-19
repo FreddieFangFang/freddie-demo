@@ -44,7 +44,7 @@ public class WidMergeFromCacheQueueTask {
     private UserLimitUpdateFacadeService userLimitUpdateFacadeService;
 
     public void widMergeFromCacheQueue() {
-        if (taskSwitch == LimitConstant.LIMITATION_REVERSE_TASK_OFF) {
+        if (taskSwitch == LimitConstant.LIMITATION_WIDMERGE_TASK_OFF) {
             return;
         }
 //        if (!SoaUtil.getLocalIp().equals(runTaskIp)) {
@@ -52,9 +52,7 @@ public class WidMergeFromCacheQueueTask {
 //        }
         if (isReverseFromCacheQueue.compareAndSet(false, true)) {
             try {
-                String key = "mergeLimitByWid";
-
-                List<Object> objectList = LimitationRedisClientUtils.popDataFromQueen(key, reversePopSize);
+                List<Object> objectList = LimitationRedisClientUtils.popDataFromQueen(LimitConstant.KEY_LIMITATION_WIDMERGE_QUEUE, reversePopSize);
                 if (CollectionUtils.isEmpty(objectList)) {
                     return;
                 }
@@ -69,13 +67,14 @@ public class WidMergeFromCacheQueueTask {
                     Long oldWid = Long.parseLong(values[2]);
                     Long time = Long.parseLong(values[3]);
                     long current = System.currentTimeMillis();
-                    if ((current - time) > 30 * 1000) {
+                    if ((current - time) > LimitConstant.WIDMERGE_EXPIRE) {
                         Cat.logTransaction("saas.ec-limitation-service",
                                 "WidMergeExceptionLog",
                                 "WidMergeFromCacheQueueTask.widMergeFromCacheQueue",
                                 System.currentTimeMillis(),
                                 value
                         );
+                        return;
                     }
                     try {
                         RpcContext.getContext().setGlobalTicket(value);
@@ -84,8 +83,8 @@ public class WidMergeFromCacheQueueTask {
                         userLimitUpdateFacadeService.mergeUserGoodsLimit(pid, newWid, oldWid);
                     } catch (Exception e) {
                         //如果异常，放回redis
-                        LimitationRedisClientUtils.pushDataToQueue(key, value);
-                        log.error("widMergeFromCacheQueue异常："+value);
+                        LimitationRedisClientUtils.pushDataToQueue(LimitConstant.KEY_LIMITATION_WIDMERGE_QUEUE, value);
+                        log.error("widMergeFromCacheQueue异常：" + value);
                     }
                 }
             } catch (Exception e) {

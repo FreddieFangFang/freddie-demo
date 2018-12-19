@@ -44,7 +44,7 @@
 		<property name="jobDetail">
 			<ref bean="widMergeFromCacheQueueJobDetail" />
 		</property>
-		<property name="cronExpression" value="0/1 * * * * ?"/>
+		<property name="cronExpression" value="${widMergeFromCacheQueueTask.cronExpression}"/>
 	</bean>
 
 	<bean id="widMergeFromCacheQueueJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
@@ -57,9 +57,9 @@
 	</bean>
 
 	<bean id="widMergeFromCacheQueueTask" class="com.weimob.saas.ec.limitation.quartz.WidMergeFromCacheQueueTask">
-		<property name="taskSwitch" value="1" />
-		<property name="runTaskIp" value="1" />
-		<property name="reversePopSize" value="1" />
+		<property name="taskSwitch" value="${widMergeFromCacheQueueTask.taskSwitch}" />
+		<property name="runTaskIp" value="${widMergeFromCacheQueueTask.runTaskIp}" />
+		<property name="reversePopSize" value="${widMergeFromCacheQueueTask.reversePopSize}" />
 		<property name="UserLimitUpdateFacadeService" ref="userLimitUpdateFacadeService"/>
 	</bean>
 </beans>
