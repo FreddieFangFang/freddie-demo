@@ -103,7 +103,7 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
 
     @Override
     protected LimitOrderChangeLogEntity createOrderChangeLog(UpdateUserLimitVo vo) {
-        LimitInfoEntity limitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(vo.getPid(), vo.getBizId(), vo.getBizType()));
+        LimitInfoEntity limitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(vo.getPid(), vo.getBizId(), vo.getBizType(), LimitConstant.DELETED));
         LimitOrderChangeLogEntity orderChangeLogEntity = new LimitOrderChangeLogEntity();
         orderChangeLogEntity.setPid(vo.getPid());
         orderChangeLogEntity.setStoreId(vo.getStoreId());

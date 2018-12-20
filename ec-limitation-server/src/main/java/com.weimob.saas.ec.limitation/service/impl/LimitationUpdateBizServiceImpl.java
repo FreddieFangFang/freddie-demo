@@ -92,7 +92,7 @@ public class LimitationUpdateBizServiceImpl implements LimitationUpdateBizServic
         // 1.查询限购主表信息 is_deleted=0/1 都查出来
         LimitInfoEntity limitInfoEntity = null;
         try {
-            limitInfoEntity = limitInfoDao.getLimitInfoForDelete(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType()));
+            limitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType(), LimitConstant.DELETED));
         } catch (Exception e) {
             throw new LimitationBizException(LimitationErrorCode.SQL_QUERY_LIMIT_INFO_ERROR, e);
         }
