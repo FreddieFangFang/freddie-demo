@@ -222,7 +222,7 @@ public class LimitationServiceImpl {
                                       List<SkuLimitInfoEntity> activityGoodsSoldEntityList) {
 
         Integer updateResult;
-        if (!CollectionUtils.isEmpty(goodsLimitEntityList)) {
+        if (CollectionUtils.isNotEmpty(goodsLimitEntityList)) {
             Collections.sort(goodsLimitEntityList);
             for (UserGoodsLimitEntity goodsLimitEntity : goodsLimitEntityList) {
                 try {
@@ -236,7 +236,7 @@ public class LimitationServiceImpl {
             }
         }
 
-        if (!CollectionUtils.isEmpty(activityLimitEntityList)) {
+        if (CollectionUtils.isNotEmpty(activityLimitEntityList)) {
             Collections.sort(activityLimitEntityList);
             for (UserLimitEntity activityLimitEntity : activityLimitEntityList) {
                 try {
@@ -250,7 +250,7 @@ public class LimitationServiceImpl {
             }
         }
 
-        if (!CollectionUtils.isEmpty(activityGoodsSoldEntityList)) {
+        if (CollectionUtils.isNotEmpty(activityGoodsSoldEntityList)) {
             Collections.sort(activityGoodsSoldEntityList);
             for (SkuLimitInfoEntity activitySoldEntity : activityGoodsSoldEntityList) {
                 try {

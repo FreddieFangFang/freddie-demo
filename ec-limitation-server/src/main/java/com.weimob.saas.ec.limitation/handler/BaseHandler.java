@@ -395,30 +395,33 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                 case LIMIT_PREFIX_GOODS:
                     long goodsId = Long.parseLong(entry.getKey().substring(lastIndex));
                     baseBo = LimitContext.getLimitBo().getGoodsIdLimitMap().get(goodsId);
-                    limitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(baseBo.getPid(), baseBo.getBizId(), baseBo.getBizType()));
-                    //活动过期
+                    limitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(baseBo.getPid(), baseBo.getBizId(), baseBo.getBizType(), LimitConstant.DELETED));
                     if (limitInfoEntity == null) {
-                        throw new LimitationBizException(LimitationErrorCode.INVALID_LIMITATION_ACTIVITY);
+                        throw new LimitationBizException(LimitationErrorCode.INVALID_ACTIVITY);
                     }
-                    LimitContext.getLimitBo().getGoodsLimitEntityList().add(LimitConvertor.convertGoodsLimit(baseBo, goodsId, entry.getValue(), limitInfoEntity));
+                    if (!limitInfoEntity.getIsDeleted()) {
+                        LimitContext.getLimitBo().getGoodsLimitEntityList().add(LimitConvertor.convertGoodsLimit(baseBo, goodsId, entry.getValue(), limitInfoEntity));
+                    }
                     break;
                 //保存活动限购记录,多门店的时候是否会出现问题？
                 case LIMIT_PREFIX_ACTIVITY:
                     long activityId = Long.parseLong(entry.getKey().substring(lastIndex));
                     baseBo = LimitContext.getLimitBo().getActivityIdLimitMap().get(activityId);
-                    limitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(baseBo.getPid(), baseBo.getBizId(), baseBo.getBizType()));
+                    limitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(baseBo.getPid(), baseBo.getBizId(), baseBo.getBizType(), LimitConstant.DELETED));
                     if (limitInfoEntity == null) {
-                        throw new LimitationBizException(LimitationErrorCode.INVALID_LIMITATION_ACTIVITY);
+                        throw new LimitationBizException(LimitationErrorCode.INVALID_ACTIVITY);
                     }
-                    LimitContext.getLimitBo().getActivityLimitEntityList().add(LimitConvertor.convertActivityLimit(baseBo, activityId, entry.getValue(), limitInfoEntity));
+                    if (!limitInfoEntity.getIsDeleted()) {
+                        LimitContext.getLimitBo().getActivityLimitEntityList().add(LimitConvertor.convertActivityLimit(baseBo, activityId, entry.getValue(), limitInfoEntity));
+                    }
                     break;
                 //更新sku的售卖数量
                 case LIMIT_PREFIX_SKU:
                     long skuId = Long.parseLong(entry.getKey().substring(lastIndex));
                     baseBo = LimitContext.getLimitBo().getSkuIdLimitMap().get(skuId);
-                    limitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(baseBo.getPid(), baseBo.getBizId(), baseBo.getBizType()));
+                    limitInfoEntity = limitInfoDao.getLimitInfo(new LimitParam(baseBo.getPid(), baseBo.getBizId(), baseBo.getBizType(), LimitConstant.DELETED));
                     if (limitInfoEntity == null) {
-                        throw new LimitationBizException(LimitationErrorCode.INVALID_LIMITATION_ACTIVITY);
+                        throw new LimitationBizException(LimitationErrorCode.INVALID_ACTIVITY);
                     }
                     LimitContext.getLimitBo().getActivityGoodsSoldEntityList().add(LimitConvertor.convertActivitySoldEntity(baseBo, skuId, entry.getValue(), limitInfoEntity));
                     break;

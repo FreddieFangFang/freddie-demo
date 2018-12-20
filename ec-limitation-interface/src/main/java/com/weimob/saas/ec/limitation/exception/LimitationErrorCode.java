@@ -71,6 +71,7 @@ public enum LimitationErrorCode {
     INVALID_REVERSE_TICKET("1080000200006", "非法的回滚ticket"),
     INVALID_LIMITATION_ACTIVITY("1080000200007", "限购活动已过期"),
     ACTIVITY_EXPIRED("1080010200008", "活动已过期，取消订单或维权失败"),
+    INVALID_ACTIVITY("1080010200009", "活动非法"),
 
 
     /*****************************业务异常04**********************************/
