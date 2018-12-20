@@ -52,6 +52,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.*;
 import java.util.concurrent.Future;
 
@@ -76,7 +77,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
     @Autowired
     private SkuLimitInfoDao skuLimitInfoDao;
 
-    @Autowired
+    @Resource(name = "threadExecutor")
     private ThreadPoolTaskExecutor threadExecutor;
 
     @Override
@@ -190,15 +191,14 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             taskResultList.add(taskResult);
         }
 
-        System.out.println("监测前数据： queryList = [" + JSON.toJSONString(queryList) + "], pid = [" + pid + "], taskResultList= ["
-            + JSON.toJSONString(taskResultList) + "], skuLimitList  = [" + JSON.toJSONString(skuLimitList));
         // 得到执行结果
         if (SkuQueryThread.isAllDone(taskResultList, skuLimitList)) {
             taskResultList.clear();
         }
-
-        System.out.println("监测后数据： queryList = [" + JSON.toJSONString(queryList) + "], pid = [" + pid + "], taskResultList= ["
-            + JSON.toJSONString(taskResultList) + "], skuLimitList  = [" + JSON.toJSONString(skuLimitList));
+        if (CollectionUtils.isEmpty(skuLimitList)){
+            LOGGER.error("监测后数据： queryList = [" + JSON.toJSONString(queryList) + "], pid = [" + pid + "], taskResultList= ["
+                    + JSON.toJSONString(taskResultList) + "], skuLimitList  = [" + JSON.toJSONString(skuLimitList));
+        }
         return skuLimitList;
     }
 

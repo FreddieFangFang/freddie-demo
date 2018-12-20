@@ -1,18 +1,19 @@
 package com.weimob.saas.ec.limitation.thread;
 
+import com.alibaba.fastjson.JSON;
 import com.weimob.saas.ec.limitation.dao.SkuLimitInfoDao;
 import com.weimob.saas.ec.limitation.entity.SkuLimitInfoEntity;
 import com.weimob.saas.ec.limitation.model.CommonLimitParam;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
 public class SkuQueryThread implements Callable<List<SkuLimitInfoEntity>> {
-    private static final Log logger = LogFactory.getLog(SkuQueryThread.class);
+    private static final Logger logger = LoggerFactory.getLogger(SkuQueryThread.class);
 
 
     private CommonLimitParam commonLimitParam;
@@ -27,6 +28,9 @@ public class SkuQueryThread implements Callable<List<SkuLimitInfoEntity>> {
     @Override
     public List<SkuLimitInfoEntity> call() {
         List<SkuLimitInfoEntity> list = skuLimitInfoDao.listSkuLimitBySkuList(commonLimitParam);
+        if( CollectionUtils.isEmpty(list)){
+            logger.error("commonLimitParam: {0}, result : list is null ", JSON.toJSONString(commonLimitParam));
+        }
         return list;
     }
 
