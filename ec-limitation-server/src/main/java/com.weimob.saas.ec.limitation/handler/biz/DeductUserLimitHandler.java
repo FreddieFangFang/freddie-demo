@@ -120,7 +120,7 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         if (vo.getRightId() != null) {
             orderChangeLogEntity.setContent(vo.getRightId().toString());
         }
-        orderChangeLogEntity.setStatus(LimitConstant.ORDER_LOG_STATUS_OVER);
+        orderChangeLogEntity.setStatus(LimitConstant.ORDER_LOG_STATUS_INIT);
         return orderChangeLogEntity;
     }
 
