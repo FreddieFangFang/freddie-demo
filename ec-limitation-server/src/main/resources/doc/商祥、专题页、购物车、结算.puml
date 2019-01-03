@@ -1,0 +1,45 @@
+@startuml
+autonumber
+LimitationQueryFacadeService -> LimitationQueryFacadeService: 入参校验
+LimitationQueryFacadeService -> LimitationQueryBizService: 调用Service方法
+LimitationQueryBizService -> TransformUtils: 将入参商品分组 \n Key：pid_bizType_bizId \n Value：入参
+LimitationQueryBizService -> TransformUtils: 将入参商品分组 \n Key：pid_bizType_bizId \n Value：goodsIdSet
+LimitationQueryBizService -> LimitInfoDao: 获取限购主表信息
+LimitationQueryBizService -> TransformUtils: 构建限购主表信息map \n key pid_bizType_bizId
+alt 7 需要校验sku限购的活动
+autonumber 7.1
+LimitationQueryBizService -> LimitationQueryBizService: 计算查询所需线程数目
+LimitationQueryBizService -> LimitationQueryBizService: 构建查询参数
+LimitationQueryBizService ->> SkuLimitInfoDao: 异步获取sku限购信息
+LimitationQueryBizService <-- SkuLimitInfoDao: 返回sku限购信息
+end
+autonumber 8
+alt 社区团购
+LimitationQueryBizService -> LimitationQueryBizService: 校验sku限购
+end
+LimitationQueryBizService -> UserLimitDao: 获取用户活动限购数量map
+alt 优惠套装
+LimitationQueryBizService -> LimitationQueryBizService: 校验活动限购、活动可售
+end
+alt N元N件
+LimitationQueryBizService -> LimitationQueryBizService: 校验活动限购
+end
+LimitationQueryBizService -> UserGoodsLimitDao: 获取用户商品购买记录
+LimitationQueryBizService -> GoodsLimitInfoDao: 获取商品限购信息
+alt 限时折扣（活动库存）/限量抢购
+LimitationQueryBizService -> LimitationQueryBizService: 校验活动限购
+LimitationQueryBizService -> LimitationQueryBizService: 校验商品限购
+else 特权价/限时折扣（可售数量）
+autonumber 14
+LimitationQueryBizService -> LimitationQueryBizService: 校验活动限购
+LimitationQueryBizService -> LimitationQueryBizService: 校验商品限购
+LimitationQueryBizService -> LimitationQueryBizService: 校验sku限购
+else 积分商城
+autonumber 14
+LimitationQueryBizService -> LimitationQueryBizService: 校验商品限购
+LimitationQueryBizService -> LimitationQueryBizService: 校验sku限购
+else 其他类型
+autonumber 14
+LimitationQueryBizService --> LimitationQueryFacadeService: return Response
+end
+@enduml

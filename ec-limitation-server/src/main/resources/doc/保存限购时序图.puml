@@ -1,0 +1,91 @@
+@startuml
+== 保存活动限购 ==
+autonumber
+LimitationUpdateFacadeService -> LimitationUpdateFacadeService: 入参校验
+LimitationUpdateFacadeService -> LimitationUpdateBizServiceImpl: 执行操作
+LimitationUpdateBizServiceImpl -> IdService: 生成全局id
+LimitationUpdateBizServiceImpl -> LimitInfoDao: 保存限购主表信息
+LimitationUpdateBizServiceImpl -> LimitStoreRelationshipDao: 保存门店表信息
+alt 优惠套装
+LimitationUpdateBizServiceImpl -> SkuLimitInfoDao: 保存sku限购信息
+end
+LimitationUpdateBizServiceImpl --> LimitationUpdateFacadeService: 返回结果
+
+
+== 更新活动限购 ==
+autonumber
+LimitationUpdateFacadeService -> LimitationUpdateFacadeService: 入参校验
+LimitationUpdateFacadeService -> LimitationUpdateBizServiceImpl: 执行操作
+LimitationUpdateBizServiceImpl -> LimitInfoDao: 获取限购主表信息（未删除数据）
+LimitationUpdateBizServiceImpl -> LimitInfoDao: 更新限购主表信息
+LimitationUpdateBizServiceImpl -> LimitStoreRelationshipDao: 更新门店表信息
+alt 优惠套装
+LimitationUpdateBizServiceImpl -> SkuLimitInfoDao: 更新sku限购信息
+end
+LimitationUpdateBizServiceImpl --> LimitationUpdateFacadeService: 返回结果
+
+
+== 删除活动限购 ==
+autonumber
+LimitationUpdateFacadeService -> LimitationUpdateFacadeService: 入参校验
+LimitationUpdateFacadeService -> LimitationUpdateBizServiceImpl: 执行操作
+LimitationUpdateBizServiceImpl -> LimitInfoDao: 获取限购主表信息（不区分是否已删除）
+LimitationUpdateBizServiceImpl -> LimitationUpdateBizServiceImpl: 设置Ticket+限购记录状态，用于区分回滚时是否回滚主表信息
+LimitationUpdateBizServiceImpl ->> SaveLimitChangeLogThread: 根据不同活动类型去记录日志
+LimitationUpdateBizServiceImpl -> LimitationServiceImpl: 调用基础Service执行删除流程
+alt 未被删除
+LimitationServiceImpl -> LimitInfoDao: 删除限购主表信息
+LimitationServiceImpl -> LimitStoreRelationshipDao: 删除门店表信息
+end
+alt 过期删除
+LimitationServiceImpl --> LimitationUpdateBizServiceImpl:直接return
+LimitationUpdateBizServiceImpl --> LimitationUpdateFacadeService: 返回结果&Ticket
+end
+alt 有商品限购
+LimitationServiceImpl -> GoodsLimitInfoDao: 删除商品限购信息
+end
+alt 有sku可售数量
+LimitationServiceImpl -> SkuLimitInfoDao: 删除sku相关信息
+end
+LimitationUpdateBizServiceImpl --> LimitationUpdateFacadeService: 返回结果&Ticket
+
+
+== 保存商品限购 ==
+LimitationUpdateFacadeService -> LimitationUpdateFacadeService: 入参校验
+alt 积分商城（商品限购）
+LimitationUpdateBizServiceImpl -> IdService: 生成全局id
+else 其他业务方
+LimitationUpdateBizServiceImpl -> LimitInfoDao: 获取限购主表id
+end
+LimitationUpdateBizServiceImpl -> GoodsLimitInfoDao: 保存商品限购信息
+LimitationUpdateBizServiceImpl -> SkuLimitInfoDao: 保存sku相关信息
+LimitationUpdateBizServiceImpl ->> SaveLimitChangeLogThread: 记录日志
+LimitationUpdateBizServiceImpl --> LimitationUpdateFacadeService: 返回结果&Ticket
+
+
+== 更新商品限购 ==
+LimitationUpdateFacadeService -> LimitationUpdateFacadeService: 入参校验
+LimitationUpdateBizServiceImpl -> LimitInfoDao: 获取限购主表id
+LimitationUpdateBizServiceImpl -> GoodsLimitInfoDao: 更新商品限购信息
+LimitationUpdateBizServiceImpl -> SkuLimitInfoDao: 更新sku相关信息（1.原来有，现在有->更新。2.原来有，现在没有->删除。3.原来没有，现在有->新增）
+LimitationUpdateBizServiceImpl ->> SaveLimitChangeLogThread: 记录日志
+LimitationUpdateBizServiceImpl --> LimitationUpdateFacadeService: 返回结果&Ticket
+
+
+== 删除商品限购 ==
+LimitationUpdateFacadeService -> LimitationUpdateFacadeService: 入参校验
+LimitationUpdateBizServiceImpl -> LimitInfoDao: 查询限购主表信息
+LimitationUpdateBizServiceImpl -> LimitationUpdateBizServiceImpl: 构建日志数据
+LimitationUpdateBizServiceImpl -> GoodsLimitInfoDao: 删除商品限购信息
+LimitationUpdateBizServiceImpl -> SkuLimitInfoDao: 删除sku相关信息
+LimitationUpdateBizServiceImpl ->> SaveLimitChangeLogThread: 记录日志
+LimitationUpdateBizServiceImpl --> LimitationUpdateFacadeService: 返回结果&Ticket
+
+
+== 删除周期性活动购买记录 ==
+LimitationUpdateFacadeService -> LimitationUpdateFacadeService: 入参校验
+LimitationUpdateBizServiceImpl -> LimitInfoDao: 获取限购主表id
+LimitationUpdateBizServiceImpl -> UserLimitDao: 将wid置为负
+LimitationUpdateBizServiceImpl -> UserGoodsLimitDao: 将wid置为负
+LimitationUpdateBizServiceImpl --> LimitationUpdateFacadeService: 返回结果
+@enduml

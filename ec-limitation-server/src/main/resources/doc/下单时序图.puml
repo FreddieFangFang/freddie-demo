@@ -1,0 +1,65 @@
+@startuml
+autonumber
+UserLimitUpdateExportService -> UserLimitUpdateExportService: 将monitorTrackId存入本地线程变量ticket
+UserLimitUpdateExportService --> UserLimitUpdateFacadeService: 执行facade层方法
+UserLimitUpdateFacadeService -> BaseHandler: 执行模板模式方法doHandler\n①校验②排序③校验更新④保存日志
+group doHandler
+autonumber 3.1
+BaseHandler -> SaveUserLimitHandler: 入参校验
+BaseHandler -> BaseHandler: 排序
+BaseHandler -> SaveUserLimitHandler: 校验限购、封装参数...
+group 3.3 doBatchBizLogic
+loop
+autonumber 3.3.1
+SaveUserLimitHandler -> SaveUserLimitHandler: 按活动类型分组
+end
+loop
+alt 处理活动限购
+SaveUserLimitHandler -> ActivityLimitBizHandler: 执行活动Handler
+autonumber stop
+ActivityLimitBizHandler -> BaseHandler: 处理入参
+ActivityLimitBizHandler -> LimitInfoDao: 查询活动限购信息
+ActivityLimitBizHandler -> UserLimitDao: 查询用户活动购买记录
+ActivityLimitBizHandler -> BaseHandler: 校验限购
+ActivityLimitBizHandler -> BaseHandler: 封装操作数据库数据
+end
+alt 处理商品限购
+autonumber 3.3.3
+SaveUserLimitHandler -> GoodsLimitBizHandler: 执行商品Handler
+autonumber stop
+GoodsLimitBizHandler -> BaseHandler: 处理入参
+GoodsLimitBizHandler -> GoodsLimitInfoDao: 查询活动限购信息
+GoodsLimitBizHandler -> UserGoodsLimitDao: 查询用户活动购买记录
+GoodsLimitBizHandler -> BaseHandler: 校验限购
+GoodsLimitBizHandler -> BaseHandler: 封装操作数据库数据
+end
+alt 处理sku限购
+autonumber 3.3.4
+SaveUserLimitHandler -> SkuLimitBizHandler: 执行skuHandler
+autonumber stop
+SkuLimitBizHandler -> BaseHandler: 处理入参
+SkuLimitBizHandler -> SkuLimitInfoDao: 查询SKU限购信息
+SkuLimitBizHandler -> BaseHandler: 校验限购
+SkuLimitBizHandler -> BaseHandler: 封装操作数据库数据
+end
+end
+group 3.3.5 保存/更新用户活动、商品、sku购买记录
+SaveUserLimitHandler -> LimitationServiceImpl: 对入参进行排序避免死锁【wid + limitId + goodsId + skuId】
+LimitationServiceImpl -> UserLimitDao: 新增或更新用户活动购买记录
+LimitationServiceImpl -> UserGoodsLimitDao: 新增或更新用户商品购买 记录
+LimitationServiceImpl -> SkuLimitInfoDao: 更新sku限购记录
+end
+end
+group 3.4 saveOrderChangeLog
+autonumber 3.4.1
+loop
+BaseHandler -> SaveUserLimitHandler: 构建下单日志
+BaseHandler <-- SaveUserLimitHandler: 返回日志信息
+end
+BaseHandler ->> SaveLimitChangeLogThread: 异步写入日志
+end
+autonumber 4
+BaseHandler --> UserLimitUpdateFacadeService: 返回本次下单ticket
+end
+UserLimitUpdateFacadeService --> UserLimitUpdateExportService: 返回出参对象
+@enduml
