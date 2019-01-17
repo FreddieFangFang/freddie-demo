@@ -58,6 +58,11 @@ public class UpdateUserLimitVo extends BaseRequest implements Comparable<UpdateU
      */
     private String limitServiceName;
 
+    /**
+     * 规则件数（只有N元N件传）
+     */
+    private Integer ruleNum;
+
     public Long getBizId() {
         return bizId;
     }
@@ -128,6 +133,14 @@ public class UpdateUserLimitVo extends BaseRequest implements Comparable<UpdateU
 
     public void setLimitServiceName(String limitServiceName) {
         this.limitServiceName = limitServiceName;
+    }
+
+    public Integer getRuleNum() {
+        return ruleNum;
+    }
+
+    public void setRuleNum(Integer ruleNum) {
+        this.ruleNum = ruleNum;
     }
 
     @Override

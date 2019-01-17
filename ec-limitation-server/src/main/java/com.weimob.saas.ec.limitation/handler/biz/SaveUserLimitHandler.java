@@ -98,6 +98,7 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         orderChangeLogEntity.setServiceName(getServiceName().name());
         orderChangeLogEntity.setReferId(vo.getOrderNo().toString());
         orderChangeLogEntity.setStatus(LimitConstant.ORDER_LOG_STATUS_INIT);
+        orderChangeLogEntity.setContent(vo.getRuleNum().toString());
         return orderChangeLogEntity;
     }
 

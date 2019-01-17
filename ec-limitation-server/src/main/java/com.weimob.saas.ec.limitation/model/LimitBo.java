@@ -38,9 +38,13 @@ public class LimitBo {
     private Map<Long, UserLimitBaseBo> skuIdLimitMap = new HashMap<>();
 
     List<UserGoodsLimitEntity> goodsLimitEntityList = new ArrayList<>();
+
     List<UserLimitEntity> activityLimitEntityList = new ArrayList<>();
+
     List<SkuLimitInfoEntity> activityGoodsSoldEntityList = new ArrayList<>();
 
+    /** N元N件规则信息Map */
+    private Map<String, Integer> globalRuleNumMap;
 
     public Map<String, Integer> getGlobalOrderBuyNumMap() {
         return globalOrderBuyNumMap;
@@ -96,5 +100,13 @@ public class LimitBo {
 
     public void setActivityGoodsSoldEntityList(List<SkuLimitInfoEntity> activityGoodsSoldEntityList) {
         this.activityGoodsSoldEntityList = activityGoodsSoldEntityList;
+    }
+
+    public Map<String, Integer> getGlobalRuleNumMap() {
+        return globalRuleNumMap;
+    }
+
+    public void setGlobalRuleNumMap(Map<String, Integer> globalRuleNumMap) {
+        this.globalRuleNumMap = globalRuleNumMap;
     }
 }
