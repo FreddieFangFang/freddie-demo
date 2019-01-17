@@ -72,6 +72,7 @@ public enum LimitationErrorCode {
     ACTIVITY_EXPIRED("1080010200008", "活动已过期，取消订单或维权失败"),
     INVALID_ACTIVITY("1080010200009", "活动非法"),
     LIMIT_SKU_IS_NULL("1080000200010", "SKU限购记录为空"),
+    ACTIVITY_RULES_HAVE_CHANGED("1080000200011", "订单中活动规则异常或活动规则已改变"),
 
 
     /*****************************业务异常04**********************************/

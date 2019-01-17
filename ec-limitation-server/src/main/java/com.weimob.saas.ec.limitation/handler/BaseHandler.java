@@ -22,11 +22,13 @@ import com.weimob.saas.ec.limitation.utils.LimitContext;
 import com.weimob.saas.ec.limitation.utils.VerifyParamUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.omg.CORBA.ObjectHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.naming.IdentityNamingStrategy;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * @author lujialin
@@ -374,8 +376,10 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                             included = true;
                             finalGoodsNum = entry.getValue() + activityUserLimitNumMap.get(activityId);
                             if (Objects.equals(ActivityTypeEnum.NYNJ.getType(), bizType)) {
-                                // N元N件 entry.getValue()为商品数量，需除以规则得到活动级别参与次数，再加上历史活动参与次数
-                                finalGoodsNum = entry.getValue() / ruleNumMap.get(entryKey) + activityUserLimitNumMap.get(activityId);
+                                // 获取活动参与次数
+                                int participationTime = getParticipationTime(entry, entryKey, ruleNumMap);
+                                // 此次活动参与次数 + 历史活动参与次数
+                                finalGoodsNum = participationTime + activityUserLimitNumMap.get(activityId);
                             }
                             // 判断是否超出活动设置的限购数量
                             LimitInfoEntity activityEntity = activityMap.get(activityId);
@@ -393,8 +397,8 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                     if (!included) {
                         finalGoodsNum = entry.getValue();
                         if (Objects.equals(ActivityTypeEnum.NYNJ.getType(), bizType)) {
-                            // N元N件 entry.getValue()为商品数量，需除以规则得到活动级别参与次数
-                            finalGoodsNum = entry.getValue() / ruleNumMap.get(entryKey);
+                            // 获取活动参与次数
+                            finalGoodsNum = getParticipationTime(entry, entryKey, ruleNumMap);
                         }
                         if (finalGoodsNum > activityMap.get(activityId).getLimitNum()) {
                             throw new LimitationBizException(LimitationErrorCode.BEYOND_ACTIVITY_LIMIT_NUM);
@@ -417,6 +421,15 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
             }
         }
 
+    }
+
+    private int getParticipationTime(Entry<String, Integer> entry, String entryKey, Map<String, Integer> ruleNumMap) {
+        // 不能满足N元N件下单条件
+        if (entry.getValue() / ruleNumMap.get(entryKey) < 1) {
+            throw new LimitationBizException(LimitationErrorCode.ACTIVITY_RULES_HAVE_CHANGED);
+        }
+        // 商品数量 / 规则 向下取整 得到此次活动参与次数
+        return (int) Math.floor(entry.getValue() / ruleNumMap.get(entryKey));
     }
 
     protected void updateUserLimitRecord(Map<String, Integer> orderBuyNumMap) {
@@ -452,7 +465,8 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                     if (!limitInfoEntity.getIsDeleted()) {
                         if (Objects.equals(ActivityTypeEnum.NYNJ.getType(), bizType)) {
                             int ruleNum = LimitContext.getLimitBo().getGlobalRuleNumMap().get(entryKey);
-                            LimitContext.getLimitBo().getActivityLimitEntityList().add(LimitConvertor.convertActivityLimit(baseBo, activityId, entry.getValue() / ruleNum, limitInfoEntity));
+                            int participationTime = (int) Math.floor(entry.getValue() / ruleNum);
+                            LimitContext.getLimitBo().getActivityLimitEntityList().add(LimitConvertor.convertActivityLimit(baseBo, activityId, participationTime, limitInfoEntity));
                         } else {
                             LimitContext.getLimitBo().getActivityLimitEntityList().add(LimitConvertor.convertActivityLimit(baseBo, activityId, entry.getValue(), limitInfoEntity));
                         }
@@ -542,6 +556,11 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
 
     private void buildActivityBuyInfoLogEntity(Map<String, UserLimitEntity> activityMap, LimitOrderChangeLogEntity logEntity) {
         String prefixKey = LIMIT_PREFIX_ACTIVITY + logEntity.getWid() + logEntity.getBizType();
+        if (Objects.equals(ActivityTypeEnum.NYNJ.getType(), logEntity.getBizType())) {
+            // 获取活动参与次数
+            int participationTime = (int) Math.floor(logEntity.getBuyNum() / Integer.parseInt(logEntity.getContent()));
+            logEntity.setBuyNum(participationTime);
+        }
         if (activityMap.get(prefixKey + logEntity.getBizId()) == null) {
             UserLimitEntity userLimitEntity = new UserLimitEntity();
             userLimitEntity.setPid(logEntity.getPid());
