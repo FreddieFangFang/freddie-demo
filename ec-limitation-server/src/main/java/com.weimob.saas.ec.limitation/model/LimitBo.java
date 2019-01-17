@@ -46,6 +46,9 @@ public class LimitBo {
     /** N元N件规则信息Map */
     private Map<String, Integer> globalRuleNumMap;
 
+    /** 活动级别参与次数 */
+    private Map<Long, Integer> globalParticipateTimeMap;
+
     public Map<String, Integer> getGlobalOrderBuyNumMap() {
         return globalOrderBuyNumMap;
     }
@@ -104,6 +107,14 @@ public class LimitBo {
 
     public Map<String, Integer> getGlobalRuleNumMap() {
         return globalRuleNumMap;
+    }
+
+    public Map<Long, Integer> getGlobalParticipateTimeMap() {
+        return globalParticipateTimeMap;
+    }
+
+    public void setGlobalParticipateTimeMap(Map<Long, Integer> globalParticipateTimeMap) {
+        this.globalParticipateTimeMap = globalParticipateTimeMap;
     }
 
     public void setGlobalRuleNumMap(Map<String, Integer> globalRuleNumMap) {

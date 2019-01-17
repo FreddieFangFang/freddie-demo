@@ -1,6 +1,7 @@
 package com.weimob.saas.ec.limitation.handler.biz;
 
 import com.alibaba.dubbo.rpc.RpcContext;
+import com.alibaba.fastjson.JSON;
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitServiceNameEnum;
@@ -12,6 +13,7 @@ import com.weimob.saas.ec.limitation.handler.BaseHandler;
 import com.weimob.saas.ec.limitation.handler.limit.ActivityLimitBizHandler;
 import com.weimob.saas.ec.limitation.handler.limit.GoodsLimitBizHandler;
 import com.weimob.saas.ec.limitation.handler.limit.SkuLimitBizHandler;
+import com.weimob.saas.ec.limitation.model.BizContentBo;
 import com.weimob.saas.ec.limitation.model.LimitParam;
 import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
 import com.weimob.saas.ec.limitation.service.LimitationServiceImpl;
@@ -85,9 +87,7 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         orderChangeLogEntity.setBizType(vo.getBizType());
         orderChangeLogEntity.setBuyNum(vo.getGoodsNum());
         orderChangeLogEntity.setGoodsId(vo.getGoodsId());
-        if (CommonBizUtil.isValidSkuLimit(vo.getBizType(), vo.getActivityStockType())) {
-            orderChangeLogEntity.setSkuId(vo.getSkuId());
-        }
+        orderChangeLogEntity.setSkuId(vo.getSkuId());
         orderChangeLogEntity.setLimitId(limitInfoEntity.getLimitId());
         orderChangeLogEntity.setWid(vo.getWid());
         if (RpcContext.getContext().getGlobalTicket().startsWith("EC_STRESS-")) {
@@ -95,10 +95,14 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         } else {
             orderChangeLogEntity.setTicket(LimitContext.getTicket());
         }
-        orderChangeLogEntity.setServiceName(getServiceName().name());
+        orderChangeLogEntity.setServiceName(vo.getLimitServiceName());
         orderChangeLogEntity.setReferId(vo.getOrderNo().toString());
         orderChangeLogEntity.setStatus(LimitConstant.ORDER_LOG_STATUS_INIT);
-        orderChangeLogEntity.setContent(vo.getRuleNum().toString());
+        if (Objects.equals(ActivityTypeEnum.NYNJ.getType(), vo.getBizType())) {
+            // 保存规则和本次活动参与次数
+            BizContentBo bizContent = new BizContentBo(vo.getRuleNum(), LimitContext.getLimitBo().getGlobalParticipateTimeMap().get(vo.getBizId()));
+            orderChangeLogEntity.setContent(JSON.toJSONString(bizContent));
+        }
         return orderChangeLogEntity;
     }
 
