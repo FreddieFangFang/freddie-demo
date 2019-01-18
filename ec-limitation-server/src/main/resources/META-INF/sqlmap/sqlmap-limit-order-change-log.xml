@@ -115,14 +115,7 @@
     WHERE
       refer_id = #{referId}
     AND biz_type = #{bizType}
-    <choose>
-      <when test="service_name != null">
-        AND service_name = #{serviceName}
-      </when>
-      <otherwise>
-        AND service_name = "DEDUCT_USER_LIMIT"
-      </otherwise>
-    </choose>
+    AND service_name = #{serviceName}
     AND status = #{status}
   /*LimitOrderChangeLogDao.getLogByReferId*/
   </select>

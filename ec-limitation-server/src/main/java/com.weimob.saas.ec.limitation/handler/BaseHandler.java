@@ -173,11 +173,8 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                     break;
                 }
             case DEDUCT_USER_LIMIT:
-                // 查询下单信息，获取规则及活动次数
-                List<LimitOrderChangeLogEntity> logEntityList = limitOrderChangeLogDao.getLogByReferId(packingLogEntity(vos, DEDUCT_USER_LIMIT));
-                // 记录每个活动规则、活动参与次数
-                recordRuleAndParticipateTime(logEntityList);
-
+                // 查询数据库下单信息并记录规则信息及参与次数
+                queryAndRecordOrdersInfo(vos, vos.get(0).getOrderNo().toString(), LimitServiceNameEnum.SAVE_USER_LIMIT.name());
                 for (UpdateUserLimitVo requestVo : vos) {
                     String activityKey = generateActivityKey(requestVo);
                     updateOrderGoodsMap(globalOrderBuyNumMap, orderGoodsQueryMap, requestVo, activityKey);
@@ -186,8 +183,14 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                 }
                 break;
             case RIGHTS_DEDUCT_LIMIT:
-                // 从数据库中查询下单信息
-                logEntityList = limitOrderChangeLogDao.getLogByReferId(packingLogEntity(vos, RIGHTS_DEDUCT_LIMIT));
+                // 查询数据库下单信息并记录规则信息及参与次数
+                queryAndRecordOrdersInfo(vos, vos.get(0).getOrderNo().toString(), LimitServiceNameEnum.SAVE_USER_LIMIT.name());
+
+                // 封装查询参数
+                LimitOrderChangeLogEntity logEntity = packingLogEntity(vos, vos.get(0).getRightId().toString(), RIGHTS_DEDUCT_LIMIT);
+
+                // 查询下单信息，获取规则及活动次数
+                List<LimitOrderChangeLogEntity> logEntityList = limitOrderChangeLogDao.getLogByReferId(logEntity);
 
                 break;
             default:
@@ -195,12 +198,23 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
         }
 }
 
-    private LimitOrderChangeLogEntity packingLogEntity(List<UpdateUserLimitVo> vos, String serviceName) {
+    private void queryAndRecordOrdersInfo(List<UpdateUserLimitVo> vos, String referId, String serviceName) {
+        // 封装查询参数
+        LimitOrderChangeLogEntity logEntity = packingLogEntity(vos, referId, serviceName);
+
+        // 查询下单信息，获取规则及活动次数
+        List<LimitOrderChangeLogEntity> logEntityList = limitOrderChangeLogDao.getLogByReferId(logEntity);
+
+        // 记录每个活动规则、活动参与次数
+        recordRuleAndParticipateTime(logEntityList);
+    }
+
+    private LimitOrderChangeLogEntity packingLogEntity(List<UpdateUserLimitVo> vos, String referId, String serviceName) {
         LimitOrderChangeLogEntity queryLogParameter;
         queryLogParameter = new LimitOrderChangeLogEntity();
-        queryLogParameter.setReferId(vos.get(0).getOrderNo().toString());
+        queryLogParameter.setReferId(referId);
         queryLogParameter.setStatus(LimitConstant.ORDER_LOG_STATUS_INIT);
-        queryLogParameter.setServiceName(DEDUCT_USER_LIMIT);
+        queryLogParameter.setServiceName(serviceName);
         queryLogParameter.setBizType(vos.get(0).getBizType());
         return queryLogParameter;
     }
