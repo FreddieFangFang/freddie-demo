@@ -1,5 +1,6 @@
 package com.weimob.saas.ec.limitation.handler.biz;
 
+import com.alibaba.fastjson.JSON;
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
 import com.weimob.saas.ec.limitation.common.LimitServiceNameEnum;
@@ -9,6 +10,7 @@ import com.weimob.saas.ec.limitation.entity.*;
 import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
 import com.weimob.saas.ec.limitation.handler.BaseHandler;
+import com.weimob.saas.ec.limitation.model.BizContentBo;
 import com.weimob.saas.ec.limitation.model.LimitParam;
 import com.weimob.saas.ec.limitation.model.request.UpdateUserLimitVo;
 import com.weimob.saas.ec.limitation.service.LimitationServiceImpl;
@@ -116,7 +118,11 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         orderChangeLogEntity.setTicket(LimitContext.getTicket());
         orderChangeLogEntity.setServiceName(getServiceName().name());
         orderChangeLogEntity.setReferId(vo.getOrderNo().toString());
-        if (vo.getRightId() != null) {
+        // 取消订单 N元N件需要记录content（次数）
+        if (Objects.equals(ActivityTypeEnum.NYNJ.getType(), vo.getBizType())) {
+            BizContentBo bizContent = new BizContentBo(LimitContext.getLimitBo().getGlobalParticipateTimeMap().get(vo.getBizId()));
+            orderChangeLogEntity.setContent(JSON.toJSONString(bizContent));
+        } else if (vo.getRightId() != null) {
             orderChangeLogEntity.setContent(vo.getRightId().toString());
         }
         orderChangeLogEntity.setStatus(LimitConstant.ORDER_LOG_STATUS_INIT);
