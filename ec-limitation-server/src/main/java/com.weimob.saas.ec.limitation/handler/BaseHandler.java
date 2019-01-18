@@ -671,7 +671,10 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
             userLimitEntity.setBuyNum(logEntity.getBuyNum());
             activityMap.put(prefixKey +logEntity.getBizId(), userLimitEntity);
         } else {
-            activityMap.get(prefixKey + logEntity.getBizId()).setBuyNum(activityMap.get(prefixKey + logEntity.getBizId()).getBuyNum() + logEntity.getBuyNum());
+            // nynj是活动级别，日志表中记录的是商品级别，这里计算参加次数，不需要进行累加
+            if (!Objects.equals(ActivityTypeEnum.NYNJ.getType(), logEntity.getBizType())) {
+                activityMap.get(prefixKey + logEntity.getBizId()).setBuyNum(activityMap.get(prefixKey + logEntity.getBizId()).getBuyNum() + logEntity.getBuyNum());
+            }
         }
     }
 
