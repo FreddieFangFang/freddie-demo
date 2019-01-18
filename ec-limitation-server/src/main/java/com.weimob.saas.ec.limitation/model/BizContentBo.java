@@ -25,6 +25,10 @@ public class BizContentBo {
     public BizContentBo() {
     }
 
+    public BizContentBo(Integer participateTime) {
+        this.participateTime = participateTime;
+    }
+
     public BizContentBo(Integer ruleNum, Integer participateTime) {
         this.ruleNum = ruleNum;
         this.participateTime = participateTime;

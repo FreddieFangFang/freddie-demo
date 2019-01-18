@@ -1,5 +1,6 @@
 package com.weimob.saas.ec.limitation.handler;
 
+import com.alibaba.fastjson.JSON;
 import com.weimob.saas.ec.common.constant.ActivityTypeEnum;
 import com.weimob.saas.ec.common.util.SoaUtil;
 import com.weimob.saas.ec.limitation.common.LimitBizTypeEnum;
@@ -11,6 +12,7 @@ import com.weimob.saas.ec.limitation.dao.LimitOrderChangeLogDao;
 import com.weimob.saas.ec.limitation.entity.*;
 import com.weimob.saas.ec.limitation.exception.LimitationBizException;
 import com.weimob.saas.ec.limitation.exception.LimitationErrorCode;
+import com.weimob.saas.ec.limitation.model.BizContentBo;
 import com.weimob.saas.ec.limitation.model.LimitParam;
 import com.weimob.saas.ec.limitation.model.UserLimitBaseBo;
 import com.weimob.saas.ec.limitation.model.convertor.LimitConvertor;
@@ -142,9 +144,23 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                                                       Map<String, Integer> localOrderBuyNumMap) {
         // N元N件，则记录规则信息至ThreadLocal中
         if (Objects.equals(ActivityTypeEnum.NYNJ.getType(), vos.get(0).getBizType())) {
-            LimitContext.getLimitBo().setGlobalRuleNumMap(new HashMap<String, Integer>());
-            LimitContext.getLimitBo().setGlobalParticipateTimeMap(new HashMap<Long, Integer>());
+            groupingNynjRequestVoList(globalOrderBuyNumMap, orderGoodsQueryMap, vos, localOrderBuyNumMap);
+            return;
         }
+        for (UpdateUserLimitVo requestVo : vos) {
+            String activityKey = generateActivityKey(requestVo);
+            updateOrderGoodsMap(globalOrderBuyNumMap, orderGoodsQueryMap, requestVo, activityKey);
+            updateOrderGoodsMap(localOrderBuyNumMap, orderGoodsQueryMap, requestVo, activityKey);
+        }
+    }
+
+    protected void groupingNynjRequestVoList(Map<String, Integer> globalOrderBuyNumMap,
+            Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap,
+            List<UpdateUserLimitVo> vos,
+            Map<String, Integer> localOrderBuyNumMap) {
+        // N元N件，则记录规则信息至ThreadLocal中
+        LimitContext.getLimitBo().setGlobalRuleNumMap(new HashMap<String, Integer>());
+        LimitContext.getLimitBo().setGlobalParticipateTimeMap(new HashMap<Long, Integer>());
         for (UpdateUserLimitVo requestVo : vos) {
             String activityKey = generateActivityKey(requestVo);
             updateOrderGoodsMap(globalOrderBuyNumMap, orderGoodsQueryMap, requestVo, activityKey);
@@ -464,7 +480,7 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
             String entryKeyPrefix = entryKey.substring(0, entryKey.indexOf("_", entryKey.indexOf("_") + 1) + 1);
 
             switch (entryKeyPrefix) {
-                //保存商品限购记录
+                // 保存商品限购记录
                 case LIMIT_PREFIX_GOODS:
                     long goodsId = Long.parseLong(entry.getKey().substring(lastIndex));
                     baseBo = LimitContext.getLimitBo().getGoodsIdLimitMap().get(goodsId);
@@ -476,7 +492,7 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                         LimitContext.getLimitBo().getGoodsLimitEntityList().add(LimitConvertor.convertGoodsLimit(baseBo, goodsId, entry.getValue(), limitInfoEntity));
                     }
                     break;
-                //保存活动限购记录,多门店的时候是否会出现问题？
+                // 保存活动限购记录,多门店的时候是否会出现问题？
                 case LIMIT_PREFIX_ACTIVITY:
                     long activityId = Long.parseLong(entry.getKey().substring(lastIndex));
                     int bizType = Integer.parseInt(entryKey.split("_")[4]);
@@ -487,15 +503,15 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                     }
                     if (!limitInfoEntity.getIsDeleted()) {
                         if (Objects.equals(ActivityTypeEnum.NYNJ.getType(), bizType)) {
-                            int ruleNum = LimitContext.getLimitBo().getGlobalRuleNumMap().get(entryKey);
-                            int participateTime = (int) Math.floor(entry.getValue() / ruleNum);
+                            // 获取活动参与次数
+                            int participateTime = LimitContext.getLimitBo().getGlobalParticipateTimeMap().get(activityId);
                             LimitContext.getLimitBo().getActivityLimitEntityList().add(LimitConvertor.convertActivityLimit(baseBo, activityId, participateTime, limitInfoEntity));
                         } else {
                             LimitContext.getLimitBo().getActivityLimitEntityList().add(LimitConvertor.convertActivityLimit(baseBo, activityId, entry.getValue(), limitInfoEntity));
                         }
                     }
                     break;
-                //更新sku的售卖数量
+                // 更新sku的售卖数量
                 case LIMIT_PREFIX_SKU:
                     long skuId = Long.parseLong(entry.getKey().substring(lastIndex));
                     baseBo = LimitContext.getLimitBo().getSkuIdLimitMap().get(skuId);
@@ -580,9 +596,8 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
     private void buildActivityBuyInfoLogEntity(Map<String, UserLimitEntity> activityMap, LimitOrderChangeLogEntity logEntity) {
         String prefixKey = LIMIT_PREFIX_ACTIVITY + logEntity.getWid() + logEntity.getBizType();
         if (Objects.equals(ActivityTypeEnum.NYNJ.getType(), logEntity.getBizType())) {
-            // 获取活动参与次数
-            int participationTime = (int) Math.floor(logEntity.getBuyNum() / Integer.parseInt(logEntity.getContent()));
-            logEntity.setBuyNum(participationTime);
+            // 由于日志表buyNum记录的是每个商品的数量，所以需要替换下buyNum中的值为content中的参与次数
+            logEntity.setBuyNum(JSON.parseObject(logEntity.getContent(), BizContentBo.class).getParticipateTime());
         }
         if (activityMap.get(prefixKey + logEntity.getBizId()) == null) {
             UserLimitEntity userLimitEntity = new UserLimitEntity();

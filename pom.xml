@@ -4,7 +4,7 @@
   <groupId>com.weimob.saas</groupId>
   <artifactId>ec-limitation-service</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.0.2-SNAPSHOT</version>
   <name>ec-limitation-service</name>
   <url>http://maven.apache.org</url>
 
