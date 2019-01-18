@@ -155,32 +155,80 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
     }
 
     protected void groupingNynjRequestVoList(Map<String, Integer> globalOrderBuyNumMap,
-            Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap,
-            List<UpdateUserLimitVo> vos,
-            Map<String, Integer> localOrderBuyNumMap) {
+                                             Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap,
+                                             List<UpdateUserLimitVo> vos,
+                                             Map<String, Integer> localOrderBuyNumMap) {
         // N元N件，则记录规则信息至ThreadLocal中
         LimitContext.getLimitBo().setGlobalRuleNumMap(new HashMap<String, Integer>());
         LimitContext.getLimitBo().setGlobalParticipateTimeMap(new HashMap<Long, Integer>());
-        for (UpdateUserLimitVo requestVo : vos) {
-            String activityKey = generateActivityKey(requestVo);
-            updateOrderGoodsMap(globalOrderBuyNumMap, orderGoodsQueryMap, requestVo, activityKey);
-            updateOrderGoodsMap(localOrderBuyNumMap, orderGoodsQueryMap, requestVo, activityKey);
+        LimitOrderChangeLogEntity queryLogParameter = null;
+        List<LimitOrderChangeLogEntity> logEntityList = null;
+        switch (vos.get(0).getLimitServiceName()) {
+            case SAVE_USER_LIMIT:
+                for (UpdateUserLimitVo requestVo : vos) {
+                    String activityKey = generateActivityKey(requestVo);
+                    updateOrderGoodsMap(globalOrderBuyNumMap, orderGoodsQueryMap, requestVo, activityKey);
+                    updateOrderGoodsMap(localOrderBuyNumMap, orderGoodsQueryMap, requestVo, activityKey);
 
-            switch (requestVo.getLimitServiceName()) {
-                case SAVE_USER_LIMIT:
                     // N元N件是活动级限购，所以多个商品对应的规则都是统一的
                     LimitContext.getLimitBo().getGlobalRuleNumMap().put(activityKey, requestVo.getRuleNum());
                     break;
-                case DEDUCT_USER_LIMIT:
+                }
+            case DEDUCT_USER_LIMIT:
+                // 从数据库中查询下单信息
+                queryLogParameter = new LimitOrderChangeLogEntity();
+                queryLogParameter.setReferId(vos.get(0).getOrderNo().toString());
+                queryLogParameter.setStatus(LimitConstant.ORDER_LOG_STATUS_INIT);
+                queryLogParameter.setServiceName(DEDUCT_USER_LIMIT);
+                queryLogParameter.setBizType(vos.get(0).getBizType());
 
-                    break;
-                case RIGHTS_DEDUCT_LIMIT:
+                logEntityList = limitOrderChangeLogDao.getLogByReferId(queryLogParameter);
+                // 归集每个活动的规则和 下单时参加的次数
+                builLogEntityList(logEntityList);
 
+                for (UpdateUserLimitVo requestVo : vos) {
+                    String activityKey = generateActivityKey(requestVo);
+                    updateOrderGoodsMap(globalOrderBuyNumMap, orderGoodsQueryMap, requestVo, activityKey);
+                    updateOrderGoodsMap(localOrderBuyNumMap, orderGoodsQueryMap, requestVo, activityKey);
                     break;
-                default:
-                    break;
-            }
+                }
+                break;
+            case RIGHTS_DEDUCT_LIMIT:
+                break;
+            default:
+                break;
         }
+}
+
+    /**
+     * N元N件 取下单日志的活动规则（同一活动id只取一次）
+     * 设置活动规则  设置购买次数
+     */
+    protected void builLogEntityList(List<LimitOrderChangeLogEntity> logEntityList){
+        Map<String, Integer> ruleNumMap = LimitContext.getLimitBo().getGlobalRuleNumMap();
+        Map<Long, Integer> participateTimeMap = LimitContext.getLimitBo().getGlobalParticipateTimeMap();
+        for (LimitOrderChangeLogEntity entity : logEntityList){
+            String activityKey = generateActivityKeyLog(entity);
+            ruleNumMap.put(activityKey, (JSON.parseObject(entity.getContent(), BizContentBo.class).getRuleNum()));//todo
+            participateTimeMap.put(entity.getBizId(), (JSON.parseObject(entity.getContent(), BizContentBo.class)
+                    .getParticipateTime()));
+            //todo
+            //todo 这一步应该是不需要的了
+            LimitContext.getLimitBo().setGlobalRuleNumMap(ruleNumMap);
+            LimitContext.getLimitBo().setGlobalParticipateTimeMap(participateTimeMap);
+        }
+    }
+
+    /**
+     * 日志表归集活动-Key值生成
+     */
+    private String generateActivityKeyLog(LimitOrderChangeLogEntity requestVo) {
+        StringBuilder key = new StringBuilder(LIMIT_PREFIX_ACTIVITY);
+        key.append(requestVo.getPid()).append("_");
+        key.append(requestVo.getStoreId()).append("_");
+        key.append(requestVo.getBizType()).append("_");
+        key.append(requestVo.getBizId());
+        return key.toString();
     }
 
     protected void groupingOrderSkuRequestVoList(Map<String, Integer> globalOrderBuyNumMap,
