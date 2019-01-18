@@ -161,8 +161,6 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
         // N元N件，则记录规则信息至ThreadLocal中
         LimitContext.getLimitBo().setGlobalRuleNumMap(new HashMap<String, Integer>());
         LimitContext.getLimitBo().setGlobalParticipateTimeMap(new HashMap<Long, Integer>());
-        LimitOrderChangeLogEntity queryLogParameter = null;
-        List<LimitOrderChangeLogEntity> logEntityList = null;
         switch (vos.get(0).getLimitServiceName()) {
             case SAVE_USER_LIMIT:
                 for (UpdateUserLimitVo requestVo : vos) {
@@ -175,16 +173,10 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                     break;
                 }
             case DEDUCT_USER_LIMIT:
-                // 从数据库中查询下单信息
-                queryLogParameter = new LimitOrderChangeLogEntity();
-                queryLogParameter.setReferId(vos.get(0).getOrderNo().toString());
-                queryLogParameter.setStatus(LimitConstant.ORDER_LOG_STATUS_INIT);
-                queryLogParameter.setServiceName(DEDUCT_USER_LIMIT);
-                queryLogParameter.setBizType(vos.get(0).getBizType());
-
-                logEntityList = limitOrderChangeLogDao.getLogByReferId(queryLogParameter);
-                // 归集每个活动的规则和 下单时参加的次数
-                builLogEntityList(logEntityList);
+                // 查询下单信息，获取规则及活动次数
+                List<LimitOrderChangeLogEntity> logEntityList = limitOrderChangeLogDao.getLogByReferId(packingLogEntity(vos, DEDUCT_USER_LIMIT));
+                // 记录每个活动规则、活动参与次数
+                recordRuleAndParticipateTime(logEntityList);
 
                 for (UpdateUserLimitVo requestVo : vos) {
                     String activityKey = generateActivityKey(requestVo);
@@ -194,28 +186,37 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                 }
                 break;
             case RIGHTS_DEDUCT_LIMIT:
+                // 从数据库中查询下单信息
+                logEntityList = limitOrderChangeLogDao.getLogByReferId(packingLogEntity(vos, RIGHTS_DEDUCT_LIMIT));
+
                 break;
             default:
                 break;
         }
 }
 
+    private LimitOrderChangeLogEntity packingLogEntity(List<UpdateUserLimitVo> vos, String serviceName) {
+        LimitOrderChangeLogEntity queryLogParameter;
+        queryLogParameter = new LimitOrderChangeLogEntity();
+        queryLogParameter.setReferId(vos.get(0).getOrderNo().toString());
+        queryLogParameter.setStatus(LimitConstant.ORDER_LOG_STATUS_INIT);
+        queryLogParameter.setServiceName(DEDUCT_USER_LIMIT);
+        queryLogParameter.setBizType(vos.get(0).getBizType());
+        return queryLogParameter;
+    }
+
     /**
      * N元N件 取下单日志的活动规则（同一活动id只取一次）
      * 设置活动规则  设置购买次数
      */
-    protected void builLogEntityList(List<LimitOrderChangeLogEntity> logEntityList){
+    protected void recordRuleAndParticipateTime(List<LimitOrderChangeLogEntity> logEntityList){
         Map<String, Integer> ruleNumMap = LimitContext.getLimitBo().getGlobalRuleNumMap();
         Map<Long, Integer> participateTimeMap = LimitContext.getLimitBo().getGlobalParticipateTimeMap();
         for (LimitOrderChangeLogEntity entity : logEntityList){
             String activityKey = generateActivityKeyLog(entity);
-            ruleNumMap.put(activityKey, (JSON.parseObject(entity.getContent(), BizContentBo.class).getRuleNum()));//todo
-            participateTimeMap.put(entity.getBizId(), (JSON.parseObject(entity.getContent(), BizContentBo.class)
-                    .getParticipateTime()));
-            //todo
-            //todo 这一步应该是不需要的了
-            LimitContext.getLimitBo().setGlobalRuleNumMap(ruleNumMap);
-            LimitContext.getLimitBo().setGlobalParticipateTimeMap(participateTimeMap);
+            BizContentBo contentBo = JSON.parseObject(entity.getContent(), BizContentBo.class);
+            ruleNumMap.put(activityKey, contentBo.getRuleNum());
+            participateTimeMap.put(entity.getBizId(), contentBo.getParticipateTime());
         }
     }
 
