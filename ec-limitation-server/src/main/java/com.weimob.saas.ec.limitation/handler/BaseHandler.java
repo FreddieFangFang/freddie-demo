@@ -229,8 +229,8 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
         Set<LimitOrderChangeLogEntity> logEntitySet = new TreeSet<>(new Comparator<LimitOrderChangeLogEntity>() {
             @Override
             public int compare(LimitOrderChangeLogEntity o1, LimitOrderChangeLogEntity o2) {
-                return Long.valueOf(JSON.parseObject(o1.getContent(), BizContentBo.class).getRightsNo())
-                        .compareTo(Long.valueOf(JSON.parseObject(o2.getContent(), BizContentBo.class).getRightsNo()));
+                return JSON.parseObject(o1.getContent(), BizContentBo.class).getRightsNo()
+                        .compareTo(JSON.parseObject(o2.getContent(), BizContentBo.class).getRightsNo());
             }
         });
         logEntitySet.addAll(logEntityList);
@@ -626,6 +626,9 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                                     participateTime = (int) Math.floor((historicalRightsTotalNum % ruleNum + entry.getValue()) / ruleNum);
                                 }
                             }
+                            // 记录本次维权 返还的活动参与次数
+                            LimitContext.getLimitBo().getGlobalParticipateTimeMap().put(activityId, participateTime);
+
                             LimitContext.getLimitBo().getActivityLimitEntityList().add(LimitConvertor.convertActivityLimit(baseBo, activityId, participateTime, limitInfoEntity));
                         }
                     }
@@ -727,7 +730,7 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
             userLimitEntity.setBuyNum(logEntity.getBuyNum());
             activityMap.put(prefixKey +logEntity.getBizId(), userLimitEntity);
         } else {
-            // nynj是活动级别，日志表中记录的是商品级别，这里计算参加次数，不需要进行累加
+            // NYNJ是活动级别，日志表中记录的是商品级别，这里计算参加次数，不需要进行累加
             if (!Objects.equals(ActivityTypeEnum.NYNJ.getType(), logEntity.getBizType())) {
                 activityMap.get(prefixKey + logEntity.getBizId()).setBuyNum(activityMap.get(prefixKey + logEntity.getBizId()).getBuyNum() + logEntity.getBuyNum());
             }

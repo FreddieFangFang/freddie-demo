@@ -13,7 +13,7 @@ public class BizContentBo {
     private Integer participateTime;
 
     /** 维权单号 */
-    private String rightsNo;
+    private Long rightsNo;
 
     /** 维权商品数量 */
     private Integer rightsGoodsNum;
@@ -30,9 +30,10 @@ public class BizContentBo {
         this.participateTime = participateTime;
     }
 
-    public BizContentBo(String rightsNo, Integer rightsGoodsNum) {
+    public BizContentBo(Long rightsNo, Integer rightsGoodsNum, Integer participateTime) {
         this.rightsNo = rightsNo;
         this.rightsGoodsNum = rightsGoodsNum;
+        this.participateTime = participateTime;
     }
 
     public Integer getRuleNum() {
@@ -51,11 +52,11 @@ public class BizContentBo {
         this.participateTime = participateTime;
     }
 
-    public String getRightsNo() {
+    public Long getRightsNo() {
         return rightsNo;
     }
 
-    public void setRightsNo(String rightsNo) {
+    public void setRightsNo(Long rightsNo) {
         this.rightsNo = rightsNo;
     }
 

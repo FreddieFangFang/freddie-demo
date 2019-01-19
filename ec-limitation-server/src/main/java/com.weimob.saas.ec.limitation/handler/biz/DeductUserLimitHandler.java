@@ -125,8 +125,10 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
 
         if (Objects.equals(ActivityTypeEnum.NYNJ.getType(), vo.getBizType())) {
             if (vo.getRightId() != null) {
-                // 维权 记录content（维权单号 + 本次维权商品数量）
-                BizContentBo bizContent = new BizContentBo(vo.getRightId().toString(), LimitContext.getLimitBo().getGlobalOrderBuyNumMap().get(vo.getBizId()));
+                Integer goodsNum = LimitContext.getLimitBo().getGlobalOrderBuyNumMap().get(vo.getBizId());
+                Integer participateTime = LimitContext.getLimitBo().getGlobalParticipateTimeMap().get(vo.getBizId());
+                // 维权 记录content（维权单号 + 本次维权商品数量 + 本次维权 返还的活动参与次数）
+                BizContentBo bizContent = new BizContentBo(vo.getRightId(), goodsNum, participateTime);
                 orderChangeLogEntity.setContent(JSON.toJSONString(bizContent));
             } else {
                 // 取消订单 记录content（次数）
