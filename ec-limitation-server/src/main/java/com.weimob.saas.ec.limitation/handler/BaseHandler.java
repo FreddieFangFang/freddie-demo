@@ -158,8 +158,9 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                                              Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap,
                                              List<UpdateUserLimitVo> vos,
                                              Map<String, Integer> localOrderBuyNumMap) {
-        // N元N件，则记录规则信息至ThreadLocal中
+        // 初始化规则信息map
         LimitContext.getLimitBo().setGlobalRuleNumMap(new HashMap<String, Integer>());
+        // 初始化参与次数map
         LimitContext.getLimitBo().setGlobalParticipateTimeMap(new HashMap<Long, Integer>());
         switch (vos.get(0).getLimitServiceName()) {
             case SAVE_USER_LIMIT:
@@ -170,37 +171,75 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
 
                     // N元N件是活动级限购，所以多个商品对应的规则都是统一的
                     LimitContext.getLimitBo().getGlobalRuleNumMap().put(activityKey, requestVo.getRuleNum());
-                    break;
                 }
+                break;
             case DEDUCT_USER_LIMIT:
-                // 查询数据库下单信息并记录规则信息及参与次数
-                queryAndRecordOrdersInfo(vos, vos.get(0).getOrderNo().toString(), LimitServiceNameEnum.SAVE_USER_LIMIT.name());
+                // 查询数据库下单信息并将规则信息及参与次数记录至ThreadLocal中
+                queryAndRecordOrdersInfo(vos, LimitServiceNameEnum.SAVE_USER_LIMIT.name());
+
                 for (UpdateUserLimitVo requestVo : vos) {
                     String activityKey = generateActivityKey(requestVo);
                     updateOrderGoodsMap(globalOrderBuyNumMap, orderGoodsQueryMap, requestVo, activityKey);
                     updateOrderGoodsMap(localOrderBuyNumMap, orderGoodsQueryMap, requestVo, activityKey);
-                    break;
                 }
                 break;
             case RIGHTS_DEDUCT_LIMIT:
-                // 查询数据库下单信息并记录规则信息及参与次数
-                queryAndRecordOrdersInfo(vos, vos.get(0).getOrderNo().toString(), LimitServiceNameEnum.SAVE_USER_LIMIT.name());
+                // 初始化参与次数map
+                LimitContext.getLimitBo().setGlobalRightsGoodsTotalNumMap(new HashMap<Long, Integer>());
+
+                // 查询数据库下单信息并将规则信息及参与次数记录至ThreadLocal中
+                queryAndRecordOrdersInfo(vos, LimitServiceNameEnum.SAVE_USER_LIMIT.name());
 
                 // 封装查询参数
-                LimitOrderChangeLogEntity logEntity = packingLogEntity(vos, vos.get(0).getRightId().toString(), RIGHTS_DEDUCT_LIMIT);
+                LimitOrderChangeLogEntity logEntity = packingLogEntity(vos, LimitServiceNameEnum.RIGHTS_DEDUCT_LIMIT.name());
 
-                // 查询下单信息，获取规则及活动次数
+                // 获取该订单下的维权记录
                 List<LimitOrderChangeLogEntity> logEntityList = limitOrderChangeLogDao.getLogByReferId(logEntity);
 
+                // 累加本次维权商品总数量
+                for (UpdateUserLimitVo requestVo : vos) {
+                    String activityKey = generateActivityKey(requestVo);
+                    updateOrderGoodsMap(globalOrderBuyNumMap, orderGoodsQueryMap, requestVo, activityKey);
+                    updateOrderGoodsMap(localOrderBuyNumMap, orderGoodsQueryMap, requestVo, activityKey);
+                }
+
+                if (CollectionUtils.isNotEmpty(logEntityList)) {
+                    // 对历史维权记录中 相同维权单号的记录 进行去重操作
+                    List<LimitOrderChangeLogEntity> noRepeatRightsIdLogList = removeDuplicateRecord(logEntityList);
+
+                    Map<Long, Integer> rightsGoodsTotalNumMap = LimitContext.getLimitBo().getGlobalRightsGoodsTotalNumMap();
+                    // 根据活动id进行分组 记录其每个活动下维权商品总数量
+                    for (LimitOrderChangeLogEntity entity : noRepeatRightsIdLogList) {
+                        Integer currentRightsGoodsNum = JSON.parseObject(entity.getContent(), BizContentBo.class).getRightsGoodsNum();
+                        if (rightsGoodsTotalNumMap.containsKey(entity.getBizId())) {
+                            rightsGoodsTotalNumMap.put(entity.getBizId(), rightsGoodsTotalNumMap.get(entity.getBizId()) + currentRightsGoodsNum);
+                        } else {
+                            rightsGoodsTotalNumMap.put(entity.getBizId(), currentRightsGoodsNum);
+                        }
+                    }
+                }
                 break;
             default:
                 break;
         }
-}
+    }
 
-    private void queryAndRecordOrdersInfo(List<UpdateUserLimitVo> vos, String referId, String serviceName) {
+    private List<LimitOrderChangeLogEntity> removeDuplicateRecord(List<LimitOrderChangeLogEntity> logEntityList) {
+        // 根据维权单号去重，因为N元N件是活动级别，日志表中记录的是商品级别，事实上相同维权单号的记录，只需要一条记录中的content就可以
+        Set<LimitOrderChangeLogEntity> logEntitySet = new TreeSet<>(new Comparator<LimitOrderChangeLogEntity>() {
+            @Override
+            public int compare(LimitOrderChangeLogEntity o1, LimitOrderChangeLogEntity o2) {
+                return Long.valueOf(JSON.parseObject(o1.getContent(), BizContentBo.class).getRightsNo())
+                        .compareTo(Long.valueOf(JSON.parseObject(o2.getContent(), BizContentBo.class).getRightsNo()));
+            }
+        });
+        logEntitySet.addAll(logEntityList);
+        return new ArrayList<>(logEntitySet);
+    }
+
+    private void queryAndRecordOrdersInfo(List<UpdateUserLimitVo> vos, String serviceName) {
         // 封装查询参数
-        LimitOrderChangeLogEntity logEntity = packingLogEntity(vos, referId, serviceName);
+        LimitOrderChangeLogEntity logEntity = packingLogEntity(vos, serviceName);
 
         // 查询下单信息，获取规则及活动次数
         List<LimitOrderChangeLogEntity> logEntityList = limitOrderChangeLogDao.getLogByReferId(logEntity);
@@ -209,10 +248,10 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
         recordRuleAndParticipateTime(logEntityList);
     }
 
-    private LimitOrderChangeLogEntity packingLogEntity(List<UpdateUserLimitVo> vos, String referId, String serviceName) {
+    private LimitOrderChangeLogEntity packingLogEntity(List<UpdateUserLimitVo> vos, String serviceName) {
         LimitOrderChangeLogEntity queryLogParameter;
         queryLogParameter = new LimitOrderChangeLogEntity();
-        queryLogParameter.setReferId(referId);
+        queryLogParameter.setReferId(vos.get(0).getOrderNo().toString());
         queryLogParameter.setStatus(LimitConstant.ORDER_LOG_STATUS_INIT);
         queryLogParameter.setServiceName(serviceName);
         queryLogParameter.setBizType(vos.get(0).getBizType());
@@ -565,12 +604,29 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                         throw new LimitationBizException(LimitationErrorCode.INVALID_ACTIVITY);
                     }
                     if (!limitInfoEntity.getIsDeleted()) {
-                        if (Objects.equals(ActivityTypeEnum.NYNJ.getType(), bizType)) {
-                            // 获取活动参与次数
-                            int participateTime = LimitContext.getLimitBo().getGlobalParticipateTimeMap().get(activityId);
-                            LimitContext.getLimitBo().getActivityLimitEntityList().add(LimitConvertor.convertActivityLimit(baseBo, activityId, participateTime, limitInfoEntity));
-                        } else {
+                        if (!Objects.equals(ActivityTypeEnum.NYNJ.getType(), bizType)) {
                             LimitContext.getLimitBo().getActivityLimitEntityList().add(LimitConvertor.convertActivityLimit(baseBo, activityId, entry.getValue(), limitInfoEntity));
+                        } else {
+                            // 下单/取消 获取活动参与次数
+                            int participateTime = LimitContext.getLimitBo().getGlobalParticipateTimeMap().get(activityId);
+
+                            // 维权 计算本次返还活动参与次数
+                            if (MapUtils.isNotEmpty(LimitContext.getLimitBo().getGlobalRightsGoodsTotalNumMap())) {
+                                // 获取活动规则
+                                Integer ruleNum = LimitContext.getLimitBo().getGlobalRuleNumMap().get(entryKey);
+
+                                // 该活动本次为第一次维权
+                                if (LimitContext.getLimitBo().getGlobalRightsGoodsTotalNumMap().get(activityId) == null) {
+                                    // 公式：本次维权商品数量 / 规则 --》 向下取整
+                                    participateTime = (int) Math.floor(entry.getValue() / ruleNum);
+                                } else {
+                                    // 获取历史维权总商品数
+                                    Integer historicalRightsTotalNum = LimitContext.getLimitBo().getGlobalRightsGoodsTotalNumMap().get(activityId);
+                                    // 公式：（历史维权总商品数 % 规则 + 本次维权商品数） / 规则 --》 向下取整
+                                    participateTime = (int) Math.floor((historicalRightsTotalNum % ruleNum + entry.getValue()) / ruleNum);
+                                }
+                            }
+                            LimitContext.getLimitBo().getActivityLimitEntityList().add(LimitConvertor.convertActivityLimit(baseBo, activityId, participateTime, limitInfoEntity));
                         }
                     }
                     break;

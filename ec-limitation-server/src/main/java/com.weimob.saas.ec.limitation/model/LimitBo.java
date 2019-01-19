@@ -15,32 +15,25 @@ import java.util.Map;
  * @date 2018/6/6 14:52
  */
 public class LimitBo {
-    /**
-     * 活动对应的购买的商品件数
-     * 商品对应的购买件数
-     * sku对应的购买件数
-     */
+    /** 购买件数（限购级别不同，含义则不同） */
     Map<String, Integer> globalOrderBuyNumMap = new HashMap();
 
-    /**
-     * 活动id对应的要插入到活动限购表需要的信息
-     */
+    /** 构建更新活动限购表所需信息 */
     private Map<Long, UserLimitBaseBo> activityIdLimitMap = new HashMap<>();
 
-    /**
-     * 商品id对应的要插入到商品限购表需要的信息
-     */
+    /** 构建更新商品限购表所需信息 */
     private Map<Long, UserLimitBaseBo> goodsIdLimitMap = new HashMap<>();
 
-    /**
-     * skuid对应的要插入到sku限购表需要的信息
-     */
+    /** 构建更新sku限购表所需信息 */
     private Map<Long, UserLimitBaseBo> skuIdLimitMap = new HashMap<>();
 
-    List<UserGoodsLimitEntity> goodsLimitEntityList = new ArrayList<>();
-
+    /** 操作活动表数据信息 */
     List<UserLimitEntity> activityLimitEntityList = new ArrayList<>();
 
+    /** 操作商品表数据信息 */
+    List<UserGoodsLimitEntity> goodsLimitEntityList = new ArrayList<>();
+
+    /** 操作sku表数据信息 */
     List<SkuLimitInfoEntity> activityGoodsSoldEntityList = new ArrayList<>();
 
     /** N元N件规则信息Map */
@@ -48,6 +41,9 @@ public class LimitBo {
 
     /** 活动级别参与次数 */
     private Map<Long, Integer> globalParticipateTimeMap;
+
+    /** 历史维权商品总数量 */
+    private Map<Long, Integer> globalRightsGoodsTotalNumMap;
 
     public Map<String, Integer> getGlobalOrderBuyNumMap() {
         return globalOrderBuyNumMap;
@@ -119,5 +115,13 @@ public class LimitBo {
 
     public void setGlobalRuleNumMap(Map<String, Integer> globalRuleNumMap) {
         this.globalRuleNumMap = globalRuleNumMap;
+    }
+
+    public Map<Long, Integer> getGlobalRightsGoodsTotalNumMap() {
+        return globalRightsGoodsTotalNumMap;
+    }
+
+    public void setGlobalRightsGoodsTotalNumMap(Map<Long, Integer> globalRightsGoodsTotalNumMap) {
+        this.globalRightsGoodsTotalNumMap = globalRightsGoodsTotalNumMap;
     }
 }

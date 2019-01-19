@@ -99,7 +99,7 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         orderChangeLogEntity.setReferId(vo.getOrderNo().toString());
         orderChangeLogEntity.setStatus(LimitConstant.ORDER_LOG_STATUS_INIT);
         if (Objects.equals(ActivityTypeEnum.NYNJ.getType(), vo.getBizType())) {
-            // 保存规则和本次活动参与次数
+            // 下单 记录content（活动规则 + 本次活动参与次数）
             BizContentBo bizContent = new BizContentBo(vo.getRuleNum(), LimitContext.getLimitBo().getGlobalParticipateTimeMap().get(vo.getBizId()));
             orderChangeLogEntity.setContent(JSON.toJSONString(bizContent));
         }

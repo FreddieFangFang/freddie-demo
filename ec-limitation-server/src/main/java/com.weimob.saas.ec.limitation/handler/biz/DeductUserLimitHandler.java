@@ -118,14 +118,22 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         orderChangeLogEntity.setTicket(LimitContext.getTicket());
         orderChangeLogEntity.setServiceName(getServiceName().name());
         orderChangeLogEntity.setReferId(vo.getOrderNo().toString());
-        // 取消订单 N元N件需要记录content（次数）
-        if (Objects.equals(ActivityTypeEnum.NYNJ.getType(), vo.getBizType())) {
-            BizContentBo bizContent = new BizContentBo(LimitContext.getLimitBo().getGlobalParticipateTimeMap().get(vo.getBizId()));
-            orderChangeLogEntity.setContent(JSON.toJSONString(bizContent));
-        } else if (vo.getRightId() != null) {
+        if (vo.getRightId() != null) {
             orderChangeLogEntity.setContent(vo.getRightId().toString());
         }
         orderChangeLogEntity.setStatus(LimitConstant.ORDER_LOG_STATUS_INIT);
+
+        if (Objects.equals(ActivityTypeEnum.NYNJ.getType(), vo.getBizType())) {
+            if (vo.getRightId() != null) {
+                // 维权 记录content（维权单号 + 本次维权商品数量）
+                BizContentBo bizContent = new BizContentBo(vo.getRightId().toString(), LimitContext.getLimitBo().getGlobalOrderBuyNumMap().get(vo.getBizId()));
+                orderChangeLogEntity.setContent(JSON.toJSONString(bizContent));
+            } else {
+                // 取消订单 记录content（次数）
+                BizContentBo bizContent = new BizContentBo(LimitContext.getLimitBo().getGlobalParticipateTimeMap().get(vo.getBizId()));
+                orderChangeLogEntity.setContent(JSON.toJSONString(bizContent));
+            }
+        }
         return orderChangeLogEntity;
     }
 
