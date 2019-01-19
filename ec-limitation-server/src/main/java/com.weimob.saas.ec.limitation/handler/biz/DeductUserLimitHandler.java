@@ -116,7 +116,7 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         orderChangeLogEntity.setLimitId(limitInfoEntity.getLimitId());
         orderChangeLogEntity.setWid(vo.getWid());
         orderChangeLogEntity.setTicket(LimitContext.getTicket());
-        orderChangeLogEntity.setServiceName(getServiceName().name());
+        orderChangeLogEntity.setServiceName(vo.getLimitServiceName());
         orderChangeLogEntity.setReferId(vo.getOrderNo().toString());
         if (vo.getRightId() != null) {
             orderChangeLogEntity.setContent(vo.getRightId().toString());
@@ -125,7 +125,8 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
 
         if (Objects.equals(ActivityTypeEnum.NYNJ.getType(), vo.getBizType())) {
             if (vo.getRightId() != null) {
-                Integer goodsNum = LimitContext.getLimitBo().getGlobalOrderBuyNumMap().get(vo.getBizId());
+                Integer goodsNum = LimitContext.getLimitBo().getGlobalOrderBuyNumMap().get("LIMIT_ACTIVITY"+"_"
+                        +vo.getPid()+"_"+vo.getStoreId()+"_"+vo.getBizType()+"_"+vo.getBizId());
                 Integer participateTime = LimitContext.getLimitBo().getGlobalParticipateTimeMap().get(vo.getBizId());
                 // 维权 记录content（维权单号 + 本次维权商品数量 + 本次维权 返还的活动参与次数）
                 BizContentBo bizContent = new BizContentBo(vo.getRightId(), goodsNum, participateTime);

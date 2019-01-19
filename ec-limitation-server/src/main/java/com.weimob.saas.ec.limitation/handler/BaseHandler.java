@@ -611,7 +611,7 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                             int participateTime = LimitContext.getLimitBo().getGlobalParticipateTimeMap().get(activityId);
 
                             // 维权 计算本次返还活动参与次数
-                            if (MapUtils.isNotEmpty(LimitContext.getLimitBo().getGlobalRightsGoodsTotalNumMap())) {
+                            if (LimitContext.getLimitBo().getGlobalRightsGoodsTotalNumMap() != null) {
                                 // 获取活动规则
                                 Integer ruleNum = LimitContext.getLimitBo().getGlobalRuleNumMap().get(entryKey);
 
