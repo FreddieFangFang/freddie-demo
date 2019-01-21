@@ -351,7 +351,7 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
         }
     }
 
-    private String generateActivityKey(UpdateUserLimitVo requestVo) {
+    protected String generateActivityKey(UpdateUserLimitVo requestVo) {
         StringBuilder key = new StringBuilder(LIMIT_PREFIX_ACTIVITY);
         key.append(requestVo.getPid()).append("_");
         key.append(requestVo.getStoreId()).append("_");
