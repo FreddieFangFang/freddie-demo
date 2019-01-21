@@ -485,14 +485,17 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                 case LIMIT_PREFIX_ACTIVITY:
                     long activityId = Long.parseLong(entryKey.substring(lastIndex));
                     int bizType = Integer.parseInt(entryKey.split("_")[4]);
-                    // 当用户没有购买记录的时候, 需要查看购买的记录, 当购买的商品超过商品限购记录则抛出异常
+                    // N元N件 规则信息
+                    Map<String, Integer> ruleNumMap = LimitContext.getLimitBo().getGlobalRuleNumMap();
+                    if (Objects.equals(ActivityTypeEnum.NYNJ.getType(), bizType)) {
+                        // 保存本次活动参与次数至ThreadLocal中
+                        getParticipateTime(entry, entryKey, ruleNumMap);
+                    }
                     if (activityMap.get(activityId).getLimitNum() == LimitConstant.UNLIMITED_NUM) {
                         break;
                     }
                     int finalGoodsNum;
                     boolean included = false;
-                    // N元N件 规则信息
-                    Map<String, Integer> ruleNumMap = LimitContext.getLimitBo().getGlobalRuleNumMap();
                     if (CollectionUtils.isNotEmpty(activityLimitList)) {
                         // 用户活动购买记录map
                         Map<Long, Integer> activityUserLimitNumMap = new HashMap<>();
