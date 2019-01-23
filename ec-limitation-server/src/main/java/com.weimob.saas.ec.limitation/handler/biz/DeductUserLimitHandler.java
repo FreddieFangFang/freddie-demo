@@ -43,7 +43,7 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
     @Override
     protected void doBatchBizLogic(List<UpdateUserLimitVo> updateUserLimitVoList) {
         //1.幂等校验
-        if (!Objects.equals(LimitServiceNameEnum.RIGHTS_DEDUCT_LIMIT.name(), updateUserLimitVoList.get(0).getLimitServiceName())) {
+        if (updateUserLimitVoList.get(0).getRightId() == null) {
             validRepeatDeductLimitNum(updateUserLimitVoList);
         }
 
