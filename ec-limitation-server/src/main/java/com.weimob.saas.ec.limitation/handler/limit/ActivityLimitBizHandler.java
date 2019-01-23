@@ -1,5 +1,6 @@
 package com.weimob.saas.ec.limitation.handler.limit;
 
+import com.weimob.saas.ec.limitation.common.LimitServiceNameEnum;
 import com.weimob.saas.ec.limitation.dao.LimitInfoDao;
 import com.weimob.saas.ec.limitation.dao.UserLimitDao;
 import com.weimob.saas.ec.limitation.entity.LimitInfoEntity;
@@ -38,7 +39,7 @@ public class ActivityLimitBizHandler extends BaseHandler implements LimitBizHand
         Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap = new HashMap<>();
         Map<String, Integer> localOrderBuyNumMap = new HashMap();
         /** 1 处理入参数据 **/
-        groupingOrderActivityRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
+        groupingOrderActivityRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap, LimitServiceNameEnum.SAVE_USER_LIMIT.name());
         List<LimitParam> limitParams = new ArrayList<>();
         for (UpdateUserLimitVo requestVo : orderGoodsQueryMap.get(LIMIT_PREFIX_ACTIVITY)) {
             LimitParam limitInputVo = new LimitParam(requestVo.getPid(), requestVo.getBizId(), requestVo.getBizType());

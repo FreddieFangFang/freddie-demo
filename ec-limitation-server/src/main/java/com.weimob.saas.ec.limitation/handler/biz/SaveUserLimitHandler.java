@@ -95,7 +95,7 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         } else {
             orderChangeLogEntity.setTicket(LimitContext.getTicket());
         }
-        orderChangeLogEntity.setServiceName(vo.getLimitServiceName());
+        orderChangeLogEntity.setServiceName(getServiceName().name());
         orderChangeLogEntity.setReferId(vo.getOrderNo().toString());
         orderChangeLogEntity.setStatus(LimitConstant.ORDER_LOG_STATUS_INIT);
         if (Objects.equals(ActivityTypeEnum.NYNJ.getType(), vo.getBizType())) {

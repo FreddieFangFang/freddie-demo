@@ -61,7 +61,11 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
             //3.更新限购记录
             //3.1 判断活动类型
             if (CommonBizUtil.isValidActivityLimit(bizType)) {
-                groupingOrderActivityRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
+                String serviceName = LimitServiceNameEnum.DEDUCT_USER_LIMIT.name();
+                if (updateUserLimitVoList.get(0).getRightId() != null) {
+                    serviceName = LimitServiceNameEnum.RIGHTS_DEDUCT_LIMIT.name();
+                }
+                groupingOrderActivityRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap, serviceName);
             }
             if (CommonBizUtil.isValidGoodsLimit(bizType)) {
                 groupingOrderGoodsRequestVoList(LimitContext.getLimitBo().getGlobalOrderBuyNumMap(), orderGoodsQueryMap, vos, localOrderBuyNumMap);
@@ -116,6 +120,10 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
         orderChangeLogEntity.setLimitId(limitInfoEntity.getLimitId());
         orderChangeLogEntity.setWid(vo.getWid());
         orderChangeLogEntity.setTicket(LimitContext.getTicket());
+        vo.setLimitServiceName(LimitServiceNameEnum.DEDUCT_USER_LIMIT.name());
+        if (vo.getRightId() != null) {
+            vo.setLimitServiceName(LimitServiceNameEnum.RIGHTS_DEDUCT_LIMIT.name());
+        }
         orderChangeLogEntity.setServiceName(vo.getLimitServiceName());
         orderChangeLogEntity.setReferId(vo.getOrderNo().toString());
         if (vo.getRightId() != null) {

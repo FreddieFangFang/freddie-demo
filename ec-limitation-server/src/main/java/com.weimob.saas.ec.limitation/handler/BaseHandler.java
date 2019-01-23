@@ -141,10 +141,10 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
     protected void groupingOrderActivityRequestVoList(Map<String, Integer> globalOrderBuyNumMap,
                                                       Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap,
                                                       List<UpdateUserLimitVo> vos,
-                                                      Map<String, Integer> localOrderBuyNumMap) {
+                                                      Map<String, Integer> localOrderBuyNumMap, String serviceName) {
         // N元N件，则记录规则信息至ThreadLocal中
         if (Objects.equals(ActivityTypeEnum.NYNJ.getType(), vos.get(0).getBizType())) {
-            groupingNynjRequestVoList(globalOrderBuyNumMap, orderGoodsQueryMap, vos, localOrderBuyNumMap);
+            groupingNynjRequestVoList(globalOrderBuyNumMap, orderGoodsQueryMap, vos, localOrderBuyNumMap, serviceName);
             return;
         }
         for (UpdateUserLimitVo requestVo : vos) {
@@ -157,12 +157,12 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
     protected void groupingNynjRequestVoList(Map<String, Integer> globalOrderBuyNumMap,
                                              Map<String, List<UpdateUserLimitVo>> orderGoodsQueryMap,
                                              List<UpdateUserLimitVo> vos,
-                                             Map<String, Integer> localOrderBuyNumMap) {
+                                             Map<String, Integer> localOrderBuyNumMap, String serviceName) {
         // 初始化规则信息map
         LimitContext.getLimitBo().setGlobalRuleNumMap(new HashMap<String, Integer>());
         // 初始化参与次数map
         LimitContext.getLimitBo().setGlobalParticipateTimeMap(new HashMap<Long, Integer>());
-        switch (vos.get(0).getLimitServiceName()) {
+        switch (serviceName) {
             case SAVE_USER_LIMIT:
                 for (UpdateUserLimitVo requestVo : vos) {
                     String activityKey = generateActivityKey(requestVo);
