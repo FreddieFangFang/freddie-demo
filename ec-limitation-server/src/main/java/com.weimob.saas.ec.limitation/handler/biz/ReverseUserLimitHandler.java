@@ -1,7 +1,6 @@
 package com.weimob.saas.ec.limitation.handler.biz;
 
 import com.alibaba.dubbo.rpc.RpcContext;
-import com.weimob.saas.ec.limitation.common.LimitServiceNameEnum;
 import com.weimob.saas.ec.limitation.constant.LimitConstant;
 import com.weimob.saas.ec.limitation.dao.LimitOrderChangeLogDao;
 import com.weimob.saas.ec.limitation.entity.LimitOrderChangeLogEntity;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author lujialin
@@ -50,8 +48,6 @@ public class ReverseUserLimitHandler {
         if (orderChangeLogEntityList.get(0).getStatus() == LimitConstant.ORDER_LOG_STATUS_INIT){
             //2.服务名
             String serviceName = orderChangeLogEntityList.get(0).getServiceName();
-            serviceName = Objects.equals(serviceName, LimitServiceNameEnum.RIGHTS_DEDUCT_LIMIT.name()) ?
-                    LimitServiceNameEnum.DEDUCT_USER_LIMIT.name() : serviceName;
             Handler<?> handler = reverseLimitHandlerFactory.getHandlerByServiceName(serviceName);
             handler.doReverse(orderChangeLogEntityList);
 
