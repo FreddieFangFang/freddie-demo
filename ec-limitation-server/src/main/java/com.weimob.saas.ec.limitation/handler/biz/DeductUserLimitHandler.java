@@ -144,6 +144,12 @@ public class DeductUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
                 orderChangeLogEntity.setContent(JSON.toJSONString(bizContent));
             }
         }
+        if (Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), vo.getBizType()) && vo.getRightId() != null) {
+            BizContentBo bizContent = new BizContentBo();
+            bizContent.setActivityStockType(vo.getActivityStockType());
+            bizContent.setRightsNo(vo.getRightId());
+            orderChangeLogEntity.setContent(JSON.toJSONString(bizContent));
+        }
         return orderChangeLogEntity;
     }
 

@@ -103,6 +103,11 @@ public class SaveUserLimitHandler extends BaseHandler<UpdateUserLimitVo> {
             BizContentBo bizContent = new BizContentBo(vo.getRuleNum(), LimitContext.getLimitBo().getGlobalParticipateTimeMap().get(vo.getBizId()));
             orderChangeLogEntity.setContent(JSON.toJSONString(bizContent));
         }
+        if (Objects.equals(ActivityTypeEnum.DISCOUNT.getType(), vo.getBizType())) {
+            BizContentBo bizContent = new BizContentBo();
+            bizContent.setActivityStockType(vo.getActivityStockType());
+            orderChangeLogEntity.setContent(JSON.toJSONString(bizContent));
+        }
         return orderChangeLogEntity;
     }
 
