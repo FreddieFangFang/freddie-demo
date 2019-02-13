@@ -694,7 +694,14 @@ public abstract class BaseHandler<T extends Comparable<T>> implements Handler<T>
                 if (CommonBizUtil.isValidGoodsLimit(logEntity.getBizType())) {
                     buildGoodsBuyInfoLogEntity(goodsLimitMap, logEntity);
                 }
-                if (CommonBizUtil.isValidSkuLimit(logEntity.getBizType(), LimitConstant.DISCOUNT_TYPE_SKU)) {
+                // content获取二级分类， 如果没有，默认新零售方案
+                Integer activityStockType = LimitConstant.DISCOUNT_TYPE_SKU;
+                if (Objects.equals(logEntity.getBizType(), ActivityTypeEnum.DISCOUNT.getType())) {
+                    BizContentBo bizContentBo = JSON.parseObject(logEntity.getContent(), BizContentBo.class);
+                    activityStockType = bizContentBo != null && bizContentBo.getActivityStockType() != null ?
+                            bizContentBo.getActivityStockType() : LimitConstant.DISCOUNT_TYPE_SKU;
+                }
+                if (CommonBizUtil.isValidSkuLimit(logEntity.getBizType(), activityStockType)) {
                     buildSkuBuyInfoLogEntity(skuLimitMap, logEntity);
                 }
             }

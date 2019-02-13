@@ -18,6 +18,9 @@ public class BizContentBo {
     /** 维权商品数量 */
     private Integer rightsGoodsNum;
 
+    /** 限时折扣二级分类 */
+    private Integer activityStockType;
+
     public BizContentBo() {
     }
 
@@ -66,5 +69,13 @@ public class BizContentBo {
 
     public void setRightsGoodsNum(Integer rightsGoodsNum) {
         this.rightsGoodsNum = rightsGoodsNum;
+    }
+
+    public Integer getActivityStockType() {
+        return activityStockType;
+    }
+
+    public void setActivityStockType(Integer activityStockType) {
+        this.activityStockType = activityStockType;
     }
 }

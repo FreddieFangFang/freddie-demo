@@ -40,6 +40,8 @@ public class ReverseLimitHandlerFactory {
             handler = saveUserLimitHandler;
         } else if (LimitServiceNameEnum.DEDUCT_USER_LIMIT.name().equals(serviceName)) {
             handler = deductUserLimitHandler;
+        }else if (LimitServiceNameEnum.RIGHTS_DEDUCT_LIMIT.name().equals(serviceName)) {
+            handler = deductUserLimitHandler;
         } else if (LimitServiceNameEnum.UPDATE_GOODS_LIMIT.name().equals(serviceName)) {
             handler = reverseUpdateGoodsLimitHandler;
         } else if (LimitServiceNameEnum.SAVE_GOODS_LIMIT.name().equals(serviceName)) {
