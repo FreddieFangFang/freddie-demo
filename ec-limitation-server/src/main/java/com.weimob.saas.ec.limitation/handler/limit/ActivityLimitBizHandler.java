@@ -50,6 +50,10 @@ public class ActivityLimitBizHandler extends BaseHandler implements LimitBizHand
         if (CollectionUtils.isEmpty(limitInfoEntityList)) {
             throw new LimitationBizException(LimitationErrorCode.LIMIT_ACTIVITY_IS_NULL);
         }
+        // 部分活动已失效
+        if (limitInfoEntityList.size() != localOrderBuyNumMap.keySet().size()) {
+            throw new LimitationBizException(LimitationErrorCode.PART_ACTIVITY_EXPIRED);
+        }
         /** 3 查询用户购买记录 **/
         List<UserLimitEntity> userLimitEntityList = userLimitDao.listUserLimitByBizId(vos);
         /** 4 校验商品是否超出活动限购 **/

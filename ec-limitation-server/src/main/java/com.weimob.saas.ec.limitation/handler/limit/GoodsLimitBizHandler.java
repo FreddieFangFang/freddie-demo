@@ -42,6 +42,10 @@ public class GoodsLimitBizHandler extends BaseHandler implements LimitBizHandler
         if (CollectionUtils.isEmpty(goodsLimitInfoEntityList)) {
             throw new LimitationBizException(LimitationErrorCode.LIMIT_GOODS_IS_NULL);
         }
+        // 部分商品已失效
+        if (goodsLimitInfoEntityList.size() != localOrderBuyNumMap.keySet().size()) {
+            throw new LimitationBizException(LimitationErrorCode.PART_GOODS_EXPIRED);
+        }
         /** 3 查询用户购买记录 **/
         List<UserGoodsLimitEntity> userGoodsLimitRecodeList = userGoodsLimitDao.listOrderUserGoodsLimit(vos);
         /** 4 校验商品是否超出限购 **/
