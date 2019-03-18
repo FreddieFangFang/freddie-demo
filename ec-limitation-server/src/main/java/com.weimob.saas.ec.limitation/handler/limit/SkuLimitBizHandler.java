@@ -38,10 +38,6 @@ public class SkuLimitBizHandler extends BaseHandler implements LimitBizHandler {
         if (CollectionUtils.isEmpty(skuLimitInfoList)) {
             throw new LimitationBizException(LimitationErrorCode.LIMIT_SKU_IS_NULL);
         }
-        // 部分规格已失效
-        if (skuLimitInfoList.size() != localOrderBuyNumMap.keySet().size()) {
-            throw new LimitationBizException(LimitationErrorCode.PART_SKU_EXPIRED);
-        }
         /** 3 校验商品是否超出限购 **/
         validLimitation(null, null,
                 null, null, skuLimitInfoList, localOrderBuyNumMap);
