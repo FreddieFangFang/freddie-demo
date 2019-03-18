@@ -72,7 +72,9 @@ public class CommonBizUtil {
         return isValidDiscount(bizType)
                 || isValidPoint(bizType)
                 || isValidPrivilegePrice(bizType)
-                || isValidLimitQuantity(bizType);
+                || isValidLimitQuantity(bizType)
+                || isValidCommunityGroupon(bizType);
+
     }
 
     /**

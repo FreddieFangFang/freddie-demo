@@ -104,9 +104,9 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             skuLimitList = this.getSkuLimitInfoList(queryList, pid);
         }
         //如果是社区团购,返回结果
-        if (CommonBizUtil.isValidCommunityGroupon(type)) {
-            return buildCommunityGrouponResponseVo(requestVo, skuLimitList, limitInfoMap);
-        }
+//        if (CommonBizUtil.isValidCommunityGroupon(type)) {
+//            return buildCommunityGrouponResponseVo(requestVo, skuLimitList, limitInfoMap);
+//        }
         //获取用户活动限购数量map
         Map<String, Integer> activityUserLimitNumMap =
                 this.getActivityUserLimitNumMap(pid, type, wid, limitInfoEntityList);
@@ -132,10 +132,14 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         //获取商品限购map
         Map<String, List<GoodsLimitInfoEntity>> goodsLimitNumMap = this.getGoodsLimitMap(requestLimitGoodsMap, limitInfoMap, pid);
 
+        //如果是社区团购,返回结果
+        if (CommonBizUtil.isValidCommunityGroupon(type)) {
+            return buildCommunityGrouponResponseVo(requestVo, skuLimitList, goodsLimitNumMap, userGoodsLimitNumMap, userPidGoodsLimitNumMap, limitInfoMap);
+        }
         //限时折扣冻结库存 && 限量抢购
         if (CommonBizUtil.isValidDiscountStock(type, activityStockType) || CommonBizUtil.isValidLimitQuantity(type)) {
-            return this.buildResponseVo(requestVo,
-                    activityUserLimitNumMap, goodsLimitNumMap, userGoodsLimitNumMap, userPidGoodsLimitNumMap, limitInfoMap);
+            return this.buildResponseVo(requestVo, activityUserLimitNumMap,
+                            goodsLimitNumMap, userGoodsLimitNumMap, userPidGoodsLimitNumMap, limitInfoMap);
 
         }
         //特权价 && 限时折扣sku
@@ -358,6 +362,9 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
 
     private GoodsLimitInfoListResponseVo buildCommunityGrouponResponseVo(GoodsLimitInfoListRequestVo requestVo,
                                                                   List<SkuLimitInfoEntity> skuLimitList,
+                                                                  Map<String, List<GoodsLimitInfoEntity>> goodsLimitNumMap,
+                                                                  Map<String, Integer> userGoodsLimitNumMap,
+                                                                  Map<String, Integer> userPidGoodsLimitNumMap,
                                                                   Map<String, LimitInfoEntity> limitInfoMap) {
         List<GoodsLimitInfoListVo> goodsLimitInfoList = new ArrayList<>();
         LimitInfoEntity limitInfoEntity = null;
@@ -380,6 +387,8 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             goodsLimitInfoListVo.setActivityLimitNum(activityLimitNum);
             goodsLimitInfoList.add(goodsLimitInfoListVo);
         }
+        // 校验goods限购
+        validGoodsLimit(requestVo, goodsLimitNumMap, userGoodsLimitNumMap, goodsLimitInfoList, userPidGoodsLimitNumMap,limitInfoMap);
         // 校验sku限购
         GoodsLimitInfoListResponseVo responseVo = new GoodsLimitInfoListResponseVo();
         responseVo.setGoodsLimitInfoList(goodsLimitInfoList);
@@ -704,7 +713,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
         Integer activityStockType = requestVo.getQueryGoodslimitNumVoList().get(0).getActivityStockType();
         List<GoodsLimitInfoEntity> goodsLimitInfoEntityList;
         Map<String, List<GoodsLimitInfoEntity>> goodsLimitNumMap = null;
-        // 如果活动类型为 特权价/限时折扣/限量抢购/积分商城，则需要查询商品限购
+        // 如果活动类型为 特权价/限时折扣/限量抢购/积分商城，则需要查询商品限购 + 社区团购
         if (CommonBizUtil.isValidGoodsLimit(bizType)) {
             goodsLimitInfoEntityList = goodsLimitInfoDao.listGoodsLimitNum(requestVo.getQueryGoodslimitNumVoList());
             if (CollectionUtils.isEmpty(goodsLimitInfoEntityList)) {
