@@ -378,6 +378,7 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             goodsLimitInfoListVo.setGoodsId(vo.getGoodsId());
             goodsLimitInfoListVo.setSkuId(vo.getSkuId());
             goodsLimitInfoListVo.setCanBuyNum(Integer.MAX_VALUE);
+            goodsLimitInfoListVo.setLimitStatus(false);
             String limitIdKey = MapKeyUtil.buildLimitIdMapKey(vo.getPid(), vo.getBizType(), vo.getBizId());
             limitInfoEntity = limitInfoMap.get(limitIdKey);
             Integer activityLimitNum = limitInfoEntity == null ? null : limitInfoEntity.getLimitNum();
