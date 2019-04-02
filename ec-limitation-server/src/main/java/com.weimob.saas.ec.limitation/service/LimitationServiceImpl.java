@@ -321,9 +321,7 @@ public class LimitationServiceImpl {
             param.setPid(pid);
             param.setLimitId(limitId);
             param.setGoodsIdList(goodsIdList);
-            if (!Objects.equals(LimitBizTypeEnum.BIZ_TYPE_COMMUNITY_GROUPON.getLevel(), bizType)) {
-                goodsLimitInfoDao.reverseGoodsLimit(param);
-            }
+            goodsLimitInfoDao.reverseGoodsLimit(param);
             skuLimitInfoDao.reverseSkuLimitStatusByGoodsId(param);
         }
     }

@@ -103,10 +103,6 @@ public class LimitationQueryBizServiceImpl implements LimitationQueryBizService 
             List<SkuLimitInfoEntity> queryList = this.buildQueryEntity(requestVo, limitInfoMap);
             skuLimitList = this.getSkuLimitInfoList(queryList, pid);
         }
-        //如果是社区团购,返回结果
-//        if (CommonBizUtil.isValidCommunityGroupon(type)) {
-//            return buildCommunityGrouponResponseVo(requestVo, skuLimitList, limitInfoMap);
-//        }
         //获取用户活动限购数量map
         Map<String, Integer> activityUserLimitNumMap =
                 this.getActivityUserLimitNumMap(pid, type, wid, limitInfoEntityList);
