@@ -14,11 +14,11 @@ public class TestDemo {
         counter.incrementAndGet();
     }
 
-    public void test001(){
+    public void test001() {
         Integer integer = new Integer(1);
     }
 
-    public void test002(){
+    public void test002() {
         Hashtable<String, String> stringStringHashtable = new Hashtable<>();
         Map<String, String> stringStringMap = new HashMap<>();
         Map<String, String> stringStringMapSyn = Collections.synchronizedMap(stringStringMap);
